@@ -61,6 +61,17 @@
         <item name="android:layout_marginBottom">0dp</item>
         <item name="android:layout_marginLeft">0dp</item>
     </style>
+    <!-- TODO: Contenedor, Estilos para contenedor reportes asistencia -->
+    <style name="contenedorReporteAsistencia">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginRight">0dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:layout_marginLeft">0dp</item>
+    </style>
     <!-- TODO: Contenedor, superior de -->
     <style name="contenedorCantidadRetenidosSaldoAFavorColorFondo">
         <item name="android:layout_width">match_parent</item>
@@ -68,7 +79,7 @@
         <item name="android:layout_weight">1</item>
         <item name="android:orientation">vertical</item>
         <item name="android:background">@color/colorPrimaryDark</item>
-        <item name="android:layout_marginRight">5dp</item>
+        <item name="android:layout_marginRight">0dp</item>
     </style>
     <!-- TODO: Contenedor  superior de la vista asesor_fragmento_inicio1 -->
     <style name="contenedorCantidadRetenidosSaldoRetenido">
@@ -126,6 +137,12 @@
         <item name="android:orientation">vertical</item>
         <!--item name="android:layout_marginLeft">10dp</item-->
         <item name="android:layout_marginRight">5dp</item>
+    </style>
+    <style name="contenedorSpinnerLarge">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <!-- TODO: Contenedor de la lista superior -->
     <style name="cabeceraLista">
@@ -201,6 +218,24 @@
         <item name="android:focusableInTouchMode">true</item>
         <item name="android:scrollHorizontally">true</item>
     </style>
+    <!-- TODO: textView, estilos de la cantidad a mostrar del servicio -->
+    <style name="textoCantidadAsistencia">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">0</item>
+        <item name="android:textSize">45dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">1dp</item>
+        <item name="android:paddingBottom">20dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
+        <item name="android:focusable">false</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:scrollHorizontally">true</item>
+    </style>
     <!-- TODO: textView, texto de no retenidos -->
     <style name="textoNoRetenidos">
         <item name="android:layout_width">match_parent</item>
@@ -217,6 +252,13 @@
         <item name="android:padding">10dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:text">Saldo a favor</item>
+    </style>
+    <!-- TODO: textView, texto contenido a mostrar de filtros -->
+    <style name="textoCantidad">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textStyle">bold</item>
     </style>
     <!-- TODO: textView, texto del apartado de saldo retenido -->
     <style name="textoCantidadSaldoRetenido">
@@ -319,6 +361,38 @@
         <item name="android:paddingLeft">10dp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
+    </style>
+
+    <!-- TODO: estilos de las fechas de los filtros -->
+    <style name="fechaInicial2">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/estilo_linea_solid2</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:text">Fecha Inicio</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:drawableRight">@drawable/icono_flecha_abajo2</item>
+        <item name="android:layout_marginRight">3dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/colorWhite</item>
+    </style>
+    <style name="fechaFinal2">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/estilo_linea_solid2</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:text">Fecha final</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:drawableRight">@drawable/icono_flecha_abajo2</item>
+        <item name="android:layout_marginLeft">3dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/colorWhite</item>
     </style>
 
 
@@ -444,6 +518,14 @@
         <item name="android:textSize">18dp</item>
         <item name="android:textStyle">bold</item>
     </style>
+    <style name="tituloLista">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textSize">18dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
     <!-- TODO: textView, campo cantidades -->
     <style name="campoCantidades">
         <item name="android:layout_width">match_parent</item>
@@ -454,6 +536,17 @@
         <item name="android:text">Resultados</item>
         <item name="android:textSize">18dp</item>
         <item name="android:textStyle">bold</item>
+    </style>
+    <style name="campoCantidadesMail">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">end</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:text">Resultados</item>
+        <item name="android:textSize">18dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:drawableRight">@drawable/icono_mail</item>
     </style>
 
     <!-- TODO: EDITTEXT -->
@@ -471,6 +564,28 @@
         <item name="android:drawableRight">@drawable/icono_buscador</item>
         <item name="android:textColorHint">@color/colorWhite</item>
         <item name="android:paddingLeft">10dp</item>
+    </style>
+
+    <style name="busquedaLarge">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@color/colorPrimaryLight</item>
+        <item name="android:hint">@string/texto_ingresar</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:drawableRight">@drawable/icono_buscador</item>
+        <item name="android:textColorHint">@color/colorWhite</item>
+        <item name="android:paddingLeft">10dp</item>
+    </style>
+
+    <!-- TODO: textView, icono acceso -->
+    <style name="iconoAcceso">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:drawableRight">@drawable/icono_acceso</item>
+        <item name="android:layout_marginTop">-40dp</item>
     </style>
 
 </resources>

@@ -3,49 +3,48 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
-    tools:context="com.airmovil.profuturo.ti.retencion.asesorFragmento.Inicio">
+    tools:context="com.airmovil.profuturo.ti.retencion.directorFragmento.Inicio">
 
 
     <LinearLayout style="@style/linearLayoutVertical" android:background="@android:color/white">
         <LinearLayout style="@style/contenedorPrimeraLetraNombre">
-            <TextView android:id="@+id/afi_tv_inicial"  style="@style/primeraLetra"/>
-            <TextView android:id="@+id/afi_tv_nombre" style="@style/nombreUsuario" />
+            <TextView android:id="@+id/dfi_tv_inicial"  style="@style/primeraLetra"/>
+            <TextView android:id="@+id/dfi_tv_nombre" style="@style/nombreUsuario" />
         </LinearLayout>
 
         <TextView style="@style/reporteDelDia"/>
-        <TextView android:id="@+id/afi_tv_fecha" style="@style/fecha"/>
+        <TextView android:id="@+id/dfi_tv_fecha" style="@style/fecha"/>
 
         <LinearLayout style="@style/contenedorRetenidosNoRetenidosSaldoAfavorSaldoEnContra">
             <LinearLayout style="@style/contenedorCantidadRetenidosSaldoAFavorColorFondo">
                 <TextView style="@style/textoRetenidos" android:text="Retenidos"/>
-                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/afi_tv_retenidos"/>
+                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/dfi_tv_retenidos"/>
             </LinearLayout>
             <LinearLayout style="@style/contenedorCantidadRetenidosSaldoAFavorColorFondo" >
                 <TextView style="@style/textoNoRetenidos" android:text="No Retenidos"/>
-                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/afi_tv_no_retenidos"/>
+                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/dfi_tv_no_retenidos"/>
             </LinearLayout>
         </LinearLayout>
         <LinearLayout style="@style/contenedorRetenidosNoRetenidosSaldoAfavorSaldoEnContra">
             <LinearLayout style="@style/contenedorCantidadRetenidosSaldoRetenido">
                 <TextView style="@style/textoSaldoRetenido" />
-                <TextView style="@style/textoCantidadSaldoRetenido" android:id="@+id/afi_tv_saldo_a_favor" />
+                <TextView style="@style/textoCantidadSaldoRetenido" android:id="@+id/dfi_tv_saldo_a_favor" />
             </LinearLayout>
             <LinearLayout style="@style/contenedorCantidadNoRetenidosSaldoEnContra">
                 <TextView style="@style/textoSaldoEnContra"/>
-                <TextView android:id="@+id/afi_tv_saldo_retenido" style="@style/textoCantidadSaldoNoRetenido" />
+                <TextView android:id="@+id/dfi_tv_saldo_retenido" style="@style/textoCantidadSaldoNoRetenido" />
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout style="@style/contenedorFiltros">
             <TextView style="@style/tituloFiltros" android:text="@string/texto_reporte_periodo"/>
             <LinearLayout style="@style/linearLayoutHorizontal">
-                <TextView android:id="@+id/afi_tv_fecha_rango1" style="@style/fechaInicial" />
-                <TextView android:id="@+id/afi_tv_fecha_rango2" style="@style/fechaFinal"/>
+                <TextView android:id="@+id/dfi_tv_fecha_rango1" style="@style/fechaInicial" />
+                <TextView android:id="@+id/dfi_tv_fecha_rango2" style="@style/fechaFinal"/>
             </LinearLayout>
-            <Button android:id="@+id/afi_btn_filtro" android:text="Aplicar filtro" style="@style/btn"/>
+            <Button android:id="@+id/dfi_btn_filtro" android:text="Aplicar filtro" style="@style/btn"/>
         </LinearLayout>
 
     </LinearLayout>
 
 </ScrollView>
-

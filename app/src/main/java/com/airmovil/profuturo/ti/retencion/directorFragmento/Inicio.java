@@ -1,4 +1,4 @@
-package com.airmovil.profuturo.ti.retencion.asesorFragmento;
+package com.airmovil.profuturo.ti.retencion.directorFragmento;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
@@ -41,10 +41,13 @@ import java.util.Map;
  * create an instance of this fragment.
  */
 public class Inicio extends Fragment {
-    // TODO: cambia el nombre de los argumentos de parámetros, elige los nombres que coinciden
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String TAG = Inicio.class.getSimpleName();
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -109,16 +112,16 @@ public class Inicio extends Fragment {
         String nombre = datos.get(SessionManager.NOMBRE);
 
         // CASTEO DE ELEMENTOS
-        tvInicial      = (TextView) view.findViewById(R.id.afi_tv_inicial);
-        tvNombre       = (TextView) view.findViewById(R.id.afi_tv_nombre);
-        tvFecha        = (TextView) view.findViewById(R.id.afi_tv_fecha);
-        tvRetenidos    = (TextView) view.findViewById(R.id.afi_tv_retenidos);
-        tvNoRetenidos  = (TextView) view.findViewById(R.id.afi_tv_no_retenidos);
-        tvSaldoRetenido  = (TextView) view.findViewById(R.id.afi_tv_saldo_a_favor);
-        tvSaldoNoRetenido= (TextView) view.findViewById(R.id.afi_tv_saldo_retenido);
-        tvRangoFecha1  = (TextView) view.findViewById(R.id.afi_tv_fecha_rango1);
-        tvRangoFecha2  = (TextView) view.findViewById(R.id.afi_tv_fecha_rango2);
-        btnFiltro      = (Button) view.findViewById(R.id.afi_btn_filtro);
+        tvInicial      = (TextView) view.findViewById(R.id.dfi_tv_inicial);
+        tvNombre       = (TextView) view.findViewById(R.id.dfi_tv_nombre);
+        tvFecha        = (TextView) view.findViewById(R.id.dfi_tv_fecha);
+        tvRetenidos    = (TextView) view.findViewById(R.id.dfi_tv_retenidos);
+        tvNoRetenidos  = (TextView) view.findViewById(R.id.dfi_tv_no_retenidos);
+        tvSaldoRetenido  = (TextView) view.findViewById(R.id.dfi_tv_saldo_a_favor);
+        tvSaldoNoRetenido= (TextView) view.findViewById(R.id.dfi_tv_saldo_retenido);
+        tvRangoFecha1  = (TextView) view.findViewById(R.id.dfi_tv_fecha_rango1);
+        tvRangoFecha2  = (TextView) view.findViewById(R.id.dfi_tv_fecha_rango2);
+        btnFiltro      = (Button) view.findViewById(R.id.dfi_btn_filtro);
 
         tvSaldoRetenido.setSelected(true);
 
@@ -162,14 +165,14 @@ public class Inicio extends Fragment {
                     Config.msj(v.getContext(),"Error de datos","Favor de introducir fechas para aplicar el filtro");
                 }else {
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    Inicio procesoDatosFiltroInicio = Inicio.newInstance(
+                    com.airmovil.profuturo.ti.retencion.asesorFragmento.Inicio procesoDatosFiltroInicio = com.airmovil.profuturo.ti.retencion.asesorFragmento.Inicio.newInstance(
                             (fechaIni.equals("") ? "" : fechaIni),
                             (fechaFin.equals("") ? "" : fechaFin),
                             rootView.getContext()
                     );
                     borrar.onDestroy();
                     ft.remove(borrar);
-                    ft.replace(R.id.content_asesor, procesoDatosFiltroInicio);
+                    ft.replace(R.id.content_director, procesoDatosFiltroInicio);
                     ft.addToBackStack(null);
 
 
@@ -179,11 +182,11 @@ public class Inicio extends Fragment {
         });
     }
 
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.asesor_fragmento_inicio, container, false);
+        return inflater.inflate(R.layout.director_fragmento_inicio, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -220,15 +223,6 @@ public class Inicio extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-    }
-
-    public static Inicio newInstance(String periodo1, String periodo2, Context ctx) {
-        Inicio enviarDatos = new Inicio();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, periodo1);
-        args.putString(ARG_PARAM2, periodo2);
-        enviarDatos.setArguments(args);
-        return enviarDatos;
     }
 
     private void rangoInicial(){

@@ -51,5 +51,7 @@
     <string name="texto_fecha">Fecha</string>
     <string name="texto_saldo">Saldo</string>
     <string name="texto_numero_cuenta">Número de cuenta</string>
+    <string name="texto_gerencias">Gerencias</string>
+    <string name="texto_asesores">Asesores</string>
 
 </resources>

@@ -24,6 +24,12 @@ import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Asesor;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.Inicio;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsesores;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistencia;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientes;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteGerente;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteSucursales;
 import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
 import com.airmovil.profuturo.ti.retencion.fragmento.Calculadora;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
@@ -145,9 +151,9 @@ public class Director extends AppCompatActivity{
         char letra = sNombreEmpleado.charAt(0);
         String primeraLetra = Character.toString(letra);
 
-        //navPrimeraLetra.setText(primeraLetra);
-        /*
-        navDatosGerente.setText("Nombre: " + sNombreEmpleado + "\nNumero Empleado: " + sNumeroEmpleado);*/
+        //navPrimeraLetra.setText("L");
+
+        //navDatosGerente.setText("Nombre: " + sNombreEmpleado + "\nNumero Empleado: " + sNumeroEmpleado);
     }
 
     /**
@@ -180,6 +186,7 @@ public class Director extends AppCompatActivity{
 
         switch (itemDrawer.getItemId()){
             case R.id.director_nav_inicio:
+                fragmentoGenerico = new Inicio();
                 break;
             case R.id.director_nav_calculadora:
                 fragmentoGenerico = new Calculadora();
@@ -188,19 +195,19 @@ public class Director extends AppCompatActivity{
                 fragmentoGenerico = new Biblioteca();
                 break;
             case R.id.director_nav_gerencias:
-
+                fragmentoGenerico = new ReporteGerente();
                 break;
             case R.id.director_nav_sucursales:
-
+                fragmentoGenerico = new ReporteSucursales();
                 break;
             case R.id.director_nav_asesores:
-
+                fragmentoGenerico = new ReporteAsesores();
                 break;
             case R.id.director_nav_clientes:
-
+                fragmentoGenerico = new ReporteClientes();
                 break;
             case R.id.director_nav_asistencia:
-
+                fragmentoGenerico = new ReporteAsistencia();
                 break;
             case R.id.director_nav_cerrar:
                 checkMapsFragment = false;
