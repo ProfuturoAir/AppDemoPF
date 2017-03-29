@@ -1,0 +1,55 @@
+<resources>
+    <string name="app_name">PremiumProfuturoApp</string>
+
+    <string name="texto_img_descripcion">Descripcion de texto</string>
+    <string name="texto_usuario">Usuario</string>
+    <string name="texto_contrasenia">Contraseña</string>
+    <string name="title_activity_asesor">Asesor</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="title_activity_gerente">Gerente</string>
+    <string name="title_activity_director">Director</string>
+
+    <string name="texto_letra">L</string>
+    <string name="texto_error_conexion">Error en conexión</string>
+    <string name="texto_nav_inicio">Inicio</string>
+    <string name="texto_nav_calculadora">Calculadora de retiro</string>
+    <string name="texto_nav_biblioteca">Biblioteca</string>
+    <string name="texto_nav_constancia_implicaciones">Constancia de implicaciones</string>
+    <string name="texto_nav_sucursales">Sucursales</string>
+    <string name="texto_nav_asesores">Asesores</string>
+    <string name="texto_nav_clientes">Clientes</string>
+    <string name="texto_nav_asistencia">Asistencia</string>
+    <string name="texto_nav_pendientes">Pendientes</string>
+    <string name="texto_nav_cerrar_sesion">Cerrar sesión</string>
+    <string name="texto_nav_reportes">Reportes</string>
+    <string name="texto_nav_gerencias">Gerencias</string>
+    <string name="texto_nombre">Nombre</string>
+    <string name="texto_clientes">Clientes</string>
+    <string name="texto_cusp">CUSP</string>
+    <string name="texto_ingresar">Ingresar</string>
+    <string name="texto_cliente">Cliente</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="texto_reporte_periodo">Reporte por periódo</string>
+    <string name="texto_sin_conexion">No hay conexión a internet</string>
+    <string name="btn_sin_cita">Cliente sin cita</string>
+    <string name="btn_aplicar">Aplicar</string>
+    <string name="btn_buscar">Buscar</string>
+
+    <string name="texto_sucursal">Sucursal</string>
+    <string name="texto_continuar">Continuar</string>
+    <string name="texto_cancelar">Cancelar</string>
+    <string name="texto_numero_empleado">Número de empleado</string>
+    <string name="texto_nss">NSS</string>
+    <string name="texto_curp">CURP</string>
+    <string name="texto_fecha">Fecha</string>
+    <string name="texto_saldo">Saldo</string>
+    <string name="texto_numero_cuenta">Número de cuenta</string>
+
+</resources>

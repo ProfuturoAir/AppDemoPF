@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/gerente_nav_inicio"
+            android:icon="@drawable/icono_inicio"
+            android:title="@string/texto_nav_inicio" />
+        <item
+            android:id="@+id/gerente_nav_calculadora"
+            android:icon="@drawable/icono_calculadora"
+            android:title="@string/texto_nav_calculadora" />
+        <item
+            android:id="@+id/gerente_nav_biblioteca"
+            android:icon="@drawable/icono_biblioteca"
+            android:title="@string/texto_nav_biblioteca" />
+        <item
+            android:id="@+id/gerente_nav_constancia_implicaciones"
+            android:icon="@drawable/icono_constancia"
+            android:title="@string/texto_nav_constancia_implicaciones" />
+    </group>
+
+    <item android:title="Reportes" >
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/gerente_nav_sucursales"
+                    android:icon="@drawable/icono_sucursales"
+                    android:title="@string/texto_nav_sucursales" />
+                <item
+                    android:id="@+id/gerente_nav_asesores"
+                    android:icon="@drawable/icono_asesores"
+                    android:title="@string/texto_nav_asesores" />
+                <item
+                    android:id="@+id/gerente_nav_clientes"
+                    android:icon="@drawable/icono_cliente"
+                    android:title="@string/texto_nav_clientes" />
+                <item
+                    android:id="@+id/gerente_nav_asistencia"
+                    android:icon="@drawable/icono_asistencia"
+                    android:title="@string/texto_nav_asistencia"/>
+                <item
+                    android:id="@+id/gerente_nav_pendientes"
+                    android:icon="@drawable/icono_pendientes"
+                    android:title="@string/texto_nav_pendientes"/>
+            </group>
+        </menu>
+    </item>
+
+    <item android:title="">
+        <menu>
+            <item
+                android:id="@+id/gerente_nav_cerrar"
+                android:icon="@drawable/icono_cerrar"
+                android:title="@string/texto_nav_cerrar_sesion" />
+        </menu>
+    </item>
+
+</menu>
