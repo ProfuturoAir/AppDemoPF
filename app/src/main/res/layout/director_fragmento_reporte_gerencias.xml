@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
-    tools:context="com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteGerente">
+    tools:context="com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteGerencias">
 
 
     <LinearLayout style="@style/linearLayoutVertical" android:background="@android:color/white">
@@ -51,7 +51,20 @@
             <TextView android:id="@+id/dfrg_tv_registros" style="@style/campoCantidadesMail"/>
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight=".6">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/dfrg_rv_gerencias"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:divider="@null"
+                android:dividerHeight="0dp"
+                android:text="hello_world" />
+        </LinearLayout>
+
     </LinearLayout>
-
-
 </ScrollView>

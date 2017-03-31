@@ -68,6 +68,7 @@ public class Inicio extends Fragment {
     private String fechaIni = "";
     private String fechaFin = "";
     private String fechaMostrar = "";
+    private String numeroUsuario;
 
     public Inicio() {
         // Required empty public constructor
@@ -107,6 +108,7 @@ public class Inicio extends Fragment {
         sessionManager = new SessionManager(getActivity().getApplicationContext());
         HashMap<String, String> datos = sessionManager.getUserDetails();
         String nombre = datos.get(SessionManager.NOMBRE);
+        numeroUsuario = datos.get(SessionManager.ID);
 
         // CASTEO DE ELEMENTOS
         tvInicial      = (TextView) view.findViewById(R.id.afi_tv_inicial);
@@ -273,9 +275,23 @@ public class Inicio extends Fragment {
         else
             loading = null;
 
-        JSONObject js = new JSONObject();
 
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_RESUMEN_RETENCIONES, js,
+        JSONObject json = new JSONObject();
+        JSONObject rqt = new JSONObject();
+        try{
+            JSONObject periodo = new JSONObject();
+            rqt.put("periodo", periodo);
+            periodo.put("fechaInicio", fechaIni);
+            periodo.put("fechaFin", fechaFin);
+            rqt.put("usuario", numeroUsuario);
+            json.put("rqt", rqt);
+            Log.d(TAG, "REQUEST -->" + json);
+
+        } catch (JSONException e){
+            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
+        }
+
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_RESUMEN_RETENCIONES, json,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

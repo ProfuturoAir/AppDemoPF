@@ -5,30 +5,26 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.Inicio;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsesores;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistencia;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientes;
-import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteGerente;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteGerencias;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteSucursales;
 import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
 import com.airmovil.profuturo.ti.retencion.fragmento.Calculadora;
@@ -195,7 +191,7 @@ public class Director extends AppCompatActivity{
                 fragmentoGenerico = new Biblioteca();
                 break;
             case R.id.director_nav_gerencias:
-                fragmentoGenerico = new ReporteGerente();
+                fragmentoGenerico = new ReporteGerencias();
                 break;
             case R.id.director_nav_sucursales:
                 fragmentoGenerico = new ReporteSucursales();
@@ -263,6 +259,17 @@ public class Director extends AppCompatActivity{
                 super.onActivityResult(requestCode, resultCode, data);
                 break;
         }
+    }
+
+    public void switchContent(Fragment frag, String idClienteCuenta) {
+        Bundle bundle=new Bundle();
+        bundle.putString("idClienteCuenta",idClienteCuenta);
+        //Fragment fragment=new Fragment();
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_director, frag, frag.toString());
+        ft.addToBackStack(null);
+        ft.commit();
     }
 
 }

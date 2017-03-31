@@ -31,6 +31,8 @@ public class Config extends Activity {
     public static final String URL_CONSULTAR_DATOS_ASESOR = URL_GENERAL + "Profuturo/consultarDatosAsesor.php";
     public static final String URL_CUNSULTAR_DATOS_CLIENTE = URL_GENERAL + "Profuturo/consultarDatosCliente.php";
 
+    public static final String URL_CONSULTAR_REPORTE_RETENCION_GERENCIAS = URL_GENERAL + "Profuturo/consultarReporteRetencionesGerencia.php";
+
     // TODO: Variables
     public static final long SPLASH_SCREEN_DELEY = 3500;
     private static Timer mTimer = new Timer();
