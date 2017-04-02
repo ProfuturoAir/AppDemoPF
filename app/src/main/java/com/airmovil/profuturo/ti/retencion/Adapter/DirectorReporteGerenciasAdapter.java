@@ -1,6 +1,7 @@
 package com.airmovil.profuturo.ti.retencion.Adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -83,8 +84,13 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
             final DirectorReporteGerenciasModel lista = list.get(position);
             final MyViewHolder myViewHolder = (MyViewHolder) holder;
 
-            myViewHolder.idGerencia.setText(lista.getIdGerencia());
-            myViewHolder.cita.setText(lista.getConCita());
+            //char nombre = lista.getIdGerencia().charAt(0);
+            //final String pLetra = Character.toString(nombre);
+
+            //myViewHolder.letra.setText(pLetra);
+            myViewHolder.idGerencia.setText("Gerencia " + lista.getIdGerencia());
+//            myViewHolder.conCita.setText(lista.getConCita());
+//            myViewHolder.sinCita.setText(lista.getSinCita());
         }else{
             ((LoadingViewHolder) holder).progressBar.setIndeterminate(true);
         }
@@ -135,16 +141,14 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        public TextView letra, idGerencia, cita, emitidas, saldos;
+        public TextView letra, idGerencia, conCita, sinCita, emitidas, saldos;
         public CardView cardView;
         public MyViewHolder(View view){
             super(view);
             letra = (TextView) view.findViewById(R.id.dfrgl_tv_letra);
             idGerencia = (TextView) view.findViewById(R.id.dfrgl_tv_id_gerencia);
-            cita = (TextView) view.findViewById(R.id.dfrgl_tv_citas);
-            emitidas = (TextView) view.findViewById(R.id.dfrgl_tv_emitidas);
-            saldos = (TextView) view.findViewById(R.id.dfrgl_tv_saldos);
-            cardView = (CardView) view.findViewById(R.id.dfrgl_cardview);
+            conCita = (TextView) view.findViewById(R.id.dfrgl_tv_con_cita);
+            sinCita = (TextView) view.findViewById(R.id.dfrgl_tv_sin_cita);
         }
     }
 }

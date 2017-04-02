@@ -1,5 +1,6 @@
 package com.airmovil.profuturo.ti.retencion.directorFragmento;
 
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,13 +16,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.Adapter.CitasClientesAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteGerenciasAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.*;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.CitasClientesModel;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteGerenciasModel;
@@ -68,13 +76,19 @@ public class ReporteGerencias extends Fragment {
     private String fechaFin = "";
     private String fechaMostrar = "";
 
-    private TextView tvFecha;
+    private TextView tvFecha, tvEntidaes, tvNoEntidades, tvSaldoEmitido, tvSaldoNoEmitido;
+    private Spinner spinnerGerencias;
+    private TextView tvFechaInicio, tvFechaFinal;
+    private Button btnBuscar;
 
     private List<DirectorReporteGerenciasModel> getDato1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private RecyclerView.Adapter recyclerViewAdapter;
     private DirectorReporteGerenciasAdapter adapter;
+
+    private SessionManager sessionManager;
+    private DatePickerDialog datePickerDialog;
 
     public ReporteGerencias() {
         // Required empty public constructor
@@ -112,6 +126,17 @@ public class ReporteGerencias extends Fragment {
         rootView = view;
         // TODO: Casteo
         tvFecha = (TextView) rootView.findViewById(R.id.dfrg_tv_fecha);
+        tvEntidaes = (TextView) rootView.findViewById(R.id.dfrg_tv_entidades);
+        tvNoEntidades = (TextView) rootView.findViewById(R.id.dfrg_tv_no_entidades);
+        tvSaldoEmitido = (TextView) rootView.findViewById(R.id.dfrg_tv_saldo_no_retenido);
+        spinnerGerencias = (Spinner) rootView.findViewById(R.id.dfrg_spinner_gerencias);
+        tvFechaInicio = (TextView) rootView.findViewById(R.id.dfrg_tv_fecha_inicio);
+        tvFechaFinal = (TextView) rootView.findViewById(R.id.dfrg_tv_fecha_final);
+        btnBuscar = (Button) rootView.findViewById(R.id.dfrg_btn_buscar);
+
+        // TODO: dialog fechas
+        rangoInicial();
+        rangoFinal();
 
 
         // TODO: fecha
@@ -132,6 +157,11 @@ public class ReporteGerencias extends Fragment {
             tvFecha.setText(fechaMostrar);
         }
 
+        // TODO: Spinner
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.GERENCIAS);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinnerGerencias.setAdapter(adapter);
+
         sendJson(true);
         // TODO: modelo
         getDato1 = new ArrayList<>();
@@ -142,7 +172,26 @@ public class ReporteGerencias extends Fragment {
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
 
 
+        final Fragment borrar = this;
+        btnBuscar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String f1 = tvFechaInicio.getText().toString();
+                String f2 = tvFechaFinal.getText().toString();
+
+                if(f1.equals("Fecha Inicio1")||f2.equals("Fecha final")){
+                    Config.msj(v.getContext(),"Error de datos","Favor de introducir fechas para aplicar el filtro");
+                }else {
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+
+                    ft.commit();
+                }
+            }
+        });
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -243,8 +292,82 @@ public class ReporteGerencias extends Fragment {
 
     private void primerPaso(JSONObject obj) {
         Log.d(TAG, "RESPONSE Reporte Gerencias -->" + obj.toString());
-
+        int idGerencia = 0;
+        // TODO: total de filas
+        int filas = 0;
+        // TODO: Datos de cantidades generales retenidos
+        int totalEntidades = 0;
+        int totalNoEntidades = 0;
+        // TODO: Datos de cantidades generales de saldos
+        String totalSaldosEmitodos= "";
+        String totalSaldoNoEmitidos = "";
+        // TODO: Mensaje de estatus
+        String status = "";
+        // TODO: datos de lista
+        int conCita = 0;
+        int sinCita = 0;
+        int retenido = 0;
+        int noRetenido = 0;
+        String saldoRetenido = "";
+        String saldoNoRetenido = "";
         try{
+            // TODO: jsonArray de gerencias
+            JSONArray array = obj.getJSONArray("Gerencia");
+            // TODO: filas totales y mensaje de respuesta
+            filas = obj.getInt("filasTotal");
+            status = obj.getString("status");
+            // TODO: Cantidades generales de retenidos y saldos
+            JSONObject jsonObjectRetenido = obj.getJSONObject("retenido");
+                totalEntidades = jsonObjectRetenido.getInt("retenido");
+                totalNoEntidades = jsonObjectRetenido.getInt("noRetenido");
+            JSONObject jsonObjectSaldos = obj.getJSONObject("saldo");
+                totalSaldosEmitodos= jsonObjectSaldos.getString("saldoRetenido");
+                totalSaldoNoEmitidos = jsonObjectSaldos.getString("saldoNoRetenido");
+            Log.d(TAG, "\nResponse retenidos -->" + totalEntidades + " --> No Retenidos" + totalNoEntidades);
+            Log.d(TAG, "\nResponse saldoRetenido -->" + totalSaldosEmitodos+ " --> SaldoNoRetenido" + totalSaldoNoEmitidos);
+            Log.d(TAG, "|nResponse status ->" + status);
+            for(int i = 0; i < array.length(); i++){
+                DirectorReporteGerenciasModel getDatos2 = new DirectorReporteGerenciasModel();
+                JSONObject json = null;
+                try{
+                    json = array.getJSONObject(i);
+                    Log.d(TAG, "\n----------------------------------");
+                    getDatos2.setIdGerencia(json.getInt("idGerencia"));
+                    idGerencia = json.getInt("idGerencia");
+                    Log.d(TAG, " RESPONSE idGerencia ->" + idGerencia);
+
+                    JSONObject citas = json.getJSONObject("cita");
+                        conCita = citas.getInt("conCita");
+                        sinCita = citas.getInt("sinCita");
+                    //getDatos2.setConCita(citas.getInt("conCita"));
+                    //getDatos2.setSinCita(citas.getInt("sinCita"));
+
+                    Log.d(TAG, " RESPONSE cita ->" + citas + "\nconCita: " + conCita + " sinCita: " + sinCita);
+                    JSONObject saldo = json.getJSONObject("saldo");
+                        saldoRetenido = saldo.getString("saldoRetenido");
+                        saldoNoRetenido= saldo.getString("saldoNoRetenido");
+                    Log.d(TAG, " RESPONSE saldo->" + saldo + "\nSaldoRetenido: " + saldoRetenido + " SaldoNoRetenido: " + saldoNoRetenido);
+                    JSONObject retenidos = json.getJSONObject("retenido");
+                        retenido = retenidos.getInt("retenido");
+                        noRetenido = retenidos.getInt("noRetenido");
+                    Log.d(TAG, " RESPONSE retenido ->" + retenidos + "\nRetenido: " + retenido + " No retenido: " + noRetenido);
+
+                    Log.d(TAG, "\n----------------------------------");
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+                getDato1.add(getDatos2);
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+
+
+        adapter = new DirectorReporteGerenciasAdapter(rootView.getContext(), getDato1, recyclerView);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(adapter);
+
+        /*try{
             JSONArray array = obj.getJSONArray("Gerencia");
             for(int i = 0; i < array.length(); i++){
                 DirectorReporteGerenciasModel getDatos2 = new DirectorReporteGerenciasModel();
@@ -252,6 +375,7 @@ public class ReporteGerencias extends Fragment {
                 try{
                     json = array.getJSONObject(i);
                     getDatos2.setIdGerencia(json.getString("idGerencia"));
+                    getDatos2.setConCita(json.getString("sinCita"));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -263,7 +387,7 @@ public class ReporteGerencias extends Fragment {
 
         adapter = new DirectorReporteGerenciasAdapter(rootView.getContext(), getDato1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(adapter);*/
 
         /*int totalFilas = -1;
         try{
@@ -325,5 +449,39 @@ public class ReporteGerencias extends Fragment {
                 }, 5000);
             }
         });*/
+    }
+
+    private void rangoInicial(){
+        tvFechaInicio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                datePickerDialog = new DatePickerDialog(getContext(),
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                tvFechaInicio.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                                fechaIni = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+            }
+        });
+    }
+
+    private void rangoFinal(){
+        tvFechaFinal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                datePickerDialog = new DatePickerDialog(getContext(),
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                tvFechaFinal.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                                fechaIni = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+            }
+        });
     }
 }

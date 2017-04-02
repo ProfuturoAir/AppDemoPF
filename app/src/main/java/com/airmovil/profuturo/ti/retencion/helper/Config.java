@@ -33,6 +33,9 @@ public class Config extends Activity {
 
     public static final String URL_CONSULTAR_REPORTE_RETENCION_GERENCIAS = URL_GENERAL + "Profuturo/consultarReporteRetencionesGerencia.php";
 
+    // TODO: String
+    public static final String[] GERENCIAS = new String[]{"Gerencia 1", "Gerencia 2", "Gerencia 3", "Gerencia 4"};
+
     // TODO: Variables
     public static final long SPLASH_SCREEN_DELEY = 3500;
     private static Timer mTimer = new Timer();

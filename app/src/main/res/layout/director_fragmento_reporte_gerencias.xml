@@ -13,21 +13,21 @@
         <LinearLayout style="@style/contenedorRetenidosNoRetenidosSaldoAfavorSaldoEnContra">
             <LinearLayout style="@style/contenedorCantidadRetenidosSaldoAFavorColorFondo">
                 <TextView style="@style/textoRetenidos" android:text="Entidades"/>
-                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/dfrg_tv_retenidos"/>
+                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/dfrg_tv_entidades"/>
             </LinearLayout>
             <LinearLayout style="@style/contenedorCantidadRetenidosSaldoAFavorColorFondo" >
                 <TextView style="@style/textoNoRetenidos" android:text="No Entidades"/>
-                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/dfrg_tv_no_retenidos"/>
+                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/dfrg_tv_no_entidades"/>
             </LinearLayout>
         </LinearLayout>
         <LinearLayout style="@style/contenedorRetenidosNoRetenidosSaldoAfavorSaldoEnContra">
             <LinearLayout style="@style/contenedorCantidadRetenidosSaldoRetenido">
                 <TextView style="@style/textoCantidad" android:text="Saldo Emitido" />
-                <TextView style="@style/textoCantidadSaldoRetenido" android:id="@+id/dfrg_tv_saldo_a_favor" />
+                <TextView style="@style/textoCantidadSaldoRetenido" android:id="@+id/dfrg_tv_saldo_emitido" />
             </LinearLayout>
             <LinearLayout style="@style/contenedorCantidadNoRetenidosSaldoEnContra">
                 <TextView style="@style/textoCantidad" android:text="Saldo no Emitido"/>
-                <TextView android:id="@+id/dfrg_tv_saldo_retenido" style="@style/textoCantidadSaldoNoRetenido" />
+                <TextView android:id="@+id/dfrg_tv_saldo_no_retenido" style="@style/textoCantidadSaldoNoRetenido" />
             </LinearLayout>
         </LinearLayout>
 
@@ -40,10 +40,10 @@
                 <TextView style="@style/linea"/>
             </LinearLayout>
             <LinearLayout style="@style/linearLayoutHorizontal">
-                <TextView android:id="@+id/dfrg_tv_fecha_rango1" style="@style/fechaInicial2" />
-                <TextView android:id="@+id/dfrg_tv_fecha_rango2" style="@style/fechaFinal2"/>
+                <TextView android:id="@+id/dfrg_tv_fecha_inicio" style="@style/fechaInicial2" />
+                <TextView android:id="@+id/dfrg_tv_fecha_final" style="@style/fechaFinal2"/>
             </LinearLayout>
-            <Button android:id="@+id/dfrg_btn_filtro" style="@style/btnBuscar"/>
+            <Button android:id="@+id/dfrg_btn_buscar" style="@style/btnBuscar"/>
         </LinearLayout>
 
         <LinearLayout style="@style/cabeceraLista">
@@ -54,6 +54,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:orientation="vertical"
             android:layout_weight=".6">
 
             <android.support.v7.widget.RecyclerView

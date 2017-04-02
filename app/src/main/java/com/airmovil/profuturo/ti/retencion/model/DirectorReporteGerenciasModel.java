@@ -5,53 +5,56 @@ package com.airmovil.profuturo.ti.retencion.model;
  */
 
 public class DirectorReporteGerenciasModel {
-    public String idGerencia;
-    public String conCita;
-    public String sinCita;
-    public String emitidas;
-    public String noEmitidas;
+    public int idGerencia;
+    public int conCita;
+    public int sinCita;
+    public int emitidas;
+    public int noEmitidas;
     public String saldoRetenido;
     public String saldoNoRetenido;
 
-    public String getIdGerencia() {
+    public int getIdGerencia() {
         return idGerencia;
     }
 
-    public void setIdGerencia(String idGerencia) {
+    public void setIdGerencia(int idGerencia) {
         this.idGerencia = idGerencia;
     }
 
-    public String getConCita() {
+    public int getConCita() {
         return conCita;
     }
 
-    public void setConCita(String conCita) {
+    public void setConCita(int conCita) {
         this.conCita = conCita;
     }
 
-    public String getSinCita() {
+    public int getSinCita() {
         return sinCita;
     }
 
-    public void setSinCita(String sinCita) {
+    public void setSinCita(int sinCita) {
         this.sinCita = sinCita;
     }
 
-    public String getEmitidas() {
+    public int getEmitidas() {
         return emitidas;
     }
 
-    public void setEmitidas(String emitidas) {
+    public void setEmitidas(int emitidas) {
         this.emitidas = emitidas;
     }
 
-    public String getNoEmitidas() {
+    public int getNoEmitidas() {
         return noEmitidas;
     }
 
-    public void setNoEmitidas(String noEmitidas) {
+    public void setNoEmitidas(int noEmitidas) {
         this.noEmitidas = noEmitidas;
     }
+
+
+
 
     public String getSaldoRetenido() {
         return saldoRetenido;

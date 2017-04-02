@@ -4,7 +4,6 @@
     android:id="@+id/dfrgl_cardview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="1dp"
     card_view:cardBackgroundColor="#f6f6f6"
     card_view:cardCornerRadius="2dp"
     card_view:contentPadding="0dp"
@@ -13,8 +12,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="1dp"
-        android:layout_marginTop="1dp"
         android:background="@color/colorGrey"
         android:orientation="horizontal">
 
@@ -49,11 +46,11 @@
             android:paddingLeft="15dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp">
-
             <TextView
                 android:id="@+id/dfrgl_tv_id_gerencia"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textStyle="bold"
                 android:textColor="@color/colorPrimaryDark"
                 android:layout_toRightOf="@+id/a_imgv_letra"
                 android:text="Nombre del Cliente"
@@ -62,39 +59,53 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:scrollHorizontally="true">
+                <!-- TODO: TextView, Con cita -->
                 <TextView
-                    android:id="@+id/dfrgl_tv_citas"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="17dp"
-                    android:text="Citas" />
+                    android:textSize="10dp"
+                    android:text="Con cita:"/>
                 <TextView
-                    android:id="@+id/dfrgl_tv_emitidas"
+                    android:id="@+id/dfrgl_tv_con_cita"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="17dp"
+                    android:textColor="@android:color/holo_green_dark"
+                    android:textSize="10dp"/>
+                <!-- TODO: TextView, sin cita -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="10dp"
+                    android:text="|Sin cita:"/>
+                <TextView
+                    android:id="@+id/dfrgl_tv_sin_cita"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="10dp"
                     android:text="emitidas" />
+                <!-- TODO: textView, Saldo retenido -->
                 <TextView
                     android:id="@+id/dfrgl_tv_saldos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:textColor="@color/colorPrimaryDark"
-                    android:textSize="17dp"
+                    android:textSize="10dp"
                     android:text="saldos" />
 
                 <TextView
                     android:id="@+id/dfrgl_tv_porcentaje"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:textColor="@color/colorPrimaryDark"
-                    android:textSize="17dp"
+                    android:textSize="10dp"
                     android:text="% Retenidos" />
             </LinearLayout>
 
