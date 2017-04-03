@@ -27,6 +27,7 @@ import com.airmovil.profuturo.ti.retencion.asesorFragmento.ConCita;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.DatosAsesor;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.DatosCliente;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.Encuesta1;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.Encuesta2;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.Inicio;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.SinCita;
 import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
@@ -203,11 +204,11 @@ public class Asesor extends AppCompatActivity{
             Log.d("Envia","a patir Encuesta 1");
             global = "1.1.3.4";
             checkProccess = true;
-        }/*else if(f instanceof Encuesta2){
+        }else if(f instanceof Encuesta2){
             Log.d("Envia","a patir Encuesta 2");
             global = "1.1.3.5";
             checkProccess = true;
-        }else if(f instanceof AvisoDePrivacidad){
+        }/*else if(f instanceof AvisoDePrivacidad){
             Log.d("Envia","a patir Aviso de Privacidad");
             global = "1.1.3.6";
             checkProccess = true;
@@ -392,10 +393,10 @@ public class Asesor extends AppCompatActivity{
                 }else if(f instanceof Encuesta1){
                     global = "1.1.3.4";
                     Log.d("Envia","a patir Encuesta 1");
-                }/*else if(f instanceof Encuesta2){
+                }else if(f instanceof Encuesta2){
                     global = "1.1.3.5";
                     Log.d("Envia","a patir Encuesta 2");
-                }else if(f instanceof AvisoDePrivacidad){
+                }/*else if(f instanceof AvisoDePrivacidad){
                     global = "1.1.3.6";
                     Log.d("Envia","a patir Aviso de Privacidad");
                 }else if(f instanceof Firma){

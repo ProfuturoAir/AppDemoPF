@@ -37,6 +37,12 @@ public class Config extends Activity {
 
     // TODO: String
     public static final String[] GERENCIAS = new String[]{"Gerencia 1", "Gerencia 2", "Gerencia 3", "Gerencia 4"};
+    public static final String[] AFORES = new String[]{"Azteca", "Banamex", "Coppel", "Inbursa", "Invercap", "Metlife", "PensionISSSTE", "Principal", "Profuturo", "SURA", "XXI-Banorte"};
+    public static final String[] MOTIVOS = new String[]{"Motivo 1", "Motivo 2", "Motivo 3", "Motivo 4", "Motivo 5", "Motivo 5", "Motivo 6", "Motivo 7", "Motivo 8", "Motivo 9"};
+    public static final String[] ESTATUS = new String[]{"Activo", "Inactivo"};
+    public static final String[] INSTITUCIONES = new String[]{"IMSS", "ISSSTE", "MIXTO"};
+    public static final String[] REGIMEN = new String[]{"IMSS Ley 73", "IMSS Ley 97", "ISSSTE"};
+    public static final String[] DOCUMENTOS = new String[]{"Estatus de cuenta con folio", "Constancia de implicaciones", "Estatus de cuenta con folio y Constancia de implicaciones", "Ningun documento"};
 
     // TODO: Variables
     public static final long SPLASH_SCREEN_DELEY = 3500;

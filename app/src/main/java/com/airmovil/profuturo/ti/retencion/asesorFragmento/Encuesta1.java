@@ -179,7 +179,7 @@ public class Encuesta1 extends Fragment {
                     final Connected conectado = new Connected();
                     if(conectado.estaConectado(getContext())){
                         sendJson(true);
-                        Fragment fragmentoGenerico = new Encuesta1();
+                        Fragment fragmentoGenerico = new Encuesta2();
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                         fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                     }else{
