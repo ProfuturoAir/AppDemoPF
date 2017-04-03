@@ -150,7 +150,6 @@
     <style name="contenedorSpinnerLarge">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_weight">1</item>
         <item name="android:orientation">vertical</item>
     </style>
     <!-- TODO: Contenedor de la lista superior -->
@@ -159,6 +158,19 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@color/colorPrimaryDark</item>
         <item name="android:padding">10dp</item>
+    </style>
+    <!-- TODO, contenedor de la pregunta -->
+    <style name="contenedorPregunta">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:background">@color/colorGreyDark</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:paddingTop">10dp</item>
     </style>
 
     <!-- TODO: Estilos de la primera letra -->
@@ -180,6 +192,15 @@
         <item name="android:textSize">30dp</item>
         <item name="android:layout_marginLeft">25dp</item>
     </style>
+    <!-- TODO, textView, texo de la pregunta -->
+    <style name="textoPregunta">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textSize">18dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
     <!-- TODO: TextView, Texto de Reporte del dia -->
     <style name="reporteDelDia">
         <item name="android:layout_width">match_parent</item>
@@ -195,7 +216,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">10dp</item>
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">15dp</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textStyle">bold</item>
         <item name="android:background">@color/colorPrimaryDark</item>
@@ -489,7 +510,7 @@
     <style name="tituloProceso">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">35dp</item>
+        <item name="android:textSize">20dp</item>
         <item name="android:padding">10dp</item>
         <item name="android:textStyle">bold</item>
     </style>
@@ -595,6 +616,44 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:drawableRight">@drawable/icono_acceso</item>
         <item name="android:layout_marginTop">-40dp</item>
+    </style>
+
+    <!-- TODO, LinearLayout, espacio superior, se aplica en el apartado de encuenta 1 -->
+    <style name="especioSuperior">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">40dp</item>
+    </style>
+
+    <!-- TODO: checkbox, contenedor de checkbox -->
+    <style name="contenedorCheckBox">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="checkboxSi">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">@string/texto_si</item>
+    </style>
+    <style name="checkboxNo">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">@string/texto_no</item>
+    </style>
+
+    <!-- TODO: Estilos para subtitulos-->
+    <style name="subTitulo">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">30dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
 </resources>

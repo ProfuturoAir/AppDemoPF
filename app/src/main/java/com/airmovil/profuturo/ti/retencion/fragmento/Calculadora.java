@@ -1,14 +1,29 @@
 package com.airmovil.profuturo.ti.retencion.fragmento;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +44,12 @@ public class Calculadora extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private WebView web;
+    private ProgressBar progressBar;
+    private AlertDialog.Builder dialogo1;
+    private ProgressDialog loading;
+    private Connected connected;
+    private LinearLayout linearLayout;
 
     public Calculadora() {
         // Required empty public constructor
@@ -59,6 +80,22 @@ public class Calculadora extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        connected = new Connected();
+
+        web = (WebView) view.findViewById(R.id.webview01);
+
+        linearLayout = (LinearLayout) view.findViewById(R.id.ll);
+
+        web.setWebViewClient(new myWebClient());
+        web.getSettings().setJavaScriptEnabled(true);
+        web.loadUrl(Config.URL_CALCULA_RETIRO_AFORE);
+
+
+        dialogo1 = new AlertDialog.Builder(getContext());
     }
 
     @Override
@@ -101,5 +138,93 @@ public class Calculadora extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public class myWebClient extends WebViewClient {
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            // TODO Auto-generated method stub
+            super.onPageStarted(view, url, favicon);
+
+
+            if(connected.estaConectado(getContext())){
+                loading = ProgressDialog.show(getActivity(), "Cargando datos", "Porfavor espere...", false, false);
+                linearLayout.setVisibility(View.GONE);
+            }else{
+                web.setVisibility(View.GONE);
+            }
+        }
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            // TODO Auto-generated method stub
+            Toast.makeText(getContext(), "2", Toast.LENGTH_SHORT).show();
+            Log.d("--------->", "2" );
+            loading.dismiss();
+
+
+            return true;
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            // TODO Auto-generated method stub
+            super.onPageFinished(view, url);
+            if(connected.estaConectado(getActivity())) {
+                loading.dismiss();
+            }else{
+                dialogo1.setTitle("Error en conexión");
+                dialogo1.setMessage("Volver a intentar");
+                dialogo1.setCancelable(false);
+                dialogo1.setNegativeButton("Ir al inicio",  new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        SessionManager sessionManager = new SessionManager(getContext().getApplicationContext());
+                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
+                        if(sessionManager.getUserDetails().get("cat").equals("1")){
+                            Fragment fragmentoGenerico = new com.airmovil.profuturo.ti.retencion.directorFragmento.Inicio();
+                            fragmentManager.beginTransaction().replace(R.id.content_director, fragmentoGenerico).commit();
+                        }
+
+                        if(sessionManager.getUserDetails().get("cat").equals("2")){
+                            Fragment fragmentoGenerico = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.Inicio();
+                            fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
+                        }
+
+                        if(sessionManager.getUserDetails().get("cat").equals("3")){
+                            Fragment fragmentoGenerico = new com.airmovil.profuturo.ti.retencion.asesorFragmento.Inicio();
+                            fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                        }
+
+                    }
+                });
+                dialogo1.setPositiveButton("Reintentar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        SessionManager sessionManager = new SessionManager(getContext().getApplicationContext());
+                        Fragment fragmentoGenerico = new Calculadora();
+                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
+                        if(sessionManager.getUserDetails().get("cat").equals("1"))
+                            fragmentManager.beginTransaction().replace(R.id.content_director, fragmentoGenerico).commit();
+
+
+                        if(sessionManager.getUserDetails().get("cat").equals("2"))
+                            fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
+
+
+                        if(sessionManager.getUserDetails().get("cat").equals("3"))
+                            fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+
+                    }
+                });
+                dialogo1.show();
+            }
+            //progressBar.setVisibility(View.GONE);
+
+        }
     }
 }

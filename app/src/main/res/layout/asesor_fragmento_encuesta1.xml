@@ -1,0 +1,85 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhite"
+    tools:context="com.airmovil.profuturo.ti.retencion.asesorFragmento.Encuesta1">
+    <!-- TODO: Contenedor general -->
+    <LinearLayout style="@style/linearLayoutVertical">
+        <LinearLayout style="@style/especioSuperior"></LinearLayout>
+        <!-- TODO: Contenedor de pregunta -->
+        <LinearLayout style="@style/contenedorPregunta">
+            <!-- TODO: Texto de la pregunta -->
+            <TextView style="@style/textoPregunta" android:text="@string/pregunta1" />
+            <!-- TODO: Contenedor de checkBox -->
+            <LinearLayout style="@style/linearLayoutHorizontal">
+                <!-- TODO: Contenedor y checkbox SI -->
+                <LinearLayout style="@style/contenedorCheckBox">
+                    <CheckBox  style="@style/checkboxSi" android:id="@+id/afe1_cb_pregunta1_si" />
+                </LinearLayout>
+                <!-- TODO: Contenedor y checkbox NO-->
+                <LinearLayout style="@style/contenedorCheckBox">
+                    <CheckBox  style="@style/checkboxNo" android:id="@+id/afe1_cb_pregunta1_no" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- TODO: Contenedor de pregunta -->
+        <LinearLayout style="@style/contenedorPregunta">
+            <!-- TODO: Texto de la pregunta -->
+            <TextView style="@style/textoPregunta" android:text="@string/pregunta2" />
+            <!-- TODO: Contenedor de checkBox -->
+            <LinearLayout style="@style/linearLayoutHorizontal">
+                <!-- TODO: Contenedor y checkbox SI -->
+                <LinearLayout style="@style/contenedorCheckBox">
+                    <CheckBox  style="@style/checkboxSi" android:id="@+id/afe1_cb_pregunta2_si" />
+                </LinearLayout>
+                <!-- TODO: Contenedor y checkbox NO-->
+                <LinearLayout style="@style/contenedorCheckBox">
+                    <CheckBox  style="@style/checkboxNo" android:id="@+id/afe1_cb_pregunta2_no" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- TODO: Contenedor de pregunta -->
+        <LinearLayout style="@style/contenedorPregunta">
+            <!-- TODO: Texto de la pregunta -->
+            <TextView style="@style/textoPregunta" android:text="@string/pregunta3" />
+            <!-- TODO: Contenedor de checkBox -->
+            <LinearLayout style="@style/linearLayoutHorizontal">
+                <!-- TODO: Contenedor y checkbox SI -->
+                <LinearLayout style="@style/contenedorCheckBox">
+                    <CheckBox  style="@style/checkboxSi" android:id="@+id/afe1_cb_pregunta3_si" />
+                </LinearLayout>
+                <!-- TODO: Contenedor y checkbox NO-->
+                <LinearLayout style="@style/contenedorCheckBox">
+                    <CheckBox  style="@style/checkboxNo" android:id="@+id/afe1_cb_pregunta3_no" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- TODO: Subtitulo -->
+        <TextView style="@style/subTitulo" android:text="@string/texto_observaciones" />
+        <!-- TODO: EditText, campo agregar contenido de observaciones -->
+        <EditText
+            android:id="@+id/afe1_et_observaciones"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="20dp"
+            android:inputType="textAutoCorrect"
+            android:padding="10dp"
+            android:gravity="top"
+            android:textColorHint="@color/colorPrimaryDark"
+            android:background="@color/colorGreyDark"
+            android:hint="@string/hint_ingresa_contenido"/>
+
+        <!-- TODO: btn Continual -->
+        <Button android:id="@+id/afe1_btn_continuar" style="@style/btnContinuar" />
+        <!-- TODO: btn Cancelar -->
+        <Button android:id="@+id/afe1_btn_cancelar" style="@style/btnCancelar" />
+    </LinearLayout>
+
+</ScrollView>

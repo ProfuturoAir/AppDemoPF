@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -102,10 +103,24 @@ public class DatosCliente extends Fragment {
         btnContinuar = (Button) rootView.findViewById(R.id.afda_btn_continuar);
         btnCancelar = (Button) rootView.findViewById(R.id.afda_btn_cancelar);
 
+        final Fragment borrar = this;
+
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                final Connected conected = new Connected();
+                if(conected.estaConectado(v.getContext())) {
+                    //
+                }else{
+                    Config.msj(v.getContext(),"Error en conexión", "Sin Conexion por el momento.Datos Cliente P-1.1.3.3");
+                }
+                Fragment fragmentoGenerico = new Encuesta1();
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                if (fragmentoGenerico != null) {
+                    fragmentManager
+                            .beginTransaction()//.setCustomAnimations(android.R.anim.slide_out_right,android.R.anim.slide_in_left)
+                            .replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();
+                }
             }
         });
 

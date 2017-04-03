@@ -54,4 +54,18 @@
     <string name="texto_gerencias">Gerencias</string>
     <string name="texto_asesores">Asesores</string>
 
+    <!-- TODO: Preguntas de encuestas -->
+    <string name="pregunta1">¿Le brindaron asesoría del trámite que vino a realizar y aclararon sus dudas ?</string>
+    <string name="pregunta2">¿Quedó satisfecho con respecto a la atención brindada en la sucursal</string>
+    <string name="pregunta3">¿Es de su interes permanecer en AFORE Profuturo?</string>
+    <string name="texto_observaciones">Observaciones</string>
+    <string name="texto_telefono">Teléfono</string>
+    <string name="texto_email">Email</string>
+    <string name="texto_si">Si</string>
+    <string name="texto_no">No</string>
+    <string name="hint_ingresa_contenido">Ingresa texto...</string>
+
+    <string name="texto_terminos_y_condiciones">Profuturo GNP S. A. de C. V. Afore con domicilio en Boulevard Adolfo López Mateos Nº 2009 Planta Baja, Colonia Los Alpes, Delegación Álvaro Obregón, C. P. 01010, México D. F., utlizará estos datos personales proporcionados por usted, con la finalidad de confirmar la información que nos proporciona como Titular de los Datos y realizar la administración de su cuenta individual de ahorro para el retiro en apego a la Lay de los Sistemas de Ahorro para el Retiro, IMSS, ISSSTE, CONSAR. Asimismo, usted afirma que tiene el conocimiento de sus beneficiarios y referencias personales para proporcionar algunos datos a Profuturo. Si desea conocer mayor detalle de los fines para los cuales serán utilizados sus dato, así como ejercer sus derechos ARCO, puede consultar nuestro Aviso de Privacidad Integral a través de www.profuturo.mx , solicitarlo en cualquiera de nuestras sucursales, o a través del área de Servicio a Clientes: teléfonos D. F. 5809-6555 Interior sin costo: 01800 7155555 o al correo: servicioaclientes@profuturo.com.mx. Agosto 2015.</string>
+
+
 </resources>

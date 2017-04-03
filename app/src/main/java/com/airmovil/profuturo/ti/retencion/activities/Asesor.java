@@ -1,5 +1,6 @@
 package com.airmovil.profuturo.ti.retencion.activities;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -13,15 +14,21 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.ConCita;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.DatosAsesor;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.DatosCliente;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.Encuesta1;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.Inicio;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.SinCita;
 import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
 import com.airmovil.profuturo.ti.retencion.fragmento.Calculadora;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
@@ -182,30 +189,109 @@ public class Asesor extends AppCompatActivity{
     private void seleccionarItem(MenuItem itemDrawer){
         Fragment fragmentoGenerico = null;
         FragmentManager fragmentManager = getSupportFragmentManager();
+        final Fragment borrarFragmento;
 
+        //Fragment f = getSupportFragmentManager().findFragmentById(R.id.a_content);
+
+        Fragment f = getSupportFragmentManager().findFragmentById(R.id.content_asesor);
+
+        if(f instanceof DatosCliente){
+            Log.d("Envia","a patir datos Cliente");
+            global = "1.1.3.3";
+            checkProccess = true;
+        }else if(f instanceof Encuesta1){
+            Log.d("Envia","a patir Encuesta 1");
+            global = "1.1.3.4";
+            checkProccess = true;
+        }/*else if(f instanceof Encuesta2){
+            Log.d("Envia","a patir Encuesta 2");
+            global = "1.1.3.5";
+            checkProccess = true;
+        }else if(f instanceof AvisoDePrivacidad){
+            Log.d("Envia","a patir Aviso de Privacidad");
+            global = "1.1.3.6";
+            checkProccess = true;
+        }else if(f instanceof Firma){
+            Log.d("Envia","a patir Firma");
+            global = "1.1.3.7";
+            checkProccess = true;
+        }else if(f instanceof Documento){
+            Log.d("Envia","a patir Documento");
+            global = "1.1.3.8";
+            checkProccess = true;
+        }else{
+            checkProccess = false;
+        }*/
+        if (fragmentoGenerico != null){
+            fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.content_asesor, fragmentoGenerico)
+                    .addToBackStack("F_MAIN")
+                    .commit();
+        }
+
+        //<editor-fold desc="Cambio de fragmentos">
         switch (itemDrawer.getItemId()){
             case R.id.asesor_nav_inicio:
-                fragmentoGenerico = new Inicio();
+                if(checkProccess == false) {
+                    checkMapsFragment = false;
+                    fragmentoGenerico = new Inicio();
+                }else{
+                    salirFragment(getApplicationContext());
+                }
                 break;
             case R.id.asesor_nav_calculadora:
-                fragmentoGenerico = new Calculadora();
+                if(checkProccess == false) {
+                    checkMapsFragment = false;
+                    fragmentoGenerico = new Inicio();
+                }else{
+                    salirFragment(getApplicationContext());
+                }
                 break;
             case R.id.asesor_nav_biblioteca:
-                fragmentoGenerico = new Biblioteca();
+                if(checkProccess == false) {
+                    checkMapsFragment = false;
+                    fragmentoGenerico = new Inicio();
+                }else{
+                    salirFragment(getApplicationContext());
+                }
                 break;
             case R.id.asesor_nav_constancia_implicaciones:
-                fragmentoGenerico = new ConCita();
+                if(checkProccess == false) {
+                    checkMapsFragment = false;
+                    fragmentoGenerico = new ConCita();
+                }else{
+                    salirFragment(getApplicationContext());
+                }
                 break;
             case R.id.asesor_nav_asistencia:
-
+                if(checkProccess == false) {
+                    if(checkMapsFragment == true){
+                        Toast.makeText(this,"map is already loaded",Toast.LENGTH_LONG).show();
+                    }
+                    if(checkMapsFragment == false){
+                        fragmentoGenerico = new Inicio();
+                        checkMapsFragment = true;
+                    }
+                }else{
+                    salirFragment(getApplicationContext());
+                }
+                //fragmentoGenerico = new Asistencia();
                 break;
             case R.id.asesor_nav_reporte:
-
+                if(checkProccess == false) {
+                    checkMapsFragment = false;
+                    fragmentoGenerico = new Inicio() ;
+                }else{
+                    salirFragment(getApplicationContext());
+                }
                 break;
             case R.id.asesor_nav_cerrar:
+                checkMapsFragment = false;
                 cerrarSesion();
                 break;
         }
+        //</editor-fold>
         if (fragmentoGenerico != null){
             fragmentManager
                     .beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
@@ -280,5 +366,67 @@ public class Asesor extends AppCompatActivity{
         ft.replace(R.id.content_asesor, frag, frag.toString());
         ft.addToBackStack(null);
         ft.commit();
+    }
+
+    public void salirFragment(Context context){
+        AlertDialog.Builder dialogo1 = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppTheme));
+
+        /*AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getApplicationContext());*/
+        dialogo1.setTitle("Confirmar");
+        dialogo1.setMessage("\"¿Estàs seguro que deseas cancelar y guardar los cambios del proceso " + global + " ?");
+        dialogo1.setCancelable(false);
+        dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Fragment f = getSupportFragmentManager().findFragmentById(R.id.content_asesor);
+
+                if (f instanceof ConCita) {
+                    Log.d("Envia", "a patir de Retencion");
+                }else if(f instanceof SinCita){
+                    Log.d("Envia", "apartir sin cita");
+                }else if(f instanceof DatosAsesor){
+                    Log.d("Envia","a patir Asesor");
+                }else if(f instanceof DatosCliente){
+                    global = "1.1.3.3";
+                    Log.d("Envia","a patir datos Cliente");
+                }else if(f instanceof Encuesta1){
+                    global = "1.1.3.4";
+                    Log.d("Envia","a patir Encuesta 1");
+                }/*else if(f instanceof Encuesta2){
+                    global = "1.1.3.5";
+                    Log.d("Envia","a patir Encuesta 2");
+                }else if(f instanceof AvisoDePrivacidad){
+                    global = "1.1.3.6";
+                    Log.d("Envia","a patir Aviso de Privacidad");
+                }else if(f instanceof Firma){
+                    global = "1.1.3.7";
+                    Log.d("Envia","a patir Firma");
+                }else if(f instanceof Documento){
+                    global = "1.1.3.8";
+                    Log.d("Envia","a patir Documento");
+                }*/
+
+                Log.d("Estas en este fragment","FF: "+f);
+
+                checkProccess = false;
+                Fragment fragmentoGenerico = null;
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentoGenerico = new Inicio();
+                if (fragmentoGenerico != null){
+                    fragmentManager
+                            .beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                            .replace(R.id.content_asesor, fragmentoGenerico)
+                            .addToBackStack("F_MAIN")
+                            .commit();
+                }
+            }
+        });
+        dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        dialogo1.show();
     }
 }
