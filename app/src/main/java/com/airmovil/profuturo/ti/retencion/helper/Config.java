@@ -30,6 +30,7 @@ public class Config extends Activity {
     public static final String URL_CONSULTAR_CLIENTE_SIN_CITA = URL_GENERAL + "Profuturo/consultarClienteSinCita.php";
     public static final String URL_CONSULTAR_DATOS_ASESOR = URL_GENERAL + "Profuturo/consultarDatosAsesor.php";
     public static final String URL_CUNSULTAR_DATOS_CLIENTE = URL_GENERAL + "Profuturo/consultarDatosCliente.php";
+    public static final String URL_GENERAR_REPORTE_CLIENTE = URL_GENERAL + "Profuturo/generarReporteCliente.php";
 
     public static final String URL_ENVIAR_ENCUESTA = URL_GENERAL + "Profuturo/enviarEncuesta.php";
 
@@ -43,6 +44,8 @@ public class Config extends Activity {
     public static final String[] INSTITUCIONES = new String[]{"IMSS", "ISSSTE", "MIXTO"};
     public static final String[] REGIMEN = new String[]{"IMSS Ley 73", "IMSS Ley 97", "ISSSTE"};
     public static final String[] DOCUMENTOS = new String[]{"Estatus de cuenta con folio", "Constancia de implicaciones", "Estatus de cuenta con folio y Constancia de implicaciones", "Ningun documento"};
+    public static final String[] EMITIDOS = new String[]{"Emitidos", "No emitidos"};
+    public static final String[] IDS = new String[]{"Selecciona...","Número de cuenta", "NSS", "CURP"};
 
     // TODO: Variables
     public static final long SPLASH_SCREEN_DELEY = 3500;

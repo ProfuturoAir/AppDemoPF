@@ -306,7 +306,7 @@ public class ConCita extends Fragment {
 
     private void primerPaso(JSONObject obj) {
         //Log.d(TAG + "-->", obj.toString());
-        int totalFilas = -1;
+        int totalFilas = 1;
         try{
             JSONArray array = obj.getJSONArray("citas");
             //Log.d(TAG + "-Citas->", array.toString());

@@ -65,7 +65,6 @@ public class SinCitaAdapter extends RecyclerView.Adapter{
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder vh;
-
         if(viewType == VIEW_TYPE_ITEM){
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.asesor_fragmento_sin_cita_item, parent, false);
             vh = new MyViewHolder(view);

@@ -94,13 +94,13 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-        Button btnLimpiar = (Button) view.findViewById(R.id.afae_btn_limpiar);
-        Button btnGuardar = (Button) view.findViewById(R.id.afae_btn_guardar);
-        Button btnCancelar= (Button) view.findViewById(R.id.afae_btn_cancelar);
+        Button btnLimpiar = (Button) view.findViewById(R.id.aff_btn_limpiar);
+        Button btnGuardar = (Button) view.findViewById(R.id.aff_btn_guardar);
+        Button btnCancelar= (Button) view.findViewById(R.id.aff_btn_cancelar);
 
-        lblLatitud = (TextView) view.findViewById(R.id.lblLatitud);
-        lblLongitud = (TextView) view.findViewById(R.id.lblLongitud);
-        btnActualizar = (ToggleButton) view.findViewById(R.id.btnActualizar);
+        lblLatitud = (TextView) view.findViewById(R.id.aff_lbl_Latitud);
+        lblLongitud = (TextView) view.findViewById(R.id.aff_lbl_Longitud);
+        btnActualizar = (ToggleButton) view.findViewById(R.id.aff_btn_actualizar);
 
         apiClient = new GoogleApiClient.Builder(getActivity())
                 .enableAutoManage(getActivity(),this)
@@ -108,7 +108,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                 .addApi(LocationServices.API)
                 .build();
 
-        dvFirma = (DrawingView) view.findViewById(R.id.dvFirma);
+        dvFirma = (DrawingView) view.findViewById(R.id.aff_dv_firma);
         dvFirma.setBrushSize(5);
         dvFirma.setColor("#000000");
         dvFirma.setFocusable(true);
@@ -204,7 +204,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                                 Bitmap emBit = Bitmap.createBitmap(dvFirma.getWidth(), dvFirma.getHeight(), Bitmap.Config.ARGB_8888);
                                 Log.d("BASE64-->", base64);
                                 dvFirma.setDrawingCacheEnabled(false);
-                                Fragment fragmentoGenerico = new Firma();
+                                Fragment fragmentoGenerico = new Escaner();
                                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                                 if (fragmentoGenerico != null) {
                                     fragmentManager

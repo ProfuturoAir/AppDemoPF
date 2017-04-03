@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -180,6 +181,45 @@ public class DatosCliente extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener(){
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
+                    AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
+                    dialogo.setTitle("Confirmar");
+                    dialogo.setMessage("¿Estás seguro que deseas regresar?");
+                    dialogo.setCancelable(false);
+                    dialogo.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Fragment fragmentoGenerico = new ConCita();
+                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            if (fragmentoGenerico != null) {
+                                fragmentManager
+                                        .beginTransaction()//.setCustomAnimations(android.R.anim.slide_out_right,android.R.anim.slide_in_left)
+                                        .replace(R.id.content_asesor, fragmentoGenerico).commit();
+                            }
+                        }
+                    });
+                    dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    dialogo.show();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     /**

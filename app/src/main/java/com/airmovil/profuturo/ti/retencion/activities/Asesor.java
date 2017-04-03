@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.Asistencia;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.ConCita;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.DatosAsesor;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.DatosCliente;
@@ -30,6 +31,7 @@ import com.airmovil.profuturo.ti.retencion.asesorFragmento.Encuesta1;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.Encuesta2;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.Firma;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.Inicio;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.ReporteClientes;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.SinCita;
 import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
 import com.airmovil.profuturo.ti.retencion.fragmento.Calculadora;
@@ -245,7 +247,7 @@ public class Asesor extends AppCompatActivity{
             case R.id.asesor_nav_calculadora:
                 if(checkProccess == false) {
                     checkMapsFragment = false;
-                    fragmentoGenerico = new Inicio();
+                    fragmentoGenerico = new Calculadora();
                 }else{
                     salirFragment(getApplicationContext());
                 }
@@ -253,7 +255,7 @@ public class Asesor extends AppCompatActivity{
             case R.id.asesor_nav_biblioteca:
                 if(checkProccess == false) {
                     checkMapsFragment = false;
-                    fragmentoGenerico = new Inicio();
+                    fragmentoGenerico = new Biblioteca();
                 }else{
                     salirFragment(getApplicationContext());
                 }
@@ -272,7 +274,7 @@ public class Asesor extends AppCompatActivity{
                         Toast.makeText(this,"map is already loaded",Toast.LENGTH_LONG).show();
                     }
                     if(checkMapsFragment == false){
-                        fragmentoGenerico = new Inicio();
+                        fragmentoGenerico = new Asistencia();
                         checkMapsFragment = true;
                     }
                 }else{
@@ -283,7 +285,7 @@ public class Asesor extends AppCompatActivity{
             case R.id.asesor_nav_reporte:
                 if(checkProccess == false) {
                     checkMapsFragment = false;
-                    fragmentoGenerico = new Inicio() ;
+                    fragmentoGenerico = new ReporteClientes() ;
                 }else{
                     salirFragment(getApplicationContext());
                 }

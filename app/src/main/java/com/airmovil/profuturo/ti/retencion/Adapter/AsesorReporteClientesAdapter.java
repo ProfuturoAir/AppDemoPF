@@ -13,24 +13,26 @@ import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Asesor;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.Asistencia;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.DatosAsesor;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.ReporteClientesDetalle;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
+import com.airmovil.profuturo.ti.retencion.model.AsesorReporteClientesModel;
 import com.airmovil.profuturo.ti.retencion.model.CitasClientesModel;
 
 import java.util.List;
 
 /**
- * Created by tecnicoairmovil on 22/03/17.
+ * Created by tecnicoairmovil on 03/04/17.
  */
 
-public class CitasClientesAdapter extends RecyclerView.Adapter {
-
+public class AsesorReporteClientesAdapter extends RecyclerView.Adapter{
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
     private Context mContext;
-    private List<CitasClientesModel> list;
+    private List<AsesorReporteClientesModel> list;
     private OnLoadMoreListener mOnLoadMoreListener;
 
     private boolean isLoading;
@@ -38,7 +40,7 @@ public class CitasClientesAdapter extends RecyclerView.Adapter {
     private int lastVisibleItem, totalItemCount;
     private RecyclerView mRecyclerView;
 
-    public CitasClientesAdapter(Context mContext, List<CitasClientesModel> list, RecyclerView mRecyclerView){
+    public AsesorReporteClientesAdapter(Context mContext, List<AsesorReporteClientesModel> list, RecyclerView mRecyclerView){
         this.mContext = mContext;
         this.list = list;
         this.mRecyclerView = mRecyclerView;
@@ -61,15 +63,13 @@ public class CitasClientesAdapter extends RecyclerView.Adapter {
 
             }
         });
-
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder vh;
-
         if (viewType == VIEW_TYPE_ITEM) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.asesor_fragmento_con_cita_lista, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.asesor_fragmento_reporte_clientes_lista, parent, false);
             vh = new MyViewHolder(view);
         } else {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.loading, parent, false);
@@ -81,26 +81,21 @@ public class CitasClientesAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof MyViewHolder) {
-
-            final CitasClientesModel lista = list.get(position);
+            final AsesorReporteClientesModel lista = list.get(position);
             final MyViewHolder myholder = (MyViewHolder) holder;
-
             myholder.campoNombre.setText(lista.getNombreCliente());
             myholder.campoCuenta.setText(lista.getNumeroCuenta());
-            myholder.campoHora.setText(lista.getHora());
-
+            myholder.campoConCita.setText(lista.getConCita());
+            myholder.campoNoEmitido.setText(lista.getNoEmitido());
             char nombre = lista.getNombreCliente().charAt(0);
             final String pLetra = Character.toString(nombre);
-
             myholder.campoLetra.setText(pLetra);
-
             myholder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     fragmentJumpDatosUsuario(pLetra, v);
                 }
             });
-
         } else {
             ((LoadingViewHolder) holder).progressBar.setIndeterminate(true);
         }
@@ -125,7 +120,7 @@ public class CitasClientesAdapter extends RecyclerView.Adapter {
     }
 
     public void fragmentJumpDatosUsuario(String idClienteCuenta, View view) {
-        Fragment fragmento = new DatosAsesor();
+        Fragment fragmento = new ReporteClientesDetalle();
         if (view.getContext() == null)
             return;
         if (view.getContext() instanceof Asesor) {
@@ -143,6 +138,7 @@ public class CitasClientesAdapter extends RecyclerView.Adapter {
 
     public static class LoadingViewHolder extends RecyclerView.ViewHolder {
         public ProgressBar progressBar;
+
         public LoadingViewHolder(View itemView) {
             super(itemView);
             progressBar = (ProgressBar) itemView.findViewById(R.id.loading);
@@ -150,15 +146,16 @@ public class CitasClientesAdapter extends RecyclerView.Adapter {
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        public TextView campoLetra, campoNombre, campoCuenta, campoHora;
+        public TextView campoLetra, campoNombre, campoCuenta, campoConCita, campoNoEmitido;
         public CardView cardView;
         public MyViewHolder(View view){
             super(view);
-            campoLetra = (TextView) view.findViewById(R.id.afccl_tv_letra);
-            campoNombre = (TextView) view.findViewById(R.id.afccl_tv_nombre_cliente);
-            campoCuenta = (TextView) view.findViewById(R.id.afccl_tv_cuenta_cliente);
-            campoHora = (TextView) view.findViewById(R.id.afccl_tv_fecha_cita);
-            cardView = (CardView) view.findViewById(R.id.cardView_item_cita);
+            campoLetra = (TextView) view.findViewById(R.id.afrcl_tv_letra);
+            campoNombre = (TextView) view.findViewById(R.id.afrcl_tv_nombre_cliente);
+            campoCuenta = (TextView) view.findViewById(R.id.afrcl_tv_cuenta_cliente);
+            campoConCita = (TextView) view.findViewById(R.id.afrcl_tv_con_cita);
+            campoNoEmitido = (TextView) view.findViewById(R.id.afrcl_tv_no_emitido);
+            cardView = (CardView) view.findViewById(R.id.afrcl_cv_lista);
         }
     }
 }

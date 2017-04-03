@@ -1,0 +1,88 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    tools:context="com.airmovil.profuturo.ti.retencion.asesorFragmento.ReporteClientes">
+
+    <LinearLayout style="@style/linearLayoutVertical" android:background="@android:color/white">
+        <TextView style="@style/tituloProceso" android:text="Clientes " />
+        <!-- TODO: Titulo datos del cliente -->
+        <TextView android:id="@+id/afrc_tv_fecha" style="@style/fecha" />
+
+        <LinearLayout style="@style/contenedorRetenidosNoRetenidosSaldoAfavorSaldoEnContra">
+            <LinearLayout style="@style/contenedorCantidadRetenidosSaldoAFavorColorFondo">
+                <TextView style="@style/textoRetenidos" android:text="Emitidos"/>
+                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/afrc_tv_emitidos"/>
+            </LinearLayout>
+            <LinearLayout style="@style/contenedorCantidadNoRetenidosSaldoEnContraColorFondo" >
+                <TextView style="@style/textoNoRetenidos" android:text="No Retenidos"/>
+                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/afrc_tv_no_emitidos"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout style="@style/contenedorRetenidosNoRetenidosSaldoAfavorSaldoEnContra">
+            <LinearLayout style="@style/contenedorCantidadRetenidosSaldoRetenido">
+                <TextView style="@style/textoSaldoRetenido" />
+                <TextView style="@style/textoCantidadSaldoRetenido" android:id="@+id/afrc_tv_saldo_emitido" />
+            </LinearLayout>
+            <LinearLayout style="@style/contenedorCantidadNoRetenidosSaldoEnContra">
+                <TextView style="@style/textoSaldoEnContra"/>
+                <TextView android:id="@+id/afrc_tv_saldo_no_emitido" style="@style/textoCantidadSaldoNoRetenido" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout style="@style/contenedorFiltros2">
+
+            <LinearLayout style="@style/linearLayoutHorizontal">
+                <LinearLayout style="@style/contenedorSpinner">
+                    <Spinner android:id="@+id/afrc_spinner_ids"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:backgroundTint="@color/colorWhite"/>
+                    <TextView style="@style/linea"/>
+                </LinearLayout>
+                <EditText android:id="@+id/afrc_et_id" style="@style/busqueda"/>
+            </LinearLayout>
+
+
+            <LinearLayout style="@style/linearLayoutHorizontal">
+                <TextView android:id="@+id/afrc_tv_fecha_rango1" style="@style/fechaInicial2" />
+                <TextView android:id="@+id/afrc_tv_fecha_rango2" style="@style/fechaFinal2"/>
+            </LinearLayout>
+
+
+            <LinearLayout style="@style/contenedorSpinner">
+                <Spinner android:id="@+id/afrc_spinner_emitidos"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:backgroundTint="@color/colorWhite"/>
+                <TextView style="@style/linea"/>
+            </LinearLayout>
+
+            <Button android:id="@+id/afrc_btn_buscar" style="@style/btnBuscar"/>
+
+        </LinearLayout>
+
+        <LinearLayout style="@style/cabeceraLista">
+            <TextView style="@style/tituloLista" android:text="@string/texto_clientes"/>
+            <TextView android:id="@+id/afrc_tv_registros" style="@style/campoCantidadesMail"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight=".6">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/afrc_rv_lista"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:text="hello_world" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -734,4 +734,79 @@
         <item name="android:visibility">gone</item>
     </style>
 
+    <!-- TODO: style items -->
+
+    <!-- TODO: Contenedor, contenedor global -->
+    <style name="contenedorLista">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">1dp</item>
+        <item name="android:layout_marginTop">1dp</item>
+        <item name="android:background">@color/colorGrey</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+    <!-- TODO: Contenedor, contiene el TextView para mostrar solo una letra -->
+    <style name="contenedorCirculoLista">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/colorWhite</item>
+        <item name="android:gravity">center</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+    </style>
+    <!-- TODO: textView, estilos para dar a la primera letra -->
+    <style name="letraLista">
+        <item name="android:layout_width">70dp</item>
+        <item name="android:layout_height">70dp</item>
+        <item name="android:background">@drawable/estilo_circular</item>
+        <item name="android:gravity">center</item>
+        <item name="android:text">@string/texto_letra</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="contenedorElementosLista">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/colorGrey</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+    </style>
+    <!-- TODO: textView, contenido para mostrar-->
+    <style name="campoLista">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textSize">17dp</item>
+    </style>
+    <!-- TODO: Contenedor, contiene el detalle de elementos -->
+    <style name="contenedorDetalleLista">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <!-- TODO: textView, contenedor de elemtos del detalle -->
+    <style name="conCitaLista">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">Con Cita: </item>
+        <item name="android:textSize">17dp</item>
+        <item name="android:textColor">@android:color/holo_green_dark</item>
+    </style>
+    <style name="noEmitido">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">17dp</item>
+        <item name="android:textColor">@android:color/holo_red_dark</item>
+        <item name="android:text">No emitido: </item>
+    </style>
 </resources>
