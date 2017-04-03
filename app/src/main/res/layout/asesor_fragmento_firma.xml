@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.airmovil.profuturo.ti.retencion.helper.DrawingView
+        android:id="@+id/dvFirma"
+        android:layout_width="match_parent"
+        android:layout_height="650dp"
+        android:layout_weight="1"
+        android:background="@android:color/white"
+        android:gravity="center_vertical|center_horizontal"
+        android:visibility="visible">
+
+    </com.airmovil.profuturo.ti.retencion.helper.DrawingView>
+
+    <TextView android:id="@+id/lblLatitud"
+        style="@style/tvlatitud"/>
+
+    <TextView android:id="@+id/lblLongitud"
+        style="@style/tvLogintud"/>
+
+    <ToggleButton android:id="@+id/btnActualizar"
+        style="@style/btnActualizar"/>
+    <Button
+        android:id="@+id/afae_btn_limpiar"
+        style="@style/btnLimpiar"/>
+
+    <Button
+        android:id="@+id/afae_btn_guardar"
+        style="@style/btnGuardar" />
+    <Button
+        android:id="@+id/afae_btn_cancelar"
+        style="@style/btnCancelar" />
+</LinearLayout>

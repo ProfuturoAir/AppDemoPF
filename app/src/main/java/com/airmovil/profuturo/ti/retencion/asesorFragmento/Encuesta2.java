@@ -158,7 +158,7 @@ public class Encuesta2 extends Fragment {
                         );
 
 
-                        Fragment fragmentoGenerico = new Inicio();
+                        Fragment fragmentoGenerico = new Firma();
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                         if (fragmentoGenerico != null) {
                             fragmentManager

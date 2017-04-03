@@ -502,6 +502,55 @@
         <item name="android:text">@string/btn_buscar</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
     </style>
+    <!-- TODO: Button, btn actualizar -->
+    <style name="btnActualizar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">3dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:layout_marginTop">3dp</item>
+        <item name="android:background">@color/colorAccent</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textOff">Iniciar actualizaciones</item>
+        <item name="android:textOn">Parar actualizaciones</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:visibility">gone</item>
+    </style>
+    <style name="btnLimpiar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:background">@color/colorAccent</item>
+        <item name="android:text">Limpiar</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="btnGuardar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:background">@color/colorAccent</item>
+        <item name="android:text">Guardar</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="drawingViewFirma">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">650dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:gravity">center_vertical|center_horizontal</item>
+        <item name="android:visibility">visible</item>
+    </style>
 
     <!-- TODO: TITULOS -->
     <!-- TODO: textView, titulo de cada fragmento -->
@@ -654,6 +703,35 @@
         <item name="android:layout_marginLeft">20dp</item>
         <item name="android:padding">10dp</item>
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- TODO: textView, longitud y latitud-->
+    <style name="tvLogintud">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">3dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:layout_marginTop">3dp</item>
+        <item name="android:background">@color/colorAccent</item>
+        <item name="android:text">Longitud</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="tvlatitud">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">3dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:layout_marginTop">3dp</item>
+        <item name="android:background">@color/colorAccent</item>
+        <item name="android:text">Latitud</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:visibility">gone</item>
     </style>
 
 </resources>
