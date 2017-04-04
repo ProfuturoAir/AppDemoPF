@@ -1,0 +1,39 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    tools:context="com.airmovil.profuturo.ti.retencion.gerenteFragmento.DatosCliente">
+    <!-- TODO: Contenido general -->
+    <LinearLayout style="@style/contenedorGeneralVertical">
+        <!-- TODO: Titulo datos del asesor -->
+        <TextView style="@style/tituloProceso" android:text="Datos Cliente"/>
+        <!-- TODO: Contenedor de datos-->
+        <LinearLayout style="@style/contenedorDatos">
+            <!-- TODO: Nombre del asesor y dato a mostrar-->
+            <TextView style="@style/tituloDato"  android:text="@string/texto_nombre" />
+            <TextView style="@style/datoMuestra" android:id="@+id/gfda_tv_nombre_cliente"/>
+            <!-- TODO: Numero de cuenta y dato a mostrar-->
+            <TextView style="@style/tituloDato" android:text="@string/texto_numero_cuenta" />
+            <TextView style="@style/datoMuestra" android:id="@+id/gfda_tv_numero_cuenta_cliente"/>
+            <!-- TODO: NSS y dato a mostrar-->
+            <TextView style="@style/tituloDato" android:text="@string/texto_nss" />
+            <TextView style="@style/datoMuestra" android:id="@+id/gfda_tv_nss_cliente"/>
+            <!-- TODO: CURP y dato a mostrar-->
+            <TextView style="@style/tituloDato" android:text="@string/texto_curp" />
+            <TextView style="@style/datoMuestra" android:id="@+id/gfda_tv_curp_cliente"/>
+            <!-- TODO: Fecha y dato a mostrar-->
+            <TextView style="@style/tituloDato" android:text="@string/texto_fecha" />
+            <TextView style="@style/datoMuestra" android:id="@+id/gfda_tv_fecha_cliente"/>
+            <!-- TODO: Saldo y dato a mostrar-->
+            <TextView style="@style/tituloDato" android:text="@string/texto_saldo" />
+            <TextView style="@style/datoMuestra" android:id="@+id/gfda_tv_saldo_cliente"/>
+        </LinearLayout>
+        <!-- TODO: boton continuar -->
+        <Button android:id="@+id/gfda_btn_continuar" style="@style/btnContinuar" />
+
+        <!-- TODO: boton continuar -->
+        <Button android:id="@+id/gfda_btn_cancelar" style="@style/btnCancelar" />
+    </LinearLayout>
+</ScrollView>

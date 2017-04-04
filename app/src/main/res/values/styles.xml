@@ -799,14 +799,72 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:text">Con Cita: </item>
-        <item name="android:textSize">17dp</item>
-        <item name="android:textColor">@android:color/holo_green_dark</item>
+        <item name="android:textSize">12dp</item>
     </style>
     <style name="noEmitido">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">17dp</item>
-        <item name="android:textColor">@android:color/holo_red_dark</item>
+        <item name="android:textSize">12dp</item>
         <item name="android:text">No emitido: </item>
+    </style>
+    <style name="EmitidasLista">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">12dp</item>
+        <item name="android:text">emitido: </item>
+    </style>
+    <style name="noEmitidasLista">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">12dp</item>
+        <item name="android:text">No emitidas: </item>
+    </style>
+    <style name="sinCitaLista">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">12dp</item>
+        <item name="android:text">Sin Cita: </item>
+    </style>
+    <style name="separador">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">12dp</item>
+        <item name="android:text">|</item>
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:layout_marginRight">4dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:layout_marginLeft">4dp</item>
+    </style>
+    <style name="textoRedLista">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">0</item>
+        <item name="android:textColor">@android:color/holo_red_dark</item>
+        <item name="android:textSize">12dp</item>
+    </style>
+    <style name="textoGreenLista">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">0</item>
+        <item name="android:textColor">@android:color/holo_green_dark</item>
+        <item name="android:textSize">12dp</item>
+    </style>
+    <style name="saldosLista">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">Saldos: </item>
+        <item name="android:textSize">12dp</item>
+    </style>
+    <style name="porcentajeLista">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">% </item>
+        <item name="android:textSize">12dp</item>
+    </style>
+    <style name="cantidadPorcentaje">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">0</item>
+        <item name="android:textSize">12dp</item>
     </style>
 </resources>

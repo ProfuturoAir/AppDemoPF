@@ -35,9 +35,11 @@ public class Config extends Activity {
     public static final String URL_ENVIAR_ENCUESTA = URL_GENERAL + "Profuturo/enviarEncuesta.php";
 
     public static final String URL_CONSULTAR_REPORTE_RETENCION_GERENCIAS = URL_GENERAL + "Profuturo/consultarReporteRetencionesGerencia.php";
+    public static final String URL_CONSULTAR_REPORTE_RETENCION_SUCURSALES = URL_GENERAL + "/Profuturo/consultarReporteRetencionesSucursal.php";
 
     // TODO: String
     public static final String[] GERENCIAS = new String[]{"Gerencia 1", "Gerencia 2", "Gerencia 3", "Gerencia 4"};
+    public static final String[] SUCURSALES = new String[]{"Sucursal 1", "Sucursal 2", "Sucursal 3", "Sucursal 4", "Sucursal 5"};
     public static final String[] AFORES = new String[]{"Azteca", "Banamex", "Coppel", "Inbursa", "Invercap", "Metlife", "PensionISSSTE", "Principal", "Profuturo", "SURA", "XXI-Banorte"};
     public static final String[] MOTIVOS = new String[]{"Motivo 1", "Motivo 2", "Motivo 3", "Motivo 4", "Motivo 5", "Motivo 5", "Motivo 6", "Motivo 7", "Motivo 8", "Motivo 9"};
     public static final String[] ESTATUS = new String[]{"Activo", "Inactivo"};

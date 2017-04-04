@@ -1,4 +1,4 @@
-package com.airmovil.profuturo.ti.retencion.asesorFragmento;
+package com.airmovil.profuturo.ti.retencion.gerenteFragmento;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -28,11 +28,14 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.airmovil.profuturo.ti.retencion.Adapter.GerenteSinCitaAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.SinCitaAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
+import com.airmovil.profuturo.ti.retencion.model.GerenteSinCitaModel;
 import com.airmovil.profuturo.ti.retencion.model.SinCitaModel;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -70,8 +73,6 @@ public class SinCita extends Fragment {
     private String mParam2;
     private InputMethodManager imm;
 
-    private OnFragmentInteractionListener mListener;
-
     // TODO: XML
     private Spinner spinner;
     private Button btnBuscar;
@@ -89,12 +90,13 @@ public class SinCita extends Fragment {
     private String fechaFin = "";
     private int posicion;
 
-    // TODO: Recycler
-    private SinCitaAdapter adapter;
-    private List<SinCitaModel> getDatos1;
+    private GerenteSinCitaAdapter adapter;
+    private List<GerenteSinCitaModel> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private RecyclerView.Adapter recyclerViewAdapter;
+
+    private OnFragmentInteractionListener mListener;
 
     public SinCita() {
         // Required empty public constructor
@@ -106,7 +108,7 @@ public class SinCita extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment SinCita.
+     * @return A new instance of fragment SinCitaModel.
      */
     // TODO: Rename and change types and number of parameters
     public static SinCita newInstance(String param1, String param2) {
@@ -132,20 +134,20 @@ public class SinCita extends Fragment {
         // TODO: Casteo
         rootView = view;
 
-        tvFecha = (TextView) rootView.findViewById(R.id.afsc_tv_fecha);
-        spinner = (Spinner) rootView.findViewById(R.id.afsc_spinner_tipo_dato);
-        etDatos = (EditText) rootView.findViewById(R.id.afsc_et_datos);
-        tvRegistros = (TextView) rootView.findViewById(R.id.afsc_tv_registros);
-        btnBuscar = (Button) rootView.findViewById(R.id.afsc_btn_buscar);
+        tvFecha = (TextView) rootView.findViewById(R.id.gfsc_tv_fecha);
+        spinner = (Spinner) rootView.findViewById(R.id.gfsc_spinner_tipo_dato);
+        etDatos = (EditText) rootView.findViewById(R.id.gfsc_et_datos);
+        tvRegistros = (TextView) rootView.findViewById(R.id.gfsc_tv_registros);
+        btnBuscar = (Button) rootView.findViewById(R.id.gfsc_btn_buscar);
 
         imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-        //Hide:   --> imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-        //Show    --> imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
 
         Map<String, Integer> fechaDatos = Config.dias();
         mYear  = fechaDatos.get("anio");
         mMonth = fechaDatos.get("mes");
         mDay   = fechaDatos.get("dia");
+
+
 
         if(getArguments() != null){
             fechaIni = getArguments().getString(ARG_PARAM1);
@@ -177,14 +179,14 @@ public class SinCita extends Fragment {
                         break;
                     case 1:
                         etDatos.setFocusableInTouchMode(true);
-                        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                        //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                         etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
                         etDatos.setInputType(InputType.TYPE_CLASS_PHONE);
                         break;
                     case 2:
                         etDatos.setFocusableInTouchMode(true);
-                        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                        //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                         etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
                         etDatos.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
@@ -229,7 +231,6 @@ public class SinCita extends Fragment {
                                 break;
                         }
                     }else{
-
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         SinCita clase = SinCita.newInstance(
                                 valores, rootView.getContext()
@@ -237,7 +238,7 @@ public class SinCita extends Fragment {
 
                         borrar.onDestroy();
                         ft.remove(borrar);
-                        ft.replace(R.id.content_asesor, clase);
+                        ft.replace(R.id.content_gerente, clase);
                         ft.addToBackStack(null);
                         etDatos.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
                         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
@@ -248,14 +249,39 @@ public class SinCita extends Fragment {
 
             }
         });
-
         // TODO: model
         getDatos1 = new ArrayList<>();
         // TODO: Recycler
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_busqueda_elemento);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.gfsc_rv_lista);
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
+    }
+
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                    Fragment fragmentoGenerico = new com.airmovil.profuturo.ti.retencion.asesorFragmento.SinCita();
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    if (fragmentoGenerico != null) {
+                        fragmentManager
+                                .beginTransaction()//.setCustomAnimations(android.R.anim.slide_out_right,android.R.anim.slide_in_left)
+                                .replace(R.id.content_gerente, fragmentoGenerico).commit();
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     public static SinCita newInstance(String campo, Context ctx){
@@ -269,7 +295,7 @@ public class SinCita extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.asesor_fragmento_sin_cita, container, false);
+        return inflater.inflate(R.layout.gerente_fragmento_sin_cita, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -306,30 +332,6 @@ public class SinCita extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        getView().setFocusableInTouchMode(true);
-        getView().requestFocus();
-        getView().setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-
-                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                    Fragment fragmentoGenerico = new SinCita();
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    if (fragmentoGenerico != null) {
-                        fragmentManager
-                                .beginTransaction()//.setCustomAnimations(android.R.anim.slide_out_right,android.R.anim.slide_in_left)
-                                .replace(R.id.content_asesor, fragmentoGenerico).commit();
-                    }
-                    return true;
-                }
-                return false;
-            }
-        });
     }
 
     // TODO: REST
@@ -416,7 +418,7 @@ public class SinCita extends Fragment {
             if(Integer.parseInt(status) == 200){
                 JSONArray array = obj.getJSONArray("clientes");
                 for (int x = 0; x < array.length(); x++){
-                    SinCitaModel getDatos2 = new SinCitaModel();
+                    GerenteSinCitaModel getDatos2 = new GerenteSinCitaModel();
                     JSONObject json = null;
                     try{
                         json = array.getJSONObject(x);
@@ -435,8 +437,12 @@ public class SinCita extends Fragment {
         }catch (JSONException e){
             e.printStackTrace();
         }
-        adapter = new SinCitaAdapter(rootView.getContext(), getDatos1, recyclerView);
+        adapter = new GerenteSinCitaAdapter(rootView.getContext(), getDatos1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
+
+
     }
+
+
 }

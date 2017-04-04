@@ -1,4 +1,4 @@
-package com.airmovil.profuturo.ti.retencion.asesorFragmento;
+package com.airmovil.profuturo.ti.retencion.gerenteFragmento;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.ConCita;
 
 import java.io.File;
 
@@ -41,6 +42,7 @@ public class Escaner extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
     private Button btnCaptura;
     private View rootView;
     int PHOTO_FILE = 0;
@@ -91,11 +93,11 @@ public class Escaner extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
-        Button btn = (Button) rootView.findViewById(R.id.btn_documento);
-        btnGuardar = (Button) view.findViewById(R.id.af_btn_guardar);
-        btnCancelar= (Button) view.findViewById(R.id.af_btn_cancelar);
-        btnBorrar= (Button) view.findViewById(R.id.af_btn_borrar);
-        imageView = (ImageView) rootView.findViewById(R.id.scannedImage);
+        Button btn = (Button) rootView.findViewById(R.id.gfe_btn_documento);
+        btnGuardar = (Button) view.findViewById(R.id.gfe_btn_guardar);
+        btnCancelar= (Button) view.findViewById(R.id.gfe_btn_cancelar);
+        btnBorrar= (Button) view.findViewById(R.id.gfe_btn_borrar);
+        imageView = (ImageView) rootView.findViewById(R.id.gerente_iv_captura);
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,9 +120,6 @@ public class Escaner extends Fragment {
                 launchIntent.putExtras(bundle);
                 startActivityForResult (launchIntent, PHOTO_FILE);
                 Log.d("PHOTO_FILE", "" + PHOTO_FILE);
-
-
-
             }
         });
 
@@ -142,7 +141,7 @@ public class Escaner extends Fragment {
                         if (fragmentoGenerico != null){
                             fragmentManager
                                     .beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-                                    .replace(R.id.content_asesor, fragmentoGenerico)
+                                    .replace(R.id.content_gerente, fragmentoGenerico)
                                     .addToBackStack("F_MAIN")
                                     .commit();
                         }
@@ -158,11 +157,10 @@ public class Escaner extends Fragment {
         });
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.asesor_fragmento_escaner, container, false);
+        return inflater.inflate(R.layout.gerente_fragmento_escaner, container, false);
     }
 
     @Override
@@ -224,7 +222,6 @@ public class Escaner extends Fragment {
         getView().setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
                     AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
                     dialogo1.setTitle("Confirmar");
@@ -233,12 +230,11 @@ public class Escaner extends Fragment {
                     dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Fragment fragmentoGenerico = new ConCita();
+                            Fragment fragmentoGenerico = new SinCita();
                             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                             if (fragmentoGenerico != null) {
                                 fragmentManager
-                                        .beginTransaction()//.setCustomAnimations(android.R.anim.slide_out_right,android.R.anim.slide_in_left)
-                                        .replace(R.id.content_asesor, fragmentoGenerico).commit();
+                                        .beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
                             }
                         }
                     });
