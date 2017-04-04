@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/gfrsl_cv"
+    android:id="@+id/gfral_cv"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="1dp"
@@ -13,10 +13,10 @@
         <!-- TODO: Contenedor del circulo y textView(Una sola letra) -->
         <LinearLayout style="@style/contenedorCirculoLista">
             <!-- TODO: muestra la primera letra del nombre u otro contenido -->
-            <TextView android:id="@+id/gfrsl_tv_letra" style="@style/letraLista"/>
+            <TextView android:id="@+id/gfral_tv_letra" style="@style/letraLista"/>
         </LinearLayout>
         <LinearLayout style="@style/contenedorElementosLista">
-            <TextView android:id="@+id/afrcl_tv_id_sucursal" style="@style/campoLista" android:text="Nombre de sucursal"/>
+            <TextView android:id="@+id/gfral_tv_id_asesor" style="@style/campoLista" android:text="Nombre del asesor"/>
             <LinearLayout style="@style/contenedorDetalleLista">
 
                 <LinearLayout
@@ -24,17 +24,16 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="horizontal">
-
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1">
                         <!-- TODO: campo 1 -->
                         <TextView style="@style/conCitaLista"/>
-                        <TextView android:id="@+id/gfrsl_tv_con_cita" style="@style/textoGreenLista"/>
+                        <TextView android:id="@+id/gfral_tv_con_cita" style="@style/textoGreenLista"/>
                         <TextView style="@style/separador" />
                         <!--TextView style="@style/sinCitaLista"/-->
-                        <TextView android:id="@+id/gfrsl_tv_sin_cita" style="@style/textoRedLista"/>
+                        <TextView android:id="@+id/gfral_tv_sin_cita" style="@style/textoRedLista"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -42,9 +41,9 @@
                         android:layout_weight="1">
                         <!-- TODO: campo 2 -->
                         <TextView style="@style/EmitidasLista"/>
-                        <TextView android:id="@+id/gfrsl_tv_emitidas" style="@style/textoGreenLista"/>
+                        <TextView android:id="@+id/gfral_tv_emitidas" style="@style/textoGreenLista"/>
                         <TextView style="@style/separador" />
-                        <TextView android:id="@+id/gfrsl_tv_no_emitidas" style="@style/textoRedLista"/>
+                        <TextView android:id="@+id/gfral_tv_no_emitidas" style="@style/textoRedLista"/>
                         <!--TextView style="@style/noEmitidasLista"/-->
                     </LinearLayout>
                     <LinearLayout
@@ -53,22 +52,22 @@
                         android:layout_weight="1">
                         <!-- TODO: campo 3 -->
                         <TextView style="@style/saldosLista"/>
-                        <TextView android:id="@+id/gfrsl_tv_saldos_emitido" style="@style/textoGreenLista"/>
+                        <TextView android:id="@+id/gfral_tv_saldos_emitido" style="@style/textoGreenLista"/>
                         <TextView style="@style/separador" />
-                        <TextView android:id="@+id/gfrsl_tv_saldos_no_emitido" style="@style/textoRedLista"/>
+                        <TextView android:id="@+id/gfral_tv_saldos_no_emitido" style="@style/textoRedLista"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
                         <!-- TODO: campo 6 -->
                         <TextView style="@style/porcentajeLista"/>
-                        <TextView android:id="@+id/gfrsl_tv_procentaje" style="@style/cantidadPorcentaje"/>
+                        <TextView android:id="@+id/gfral_tv_procentaje" style="@style/cantidadPorcentaje"/>
 
                     </LinearLayout>
                 </LinearLayout>
 
                 <Button
-                    android:id="@+id/gfrcl_btn_detalles"
+                    android:id="@+id/gfral_btn_detalles"
                     android:layout_width="50dp"
                     android:layout_height="match_parent"
                     android:background="#f6f6f6"

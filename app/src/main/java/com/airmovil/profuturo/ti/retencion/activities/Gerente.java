@@ -32,6 +32,7 @@ import com.airmovil.profuturo.ti.retencion.gerenteFragmento.Firma;
 import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
 import com.airmovil.profuturo.ti.retencion.fragmento.Calculadora;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.Inicio;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsesores;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteSucursales;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.SinCita;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
@@ -260,6 +261,9 @@ public class Gerente extends AppCompatActivity{
                 break;
             case R.id.gerente_nav_sucursales:
                 fragmentoGenerico = new ReporteSucursales();
+                break;
+            case R.id.gerente_nav_asesores:
+                fragmentoGenerico = new ReporteAsesores();
                 break;
             case R.id.gerente_nav_asistencia:
                 if(checkProccess == false) {
