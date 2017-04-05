@@ -23,7 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistencia;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.DatosAsesor;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.DatosCliente;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.Encuesta1;

@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,15 +25,16 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.airmovil.profuturo.ti.retencion.Adapter.CitasClientesAdapter;
-import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteAsistenciaAdapter;
+import com.airmovil.profuturo.ti.retencion.Adapter.AsesorReporteClientesAdapter;
+import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteAsistenciaDetalleAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.*;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
-import com.airmovil.profuturo.ti.retencion.model.CitasClientesModel;
-import com.airmovil.profuturo.ti.retencion.model.GerenteReporteAsistenciaModel;
+import com.airmovil.profuturo.ti.retencion.model.AsesorReporteClientesModel;
+import com.airmovil.profuturo.ti.retencion.model.GerenteReporteAsistenciaDetalleModel;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -42,6 +44,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,12 +54,12 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ReporteAsistencia.OnFragmentInteractionListener} interface
+ * {@link ReporteAsistenciaDetalles.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ReporteAsistencia#newInstance} factory method to
+ * Use the {@link ReporteAsistenciaDetalles#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ReporteAsistencia extends Fragment {
+public class ReporteAsistenciaDetalles extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -66,43 +69,43 @@ public class ReporteAsistencia extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    // TODO: LIST
-    private List<GerenteReporteAsistenciaModel> getDatos1;
-    private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager recyclerViewLayoutManager;
-    private RecyclerView.Adapter recyclerViewAdapter;
-    private int filas;
-    private GerenteReporteAsistenciaAdapter adapter;
-    private int pagina = 1;
-    private int numeroMaximoPaginas = 0;
-    private int totalF;
-
     // TODO: View, sessionManager, datePickerDialog
     private View rootView;
     private SessionManager sessionManager;
     private DatePickerDialog datePickerDialog;
 
-    // TODO: Elements XML
+    // TODO: XML
     private TextView tvFecha;
-    private TextView tvATiempo, tvRetardados, tvSinAsistencia;
-    private Spinner spinnerSucursal;
-    private EditText etAsesor;
+    private TextView tvLetra;
+    private TextView tvNombreAsesor, tvNoEmpleado, tvRangoFechas;
+    private TextView tvAtiempo, tvRetardo, tvSinAsistencia;
     private TextView tvRangoFecha1, tvRangoFecha2;
-    private Button btnFiltro;
+    private Button btnBuscar;
     private TextView tvResultados;
-    private InputMethodManager imm;
 
+    // TODO: variable
     private int mYear;
     private int mMonth;
     private int mDay;
     private String fechaIni = "";
     private String fechaFin = "";
     private String fechaMostrar = "";
+    private String numeroUsuario;
 
+    // TODO: list
+    private List<GerenteReporteAsistenciaDetalleModel> getDatos1;
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager recyclerViewLayoutManager;
+    private RecyclerView.Adapter recyclerViewAdapter;
+    private GerenteReporteAsistenciaDetalleAdapter adapter;
+
+    private int filas;
+    private int pagina = 1;
+    private int numeroMaximoPaginas = 0;
 
     private OnFragmentInteractionListener mListener;
 
-    public ReporteAsistencia() {
+    public ReporteAsistenciaDetalles() {
         // Required empty public constructor
     }
 
@@ -112,11 +115,11 @@ public class ReporteAsistencia extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ReporteAsistencia.
+     * @return A new instance of fragment ReporteAsistenciaDetalles.
      */
     // TODO: Rename and change types and number of parameters
-    public static ReporteAsistencia newInstance(String param1, String param2, Context context) {
-        ReporteAsistencia fragment = new ReporteAsistencia();
+    public static ReporteAsistenciaDetalles newInstance(String param1, String param2, Context context) {
+        ReporteAsistenciaDetalles fragment = new ReporteAsistenciaDetalles();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -136,39 +139,21 @@ public class ReporteAsistencia extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
-        // TODO: casteo
-        tvFecha = (TextView) rootView.findViewById(R.id.gfras_tv_fecha);
-        tvATiempo = (TextView) rootView.findViewById(R.id.gfras_tv_a_tiempo);
-        tvRetardados  = (TextView) rootView.findViewById(R.id.gfras_tv_retardados);
-        tvSinAsistencia = (TextView) rootView.findViewById(R.id.gfras_tv_sin_asistencia);
-        spinnerSucursal = (Spinner) rootView.findViewById(R.id.gfras_spinner_sucursal);
-        etAsesor = (EditText) rootView.findViewById(R.id.gfras_et_asesor);
-        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.gfras_tv_fecha_rango1);
-        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.gfras_tv_fecha_rango2);
-        btnFiltro = (Button) rootView.findViewById(R.id.gfras_btn_filtro);
-        tvResultados = (TextView) rootView.findViewById(R.id.gfras_tv_registros);
+        // TODO: Casteo
+        tvFecha = (TextView) rootView.findViewById(R.id.gfrasd_tv_fecha);
+        tvLetra = (TextView) rootView.findViewById(R.id.gfrasd_tv_letra);
+        tvNombreAsesor = (TextView) rootView.findViewById(R.id.gfrasd_tv_nombre_asesor);
+        tvNoEmpleado = (TextView) rootView.findViewById(R.id.gfrasd_tv_numero_empleado_asesor);
+        tvRangoFechas = (TextView) rootView.findViewById(R.id.gfrasd_tv_rango_fechas);
+        tvAtiempo = (TextView) rootView.findViewById(R.id.gfrasd_tv_a_tiempo);
+        tvRetardo = (TextView) rootView.findViewById(R.id.gfrasd_tv_retardados);
+        tvSinAsistencia = (TextView) rootView.findViewById(R.id.gfrasd_tv_sin_asistencia);
+        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.gfrasd_tv_fecha_rango1);
+        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.gfrasd_tv_fecha_rango2);
+        btnBuscar = (Button) rootView.findViewById(R.id.gfrasd_btn_buscar);
+        tvResultados = (TextView) rootView.findViewById(R.id.gfrasd_tv_resultados);
 
-        // TODO: ocultar teclado
-        imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-
-
-        // TODO: Spinner
-        ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.SUCURSALES);
-        adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerSucursal.setAdapter(adapterSucursal);
-
-        // TODO: modelo
-        getDatos1 = new ArrayList<>();
-        // TODO: Recycler
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.gfras_rv_lista);
-        recyclerView.setHasFixedSize(true);
-        recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(recyclerViewLayoutManager);
-
-        // TODO: JSON
-        sendJson(true);
-
-        // TODO: fechas
+        // TODO: fecha
         Map<String, Integer> fechaDatos = Config.dias();
         mYear  = fechaDatos.get("anio");
         mMonth = fechaDatos.get("mes");
@@ -177,53 +162,54 @@ public class ReporteAsistencia extends Fragment {
         if(getArguments() != null){
             fechaIni = getArguments().getString(ARG_PARAM1);
             fechaFin = getArguments().getString(ARG_PARAM2);
-            //mParam2 = getArguments().getString(ARG_PARAM2);
-            //fechaIni = getArguments().getString("fechaIni", "");
-            //fechaFin = getArguments().getString("fechaFin", "");
-            //Log.d("ARG onCreateView","A1: "+fechaIni +" A2: "+fechaIni);
             tvFecha.setText(fechaIni+" - "+fechaFin);
-            //Log.d("FECHA","SI");
         }else {
             Map<String, String> fechas = Config.fechas(1);
             fechaFin = fechas.get("fechaFin");
             fechaIni = fechas.get("fechaIni");
             fechaMostrar = fechaIni;
             tvFecha.setText(fechaMostrar);
-            //Log.d("FECHA","NO");
         }
 
+        // TODO: fechas dialog
         rangoInicial();
         rangoFinal();
 
-        // TODO: btn filtro
+        // TODO: model
+        getDatos1 = new ArrayList<>();
+        // TODO Recycler
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.gfrasd_rv_lista);
+        recyclerView.setHasFixedSize(true);
+        recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(recyclerViewLayoutManager);
+
+        // TODO: webservice
+        sendJson(true);
 
         final Fragment borrar = this;
-        btnFiltro.setOnClickListener(new View.OnClickListener() {
+        btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                String f1 = tvRangoFecha1.getText().toString();
-                String f2 = tvRangoFecha2.getText().toString();
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ReporteAsistencia fragmento = ReporteAsistencia.newInstance(
-                            (fechaIni.equals("") ? "" : fechaIni),
-                            (fechaFin.equals("") ? "" : fechaFin),
-                            rootView.getContext()
-                );
-                borrar.onDestroy();
-                ft.remove(borrar);
-                ft.replace(R.id.content_gerente, fragmento);
-                ft.addToBackStack(null);
-                ft.commit();
+                ReporteAsistenciaDetalles fragmento = ReporteAsistenciaDetalles.newInstance(
+                        " ",
+                        " ",
+                        rootView.getContext()
+                    );
+                    borrar.onDestroy();
+                    ft.remove(borrar);
+                    ft.replace(R.id.content_gerente, fragmento);
+                    ft.addToBackStack(null);
             }
         });
 
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.gerente_fragmento_reporte_asistencia, container, false);
+        return inflater.inflate(R.layout.gerente_fragmento_reporte_asistencia_detalles, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -272,20 +258,27 @@ public class ReporteAsistencia extends Fragment {
             loading = null;
 
         JSONObject obj = new JSONObject();
-        try {
-            // TODO: Formacion del JSON request
 
+        try{
             JSONObject rqt = new JSONObject();
-            rqt.put("estatusCita", "1");
-            rqt.put("pagina", pagina);
-            rqt.put("usuario", "USUARIO");
+            JSONObject filtros = new JSONObject();
+            JSONObject periodo = new JSONObject();
+            filtros.put("curp", "");
+            filtros.put("nss", "");
+            filtros.put("numeroCuenta", "");
+            rqt.put("filtro", filtros);
+            rqt.put("idTramite", 1);
+            periodo.put("fechaInicio", fechaIni);
+            periodo.put("fechaFin", fechaFin);
+            rqt.put("periodo", periodo);
+            rqt.put("usuario", "");
             obj.put("rqt", rqt);
-            Log.d("RQT", " sendJson -->" + obj);
-        } catch (JSONException e) {
-            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
+            Log.d("", "PETICION VACIA-->" + obj);
+        }catch (JSONException e){
+            e.printStackTrace();
         }
-        //Creating a json array request
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_ASISTENCIA, obj,
+
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_ASISTENCIA_DETALLE, obj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -315,46 +308,44 @@ public class ReporteAsistencia extends Fragment {
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
     }
 
+
     private void primerPaso(JSONObject obj) {
-        Log.d("RESPONSE", " primerPaso -->" + obj.toString());
+        Log.d("RQT", " primerPaso" + obj.toString());
         int onTime = 0;
         int retardo = 0;
         int inasistencia = 0;
-        int totalFilas = 1;
-
-        int filas = 0;
+        int totalFilas = 0;
 
         try{
-            JSONObject asistencia = obj.getJSONObject("Asistencia");
+            JSONObject asistencia = obj.getJSONObject("asisitencia");
             onTime = asistencia.getInt("onTime");
             retardo = asistencia.getInt("retardo");
             inasistencia = asistencia.getInt("inasistencia");
-            JSONArray empleado = obj.getJSONArray("Empleado");
             filas = obj.getInt("filasTotal");
-            for(int i = 0; i < empleado.length(); i++){
-                GerenteReporteAsistenciaModel getDatos2 = new GerenteReporteAsistenciaModel();
+            JSONArray registroHorario = obj.getJSONArray("RegistroHorario");
+            for(int i = 0; i < registroHorario.length(); i++){
+                GerenteReporteAsistenciaDetalleModel getDatos2 = new GerenteReporteAsistenciaDetalleModel();
                 JSONObject json = null;
                 try{
-                    json = empleado.getJSONObject(i);
-                    getDatos2.setNombre(json.getString("nombre"));
-                    getDatos2.setNumeroEmpleado(json.getInt("numeroEmpleado"));
-                    getDatos2.setIdSucursal(json.getInt("idSucursal"));
+                    json = registroHorario.getJSONObject(i);
+                    getDatos2.setFechaAsistencia(json.getString("fecha"));
+                    JSONObject comida = json.getJSONObject("comida");
+                        getDatos2.setComidaHora(comida.getString(""));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
                 getDatos1.add(getDatos2);
             }
-        }catch (JSONException e){
+        } catch (JSONException e){
             e.printStackTrace();
         }
-
-        tvResultados.setText(filas + " Resulatdos");
-
-        tvATiempo.setText("" + onTime);
-        tvRetardados.setText("" + retardo);
+        tvResultados.setText("" + totalFilas);
+        tvAtiempo.setText("" + onTime);
+        tvRetardo.setText("" + retardo);
         tvSinAsistencia.setText("" + inasistencia);
+
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
-        adapter = new GerenteReporteAsistenciaAdapter(rootView.getContext(), getDatos1, recyclerView);
+        adapter = new GerenteReporteAsistenciaDetalleAdapter(rootView.getContext(), getDatos1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
@@ -391,26 +382,24 @@ public class ReporteAsistencia extends Fragment {
     }
 
     private void segundoPaso(JSONObject obj) {
-
-
         try{
-            JSONObject asistencia = obj.getJSONObject("Asistencia");
-            JSONArray empleado = obj.getJSONArray("Empleado");
+            JSONObject asistencia = obj.getJSONObject("asisitencia");
             filas = obj.getInt("filasTotal");
-            for(int i = 0; i < empleado.length(); i++){
-                GerenteReporteAsistenciaModel getDatos2 = new GerenteReporteAsistenciaModel();
+            JSONArray registroHorario = obj.getJSONArray("RegistroHorario");
+            for(int i = 0; i < registroHorario.length(); i++){
+                GerenteReporteAsistenciaDetalleModel getDatos2 = new GerenteReporteAsistenciaDetalleModel();
                 JSONObject json = null;
                 try{
-                    json = empleado.getJSONObject(i);
-                    getDatos2.setNombre(json.getString("nombre"));
-                    getDatos2.setNumeroEmpleado(json.getInt("numeroEmpleado"));
-                    getDatos2.setIdSucursal(json.getInt("idSucursal"));
+                    json = registroHorario.getJSONObject(i);
+                    getDatos2.setFechaAsistencia(json.getString("fecha"));
+                    JSONObject comida = json.getJSONObject("comida");
+                    getDatos2.setComidaHora(comida.getString(""));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
                 getDatos1.add(getDatos2);
             }
-        }catch (JSONException e){
+        } catch (JSONException e){
             e.printStackTrace();
         }
 

@@ -38,6 +38,8 @@ public class Config extends Activity {
     public static final String URL_CONSULTAR_REPORTE_RETENCION_SUCURSALES = URL_GENERAL + "Profuturo/consultarReporteRetencionesSucursal.php";
     public static final String URL_CONSULTAR_REPORTE_RETENCION_ASESORES = URL_GENERAL + "Profuturo/consultarReporteRetencionesAsesor.php";
     public static final String URL_CONSULTAR_REPORTE_RETENCION_CLIENTES = URL_GENERAL + "Profuturo/consultarReporteRetencionesCliente.php";
+    public static final String URL_CONSULTAR_REPORTE_ASISTENCIA = URL_GENERAL + "Profuturo/consultarReporteAsistencia.php";
+    public static final String URL_CONSULTAR_REPORTE_ASISTENCIA_DETALLE = URL_GENERAL + "Profuturo/consultarReporteProductividadAsistencia.php";
 
     // TODO: String
     public static final String[] GERENCIAS = new String[]{"Gerencia 1", "Gerencia 2", "Gerencia 3", "Gerencia 4"};
