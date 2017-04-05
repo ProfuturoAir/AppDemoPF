@@ -129,7 +129,7 @@ public class Login extends AppCompatActivity {
                 String sPerfilEmpleado = String.valueOf(jPerfilEmpleado);
                 if (jPerfilEmpleado == 1) {
                     Log.d(TAG, "Usuario: director");
-                    sessionManager.createLoginSession(sNumeroEmpleado, jNombreEmpleado, sPerfilEmpleado);
+                    sessionManager.createLoginSession(sNumeroEmpleado, "Director", sPerfilEmpleado);
                     startActivity(new Intent(Login.this, Director.class));
                 } else if (jPerfilEmpleado == 2) {
                     Log.d(TAG, "Usuario: gerente");

@@ -1,13 +1,11 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:background="@android:color/white"
     tools:context="com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteGerencias">
-
-
-    <LinearLayout style="@style/linearLayoutVertical" android:background="@android:color/white">
-        <TextView style="@style/tituloProceso" android:text="GERENCIAS " />
+    <TextView style="@style/tituloProceso" android:text="GERENCIAS " />
         <TextView android:id="@+id/dfrg_tv_fecha" style="@style/fecha"/>
 
         <LinearLayout style="@style/contenedorRetenidosNoRetenidosSaldoAfavorSaldoEnContra">
@@ -67,5 +65,4 @@
                 android:text="hello_world" />
         </LinearLayout>
 
-    </LinearLayout>
-</ScrollView>
+</LinearLayout>

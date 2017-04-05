@@ -212,7 +212,7 @@ public class Director extends AppCompatActivity{
         }
         if (fragmentoGenerico != null){
             fragmentManager
-                    .beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                    .beginTransaction()//.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
                     .replace(R.id.content_director, fragmentoGenerico)
                     .addToBackStack("F_MAIN")
                     .commit();
