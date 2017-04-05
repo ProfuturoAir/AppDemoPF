@@ -33,6 +33,7 @@ import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
 import com.airmovil.profuturo.ti.retencion.fragmento.Calculadora;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.Inicio;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsesores;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteSucursales;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.SinCita;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
@@ -265,6 +266,9 @@ public class Gerente extends AppCompatActivity{
             case R.id.gerente_nav_asesores:
                 fragmentoGenerico = new ReporteAsesores();
                 break;
+            case R.id.gerente_nav_clientes:
+                fragmentoGenerico = new ReporteClientes();
+                break;
             case R.id.gerente_nav_asistencia:
                 if(checkProccess == false) {
                     if(checkMapsFragment == true){
@@ -289,7 +293,7 @@ public class Gerente extends AppCompatActivity{
 
         if (fragmentoGenerico != null){
             fragmentManager
-                    .beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                    .beginTransaction()//.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
                     .replace(R.id.content_gerente, fragmentoGenerico)
                     .addToBackStack("F_MAIN")
                     .commit();
@@ -337,7 +341,7 @@ public class Gerente extends AppCompatActivity{
                 fragmentoGenerico = new Inicio();
                 if (fragmentoGenerico != null){
                     fragmentManager
-                            .beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                            .beginTransaction()//.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
                             .replace(R.id.content_gerente, fragmentoGenerico)
                             .addToBackStack("F_MAIN")
                             .commit();

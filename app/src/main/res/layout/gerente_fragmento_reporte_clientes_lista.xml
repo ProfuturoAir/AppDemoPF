@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/gfrcll_cv"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="1dp"
+    card_view:cardBackgroundColor="#f6f6f6"
+    card_view:cardCornerRadius="2dp"
+    card_view:contentPadding="0dp"
+    card_view:cardElevation="5dp">
+    <LinearLayout style="@style/contenedorLista">
+        <!-- TODO: Contenedor del circulo y textView(Una sola letra) -->
+        <LinearLayout style="@style/contenedorCirculoLista">
+            <!-- TODO: muestra la primera letra del nombre u otro contenido -->
+            <TextView android:id="@+id/gfrcll_tv_letra" style="@style/letraLista"/>
+        </LinearLayout>
+        <LinearLayout style="@style/contenedorElementosLista">
+                <TextView android:id="@+id/gfrcll_tv_nombre_cliente" style="@style/campoLista" android:text="Nombre de sucursal"/>
+                <TextView android:id="@+id/gfrcll_tv_cuenta_cliente" style="@style/campoLista" android:text="Cuenta"/>
+
+                <LinearLayout style="@style/contenedorDetalleLista">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+                            <!-- TODO: campo 1 -->
+                            <TextView style="@style/asesorLista"/>
+                            <TextView android:id="@+id/gfrcll_tv_asesor_cliente" style="@style/textoGreenLista"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+                            <!-- TODO: campo 2 -->
+                            <TextView style="@style/conCitaListaGreen"/>
+                            <TextView android:id="@+id/gfrcll_tv_con_cita_cliente" style="@style/textoGreenLista"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+                            <!-- TODO: campo 2 -->
+                            <TextView style="@style/retenidoListaRed"/>
+                            <TextView android:id="@+id/gfrcll_tv_retenidos_cliente" style="@style/textoRedLista"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+                            <!-- TODO: campo 1 -->
+                            <TextView style="@style/sucursalLista"/>
+                            <TextView android:id="@+id/gfrcll_tv_sucursal_cliente" style="@style/textoLista"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+        </LinearLayout>
+        <Button
+            android:id="@+id/gfrcll_btn_detalles"
+            android:layout_width="50dp"
+            android:layout_marginLeft="-50dp"
+            android:layout_height="wrap_content"
+            android:background="#f6f6f6"
+            android:layout_gravity="center_vertical"
+            android:drawableTop="@drawable/icono_menu_vertical"/>
+    </LinearLayout>
+</android.support.v7.widget.CardView>

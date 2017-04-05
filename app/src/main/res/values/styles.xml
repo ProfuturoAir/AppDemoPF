@@ -659,6 +659,18 @@
         <item name="android:paddingLeft">10dp</item>
     </style>
 
+    <style name="busquedaShort">
+        <item name="android:layout_width">230dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/colorPrimaryLight</item>
+        <item name="android:hint">@string/texto_ingresar</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:drawableRight">@drawable/icono_buscador</item>
+        <item name="android:textColorHint">@color/colorWhite</item>
+        <item name="android:paddingLeft">10dp</item>
+    </style>
+
     <!-- TODO: textView, icono acceso -->
     <style name="iconoAcceso">
         <item name="android:layout_width">match_parent</item>
@@ -801,11 +813,31 @@
         <item name="android:text">Con Cita: </item>
         <item name="android:textSize">12dp</item>
     </style>
+    <style name="sucursalLista">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">Sucursal: </item>
+        <item name="android:textSize">12dp</item>
+    </style>
     <style name="noEmitido">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">12dp</item>
         <item name="android:text">No emitido: </item>
+    </style>
+    <style name="conCitaListaGreen">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">12dp</item>
+        <item name="android:text">Con Cita: </item>
+        <item name="android:textColor">@android:color/holo_green_dark</item>
+    </style>
+    <style name="retenidoListaRed">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">12dp</item>
+        <item name="android:text">Retenido: </item>
+        <item name="android:textColor">@android:color/holo_red_dark</item>
     </style>
     <style name="EmitidasLista">
         <item name="android:layout_width">wrap_content</item>
@@ -824,6 +856,12 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">12dp</item>
         <item name="android:text">Sin Cita: </item>
+    </style>
+    <style name="asesorLista">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">12dp</item>
+        <item name="android:text">Asesor: </item>
     </style>
     <style name="separador">
         <item name="android:layout_width">wrap_content</item>
@@ -847,6 +885,12 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:text">0</item>
         <item name="android:textColor">@android:color/holo_green_dark</item>
+        <item name="android:textSize">12dp</item>
+    </style>
+    <style name="textoLista">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">0</item>
         <item name="android:textSize">12dp</item>
     </style>
     <style name="saldosLista">

@@ -37,6 +37,7 @@ public class Config extends Activity {
     public static final String URL_CONSULTAR_REPORTE_RETENCION_GERENCIAS = URL_GENERAL + "Profuturo/consultarReporteRetencionesGerencia.php";
     public static final String URL_CONSULTAR_REPORTE_RETENCION_SUCURSALES = URL_GENERAL + "Profuturo/consultarReporteRetencionesSucursal.php";
     public static final String URL_CONSULTAR_REPORTE_RETENCION_ASESORES = URL_GENERAL + "Profuturo/consultarReporteRetencionesAsesor.php";
+    public static final String URL_CONSULTAR_REPORTE_RETENCION_CLIENTES = URL_GENERAL + "Profuturo/consultarReporteRetencionesCliente.php";
 
     // TODO: String
     public static final String[] GERENCIAS = new String[]{"Gerencia 1", "Gerencia 2", "Gerencia 3", "Gerencia 4"};
@@ -49,6 +50,8 @@ public class Config extends Activity {
     public static final String[] DOCUMENTOS = new String[]{"Estatus de cuenta con folio", "Constancia de implicaciones", "Estatus de cuenta con folio y Constancia de implicaciones", "Ningun documento"};
     public static final String[] EMITIDOS = new String[]{"Emitidos", "No emitidos"};
     public static final String[] IDS = new String[]{"Selecciona...","Número de cuenta", "NSS", "CURP"};
+    public static final String[] RETENIDO = new String[]{"Seleciona...", "Retenido", "No Retenido", "Ambos"};
+    public static final String[] CITAS = new String[]{"Seleciona...", "Con Cita", "Sin Cita", "Ambos"};
 
     // TODO: Variables
     public static final long SPLASH_SCREEN_DELEY = 3500;
