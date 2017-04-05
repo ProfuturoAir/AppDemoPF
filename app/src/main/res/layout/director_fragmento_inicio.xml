@@ -39,7 +39,11 @@
         <LinearLayout style="@style/contenedorFiltros">
             <TextView style="@style/tituloFiltros" android:text="@string/texto_reporte_periodo"/>
             <LinearLayout style="@style/linearLayoutHorizontal">
-                <TextView android:id="@+id/dfi_tv_fecha_rango1" style="@style/fechaInicial" />
+
+                <TextView
+                    android:id="@+id/dfi_tv_fecha_rango1"
+                    style="@style/fechaInicial" />
+
                 <TextView android:id="@+id/dfi_tv_fecha_rango2" style="@style/fechaFinal"/>
             </LinearLayout>
             <Button android:id="@+id/dfi_btn_filtro" android:text="Aplicar filtro" style="@style/btn"/>

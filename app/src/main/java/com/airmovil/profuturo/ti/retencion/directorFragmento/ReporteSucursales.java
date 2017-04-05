@@ -55,8 +55,9 @@ import java.util.Map;
 public class ReporteSucursales extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM1 = "parametro1";
+    private static final String ARG_PARAM2 = "parametro2";
+    private static final String ARG_PARAM3 = "parametro3";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -99,24 +100,6 @@ public class ReporteSucursales extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ReporteSucursales.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ReporteSucursales newInstance(String param1, String param2) {
-        ReporteSucursales fragment = new ReporteSucursales();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,9 +139,25 @@ public class ReporteSucursales extends Fragment {
         mDay   = fechaDatos.get("dia");
 
         if(getArguments() != null){
-            fechaIni = getArguments().getString(ARG_PARAM1);
-            fechaFin = getArguments().getString(ARG_PARAM2);
-            tvFecha.setText(fechaIni+" - "+fechaFin);
+            fechaIni = getArguments().getString(ARG_PARAM1).trim();
+            fechaFin = getArguments().getString(ARG_PARAM2).trim();
+            String dato = getArguments().getString(ARG_PARAM2).trim();
+
+            if(fechaFin.equals("") && fechaIni.equals("")){
+                Map<String, String> fechas = Config.fechas(1);
+                fechaFin = fechas.get("fechaFin");
+                fechaIni = fechas.get("fechaIni");
+                fechaMostrar = fechaIni;
+                tvFecha.setText(fechaMostrar);
+            }else if(fechaFin.equals("")){
+                tvFecha.setText(fechaIni);
+            }else if(fechaIni.matches("")){
+                tvFecha.setText(fechaFin);
+            }else{
+                tvFecha.setText(fechaIni + " - " + fechaFin);
+            }
+
+            Log.d("getArguments", "Fecha inicio: " + fechaIni + "\nfecha fin: " + fechaFin + "\nTipo Sucursal: " + dato);
         }else {
             Map<String, String> fechas = Config.fechas(1);
             fechaFin = fechas.get("fechaFin");
@@ -181,19 +180,32 @@ public class ReporteSucursales extends Fragment {
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    ReporteSucursales rs = ReporteSucursales.newInstance(
-                            (fechaIni.equals("") ? "" : fechaIni),
-                            (fechaFin.equals("") ? "" : fechaFin),
-                            "",
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+
+                final String fechaIncial = tvRangoFecha1.getText().toString();
+                final String fechaFinal = tvRangoFecha2.getText().toString();
+                final String tipoSucursal = "Sucursal 123";
+
+                Log.d("Datos a enviar: ", "1. " + fechaIncial + " 2. " + fechaFinal + " 3. " + tipoSucursal);
+
+                ReporteSucursales fragmento = ReporteSucursales.newInstance(
+                            fechaIncial,
+                            fechaFinal,
+                            tipoSucursal,
                             rootView.getContext()
                     );
                     borrar.onDestroy();
                     ft.remove(borrar);
-                    ft.replace(R.id.content_director, rs);
+                    ft.replace(R.id.content_director, fragmento);
                     ft.addToBackStack(null);
                     ft.commit();
-
+                Log.d("btnBuscar", "Fecha inicio: " + fechaIni + "\nFecha fin" + fechaFin);
+                try{
+                    Log.d("btnBuscar", "Fecha inicio: " + fechaIni + "\nFecha fin" + fechaFin);
+                } catch (Exception e){
+                    e.printStackTrace();
+                    Log.d("Exception", e.toString());
+                }
             }
         });
 

@@ -154,8 +154,8 @@ public class ReporteClientes extends Fragment {
             //mParam2 = getArguments().getString(ARG_PARAM2);
             //fechaIni = getArguments().getString("fechaIni", "");
             //fechaFin = getArguments().getString("fechaFin", "");
-            //Log.d("ARG onCreateView","A1: "+fechaIni +" A2: "+fechaIni);
-            tvFecha.setText(fechaIni+" - "+fechaFin);
+            Log.d("ARG onCreateView","A1: "+fechaIni +" A2: "+fechaIni);
+            tvFecha.setText(fechaIni + " - " + fechaFin);
             //Log.d("FECHA","SI");
         }else {
             Map<String, String> fechas = Config.fechas(1);
@@ -163,7 +163,7 @@ public class ReporteClientes extends Fragment {
             fechaIni = fechas.get("fechaIni");
             fechaMostrar = fechaIni;
             tvFecha.setText(fechaMostrar);
-            //Log.d("FECHA","NO");
+            Log.d("FECHA","NO");
         }
 
         // TODO: Spinner

@@ -8,26 +8,130 @@
     <TextView style="@style/tituloProceso" android:text="GERENCIAS " />
         <TextView android:id="@+id/dfrg_tv_fecha" style="@style/fecha"/>
 
-        <LinearLayout style="@style/contenedorRetenidosNoRetenidosSaldoAfavorSaldoEnContra">
-            <LinearLayout style="@style/contenedorCantidadRetenidosSaldoAFavorColorFondo">
-                <TextView style="@style/textoRetenidos" android:text="Entidades"/>
-                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/dfrg_tv_entidades"/>
-            </LinearLayout>
-            <LinearLayout style="@style/contenedorCantidadRetenidosSaldoAFavorColorFondo" >
-                <TextView style="@style/textoNoRetenidos" android:text="No Entidades"/>
-                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/dfrg_tv_no_entidades"/>
-            </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="5dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@color/colorPrimaryDark"
+            android:layout_marginRight="4dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Emitidas"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"
+                android:paddingLeft="10dp"
+                android:textSize="12dp"
+                android:paddingTop="10dp"/>
+            <TextView
+                android:id="@+id/dfrg_tv_entidades"
+                android:layout_width="294dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="0"
+                android:paddingTop="5dp"
+                android:paddingBottom="10dp"
+                android:textStyle="bold"
+                android:textSize="40dp"
+                android:textColor="@color/colorWhite"/>
         </LinearLayout>
-        <LinearLayout style="@style/contenedorRetenidosNoRetenidosSaldoAfavorSaldoEnContra">
-            <LinearLayout style="@style/contenedorCantidadRetenidosSaldoRetenido">
-                <TextView style="@style/textoCantidad" android:text="Saldo Emitido" />
-                <TextView style="@style/textoCantidadSaldoRetenido" android:id="@+id/dfrg_tv_saldo_emitido" />
-            </LinearLayout>
-            <LinearLayout style="@style/contenedorCantidadNoRetenidosSaldoEnContra">
-                <TextView style="@style/textoCantidad" android:text="Saldo no Emitido"/>
-                <TextView android:id="@+id/dfrg_tv_saldo_no_retenido" style="@style/textoCantidadSaldoNoRetenido" />
-            </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@color/colorPrimaryDark"
+            android:layout_marginLeft="4dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No Emitidas"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"
+                android:paddingLeft="10dp"
+                android:textSize="12dp"
+                android:paddingTop="10dp"/>
+            <TextView
+                android:id="@+id/dfrg_tv_no_entidades"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="0"
+                android:paddingTop="5dp"
+                android:paddingBottom="10dp"
+                android:textStyle="bold"
+                android:textSize="40dp"
+                android:textColor="@color/colorWhite"/>
         </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="5dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@color/colorGrey"
+            android:layout_marginRight="4dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Saldo Emitido"
+                android:textStyle="bold"
+                android:paddingLeft="10dp"
+                android:textSize="12dp"
+                android:paddingTop="10dp"/>
+            <TextView
+                android:id="@+id/dfrg_tv_saldo_emitido"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="0"
+                android:paddingTop="5dp"
+                android:paddingBottom="10dp"
+                android:textStyle="bold"
+                android:textSize="40dp"
+                android:textColor="@android:color/holo_green_dark"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@color/colorGrey"
+            android:layout_marginLeft="4dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Saldo No Emitido"
+                android:textStyle="bold"
+                android:paddingLeft="10dp"
+                android:textSize="12dp"
+                android:paddingTop="10dp"/>
+
+            <TextView
+                android:id="@+id/dfrg_tv_saldo_no_emitido"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingBottom="10dp"
+                android:paddingTop="5dp"
+                android:text="0"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="40dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
 
         <LinearLayout style="@style/contenedorFiltros2">
             <LinearLayout style="@style/contenedorSpinnerLarge">

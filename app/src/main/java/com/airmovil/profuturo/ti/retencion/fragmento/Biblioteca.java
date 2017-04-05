@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -60,11 +61,11 @@ public class Biblioteca extends Fragment implements GoogleApiClient.ConnectionCa
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragmento_biblioteca, container, false);
         ImageButton openFile = (ImageButton) view.findViewById(R.id.openfile);
-        ImageButton createfile = (ImageButton) view.findViewById(R.id.createfile);
+        //ImageButton createfile = (ImageButton) view.findViewById(R.id.createfile);
 
         getActivity().setTitle("Biblioteca");
 
-        createfile.setOnClickListener(crearDrive);
+        //createfile.setOnClickListener(crearDrive);
         openFile.setOnClickListener(abrirDrive);
 
         return view;
@@ -144,23 +145,21 @@ public class Biblioteca extends Fragment implements GoogleApiClient.ConnectionCa
     }
 
     /**
-     * It invoked when Google API client connected
+     * Se invoca cuando la API de google cliente, esta conectada
      * @param connectionHint
      */
     @Override
     public void onConnected(Bundle connectionHint) {
-
-        Toast.makeText(getContext(), "Connected" , Toast.LENGTH_LONG).show();
+        Config.msjTime(getContext(), "Conectando...", "Conexión establecida con google drive", 3000);
     }
 
     /**
-     * It invoked when connection suspended
+     * Se invoca cuando la conexion ha sido suspendida
      * @param cause
      */
     @Override
     public void onConnectionSuspended(int cause) {
-
-        Log.i(TAG, "GoogleApiClient connection suspended");
+        Config.msjTime(getContext(), "Error", "Conexiòn suspendida con google drive", 3000);
     }
 
 

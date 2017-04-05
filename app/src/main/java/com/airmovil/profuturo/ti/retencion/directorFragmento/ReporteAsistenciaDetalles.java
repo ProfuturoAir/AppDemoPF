@@ -1,14 +1,46 @@
 package com.airmovil.profuturo.ti.retencion.directorFragmento;
 
+import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.TextView;
 
+import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteAsistenciaDetalleAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
+import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
+import com.airmovil.profuturo.ti.retencion.model.DirectorReporteAsistenciaDetalleModel;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +60,40 @@ public class ReporteAsistenciaDetalles extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    // TODO: View, sessionManager, datePickerDialog
+    private View rootView;
+    private SessionManager sessionManager;
+    private DatePickerDialog datePickerDialog;
+
+    // TODO: XML
+    private TextView tvFecha;
+    private TextView tvLetra;
+    private TextView tvNombreAsesor, tvNoEmpleado, tvRangoFechas;
+    private TextView tvAtiempo, tvRetardo, tvSinAsistencia;
+    private TextView tvRangoFecha1, tvRangoFecha2;
+    private Button btnBuscar;
+    private TextView tvResultados;
+
+    // TODO: variable
+    private int mYear;
+    private int mMonth;
+    private int mDay;
+    private String fechaIni = "";
+    private String fechaFin = "";
+    private String fechaMostrar = "";
+    private String numeroUsuario;
+
+    // TODO: list
+    private List<DirectorReporteAsistenciaDetalleModel> getDatos1;
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager recyclerViewLayoutManager;
+    private RecyclerView.Adapter recyclerViewAdapter;
+    private DirectorReporteAsistenciaDetalleAdapter adapter;
+
+    private int filas;
+    private int pagina = 1;
+    private int numeroMaximoPaginas = 0;
+
     private OnFragmentInteractionListener mListener;
 
     public ReporteAsistenciaDetalles() {
@@ -43,7 +109,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
      * @return A new instance of fragment ReporteAsistenciaDetalles.
      */
     // TODO: Rename and change types and number of parameters
-    public static ReporteAsistenciaDetalles newInstance(String param1, String param2) {
+    public static ReporteAsistenciaDetalles newInstance(String param1, String param2, Context context) {
         ReporteAsistenciaDetalles fragment = new ReporteAsistenciaDetalles();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
@@ -60,6 +126,76 @@ public class ReporteAsistenciaDetalles extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        rootView = view;
+        // TODO: Casteo
+        tvFecha = (TextView) rootView.findViewById(R.id.ddfrasd_tv_fecha);
+        tvLetra = (TextView) rootView.findViewById(R.id.ddfrasd_tv_letra);
+        tvNombreAsesor = (TextView) rootView.findViewById(R.id.ddfrasd_tv_nombre_asesor);
+        tvNoEmpleado = (TextView) rootView.findViewById(R.id.ddfrasd_tv_numero_empleado_asesor);
+        tvRangoFechas = (TextView) rootView.findViewById(R.id.ddfrasd_tv_rango_fechas);
+        tvAtiempo = (TextView) rootView.findViewById(R.id.ddfrasd_tv_a_tiempo);
+        tvRetardo = (TextView) rootView.findViewById(R.id.ddfrasd_tv_retardados);
+        tvSinAsistencia = (TextView) rootView.findViewById(R.id.ddfrasd_tv_sin_asistencia);
+        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.ddfrasd_tv_fecha_rango1);
+        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.ddfrasd_tv_fecha_rango2);
+        btnBuscar = (Button) rootView.findViewById(R.id.ddfrasd_btn_buscar);
+        tvResultados = (TextView) rootView.findViewById(R.id.ddfrasd_tv_resultados);
+
+        // TODO: fecha
+        Map<String, Integer> fechaDatos = Config.dias();
+        mYear  = fechaDatos.get("anio");
+        mMonth = fechaDatos.get("mes");
+        mDay   = fechaDatos.get("dia");
+
+        if(getArguments() != null){
+            fechaIni = getArguments().getString(ARG_PARAM1);
+            fechaFin = getArguments().getString(ARG_PARAM2);
+            tvFecha.setText(fechaIni+" - "+fechaFin);
+        }else {
+            Map<String, String> fechas = Config.fechas(1);
+            fechaFin = fechas.get("fechaFin");
+            fechaIni = fechas.get("fechaIni");
+            fechaMostrar = fechaIni;
+            tvFecha.setText(fechaMostrar);
+        }
+
+        // TODO: fechas dialog
+        rangoInicial();
+        rangoFinal();
+
+        // TODO: model
+        getDatos1 = new ArrayList<>();
+        // TODO Recycler
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.ddfrasd_rv_lista);
+        recyclerView.setHasFixedSize(true);
+        recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(recyclerViewLayoutManager);
+
+        // TODO: webservice
+        sendJson(true);
+
+        final Fragment borrar = this;
+        btnBuscar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ReporteAsistenciaDetalles fragmento = ReporteAsistenciaDetalles.newInstance(
+                        " ",
+                        " ",
+                        rootView.getContext()
+                );
+                borrar.onDestroy();
+                ft.remove(borrar);
+                ft.replace(R.id.content_director, fragmento);
+                ft.addToBackStack(null);
+            }
+        });
+
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -101,5 +237,198 @@ public class ReporteAsistenciaDetalles extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    // TODO: REST
+    private void sendJson(final boolean primerPeticion) {
+
+        final ProgressDialog loading;
+        if (primerPeticion)
+            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
+        else
+            loading = null;
+
+        JSONObject obj = new JSONObject();
+
+        try{
+            JSONObject rqt = new JSONObject();
+            JSONObject filtros = new JSONObject();
+            JSONObject periodo = new JSONObject();
+            filtros.put("curp", "");
+            filtros.put("nss", "");
+            filtros.put("numeroCuenta", "");
+            rqt.put("filtro", filtros);
+            rqt.put("idTramite", 1);
+            periodo.put("fechaInicio", fechaIni);
+            periodo.put("fechaFin", fechaFin);
+            rqt.put("periodo", periodo);
+            rqt.put("usuario", "");
+            obj.put("rqt", rqt);
+            Log.d("", "PETICION VACIA-->" + obj);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_ASISTENCIA_DETALLE, obj,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        //Dismissing progress dialog
+                        if (primerPeticion) {
+                            loading.dismiss();
+                            primerPaso(response);
+                        } else {
+                            segundoPaso(response);
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        loading.dismiss();
+                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                return headers;
+            }
+        };
+        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+    }
+
+    private void primerPaso(JSONObject obj) {
+        Log.d("RQT", " primerPaso" + obj.toString());
+        int onTime = 0;
+        int retardo = 0;
+        int inasistencia = 0;
+        int totalFilas = 0;
+
+        try{
+            JSONObject asistencia = obj.getJSONObject("asisitencia");
+            onTime = asistencia.getInt("onTime");
+            retardo = asistencia.getInt("retardo");
+            inasistencia = asistencia.getInt("inasistencia");
+            filas = obj.getInt("filasTotal");
+            JSONArray registroHorario = obj.getJSONArray("RegistroHorario");
+            for(int i = 0; i < registroHorario.length(); i++){
+                DirectorReporteAsistenciaDetalleModel getDatos2 = new DirectorReporteAsistenciaDetalleModel();
+                JSONObject json = null;
+                try{
+                    json = registroHorario.getJSONObject(i);
+                    getDatos2.setFechaAsistencia(json.getString("fecha"));
+                    JSONObject comida = json.getJSONObject("comida");
+                    getDatos2.setComidaHora(comida.getString(""));
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+                getDatos1.add(getDatos2);
+            }
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+        tvResultados.setText("" + totalFilas);
+        tvAtiempo.setText("" + onTime);
+        tvRetardo.setText("" + retardo);
+        tvSinAsistencia.setText("" + inasistencia);
+
+        numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
+        adapter = new DirectorReporteAsistenciaDetalleAdapter(rootView.getContext(), getDatos1, recyclerView);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(adapter);
+
+        adapter.notifyDataSetChanged();
+
+        adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                Log.d("setOnLoadMoreListener", "pagina->" + pagina + "numeroMaximo" + numeroMaximoPaginas);
+                if (pagina >= numeroMaximoPaginas) {
+                    Log.d("FINALIZA", "termino proceso");
+                    return;
+                }
+                Log.e("haint", "Load More");
+                getDatos1.add(null);
+                adapter.notifyItemInserted(getDatos1.size() - 1);
+
+                //Load more data for reyclerview
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.e("haint", "Load More 2");
+                        //Remove loading item
+                        getDatos1.remove(getDatos1.size() - 1);
+                        adapter.notifyItemRemoved(getDatos1.size());
+                        //Load data
+                        Log.d("EnvioIndex", getDatos1.size() + "");
+                        pagina = Config.pidePagina(getDatos1);
+                        sendJson(false);
+                    }
+                }, 5000);
+            }
+        });
+    }
+
+    private void segundoPaso(JSONObject obj) {
+        try{
+            JSONObject asistencia = obj.getJSONObject("asisitencia");
+            filas = obj.getInt("filasTotal");
+            JSONArray registroHorario = obj.getJSONArray("RegistroHorario");
+            for(int i = 0; i < registroHorario.length(); i++){
+                DirectorReporteAsistenciaDetalleModel getDatos2 = new DirectorReporteAsistenciaDetalleModel();
+                JSONObject json = null;
+                try{
+                    json = registroHorario.getJSONObject(i);
+                    getDatos2.setFechaAsistencia(json.getString("fecha"));
+                    JSONObject comida = json.getJSONObject("comida");
+                    getDatos2.setComidaHora(comida.getString(""));
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+                getDatos1.add(getDatos2);
+            }
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        adapter.notifyDataSetChanged();
+        adapter.setLoaded();
+    }
+
+
+    private void rangoInicial(){
+        tvRangoFecha1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                datePickerDialog = new DatePickerDialog(getContext(),
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                tvRangoFecha1.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                                fechaIni = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+            }
+        });
+    }
+
+    private void rangoFinal(){
+        tvRangoFecha2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                datePickerDialog = new DatePickerDialog(getContext(),
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                tvRangoFecha2.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                                fechaIni = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+            }
+        });
     }
 }

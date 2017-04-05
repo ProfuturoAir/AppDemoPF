@@ -12,6 +12,15 @@ public class DirectorReporteGerenciasModel {
     public int noEmitidas;
     public String saldoRetenido;
     public String saldoNoRetenido;
+    public int retenidos;
+
+    public int getRetenidos() {
+        return retenidos;
+    }
+
+    public void setRetenidos(int retenidos) {
+        this.retenidos = retenidos;
+    }
 
     public int getIdGerencia() {
         return idGerencia;

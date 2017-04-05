@@ -3,17 +3,26 @@ package com.airmovil.profuturo.ti.retencion.Adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.activities.Director;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.Encuesta2;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.Inicio;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteGerencias;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteSucursales;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
@@ -89,8 +98,22 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
 
             //myViewHolder.letra.setText(pLetra);
             myViewHolder.idGerencia.setText("Gerencia " + lista.getIdGerencia());
-//            myViewHolder.conCita.setText(lista.getConCita());
-//            myViewHolder.sinCita.setText(lista.getSinCita());
+            myViewHolder.conCita.setText(" " + lista.getConCita() + " ");
+            myViewHolder.sinCita.setText(" " + lista.getSinCita() + " ");
+            myViewHolder.tvClick.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PopupMenu popup = new PopupMenu(mContext, v);
+                    MenuInflater inflater = popup.getMenuInflater();
+                    inflater.inflate(R.menu.menu_detalle_reporte_sucursales, popup.getMenu());
+
+
+
+
+                    popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
+                    popup.show();
+                }
+            });
         }else{
             ((LoadingViewHolder) holder).progressBar.setIndeterminate(true);
         }
@@ -108,6 +131,18 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
 
     public void setLoaded() {
         isLoading = false;
+    }
+
+    /**
+     * Muesta el menu cuando se hace click en los 3 botonos de la lista
+     */
+    private void surgirMenu(View view) {
+        // inflate menu
+        PopupMenu popup = new PopupMenu(mContext, view);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.menu_detalle_reporte_sucursales, popup.getMenu());
+        popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
+        popup.show();
     }
 
     public void fragmentJumpDatosUsuario(String idClienteCuenta, View view) {
@@ -131,6 +166,64 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
         this.mOnLoadMoreListener = mOnLoadMoreListener;
     }
 
+    public void fragmentJumpDatos(View view, String id) {
+        Fragment fragmento = new ReporteSucursales();
+        if (view.getContext() == null)
+            return;
+        if (view.getContext() instanceof Director) {
+            Director director = (Director) view.getContext();
+
+            final Connected conected = new Connected();
+            if(conected.estaConectado(view.getContext())) {
+
+            }else{
+                Config.msj(view.getContext(),"Error conexión", "Sin Conexion por el momento.Cliente P-1.1.3");
+            }
+            director.switchContent(fragmento, id);
+        }
+    }
+
+
+    /**
+     * escucha el popup al dar click
+     */
+    class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
+
+        public MyMenuItemClickListener() {
+        }
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.nav_sucursales:
+                    Toast.makeText(mContext, "Sucursales", Toast.LENGTH_SHORT).show();
+                    AppCompatActivity sucursales = (AppCompatActivity) mRecyclerView.getContext();
+                    ReporteSucursales fragmentoSucursales = new ReporteSucursales();
+                    //Create a bundle to pass data, add data, set the bundle to your fragment and:
+                    sucursales.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoSucursales).addToBackStack(null).commit();
+                    return true;
+                case R.id.nav_asesores:
+                    Toast.makeText(mContext, "Asesores", Toast.LENGTH_SHORT).show();
+                    AppCompatActivity asesores = (AppCompatActivity) mRecyclerView.getContext();
+                    ReporteSucursales fragmentoAsesores = new ReporteSucursales();
+                    //Create a bundle to pass data, add data, set the bundle to your fragment and:
+                    asesores.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoAsesores).addToBackStack(null).commit();
+                    return true;
+                case R.id.nav_clientes:
+                    Toast.makeText(mContext, "Clientes", Toast.LENGTH_SHORT).show();
+                    AppCompatActivity Clientes = (AppCompatActivity) mRecyclerView.getContext();
+                    ReporteSucursales fragmentoClientes = new ReporteSucursales();
+                    //Create a bundle to pass data, add data, set the bundle to your fragment and:
+                    Clientes.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoClientes).addToBackStack(null).commit();
+                    return true;
+                case R.id.nav_enviar_a_email:
+                    Toast.makeText(mContext, "Email", Toast.LENGTH_SHORT).show();
+                    return true;
+                default:
+            }
+            return false;
+        }
+    }
+
     public static class LoadingViewHolder extends RecyclerView.ViewHolder {
         public ProgressBar progressBar;
 
@@ -143,12 +236,14 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
     public class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView letra, idGerencia, conCita, sinCita, emitidas, saldos;
         public CardView cardView;
+        public TextView tvClick;
         public MyViewHolder(View view){
             super(view);
             letra = (TextView) view.findViewById(R.id.dfrgl_tv_letra);
             idGerencia = (TextView) view.findViewById(R.id.dfrgl_tv_id_gerencia);
             conCita = (TextView) view.findViewById(R.id.dfrgl_tv_con_cita);
             sinCita = (TextView) view.findViewById(R.id.dfrgl_tv_sin_cita);
+            tvClick = (TextView) view.findViewById(R.id.dfrcll_btn_detalles);
         }
     }
 }

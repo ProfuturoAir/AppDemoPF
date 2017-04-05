@@ -308,7 +308,6 @@ public class ReporteAsistenciaDetalles extends Fragment {
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
     }
 
-
     private void primerPaso(JSONObject obj) {
         Log.d("RQT", " primerPaso" + obj.toString());
         int onTime = 0;

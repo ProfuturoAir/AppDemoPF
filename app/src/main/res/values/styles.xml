@@ -368,7 +368,8 @@
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/estilo_linea_solid</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:text">Fecha Inicio</item>
+        <item name="android:hint">Fecha Inicio</item>
+        <item name="android:textColorHint">@color/colorPrimaryDark</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">10dp</item>
         <item name="android:drawableRight">@drawable/icono_flecha_abajo</item>
@@ -383,7 +384,8 @@
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/estilo_linea_solid</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:text">Fecha final</item>
+        <item name="android:hint">Fecha final</item>
+        <item name="android:textColorHint">@color/colorPrimaryDark</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">10dp</item>
         <item name="android:drawableRight">@drawable/icono_flecha_abajo</item>
@@ -400,7 +402,8 @@
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/estilo_linea_solid2</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:text">Fecha Inicio</item>
+        <item name="android:hint">Fecha Inicio</item>
+        <item name="android:textColorHint">@color/colorWhite</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">10dp</item>
         <item name="android:drawableRight">@drawable/icono_flecha_abajo2</item>
@@ -415,7 +418,8 @@
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/estilo_linea_solid2</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:text">Fecha final</item>
+        <item name="android:hint">Fecha final</item>
+        <item name="android:textColorHint">@color/colorWhite</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">10dp</item>
         <item name="android:drawableRight">@drawable/icono_flecha_abajo2</item>
