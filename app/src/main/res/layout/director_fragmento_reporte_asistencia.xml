@@ -1,67 +1,96 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
+    android:orientation="vertical"
     tools:context="com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistencia">
+    <TextView style="@style/tituloProceso" android:text="Asistencia Asesor " />
+    <TextView android:id="@+id/ddfras_tv_fecha" style="@style/fecha"/>
 
-    <LinearLayout style="@style/linearLayoutVertical" android:background="@android:color/white">
-        <TextView style="@style/tituloProceso" android:text="Clientes " />
-        <TextView android:id="@+id/dfrc_tv_fecha" style="@style/fecha"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_marginRight="5dp"
+            android:background="@color/colorPrimaryDark">
+            <TextView style="@style/textoRetenidos" android:text="A tiempo" android:gravity="center"/>
+            <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/ddfras_tv_a_tiempo"/>
+            <TextView style="@style/iconoAcceso"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@color/colorPrimaryDark">
+            <TextView style="@style/textoNoRetenidos" android:text="Retardadis" android:gravity="center"/>
+            <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/ddfras_tv_retardados"/>
+            <TextView style="@style/iconoAcceso"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:background="@color/colorPrimaryDark">
+            <TextView style="@style/textoNoRetenidos" android:text="Sin asistencia" android:gravity="center"/>
+            <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/ddfras_tv_sin_asistencia"/>
+            <TextView style="@style/iconoAcceso"/>
+        </LinearLayout>
+    </LinearLayout>
 
-        <LinearLayout style="@style/contenedorReporteAsistencia">
-            <LinearLayout style="@style/contenedorCantidadRetenidosSaldoAFavorColorFondo" android:layout_marginRight="10dp">
-                <TextView style="@style/textoRetenidos" android:text="Retenidos" android:gravity="center"/>
-                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/dfra_tv_a_tiempo"/>
-                <TextView style="@style/iconoAcceso"/>
+    <LinearLayout style="@style/contenedorFiltros2">
+
+        <LinearLayout style="@style/linearLayoutHorizontal">
+            <LinearLayout style="@style/contenedorSpinner">
+                <Spinner android:id="@+id/ddfras_spinner_sucursal"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:backgroundTint="@color/colorWhite"/>
+                <TextView style="@style/linea"/>
             </LinearLayout>
-            <LinearLayout style="@style/contenedorCantidadRetenidosSaldoAFavorColorFondo" android:layout_marginRight="5dp" android:layout_marginLeft="5dp">
-                <TextView style="@style/textoNoRetenidos" android:text="No Retenidos" android:gravity="center"/>
-                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/dfra_tv_retardados"/>
-                <TextView style="@style/iconoAcceso"/>
-            </LinearLayout>
-            <LinearLayout style="@style/contenedorCantidadRetenidosSaldoAFavorColorFondo" android:layout_marginLeft="10dp">
-                <TextView style="@style/textoNoRetenidos" android:text="No Retenidos" android:gravity="center"/>
-                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/dfra_tv_sin_asistencia"/>
-                <TextView style="@style/iconoAcceso"/>
-            </LinearLayout>
+            <EditText android:id="@+id/ddfras_et_asesor" style="@style/busqueda"/>
         </LinearLayout>
 
-        <LinearLayout style="@style/contenedorFiltros2">
-
-            <LinearLayout style="@style/linearLayoutHorizontal">
-                <LinearLayout style="@style/contenedorSpinner">
-                    <Spinner android:id="@+id/dfrc_spinner_gerencia"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:backgroundTint="@color/colorWhite"/>
-                    <TextView style="@style/linea"/>
-                </LinearLayout>
-                <LinearLayout style="@style/contenedorSpinner">
-                    <Spinner android:id="@+id/dfrc_spinner_sucursal"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:backgroundTint="@color/colorWhite"/>
-                    <TextView style="@style/linea"/>
-                </LinearLayout>
-                <EditText android:id="@+id/dfrc_et_asesor" style="@style/busqueda"/>
-            </LinearLayout>
-
-            <LinearLayout style="@style/linearLayoutHorizontal">
-                <TextView android:id="@+id/dfrc_tv_fecha_rango1" style="@style/fechaInicial2" />
-                <TextView android:id="@+id/dfrc_tv_fecha_rango2" style="@style/fechaFinal2"/>
-            </LinearLayout>
-
-            <Button android:id="@+id/dfrc_btn_filtro" style="@style/btnBuscar"/>
-
+        <LinearLayout style="@style/linearLayoutHorizontal">
+            <TextView android:id="@+id/ddfras_tv_fecha_rango1" style="@style/fechaInicial2" />
+            <TextView android:id="@+id/ddfras_tv_fecha_rango2" style="@style/fechaFinal2"/>
         </LinearLayout>
 
-        <LinearLayout style="@style/cabeceraLista">
-            <TextView style="@style/tituloLista" android:text="@string/texto_asesores"/>
-            <TextView android:id="@+id/dfrc_tv_registros" style="@style/campoCantidadesMail"/>
-        </LinearLayout>
+        <Button android:id="@+id/ddfras_btn_filtro" style="@style/btnBuscar"/>
 
     </LinearLayout>
-</ScrollView>
+
+    <LinearLayout style="@style/cabeceraLista">
+        <TextView style="@style/tituloLista" android:text="@string/texto_asesores"/>
+        <TextView android:id="@+id/ddfras_tv_registros" style="@style/campoCantidadesMail"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/ddfras_rv_lista"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:text="hello_world" />
+    </LinearLayout>
+
+</LinearLayout>
+
+
+
 
 
