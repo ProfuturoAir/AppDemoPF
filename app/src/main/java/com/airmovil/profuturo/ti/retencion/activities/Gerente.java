@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistencia;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.DatosAsesor;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.DatosCliente;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.Encuesta1;
@@ -270,18 +271,7 @@ public class Gerente extends AppCompatActivity{
                 fragmentoGenerico = new ReporteClientes();
                 break;
             case R.id.gerente_nav_asistencia:
-                if(checkProccess == false) {
-                    if(checkMapsFragment == true){
-                        Toast.makeText(this,"map is already loaded",Toast.LENGTH_LONG).show();
-                    }
-                    if(checkMapsFragment == false){
-                        fragmentoGenerico = new Inicio();
-                        checkMapsFragment = true;
-                    }
-                }else{
-                    salirFragment(getApplicationContext());
-                }
-                //fragmentoGenerico = new Asistencia();
+                fragmentoGenerico = new ReporteAsistencia();
                 break;
 
             case R.id.gerente_nav_cerrar:

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/gfral_cv"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="1dp"
+    card_view:cardBackgroundColor="#f6f6f6"
+    card_view:cardCornerRadius="2dp"
+    card_view:contentPadding="0dp"
+    card_view:cardElevation="5dp">
+    <LinearLayout style="@style/contenedorLista">
+        <!-- TODO: Contenedor del circulo y textView(Una sola letra) -->
+        <LinearLayout style="@style/contenedorCirculoLista">
+            <!-- TODO: muestra la primera letra del nombre u otro contenido -->
+            <TextView android:id="@+id/gfral_tv_letra" style="@style/letraLista"/>
+        </LinearLayout>
+        <RelativeLayout style="@style/contenedorElementosLista">
+            <TextView
+                android:id="@+id/gfras_tv_nombre_asesor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:text="Nombre del Asesor"
+                android:textSize="17dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/gfral_btn_detalles"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:background="#f6f6f6"
+                android:gravity="center_vertical"
+                android:drawableTop="@drawable/icono_menu_vertical"/>
+        </RelativeLayout>
+    </LinearLayout>
+</android.support.v7.widget.CardView>
