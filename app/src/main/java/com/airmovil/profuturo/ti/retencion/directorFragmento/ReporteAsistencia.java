@@ -13,6 +13,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,8 +58,8 @@ import java.util.Map;
 public class ReporteAsistencia extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM1 = "parametro1";
+    private static final String ARG_PARAM2 = "parametro2";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -83,7 +84,7 @@ public class ReporteAsistencia extends Fragment {
     // TODO: Elements XML
     private TextView tvFecha;
     private TextView tvATiempo, tvRetardados, tvSinAsistencia;
-    private Spinner spinnerSucursal;
+    private Spinner spinnerGerencia, spinnerSucursal;
     private EditText etAsesor;
     private TextView tvRangoFecha1, tvRangoFecha2;
     private Button btnFiltro;
@@ -138,6 +139,7 @@ public class ReporteAsistencia extends Fragment {
         tvATiempo = (TextView) rootView.findViewById(R.id.ddfras_tv_a_tiempo);
         tvRetardados  = (TextView) rootView.findViewById(R.id.ddfras_tv_retardados);
         tvSinAsistencia = (TextView) rootView.findViewById(R.id.ddfras_tv_sin_asistencia);
+        spinnerGerencia = (Spinner) rootView.findViewById(R.id.ddfras_spinner_gerencia);
         spinnerSucursal = (Spinner) rootView.findViewById(R.id.ddfras_spinner_sucursal);
         etAsesor = (EditText) rootView.findViewById(R.id.ddfras_et_asesor);
         tvRangoFecha1 = (TextView) rootView.findViewById(R.id.ddfras_tv_fecha_rango1);
@@ -148,6 +150,10 @@ public class ReporteAsistencia extends Fragment {
         // TODO: ocultar teclado
         imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
 
+        // TODO: Spinner
+        ArrayAdapter<String> adapterGerencia = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.GERENCIAS);
+        adapterGerencia.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinnerGerencia.setAdapter(adapterGerencia);
 
         // TODO: Spinner
         ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.SUCURSALES);
@@ -172,21 +178,26 @@ public class ReporteAsistencia extends Fragment {
         mDay   = fechaDatos.get("dia");
 
         if(getArguments() != null){
-            fechaIni = getArguments().getString(ARG_PARAM1);
-            fechaFin = getArguments().getString(ARG_PARAM2);
-            //mParam2 = getArguments().getString(ARG_PARAM2);
-            //fechaIni = getArguments().getString("fechaIni", "");
-            //fechaFin = getArguments().getString("fechaFin", "");
-            //Log.d("ARG onCreateView","A1: "+fechaIni +" A2: "+fechaIni);
-            tvFecha.setText(fechaIni+" - "+fechaFin);
-            //Log.d("FECHA","SI");
+            fechaIni = getArguments().getString(ARG_PARAM1).trim();
+            fechaFin = getArguments().getString(ARG_PARAM2).trim();
+            if(fechaFin.equals("") && fechaIni.equals("")){
+                Map<String, String> fechas = Config.fechas(1);
+                fechaIni = fechas.get("fechaIni");
+                fechaMostrar = fechaIni;
+                tvFecha.setText(fechaMostrar);
+            }else if(fechaFin.equals("")){
+                tvFecha.setText(fechaIni);
+            }else if(fechaIni.matches("")){
+                tvFecha.setText(fechaFin);
+            }else{
+                tvFecha.setText(fechaIni + " - " + fechaFin);
+            }
         }else {
             Map<String, String> fechas = Config.fechas(1);
             fechaFin = fechas.get("fechaFin");
             fechaIni = fechas.get("fechaIni");
             fechaMostrar = fechaIni;
             tvFecha.setText(fechaMostrar);
-            //Log.d("FECHA","NO");
         }
 
         rangoInicial();
@@ -202,16 +213,26 @@ public class ReporteAsistencia extends Fragment {
                 String f1 = tvRangoFecha1.getText().toString();
                 String f2 = tvRangoFecha2.getText().toString();
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ReporteAsistencia fragmento = ReporteAsistencia.newInstance(
-                        (fechaIni.equals("") ? "" : fechaIni),
-                        (fechaFin.equals("") ? "" : fechaFin),
-                        rootView.getContext()
-                );
+                ReporteAsistencia fragmento = ReporteAsistencia.newInstance(f1,f2,rootView.getContext());
                 borrar.onDestroy();
                 ft.remove(borrar);
                 ft.replace(R.id.content_director, fragmento);
                 ft.addToBackStack(null);
                 ft.commit();
+
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+
+            }
+        });
+
+        etAsesor.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (event != null&& (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                    InputMethodManager in = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+                    in.hideSoftInputFromWindow(etAsesor.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                return false;
             }
         });
 

@@ -17,6 +17,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
@@ -45,6 +46,8 @@ public class Director extends AppCompatActivity{
     private DriveId mFileId;
     private static final  int REQUEST_CODE_OPENER = 2;
     String url;
+    private InputMethodManager imm;
+
     /**
      * Se utiliza para iniciar la actividad
      * @param savedInstanceState
@@ -56,7 +59,11 @@ public class Director extends AppCompatActivity{
         sessionManager = new SessionManager(getApplicationContext());
         // TODO: Mantener el estado de la pantalla Vertical
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        // TODO: ocultar teclado
+        InputMethodManager imm = (InputMethodManager) getSystemService(getApplicationContext().INPUT_METHOD_SERVICE);
+
         validateSession();
+
     }
 
     /**

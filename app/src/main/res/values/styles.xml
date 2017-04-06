@@ -367,6 +367,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/estilo_linea_solid</item>
+        <item name="android:textSize">14dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:hint">Fecha Inicio</item>
         <item name="android:textColorHint">@color/colorPrimaryDark</item>
@@ -383,6 +384,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/estilo_linea_solid</item>
+        <item name="android:textSize">14dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:hint">Fecha final</item>
         <item name="android:textColorHint">@color/colorPrimaryDark</item>
@@ -401,6 +403,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/estilo_linea_solid2</item>
+        <item name="android:textSize">14dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:hint">Fecha Inicio</item>
         <item name="android:textColorHint">@color/colorWhite</item>
@@ -417,6 +420,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/estilo_linea_solid2</item>
+        <item name="android:textSize">14dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:hint">Fecha final</item>
         <item name="android:textColorHint">@color/colorWhite</item>
@@ -626,7 +630,7 @@
         <item name="android:layout_weight">1</item>
         <item name="android:gravity">end</item>
         <item name="android:textColor">@color/colorWhite</item>
-        <item name="android:text">Resultados</item>
+        <item name="android:text">Resultados </item>
         <item name="android:textSize">18dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:drawableRight">@drawable/icono_mail</item>
@@ -651,12 +655,13 @@
 
     <style name="busquedaLarge">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_height">50dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:background">@color/colorPrimaryLight</item>
         <item name="android:hint">@string/texto_ingresar</item>
         <item name="android:textColor">@color/colorWhite</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
         <item name="android:padding">10dp</item>
         <item name="android:drawableRight">@drawable/icono_buscador</item>
         <item name="android:textColorHint">@color/colorWhite</item>

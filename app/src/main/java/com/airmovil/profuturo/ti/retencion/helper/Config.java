@@ -42,18 +42,18 @@ public class Config extends Activity {
     public static final String URL_CONSULTAR_REPORTE_ASISTENCIA_DETALLE = URL_GENERAL + "Profuturo/consultarReporteProductividadAsistencia.php";
 
     // TODO: String
-    public static final String[] GERENCIAS = new String[]{"Seleccion de Gerencia","Gerencia 1", "Gerencia 2", "Gerencia 3", "Gerencia 4"};
-    public static final String[] SUCURSALES = new String[]{"Sucursal 1", "Sucursal 2", "Sucursal 3", "Sucursal 4", "Sucursal 5"};
-    public static final String[] AFORES = new String[]{"Azteca", "Banamex", "Coppel", "Inbursa", "Invercap", "Metlife", "PensionISSSTE", "Principal", "Profuturo", "SURA", "XXI-Banorte"};
-    public static final String[] MOTIVOS = new String[]{"Motivo 1", "Motivo 2", "Motivo 3", "Motivo 4", "Motivo 5", "Motivo 5", "Motivo 6", "Motivo 7", "Motivo 8", "Motivo 9"};
-    public static final String[] ESTATUS = new String[]{"Activo", "Inactivo"};
-    public static final String[] INSTITUCIONES = new String[]{"IMSS", "ISSSTE", "MIXTO"};
-    public static final String[] REGIMEN = new String[]{"IMSS Ley 73", "IMSS Ley 97", "ISSSTE"};
-    public static final String[] DOCUMENTOS = new String[]{"Estatus de cuenta con folio", "Constancia de implicaciones", "Estatus de cuenta con folio y Constancia de implicaciones", "Ningun documento"};
-    public static final String[] EMITIDOS = new String[]{"Emitidos", "No emitidos"};
-    public static final String[] IDS = new String[]{"Selecciona...","Número de cuenta", "NSS", "CURP"};
-    public static final String[] RETENIDO = new String[]{"Seleciona...", "Retenido", "No Retenido", "Ambos"};
-    public static final String[] CITAS = new String[]{"Seleciona...", "Con Cita", "Sin Cita", "Ambos"};
+    public static final String[] GERENCIAS = new String[]{"Selecciona una Gerencia","Gerencia 1", "Gerencia 2", "Gerencia 3", "Gerencia 4"};
+    public static final String[] SUCURSALES = new String[]{"Selecciona una sucursal","Sucursal 1", "Sucursal 2", "Sucursal 3", "Sucursal 4", "Sucursal 5"};
+    public static final String[] AFORES = new String[]{"Selecciona una AFORE","Azteca", "Banamex", "Coppel", "Inbursa", "Invercap", "Metlife", "PensionISSSTE", "Principal", "Profuturo", "SURA", "XXI-Banorte"};
+    public static final String[] MOTIVOS = new String[]{"Selecciona un motivo", "Motivo 1", "Motivo 2", "Motivo 3", "Motivo 4", "Motivo 5", "Motivo 5", "Motivo 6", "Motivo 7", "Motivo 8", "Motivo 9"};
+    public static final String[] ESTATUS = new String[]{"Selecciona un estatus", "Activo", "Inactivo", "Ambos"};
+    public static final String[] INSTITUCIONES = new String[]{"Selecciona una Institución","IMSS", "ISSSTE", "MIXTO"};
+    public static final String[] REGIMEN = new String[]{"Selecciona un regimen","IMSS Ley 73", "IMSS Ley 97", "ISSSTE"};
+    public static final String[] DOCUMENTOS = new String[]{"Selecciona el tipo de ducumentación","Estatus de cuenta con folio", "Constancia de implicaciones", "Estatus de cuenta con folio y Constancia de implicaciones", "Ningun documento"};
+    public static final String[] EMITIDOS = new String[]{"Selecciona el tipo estatus de emitidos", "Emitidos", "No emitidos"};
+    public static final String[] IDS = new String[]{"Selecciona el tipo de ID a buscar","Número de cuenta", "NSS", "CURP"};
+    public static final String[] RETENIDO = new String[]{"Selecciona el tipo de estatus de retenidos ", "Retenido", "No Retenido", "Ambos"};
+    public static final String[] CITAS = new String[]{"Seleciona el tipo de estatus de citas", "Con Cita", "Sin Cita", "Ambos"};
 
     // TODO: Variables
     public static final long SPLASH_SCREEN_DELEY = 3500;

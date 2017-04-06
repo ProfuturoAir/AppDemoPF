@@ -37,7 +37,7 @@
                         android:backgroundTint="@color/colorWhite"/>
                     <TextView style="@style/linea"/>
                 </LinearLayout>
-                <EditText android:id="@+id/ddfrc_et_asesor" style="@style/busqueda"/>
+                <EditText android:id="@+id/ddfrc_et_asesor" style="@style/busqueda" android:inputType="number" android:hint="Ingresa un ID Asesor"/>
             </LinearLayout>
 
             <LinearLayout style="@style/linearLayoutHorizontal">

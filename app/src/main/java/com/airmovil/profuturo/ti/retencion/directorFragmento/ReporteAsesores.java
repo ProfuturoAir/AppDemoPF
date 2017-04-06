@@ -13,9 +13,11 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -54,9 +56,8 @@ import java.util.Map;
 public class ReporteAsesores extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
+    private static final String ARG_PARAM1 = "parametro1";
+    private static final String ARG_PARAM2 = "parametro2";
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -72,6 +73,7 @@ public class ReporteAsesores extends Fragment {
     private View rootView;
     private SessionManager sessionManager;
     private DatePickerDialog datePickerDialog;
+    private InputMethodManager imm;
 
     // TODO: datas
     private int mYear;
@@ -107,7 +109,7 @@ public class ReporteAsesores extends Fragment {
      * @return A new instance of fragment ReporteAsesores.
      */
     // TODO: Rename and change types and number of parameters
-    public static ReporteAsesores newInstance(String param1, String param2) {
+    public static ReporteAsesores newInstance(String param1, String param2, Context context) {
         ReporteAsesores fragment = new ReporteAsesores();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
@@ -139,6 +141,9 @@ public class ReporteAsesores extends Fragment {
         tvRangoFecha2 = (TextView) rootView.findViewById(R.id.dfra_tv_fecha_rango2);
         btnBuscar = (Button) rootView.findViewById(R.id.dfra_btn_buscar);
 
+        // TODO: ocultar teclado
+        imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+
         // TODO: fechas
         Map<String, Integer> fechaDatos = Config.dias();
         mYear  = fechaDatos.get("anio");
@@ -146,9 +151,20 @@ public class ReporteAsesores extends Fragment {
         mDay   = fechaDatos.get("dia");
 
         if(getArguments() != null){
-            fechaIni = getArguments().getString(ARG_PARAM1);
-            fechaFin = getArguments().getString(ARG_PARAM2);
-            tvFecha.setText(fechaIni+" - "+fechaFin);
+            fechaIni = getArguments().getString(ARG_PARAM1).trim();
+            fechaFin = getArguments().getString(ARG_PARAM2).trim();
+            if(fechaFin.equals("") && fechaIni.equals("")){
+                Map<String, String> fechas = Config.fechas(1);
+                fechaIni = fechas.get("fechaIni");
+                fechaMostrar = fechaIni;
+                tvFecha.setText(fechaMostrar);
+            }else if(fechaFin.equals("")){
+                tvFecha.setText(fechaIni);
+            }else if(fechaIni.matches("")){
+                tvFecha.setText(fechaFin);
+            }else{
+                tvFecha.setText(fechaIni + " - " + fechaFin);
+            }
         }else {
             Map<String, String> fechas = Config.fechas(1);
             fechaFin = fechas.get("fechaFin");
@@ -178,16 +194,28 @@ public class ReporteAsesores extends Fragment {
                 String f1 = tvRangoFecha1.getText().toString();
                 String f2 = tvRangoFecha2.getText().toString();
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsesores fragmento = com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsesores.newInstance(
-                        (fechaIni.equals("") ? "" : fechaIni),
-                        (fechaFin.equals("") ? "" : fechaFin),
-                        rootView.getContext()
-                );
+                ReporteAsesores fragmento = ReporteAsesores.newInstance(f1,f2, rootView.getContext());
                 borrar.onDestroy();
                 ft.remove(borrar);
-                ft.replace(R.id.content_gerente, fragmento);
+                ft.replace(R.id.content_director, fragmento);
                 ft.addToBackStack(null);
                 ft.commit();
+
+                // TODO: ocultar teclado
+                imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+            }
+        });
+
+
+
+        etAsesor.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (event != null&& (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                    InputMethodManager in = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+                    in.hideSoftInputFromWindow(etAsesor.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                return false;
             }
         });
     }

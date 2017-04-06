@@ -107,8 +107,8 @@ public class ReporteGerencias extends Fragment {
     public static ReporteGerencias newInstance(String param1, String param2, Context context) {
         ReporteGerencias fragment = new ReporteGerencias();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString("parametro1", param1);
+        args.putString("parametro2", param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -137,12 +137,9 @@ public class ReporteGerencias extends Fragment {
         tvRangoFecha2 = (TextView) rootView.findViewById(R.id.dfrg_tv_fecha_final);
         btnBuscar = (Button) rootView.findViewById(R.id.dfrg_btn_buscar);
         //</editor-fold>
-
         // TODO: dialog fechas
         rangoInicial();
         rangoFinal();
-
-
         // TODO: fecha
         //<editor-fold desc="Fechas">
         Map<String, Integer> fechaDatos = Config.dias();
@@ -151,8 +148,8 @@ public class ReporteGerencias extends Fragment {
         mDay   = fechaDatos.get("dia");
 
         if(getArguments() != null){
-            fechaIni = getArguments().getString(ARG_PARAM1).trim();
-            fechaFin = getArguments().getString(ARG_PARAM2).trim();
+            fechaIni = getArguments().getString("parametro1").trim();
+            fechaFin = getArguments().getString("parametro2").trim();
             if(fechaFin.equals("") && fechaIni.equals("")){
                 Map<String, String> fechas = Config.fechas(1);
                 fechaIni = fechas.get("fechaIni");
@@ -196,25 +193,16 @@ public class ReporteGerencias extends Fragment {
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btnBuscar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
 
-                        final String fechaIncial = tvRangoFecha1.getText().toString();
-                        final String fechaFinal = tvRangoFecha2.getText().toString();
-
-                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ReporteGerencias procesoDatosFiltroInicio = ReporteGerencias.newInstance(
-                                (fechaIni.equals("") ? "" : fechaIni),
-                                (fechaFin.equals("") ? "" : fechaFin),
-                                rootView.getContext()
-                        );
-                        borrar.onDestroy();
-                        ft.remove(borrar);
-                        ft.replace(R.id.content_director, procesoDatosFiltroInicio);
-                        ft.addToBackStack(null);
-                    }
-                });
+                final String fechaIncial = tvRangoFecha1.getText().toString();
+                final String fechaFinal = tvRangoFecha2.getText().toString();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ReporteGerencias fragmento = ReporteGerencias.newInstance(fechaIncial,fechaFinal, rootView.getContext());
+                borrar.onDestroy();
+                ft.remove(borrar);
+                ft.replace(R.id.content_director, fragmento);
+                ft.addToBackStack(null);
+                ft.commit();
             }
         });
         //</editor-fold>

@@ -1,8 +1,10 @@
 package com.airmovil.profuturo.ti.retencion.directorFragmento;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -53,8 +55,8 @@ import java.util.Map;
 public class ReporteAsistenciaDetalles extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM1 = "parametro1";
+    private static final String ARG_PARAM2 = "parametro2";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -112,8 +114,8 @@ public class ReporteAsistenciaDetalles extends Fragment {
     public static ReporteAsistenciaDetalles newInstance(String param1, String param2, Context context) {
         ReporteAsistenciaDetalles fragment = new ReporteAsistenciaDetalles();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString("parametro1", param1);
+        args.putString("parametro2", param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -149,17 +151,25 @@ public class ReporteAsistenciaDetalles extends Fragment {
         mYear  = fechaDatos.get("anio");
         mMonth = fechaDatos.get("mes");
         mDay   = fechaDatos.get("dia");
-
+        Map<String, String> fechas = Config.fechas(1);
+        String fechaMuestra = fechas.get("fechaIni");
+        fechaIni = getArguments().getString(ARG_PARAM1);
+        fechaFin = getArguments().getString(ARG_PARAM2);
         if(getArguments() != null){
-            fechaIni = getArguments().getString(ARG_PARAM1);
-            fechaFin = getArguments().getString(ARG_PARAM2);
-            tvFecha.setText(fechaIni+" - "+fechaFin);
-        }else {
-            Map<String, String> fechas = Config.fechas(1);
-            fechaFin = fechas.get("fechaFin");
-            fechaIni = fechas.get("fechaIni");
-            fechaMostrar = fechaIni;
-            tvFecha.setText(fechaMostrar);
+            Log.d("getArguments","fechas: " + fechaIni + " " + fechaFin);
+            if(fechaIni == null && fechaFin == null){
+                Log.d("datos Vacios", "FechaInicio" + fechaIni);
+                tvFecha.setText(fechaMuestra);
+            }else if(fechaIni != null && fechaFin != null){
+                tvFecha.setText(fechaIni + "  " + fechaFin);
+            }else{
+                tvFecha.setText(fechaMuestra);
+            }
+        }else if(fechaIni == "" && fechaFin == ""){
+            tvFecha.setText(fechaMuestra);
+            Log.d("vacios getParams","fechas: " + fechaIni + " " + fechaFin);
+        }else{
+            Log.d("else getParams","fechas: " + fechaIni + " " + fechaFin);
         }
 
         // TODO: fechas dialog
@@ -181,16 +191,15 @@ public class ReporteAsistenciaDetalles extends Fragment {
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final String fechaIncial = tvRangoFecha1.getText().toString();
+                final String fechaFinal = tvRangoFecha2.getText().toString();
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ReporteAsistenciaDetalles fragmento = ReporteAsistenciaDetalles.newInstance(
-                        " ",
-                        " ",
-                        rootView.getContext()
-                );
+                ReporteAsistenciaDetalles fragmento = ReporteAsistenciaDetalles.newInstance(fechaIncial,fechaFinal,rootView.getContext());
                 borrar.onDestroy();
                 ft.remove(borrar);
                 ft.replace(R.id.content_director, fragmento);
                 ft.addToBackStack(null);
+                ft.commit();
             }
         });
 
@@ -244,7 +253,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
 
         final ProgressDialog loading;
         if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
+            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
         else
             loading = null;
 
@@ -286,7 +295,19 @@ public class ReporteAsistenciaDetalles extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         loading.dismiss();
-                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+
+                            AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(getContext());
+                            dlgAlert.setTitle("Error en la conexión");
+                            dlgAlert.setMessage("Lo sentimos ocurrio un error, deseas reintentar");
+                            dlgAlert.setCancelable(true);
+                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    sendJson(true);
+                                }
+                            });
+                            dlgAlert.create().show();
+
                     }
                 }) {
             @Override
@@ -300,7 +321,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
     }
 
     private void primerPaso(JSONObject obj) {
-        Log.d("RQT", " primerPaso" + obj.toString());
+        //Log.d("RQT", " primerPaso" + obj.toString());
         int onTime = 0;
         int retardo = 0;
         int inasistencia = 0;
@@ -318,9 +339,8 @@ public class ReporteAsistenciaDetalles extends Fragment {
                 JSONObject json = null;
                 try{
                     json = registroHorario.getJSONObject(i);
-                    getDatos2.setFechaAsistencia(json.getString("fecha"));
                     JSONObject comida = json.getJSONObject("comida");
-                    getDatos2.setComidaHora(comida.getString(""));
+                    getDatos2.setFechaAsistencia(comida.getString("Fecha"));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }

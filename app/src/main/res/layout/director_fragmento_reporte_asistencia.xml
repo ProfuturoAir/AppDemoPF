@@ -32,7 +32,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:background="@color/colorPrimaryDark">
-            <TextView style="@style/textoNoRetenidos" android:text="Retardadis" android:gravity="center"/>
+            <TextView style="@style/textoNoRetenidos" android:text="Retardados" android:gravity="center"/>
             <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/ddfras_tv_retardados"/>
             <TextView style="@style/iconoAcceso"/>
         </LinearLayout>
@@ -52,13 +52,20 @@
 
         <LinearLayout style="@style/linearLayoutHorizontal">
             <LinearLayout style="@style/contenedorSpinner">
+                <Spinner android:id="@+id/ddfras_spinner_gerencia"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:backgroundTint="@color/colorWhite"/>
+                <TextView style="@style/linea"/>
+            </LinearLayout>
+            <LinearLayout style="@style/contenedorSpinner">
                 <Spinner android:id="@+id/ddfras_spinner_sucursal"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:backgroundTint="@color/colorWhite"/>
                 <TextView style="@style/linea"/>
             </LinearLayout>
-            <EditText android:id="@+id/ddfras_et_asesor" style="@style/busqueda"/>
+            <EditText android:id="@+id/ddfras_et_asesor" style="@style/busqueda" android:hint="Ingresa ID Asesor" android:inputType="number"/>
         </LinearLayout>
 
         <LinearLayout style="@style/linearLayoutHorizontal">

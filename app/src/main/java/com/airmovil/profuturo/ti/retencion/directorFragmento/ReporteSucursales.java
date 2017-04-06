@@ -138,32 +138,36 @@ public class ReporteSucursales extends Fragment {
         mMonth = fechaDatos.get("mes");
         mDay   = fechaDatos.get("dia");
 
-        if(getArguments() != null){
-            fechaIni = getArguments().getString(ARG_PARAM1).trim();
-            fechaFin = getArguments().getString(ARG_PARAM2).trim();
-            String dato = getArguments().getString(ARG_PARAM2).trim();
+        try{
+            if(getArguments() != null){
+                fechaIni = getArguments().getString(ARG_PARAM1).trim();
+                fechaFin = getArguments().getString(ARG_PARAM2).trim();
+                String dato = getArguments().getString(ARG_PARAM2).trim();
 
-            if(fechaFin.equals("") && fechaIni.equals("")){
+                if(fechaFin.equals("") && fechaIni.equals("")){
+                    Map<String, String> fechas = Config.fechas(1);
+                    fechaFin = fechas.get("fechaFin");
+                    fechaIni = fechas.get("fechaIni");
+                    fechaMostrar = fechaIni;
+                    tvFecha.setText(fechaMostrar);
+                }else if(fechaFin.equals("")){
+                    tvFecha.setText(fechaIni);
+                }else if(fechaIni.matches("")){
+                    tvFecha.setText(fechaFin);
+                }else{
+                    tvFecha.setText(fechaIni + " - " + fechaFin);
+                }
+
+                Log.d("getArguments", "Fecha inicio: " + fechaIni + "\nfecha fin: " + fechaFin + "\nTipo Sucursal: " + dato);
+            }else {
                 Map<String, String> fechas = Config.fechas(1);
                 fechaFin = fechas.get("fechaFin");
                 fechaIni = fechas.get("fechaIni");
                 fechaMostrar = fechaIni;
                 tvFecha.setText(fechaMostrar);
-            }else if(fechaFin.equals("")){
-                tvFecha.setText(fechaIni);
-            }else if(fechaIni.matches("")){
-                tvFecha.setText(fechaFin);
-            }else{
-                tvFecha.setText(fechaIni + " - " + fechaFin);
             }
-
-            Log.d("getArguments", "Fecha inicio: " + fechaIni + "\nfecha fin: " + fechaFin + "\nTipo Sucursal: " + dato);
-        }else {
-            Map<String, String> fechas = Config.fechas(1);
-            fechaFin = fechas.get("fechaFin");
-            fechaIni = fechas.get("fechaIni");
-            fechaMostrar = fechaIni;
-            tvFecha.setText(fechaMostrar);
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
         // TODO: model

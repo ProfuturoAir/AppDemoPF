@@ -1,19 +1,24 @@
 package com.airmovil.profuturo.ti.retencion.directorFragmento;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
@@ -117,16 +122,16 @@ public class Inicio extends Fragment {
         numeroUsuario = datos.get(SessionManager.ID);
 
         // CASTEO DE ELEMENTOS
-        tvInicial      = (TextView) view.findViewById(R.id.dfi_tv_inicial);
-        tvNombre       = (TextView) view.findViewById(R.id.dfi_tv_nombre);
-        tvFecha        = (TextView) view.findViewById(R.id.dfi_tv_fecha);
-        tvRetenidos    = (TextView) view.findViewById(R.id.dfi_tv_retenidos);
-        tvNoRetenidos  = (TextView) view.findViewById(R.id.dfi_tv_no_retenidos);
-        tvSaldoRetenido  = (TextView) view.findViewById(R.id.dfi_tv_saldo_a_favor);
-        tvSaldoNoRetenido= (TextView) view.findViewById(R.id.dfi_tv_saldo_retenido);
-        tvRangoFecha1  = (TextView) view.findViewById(R.id.dfi_tv_fecha_rango1);
-        tvRangoFecha2  = (TextView) view.findViewById(R.id.dfi_tv_fecha_rango2);
-        btnFiltro      = (Button) view.findViewById(R.id.dfi_btn_filtro);
+        tvInicial = (TextView) view.findViewById(R.id.dfi_tv_inicial);
+        tvNombre = (TextView) view.findViewById(R.id.dfi_tv_nombre);
+        tvFecha = (TextView) view.findViewById(R.id.dfi_tv_fecha);
+        tvRetenidos = (TextView) view.findViewById(R.id.dfi_tv_retenidos);
+        tvNoRetenidos = (TextView) view.findViewById(R.id.dfi_tv_no_retenidos);
+        tvSaldoRetenido = (TextView) view.findViewById(R.id.dfi_tv_saldo_a_favor);
+        tvSaldoNoRetenido = (TextView) view.findViewById(R.id.dfi_tv_saldo_retenido);
+        tvRangoFecha1 = (TextView) view.findViewById(R.id.dfi_tv_fecha_rango1);
+        tvRangoFecha2 = (TextView) view.findViewById(R.id.dfi_tv_fecha_rango2);
+        btnFiltro = (Button) view.findViewById(R.id.dfi_btn_filtro);
 
         tvSaldoRetenido.setSelected(true);
 
@@ -137,6 +142,8 @@ public class Inicio extends Fragment {
         mYear  = fechaDatos.get("anio");
         mMonth = fechaDatos.get("mes");
         mDay   = fechaDatos.get("dia");
+
+
 
         if(getArguments() != null){
             fechaIni = getArguments().getString(ARG_PARAM1).trim();
@@ -197,7 +204,6 @@ public class Inicio extends Fragment {
             }
         });
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

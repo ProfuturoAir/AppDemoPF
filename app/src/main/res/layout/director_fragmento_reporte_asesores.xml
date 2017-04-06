@@ -36,7 +36,7 @@
 
 
         <LinearLayout style="@style/contenedorFiltros2">
-            <EditText android:id="@+id/dfra_et_asesor" style="@style/busquedaLarge"/>
+            <EditText android:id="@+id/dfra_et_asesor" style="@style/busquedaLarge" android:hint="Ingresar un ID Asesor" android:inputType="number"/>
             <LinearLayout style="@style/linearLayoutHorizontal">
                 <TextView android:id="@+id/dfra_tv_fecha_rango1" style="@style/fechaInicial2" />
                 <TextView android:id="@+id/dfra_tv_fecha_rango2" style="@style/fechaFinal2"/>
