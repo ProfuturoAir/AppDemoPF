@@ -184,6 +184,9 @@ public class Encuesta1 extends Fragment {
                         fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                     }else{
                         Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
+                        Fragment fragmentoGenerico = new Encuesta2();
+                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                     }
 
                 }

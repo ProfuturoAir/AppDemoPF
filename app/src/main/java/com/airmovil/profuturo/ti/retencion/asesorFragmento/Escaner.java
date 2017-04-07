@@ -54,6 +54,7 @@ public class Escaner extends Fragment {
     private String msjConexion;
     private File mCurrentPhoto;
     private ImageView imageView;
+    private Button btnFinalizar;
 
     private OnFragmentInteractionListener mListener;
 
@@ -94,6 +95,8 @@ public class Escaner extends Fragment {
         Button btn = (Button) rootView.findViewById(R.id.btn_documento);
         btnGuardar = (Button) view.findViewById(R.id.af_btn_guardar);
         btnCancelar= (Button) view.findViewById(R.id.af_btn_cancelar);
+        btnFinalizar = (Button) view.findViewById(R.id.af_btn_guardar);
+
         btnBorrar= (Button) view.findViewById(R.id.af_btn_borrar);
         imageView = (ImageView) rootView.findViewById(R.id.scannedImage);
 
@@ -154,6 +157,22 @@ public class Escaner extends Fragment {
                     }
                 });
                 dialogo1.show();
+            }
+        });
+
+        btnFinalizar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragmentoGenerico = null;
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentoGenerico = new ConCita();
+                if (fragmentoGenerico != null){
+                    fragmentManager
+                            .beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                            .replace(R.id.content_asesor, fragmentoGenerico)
+                            .addToBackStack("F_MAIN")
+                            .commit();
+                }
             }
         });
     }

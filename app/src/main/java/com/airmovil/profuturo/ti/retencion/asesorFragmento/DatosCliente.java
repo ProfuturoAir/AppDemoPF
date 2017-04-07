@@ -239,11 +239,6 @@ public class DatosCliente extends Fragment {
     }
 
     private void sendJson(final boolean primerPeticion) {
-        final ProgressDialog loading;
-        if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
-        else
-            loading = null;
 
         JSONObject obj = new JSONObject();
         try {
@@ -274,7 +269,7 @@ public class DatosCliente extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         try{
-                            loading.dismiss();
+                            //loading.dismiss();
                         }catch (Exception e){
                             e.printStackTrace();
                         }

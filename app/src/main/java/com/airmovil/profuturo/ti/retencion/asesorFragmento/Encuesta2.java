@@ -107,6 +107,7 @@ public class Encuesta2 extends Fragment {
         spinnerRegimen.setAdapter(arrayAdapterRegimen);
         spinnerDocumentos.setAdapter(arrayAdapterDocumentos);
 
+        //<editor-fold desc="btn continuar">
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -137,39 +138,91 @@ public class Encuesta2 extends Fragment {
                     Config.msj(getContext(),"Error", "Faltan Respuestas Favor de Checar");
                 }else{
                     final Connected conected = new Connected();
-                    if(conected.estaConectado(v.getContext())) {
+                    if(conected.estaConectado(getContext())){
+                        if(validandoEmail == false){
+                            Config.msj(getContext(),"Error", "El correo electrónico es invalido");
+                        }else{
+                            Log.d("Llena todos los campos:",
+                                    "\nSpinner 1: " + spinnerAfores.getText().toString() +
+                                            "\nSpinner 2: " + spinnerMotivos.getText().toString() +
+                                            "\nSpinner 3: " + spinnerEstatus.getText().toString() +
+                                            "\nSpinner 4: " + spinnerInstituto.getText().toString() +
+                                            "\nSpinner 5: " + spinnerRegimen.getText().toString() +
+                                            "\nSpinner 6: " + spinnerDocumentos.getText().toString() +
+                                            "\nEditText : " + etTelefono.getText().toString() + "\nEmail : " + validandoEmail +
+                                            "\nEMAIL: " + email +
+                                            "\nid spinner 1: " + spinnerAfores.getId()
+                            );
+
+
+                            Fragment fragmentoGenerico = new Firma();
+                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            if (fragmentoGenerico != null) {
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.content_asesor, fragmentoGenerico).commit();
+                            }
+                        }
+
                     }else{
-                        Config.msj(v.getContext(),"Error", "Sin Conexion por el momento.Encuesta P-1.1.3.6");
-                    }
-
-                    if(validandoEmail == false){
-                        Config.msj(getContext(),"Error", "El correo electrónico es invalido");
-                    }else{
-                        Log.d("Llena todos los campos:",
-                                "\nSpinner 1: " + spinnerAfores.getText().toString() +
-                                        "\nSpinner 2: " + spinnerMotivos.getText().toString() +
-                                        "\nSpinner 3: " + spinnerEstatus.getText().toString() +
-                                        "\nSpinner 4: " + spinnerInstituto.getText().toString() +
-                                        "\nSpinner 5: " + spinnerRegimen.getText().toString() +
-                                        "\nSpinner 6: " + spinnerDocumentos.getText().toString() +
-                                        "\nEditText : " + etTelefono.getText().toString() + "\nEmail : " + validandoEmail +
-                                        "\nEMAIL: " + email +
-                                        "\nid spinner 1: " + spinnerAfores.getId()
-                        );
+                        Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
+                        if(validandoEmail == false){
+                            Config.msj(getContext(),"Error", "El correo electrónico es invalido");
+                        }else{
+                            Log.d("Llena todos los campos:",
+                                    "\nSpinner 1: " + spinnerAfores.getText().toString() +
+                                            "\nSpinner 2: " + spinnerMotivos.getText().toString() +
+                                            "\nSpinner 3: " + spinnerEstatus.getText().toString() +
+                                            "\nSpinner 4: " + spinnerInstituto.getText().toString() +
+                                            "\nSpinner 5: " + spinnerRegimen.getText().toString() +
+                                            "\nSpinner 6: " + spinnerDocumentos.getText().toString() +
+                                            "\nEditText : " + etTelefono.getText().toString() + "\nEmail : " + validandoEmail +
+                                            "\nEMAIL: " + email +
+                                            "\nid spinner 1: " + spinnerAfores.getId()
+                            );
 
 
-                        Fragment fragmentoGenerico = new Firma();
-                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        if (fragmentoGenerico != null) {
-                            fragmentManager
-                                    .beginTransaction()
-                                    .replace(R.id.content_asesor, fragmentoGenerico).commit();
+                            Fragment fragmentoGenerico = new Firma();
+                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            if (fragmentoGenerico != null) {
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.content_asesor, fragmentoGenerico).commit();
+                            }
                         }
                     }
+
+
 
                 }
 
 
+            }
+        });
+        //</editor-fold>
+
+        btnCancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
+                dialogo1.setTitle("Confirmar");
+                dialogo1.setMessage("¿Estás seguro que deseas cancelar y guardar los cambios del proceso 1.1.3.5?");
+                dialogo1.setCancelable(false);
+                dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Fragment fragmentoGenerico = new ConCita();
+                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                    }
+                });
+                dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                dialogo1.show();
             }
         });
 

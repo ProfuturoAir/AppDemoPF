@@ -115,6 +115,15 @@ public class DatosAsesor extends Fragment {
             public void onClick(View v) {
                 Connected connected = new Connected();
                 if(connected.estaConectado(getContext())){
+                    Fragment fragmentoGenerico = new DatosCliente();
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    fragmentManager
+                            .beginTransaction()//.setCustomAnimations(android.R.anim.slide_out_right,android.R.anim.slide_in_left)
+                            .replace(R.id.content_asesor, fragmentoGenerico).commit();
+
+
+                }else {
+
                     android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
                     dlgAlert.setTitle("Error de conexión");
                     dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
@@ -138,12 +147,7 @@ public class DatosAsesor extends Fragment {
                     dlgAlert.create().show();
 
 
-                }else {
-                    Fragment fragmentoGenerico = new DatosCliente();
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    fragmentManager
-                            .beginTransaction()//.setCustomAnimations(android.R.anim.slide_out_right,android.R.anim.slide_in_left)
-                            .replace(R.id.content_asesor, fragmentoGenerico).commit();
+
                 }
             }
         });
@@ -295,7 +299,7 @@ public class DatosAsesor extends Fragment {
                         Connected connected = new Connected();
                         if(connected.estaConectado(getContext())){
                             android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                            dlgAlert.setTitle("Error");
+                            dlgAlert.setTitle("Error123");
                             dlgAlert.setMessage("Se ha encontrado un problema, deseas volver intentarlo");
                             dlgAlert.setCancelable(true);
                             dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {

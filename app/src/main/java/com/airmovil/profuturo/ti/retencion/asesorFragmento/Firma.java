@@ -102,11 +102,16 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
         lblLongitud = (TextView) view.findViewById(R.id.aff_lbl_Longitud);
         btnActualizar = (ToggleButton) view.findViewById(R.id.aff_btn_actualizar);
 
-        apiClient = new GoogleApiClient.Builder(getActivity())
-                .enableAutoManage(getActivity(),this)
-                .addConnectionCallbacks(this)
-                .addApi(LocationServices.API)
-                .build();
+        try{
+            apiClient = new GoogleApiClient.Builder(getActivity())
+                    .enableAutoManage(getActivity(),this)
+                    .addConnectionCallbacks(this)
+                    .addApi(LocationServices.API)
+                    .build();
+
+        } catch (Exception e){
+
+        }
 
         dvFirma = (DrawingView) view.findViewById(R.id.aff_dv_firma);
         dvFirma.setBrushSize(5);
