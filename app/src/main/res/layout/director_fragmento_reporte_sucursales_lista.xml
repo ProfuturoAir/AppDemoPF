@@ -67,8 +67,8 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <Button
-                    android:id="@+id/dfrsl_btn_detalles"
+                <TextView
+                    android:id="@+id/dfrsl_tv_menu"
                     android:layout_width="50dp"
                     android:layout_height="match_parent"
                     android:background="#f6f6f6"

@@ -348,6 +348,7 @@ public class ReporteAsistencia extends Fragment {
             retardo = asistencia.getInt("retardo");
             inasistencia = asistencia.getInt("inasistencia");
             JSONArray empleado = obj.getJSONArray("Empleado");
+            totalFilas = 50;
             filas = obj.getInt("filasTotal");
             for(int i = 0; i < empleado.length(); i++){
                 DirectorReporteAsistenciaModel getDatos2 = new DirectorReporteAsistenciaModel();

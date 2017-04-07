@@ -13,10 +13,13 @@
 
         <LinearLayout style="@style/linearLayoutHorizontal">
             <LinearLayout style="@style/contenedorSpinner">
-                <Spinner android:id="@+id/afsc_spinner_tipo_dato"
+
+                <Spinner
+                    android:id="@+id/afsc_spinner_tipo_dato"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:backgroundTint="@color/colorWhite"/>
+                    android:backgroundTint="@color/colorWhite" />
+
                 <TextView style="@style/linea"/>
             </LinearLayout>
             <EditText android:id="@+id/afsc_et_datos" style="@style/busqueda"/>

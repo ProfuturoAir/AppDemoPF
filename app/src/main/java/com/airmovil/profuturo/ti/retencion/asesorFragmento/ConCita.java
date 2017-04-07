@@ -188,8 +188,7 @@ public class ConCita extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.asesor_fragmento_con_cita, container, false);
     }
@@ -332,12 +331,13 @@ public class ConCita extends Fragment {
         }
         tvRegistros.setText(filas + " Registros");
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
+
+        Log.d("numeroMaximoPaginas", ""+numeroMaximoPaginas);
         adapter = new CitasClientesAdapter(rootView.getContext(), getDatos1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
         adapter.notifyDataSetChanged();
-
         adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {

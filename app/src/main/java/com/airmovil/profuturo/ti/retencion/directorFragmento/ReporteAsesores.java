@@ -334,6 +334,7 @@ public class ReporteAsesores extends Fragment {
             JSONObject objSaldo = obj.getJSONObject("saldo");
             saldoEmitido = objSaldo.getInt("saldoRetenido");
             saldoNoEmitido = objSaldo.getInt("saldoNoRetenido");
+            totalFilas = 50;
             filas = obj.getInt("filasTotal");
             for(int i = 0; i < array.length(); i++){
                 GerenteReporteAsesoresModel getDatos2 = new GerenteReporteAsesoresModel();

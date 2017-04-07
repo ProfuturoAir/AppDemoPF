@@ -44,6 +44,7 @@ public class Director extends AppCompatActivity{
     private Boolean checkProccess = false;
     private String global = "";
     private DriveId mFileId;
+    NavigationView navigationView;
     private static final  int REQUEST_CODE_OPENER = 2;
     String url;
     private InputMethodManager imm;
@@ -61,6 +62,7 @@ public class Director extends AppCompatActivity{
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         // TODO: ocultar teclado
         InputMethodManager imm = (InputMethodManager) getSystemService(getApplicationContext().INPUT_METHOD_SERVICE);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.director_nav_view);
 
         validateSession();
 
@@ -186,6 +188,15 @@ public class Director extends AppCompatActivity{
     private void seleccionarItem(MenuItem itemDrawer){
         Fragment fragmentoGenerico = null;
         FragmentManager fragmentManager = getSupportFragmentManager();
+
+        Fragment f = getSupportFragmentManager().findFragmentById(R.id.content_director);
+        if(f instanceof ReporteGerencias){
+            checkProccess = true;
+        }else if(f instanceof ReporteSucursales){
+            checkProccess = true;
+        }else if(f instanceof ReporteAsesores){
+            checkProccess = true;
+        }
 
         switch (itemDrawer.getItemId()){
             case R.id.director_nav_inicio:

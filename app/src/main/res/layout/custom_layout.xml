@@ -1,0 +1,62 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="10dp"
+    android:paddingLeft="30dp"
+    android:background="@color/colorWhite"
+    android:paddingBottom="10dp"
+    android:paddingRight="30dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:src="@drawable/icono_acceso"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:text="Enviar a Email"
+        android:gravity="center"
+        android:textSize="25sp"
+        android:inputType="textEmailSubject"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimaryDark"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Email"
+        android:textSize="20dp"
+        android:paddingLeft="20dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="20dp"
+        android:gravity="center_vertical">
+        <LinearLayout style="@style/contenedorSpinner">
+            <EditText android:id="@+id/dialog_et_mail" style="@style/mailDialog"/>
+            <TextView style="@style/linea1"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" @ "
+            android:textStyle="bold"
+            android:textSize="29dp"/>
+        <LinearLayout style="@style/contenedorSpinner">
+
+            <Spinner
+                android:id="@+id/dialog_spinner_mail"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:backgroundTint="@color/colorPrimaryDark" />
+
+            <TextView style="@style/linea1"/>
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <Button android:id="@+id/dialog_btn_enviar" style="@style/btnAplicar" />
+
+</LinearLayout>

@@ -454,6 +454,16 @@
         <item name="android:textColor">@color/colorPrimaryDark</item>
         <item name="android:textStyle">bold</item>
     </style>
+    <!-- TODO: Button, btn Aplicar -->
+    <style name="btnEnviar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@color/colorAccent</item>
+        <item name="android:text">@string/btn_enviar</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textStyle">bold</item>
+    </style>
     <!-- TODO: btn, boton continuar(Fragmento firma"Asesor") -->
     <style name="btnContinuar">
         <item name="android:layout_width">match_parent</item>
@@ -584,6 +594,11 @@
         <item name="android:layout_height">2dp</item>
         <item name="android:background">@color/colorWhite</item>
     </style>
+    <style name="linea1">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">2dp</item>
+        <item name="android:background">@color/colorPrimaryDark</item>
+    </style>
 
     <!-- TODO: textView, campo con el titulo cliente -->
     <style name="campoClientes">
@@ -665,6 +680,19 @@
         <item name="android:padding">10dp</item>
         <item name="android:drawableRight">@drawable/icono_buscador</item>
         <item name="android:textColorHint">@color/colorWhite</item>
+        <item name="android:paddingLeft">10dp</item>
+    </style>
+
+    <style name="mailDialog">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@drawable/estilo_edit_text</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:hint">email</item>
+        <item name="android:textColorHint">@color/colorPrimaryDark</item>
         <item name="android:paddingLeft">10dp</item>
     </style>
 
@@ -920,4 +948,6 @@
         <item name="android:text">0</item>
         <item name="android:textSize">12dp</item>
     </style>
+
+    <string name="btn_enviar">Enviar</string>
 </resources>

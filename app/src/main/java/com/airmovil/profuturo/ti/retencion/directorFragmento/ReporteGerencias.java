@@ -1,14 +1,19 @@
 package com.airmovil.profuturo.ti.retencion.directorFragmento;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,22 +21,24 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.airmovil.profuturo.ti.retencion.Adapter.CitasClientesAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteGerenciasAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.asesorFragmento.*;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.Firma;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
-import com.airmovil.profuturo.ti.retencion.model.CitasClientesModel;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteGerenciasModel;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -76,11 +83,14 @@ public class ReporteGerencias extends Fragment {
     private String fechaIni = "";
     private String fechaFin = "";
     private String fechaMostrar = "";
+    private int pagina = 1;
+    private int numeroMaximoPaginas = 0;
 
     private TextView tvFecha, tvEntidaes, tvNoEntidades, tvSaldoEmitido, tvSaldoNoEmitido;
     private Spinner spinnerGerencias;
     private TextView tvRangoFecha1, tvRangoFecha2;
     private Button btnBuscar;
+    private TextView tvResultados, tvMail;
 
     private List<DirectorReporteGerenciasModel> getDato1;
     private RecyclerView recyclerView;
@@ -90,6 +100,7 @@ public class ReporteGerencias extends Fragment {
 
     private SessionManager sessionManager;
     private DatePickerDialog datePickerDialog;
+    private InputMethodManager imm;
 
     public ReporteGerencias() {
         // Required empty public constructor
@@ -136,6 +147,14 @@ public class ReporteGerencias extends Fragment {
         tvRangoFecha1 = (TextView) rootView.findViewById(R.id.dfrg_tv_fecha_inicio);
         tvRangoFecha2 = (TextView) rootView.findViewById(R.id.dfrg_tv_fecha_final);
         btnBuscar = (Button) rootView.findViewById(R.id.dfrg_btn_buscar);
+        tvResultados = (TextView) rootView.findViewById(R.id.dfrg_tv_registros);
+        tvMail = (TextView) rootView.findViewById(R.id.dfrg_tv_mail);
+
+        // TODO: ocultar teclado
+        imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+
         //</editor-fold>
         // TODO: dialog fechas
         rangoInicial();
@@ -172,11 +191,10 @@ public class ReporteGerencias extends Fragment {
         //</editor-fold>
 
         // TODO: Spinner
-        //<editor-fold desc="Spinner de gerencias">
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.GERENCIAS);
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerGerencias.setAdapter(adapter);
-        //</editor-fold>
+        ArrayAdapter<String> adapterGerencias = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.GERENCIAS);
+        adapterGerencias.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinnerGerencias.setAdapter(adapterGerencias);
+
 
         sendJson(true);
         // TODO: modelo
@@ -194,25 +212,82 @@ public class ReporteGerencias extends Fragment {
             @Override
             public void onClick(View v) {
 
-                final String fechaIncial = tvRangoFecha1.getText().toString();
-                final String fechaFinal = tvRangoFecha2.getText().toString();
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ReporteGerencias fragmento = ReporteGerencias.newInstance(fechaIncial,fechaFinal, rootView.getContext());
-                borrar.onDestroy();
-                ft.remove(borrar);
-                ft.replace(R.id.content_director, fragmento);
-                ft.addToBackStack(null);
-                ft.commit();
+                Connected connected = new Connected();
+                if(connected.estaConectado(getContext())){
+                    final String fechaIncial = tvRangoFecha1.getText().toString();
+                    final String fechaFinal = tvRangoFecha2.getText().toString();
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                    ReporteGerencias fragmento = ReporteGerencias.newInstance(fechaIncial,fechaFinal, rootView.getContext());
+                    borrar.onDestroy();
+                    ft.remove(borrar);
+                    ft.replace(R.id.content_director, fragmento);
+                    ft.addToBackStack(null);
+                    ft.commit();
+                }else{
+                    android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                    dlgAlert.setTitle("Error de conexión");
+                    dlgAlert.setMessage("Se ha encontrado un problemaº, deseas volver intentarlo");
+                    dlgAlert.setCancelable(true);
+                    dlgAlert.setCancelable(true);
+                    dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            sendJson(true);
+                        }
+                    });
+                    dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    dlgAlert.create().show();
+                }
+
+
+            }
+        });
+
+        tvResultados.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Dialog dialog = new Dialog(getContext());
+                dialog.setContentView(R.layout.custom_layout);
+
+                Button btn = (Button) dialog.findViewById(R.id.dialog_btn_enviar);
+                Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
+
+                // TODO: Spinner
+                ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item_azul, Config.EMAIL);
+                adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                spinner.setAdapter(adapterSucursal);
+
+
+
+                btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
+
+                        final String datoEditText = editText.getText().toString();
+                        //final String datoSpinner = spinner.getSelectedItem().toString();
+                        dialog.dismiss();
+
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                        Config.msjTime(getContext(), "Mensaje datos", "Se está enviado los datos a " + datoEditText + "@profuturo.com", 8000);
+                    }
+                });
+                dialog.show();
             }
         });
         //</editor-fold>
     }
 
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.director_fragmento_reporte_gerencias, container, false);
     }
 
@@ -286,7 +361,7 @@ public class ReporteGerencias extends Fragment {
                             loading.dismiss();
                             primerPaso(response);
                         } else {
-                            //segundoPaso(response);
+                            segundoPaso(response);
                         }
                     }
                 },
@@ -294,7 +369,24 @@ public class ReporteGerencias extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         loading.dismiss();
-                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+
+                        android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                        dlgAlert.setTitle("Error");
+                        dlgAlert.setMessage("Se ha encontrado un problema, deseas volver intentarlo");
+                        dlgAlert.setCancelable(true);
+                        dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                sendJson(true);
+                            }
+                        });
+                        dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                        dlgAlert.create().show();
                     }
                 }) {
             @Override
@@ -312,6 +404,7 @@ public class ReporteGerencias extends Fragment {
         int idGerencia = 0;
         // TODO: total de filas
         int filas = 0;
+        int totalFilas = 1;
         // TODO: Datos de cantidades generales retenidos
         int totalEntidades = 0;
         int totalNoEntidades = 0;
@@ -331,7 +424,7 @@ public class ReporteGerencias extends Fragment {
             // TODO: jsonArray de gerencias
             JSONArray array = obj.getJSONArray("Gerencia");
             // TODO: filas totales y mensaje de respuesta
-            filas = obj.getInt("filasTotal");
+            totalFilas = obj.getInt("filasTotal");
             status = obj.getString("status");
             // TODO: Cantidades generales de retenidos y saldos
             JSONObject jsonObjectRetenido = obj.getJSONObject("retenido");
@@ -340,9 +433,7 @@ public class ReporteGerencias extends Fragment {
             JSONObject jsonObjectSaldos = obj.getJSONObject("saldo");
                 totalSaldosEmitodos= jsonObjectSaldos.getString("saldoRetenido");
                 totalSaldoNoEmitidos = jsonObjectSaldos.getString("saldoNoRetenido");
-            Log.d(TAG, "\nResponse retenidos -->" + totalEntidades + " --> No Retenidos" + totalNoEntidades);
-            Log.d(TAG, "\nResponse saldoRetenido -->" + totalSaldosEmitodos+ " --> SaldoNoRetenido" + totalSaldoNoEmitidos);
-            Log.d(TAG, "|nResponse status ->" + status);
+            Log.d("filas json", "Total de filas " + totalFilas);
             for(int i = 0; i < array.length(); i++){
                 DirectorReporteGerenciasModel getDatos2 = new DirectorReporteGerenciasModel();
                 JSONObject json = null;
@@ -364,15 +455,83 @@ public class ReporteGerencias extends Fragment {
         }catch (JSONException e){
             e.printStackTrace();
         }
+        tvResultados.setText("" + totalFilas + " Resultados");
         tvEntidaes.setText("" + totalEntidades);
         tvNoEntidades.setText("" + totalNoEntidades);
         tvSaldoEmitido.setText("" + totalSaldosEmitodos);
         tvSaldoNoEmitido.setText("" + totalSaldoNoEmitidos);
 
+        numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
+        Log.d("numeroMaximoPaginas", ""+numeroMaximoPaginas);
         adapter = new DirectorReporteGerenciasAdapter(rootView.getContext(), getDato1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
+        adapter.notifyDataSetChanged();
+        adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                Log.d(TAG, "pagina->" + pagina + "numeroMaximo" + numeroMaximoPaginas);
+                if (pagina >= numeroMaximoPaginas) {
+                    Log.d("FINALIZA", "termino proceso");
+                    return;
+                }
+                Log.e("haint", "Load More");
+                getDato1.add(null);
+                adapter.notifyItemInserted(getDato1.size() - 1);
+
+                //Load more data for reyclerview
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.e("haint", "Load More 2");
+                        //Remove loading item
+                        getDato1.remove(getDato1.size() - 1);
+                        adapter.notifyItemRemoved(getDato1.size());
+                        //Load data
+                        Log.d("EnvioIndex", getDato1.size() + "");
+                        pagina = Config.pidePagina(getDato1);
+                        sendJson(false);
+                    }
+                }, 5000);
+            }
+        });
+
+    }
+
+    private void segundoPaso(JSONObject obj) {
+        Log.d("segundoPaso", obj.toString());
+        try{
+            // TODO: jsonArray de gerencias
+            JSONArray array = obj.getJSONArray("Gerencia");
+            // TODO: filas totales y mensaje de respuesta
+            // TODO: Cantidades generales de retenidos y saldos
+            JSONObject jsonObjectRetenido = obj.getJSONObject("retenido");
+            JSONObject jsonObjectSaldos = obj.getJSONObject("saldo");
+            for(int i = 0; i < array.length(); i++){
+                DirectorReporteGerenciasModel getDatos2 = new DirectorReporteGerenciasModel();
+                JSONObject json = null;
+                try{
+                    json = array.getJSONObject(i);
+                    getDatos2.setIdGerencia(json.getInt("idGerencia"));
+                    JSONObject citas = json.getJSONObject("cita");
+                    getDatos2.setConCita(citas.getInt("conCita"));
+                    getDatos2.setSinCita(citas.getInt("sinCita"));
+                    JSONObject saldo = json.getJSONObject("saldo");
+                    getDatos2.setSaldoRetenido(saldo.getString("saldoRetenido"));
+                    getDatos2.setSaldoNoRetenido(saldo.getString("saldoNoRetenido"));
+                    JSONObject retenidoss = json.getJSONObject("retenido");
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+                getDato1.add(getDatos2);
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        adapter.notifyDataSetChanged();
+        adapter.setLoaded();
     }
 
     private void rangoInicial(){

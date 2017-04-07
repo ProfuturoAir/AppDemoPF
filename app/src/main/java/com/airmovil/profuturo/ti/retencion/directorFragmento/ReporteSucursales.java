@@ -93,7 +93,7 @@ public class ReporteSucursales extends Fragment {
     private Spinner spinnerSucursales;
     private TextView tvRangoFecha1, tvRangoFecha2;
     private Button btnBuscar;
-    private TextView tvTotalResultados;
+    private TextView tvResultados;
     int filas;
 
     public ReporteSucursales() {
@@ -122,6 +122,7 @@ public class ReporteSucursales extends Fragment {
         tvRangoFecha2 = (TextView) rootView.findViewById(R.id.dfrs_tv_fecha_rango2);
         spinnerSucursales = (Spinner) rootView.findViewById(R.id.dfrs_spinner_sucursales);
         btnBuscar = (Button) rootView.findViewById(R.id.dfrs_btn_buscar);
+        tvResultados = (TextView) rootView.findViewById(R.id.gfsc_tv_registros);
 
         // TODO: fechas dialog
         rangoInicial();
@@ -336,6 +337,7 @@ public class ReporteSucursales extends Fragment {
             JSONObject objEmitidos = obj.getJSONObject("retenido");
             emitidos = objEmitidos.getInt("retenido");
             noEmitido = objEmitidos.getInt("noRetenido");
+            totalFilas = 50;
             JSONObject objSaldo = obj.getJSONObject("saldo");
             saldoEmitido = objSaldo.getInt("saldoRetenido");
             saldoNoEmitido = objSaldo.getInt("saldoNoRetenido");
@@ -368,7 +370,7 @@ public class ReporteSucursales extends Fragment {
         tvNoEmitidas.setText("" + noEmitido);
         tvSaldoEmitido.setText("" + saldoEmitido);
         tvSaldoNoEmitido.setText("" + saldoNoEmitido);
-       // tvTotalResultados.setText("" + filas + " Resultados ");
+        tvResultados.setText(filas + " Resultados ");
 
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         adapter = new DirectorReporteSucursalesAdapter(rootView.getContext(), getDatos1, recyclerView);

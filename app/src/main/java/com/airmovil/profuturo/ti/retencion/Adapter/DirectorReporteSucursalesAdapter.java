@@ -1,6 +1,7 @@
 package com.airmovil.profuturo.ti.retencion.Adapter;
 
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -10,12 +11,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsesores;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistencia;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientes;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteSucursalesModel;
 
@@ -96,7 +99,7 @@ public class DirectorReporteSucursalesAdapter extends RecyclerView.Adapter{
 
             myholder.campoLetra.setText(inicial);
 
-            myholder.btn.setOnClickListener(new View.OnClickListener() {
+            myholder.subMenu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     surgirMenu(v);
@@ -124,7 +127,7 @@ public class DirectorReporteSucursalesAdapter extends RecyclerView.Adapter{
         // inflate menu
         PopupMenu popup = new PopupMenu(mContext, view);
         MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.menu_detalle_reporte_sucursales, popup.getMenu());
+        inflater.inflate(R.menu.sub_menu_reporte_sucursal, popup.getMenu());
         popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
         popup.show();
     }
@@ -150,16 +153,22 @@ public class DirectorReporteSucursalesAdapter extends RecyclerView.Adapter{
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.nav_sucursales:
-                    Toast.makeText(mContext, "Sucursales", Toast.LENGTH_SHORT).show();
+                case R.id.sub_menu_reporte_sucusal_nav_asesores:
+                    AppCompatActivity asesores = (AppCompatActivity) mRecyclerView.getContext();
+                    ReporteAsesores ReporteAsesores = new ReporteAsesores();
+                    asesores.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, ReporteAsesores).addToBackStack(null).commit();
                     return true;
-                case R.id.nav_asesores:
-                    Toast.makeText(mContext, "Asesores", Toast.LENGTH_SHORT).show();
+                case R.id.sub_menu_reporte_sucusal_nav_clientes:
+                    AppCompatActivity clientes = (AppCompatActivity) mRecyclerView.getContext();
+                    ReporteClientes fragmentoClientes = new ReporteClientes();
+                    clientes.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoClientes).addToBackStack(null).commit();
                     return true;
-                case R.id.nav_clientes:
-                    Toast.makeText(mContext, "Clientes", Toast.LENGTH_SHORT).show();
+                case R.id.sub_menu_reporte_sucusal_nav_asistencia:
+                    AppCompatActivity assitencia = (AppCompatActivity) mRecyclerView.getContext();
+                    ReporteAsistencia fragmentoAsistencia = new ReporteAsistencia();
+                    assitencia.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoAsistencia).addToBackStack(null).commit();
                     return true;
-                case R.id.nav_enviar_a_email:
+                case R.id.sub_menu_reporte_sucusal_email:
                     Toast.makeText(mContext, "Email", Toast.LENGTH_SHORT).show();
                     return true;
                 default:
@@ -179,7 +188,7 @@ public class DirectorReporteSucursalesAdapter extends RecyclerView.Adapter{
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView campoLetra, campoIdSucursal, campoConCita, campoSinCita, campoEmitidas, campoNoEmitidas, campoSaldoEmitido, campoSaldoNoEmitido;
-        public Button btn;
+        public TextView subMenu;
         public CardView cardView;
         public MyViewHolder(View view){
             super(view);
@@ -191,7 +200,7 @@ public class DirectorReporteSucursalesAdapter extends RecyclerView.Adapter{
             campoNoEmitidas = (TextView) view.findViewById(R.id.dfrsl_tv_no_emitidas);
             campoSaldoEmitido = (TextView) view.findViewById(R.id.dfrsl_tv_saldos_emitido);
             campoSaldoNoEmitido = (TextView) view.findViewById(R.id.dfrsl_tv_saldos_no_emitido);
-            btn = (Button) view.findViewById(R.id.dfrsl_btn_detalles);
+            subMenu = (TextView) view.findViewById(R.id.dfrsl_tv_menu);
             cardView = (CardView) view.findViewById(R.id.dfrsl_cv);
         }
     }

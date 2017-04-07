@@ -151,8 +151,12 @@
     </LinearLayout>
 
     <LinearLayout style="@style/cabeceraLista">
-        <TextView style="@style/campoCliente"/>
-        <TextView android:id="@+id/gfsc_tv_total_registros" style="@style/campoCantidades"/>
+
+        <TextView style="@style/campoCliente" />
+
+        <TextView
+            android:id="@+id/gfsc_tv_registros"
+            style="@style/campoCantidadesMail" />
     </LinearLayout>
 
     <LinearLayout

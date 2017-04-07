@@ -1,9 +1,8 @@
 package com.airmovil.profuturo.ti.retencion.Adapter;
 
-import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -16,20 +15,24 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.activities.Director;
-import com.airmovil.profuturo.ti.retencion.asesorFragmento.Encuesta2;
-import com.airmovil.profuturo.ti.retencion.directorFragmento.Inicio;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsesores;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientes;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteGerencias;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteSucursales;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteGerenciasModel;
 
@@ -53,8 +56,6 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
     private int visibleThreshold = 10;
     private int lastVisibleItem, totalItemCount;
     private RecyclerView mRecyclerView;
-
-    private BaseAdapter mAdapter;
 
     public DirectorReporteGerenciasAdapter(Context mContext, List<DirectorReporteGerenciasModel> list, RecyclerView mRecyclerView) {
         this.mContext = mContext;
@@ -100,10 +101,11 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
             final DirectorReporteGerenciasModel lista = list.get(position);
             final MyViewHolder myViewHolder = (MyViewHolder) holder;
 
-            //char nombre = lista.getIdGerencia().charAt(0);
-            //final String pLetra = Character.toString(nombre);
+            String idGerencia = String.valueOf(lista.getIdGerencia());
+            char dato = idGerencia.charAt(0);
+            final String letra = Character.toString(dato);
 
-            //myViewHolder.letra.setText(pLetra);
+            myViewHolder.letra.setText(letra);
             myViewHolder.idGerencia.setText("Gerencia " + lista.getIdGerencia());
             myViewHolder.conCita.setText(" " + lista.getConCita() + " ");
             myViewHolder.sinCita.setText(" " + lista.getSinCita() + " ");
@@ -146,7 +148,7 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
         // inflate menu
         PopupMenu popup = new PopupMenu(mContext, view);
         MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.menu_detalle_reporte_sucursales, popup.getMenu());
+        inflater.inflate(R.menu.sub_menu_reporte_gerencia, popup.getMenu());
         popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
         popup.show();
     }
@@ -172,6 +174,69 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
         this.mOnLoadMoreListener = mOnLoadMoreListener;
     }
 
+    /**
+     * escucha el popup al dar click
+     */
+    class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
+
+        public MyMenuItemClickListener() {
+        }
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.nav_sucursales:
+                    AppCompatActivity sucursales = (AppCompatActivity) mRecyclerView.getContext();
+                    ReporteSucursales fragmentoSucursales = new ReporteSucursales();
+                    //Create a bundle to pass data, add data, set the bundle to your fragment and:
+                    sucursales.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoSucursales).addToBackStack(null).commit();
+                    return true;
+                case R.id.nav_asesores:
+                    AppCompatActivity asesores = (AppCompatActivity) mRecyclerView.getContext();
+                    ReporteAsesores fragmentoAsesores = new ReporteAsesores();
+                    //Create a bundle to pass data, add data, set the bundle to your fragment and:
+                    asesores.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoAsesores).addToBackStack(null).commit();
+                    return true;
+                case R.id.nav_clientes:
+                    AppCompatActivity Clientes = (AppCompatActivity) mRecyclerView.getContext();
+                    ReporteClientes fragmentoClientes = new ReporteClientes();
+                    //Create a bundle to pass data, add data, set the bundle to your fragment and:
+                    Clientes.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoClientes).addToBackStack(null).commit();
+                    return true;
+                case R.id.nav_enviar_a_email:
+                    final Dialog dialog = new Dialog(mContext);
+                    dialog.setContentView(R.layout.custom_layout);
+
+                    Button btn = (Button) dialog.findViewById(R.id.dialog_btn_enviar);
+                    Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
+
+                    // TODO: Spinner
+                    ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(mContext, R.layout.spinner_item_azul, Config.EMAIL);
+                    adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                    spinner.setAdapter(adapterSucursal);
+
+                    btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
+
+                            final String datoEditText = editText.getText().toString();
+                            //final String datoSpinner = spinner.getSelectedItem().toString();
+
+                            InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Service.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                            Config.msjTime(mContext, "Enviando", "Se ha enviado el mensaje al destino", 4000);
+                            dialog.dismiss();
+
+                        }
+                    });
+                    dialog.show();
+                    return true;
+                default:
+            }
+            return false;
+        }
+    }
+
     public void fragmentJumpDatos(View view, String id) {
         Fragment fragmento = new ReporteSucursales();
         if (view.getContext() == null)
@@ -186,48 +251,6 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
                 Config.msj(view.getContext(),"Error conexión", "Sin Conexion por el momento.Cliente P-1.1.3");
             }
             director.switchContent(fragmento, id);
-        }
-    }
-
-
-    /**
-     * escucha el popup al dar click
-     */
-    class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
-
-        public MyMenuItemClickListener() {
-        }
-        @Override
-        public boolean onMenuItemClick(MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.nav_sucursales:
-                    Toast.makeText(mContext, "Sucursales", Toast.LENGTH_SHORT).show();
-                    AppCompatActivity sucursales = (AppCompatActivity) mRecyclerView.getContext();
-                    ReporteSucursales fragmentoSucursales = new ReporteSucursales();
-                    //Create a bundle to pass data, add data, set the bundle to your fragment and:
-                    sucursales.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoSucursales).addToBackStack(null).commit();
-                    return true;
-                case R.id.nav_asesores:
-                    Toast.makeText(mContext, "Asesores", Toast.LENGTH_SHORT).show();
-                    AppCompatActivity asesores = (AppCompatActivity) mRecyclerView.getContext();
-                    ReporteAsesores fragmentoAsesores = new ReporteAsesores();
-                    //Create a bundle to pass data, add data, set the bundle to your fragment and:
-                    asesores.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoAsesores).addToBackStack(null).commit();
-                    return true;
-                case R.id.nav_clientes:
-                    Toast.makeText(mContext, "Clientes", Toast.LENGTH_SHORT).show();
-                    AppCompatActivity Clientes = (AppCompatActivity) mRecyclerView.getContext();
-                    ReporteClientes fragmentoClientes = new ReporteClientes();
-                    //Create a bundle to pass data, add data, set the bundle to your fragment and:
-                    Clientes.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoClientes).addToBackStack(null).commit();
-                    return true;
-                case R.id.nav_enviar_a_email:
-                    Context context;
-                    Config.msj(mContext, "Enviar mensaje de email", "se enviara el mensaje de email");
-                    return true;
-                default:
-            }
-            return false;
         }
     }
 
