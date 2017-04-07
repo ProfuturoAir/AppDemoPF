@@ -42,7 +42,7 @@
                             android:layout_weight="1">
                             <!-- TODO: campo 2 -->
                             <TextView style="@style/conCitaListaGreen"/>
-                            <TextView android:id="@+id/dfrcll_tv_con_cita_cliente" style="@style/textoGreenLista"/>
+                            <TextView android:id="@+id/dfrcll_tv_con_cita_cliente" android:text="1531" style="@style/textoGreenLista"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -60,12 +60,12 @@
                             android:layout_weight="1">
                             <!-- TODO: campo 1 -->
                             <TextView style="@style/sucursalLista"/>
-                            <TextView android:id="@+id/dfrcll_tv_sucursal_cliente" style="@style/textoLista"/>
+                            <TextView android:id="@+id/dfrcll_tv_sucursal_cliente" android:text="4323" style="@style/textoLista"/>
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
         </LinearLayout>
-        <Button
+        <TextView
             android:id="@+id/dfrcll_btn_detalles"
             android:layout_width="50dp"
             android:layout_marginLeft="-50dp"

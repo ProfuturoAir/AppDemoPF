@@ -1,5 +1,7 @@
 package com.airmovil.profuturo.ti.retencion.Adapter;
 
+import android.app.Dialog;
+import android.app.Service;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,12 +12,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteClientesModel;
 
@@ -123,7 +131,7 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
         // inflate menu
         PopupMenu popup = new PopupMenu(mContext, view);
         MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.sub_menu_reporte_gerencia, popup.getMenu());
+        inflater.inflate(R.menu.sub_menu_reporte_clientes, popup.getMenu());
         popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
         popup.show();
     }
@@ -149,18 +157,41 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.nav_sucursales:
-                    Toast.makeText(mContext, "Sucursales", Toast.LENGTH_SHORT).show();
-                    return true;
-                case R.id.nav_asesores:
-                    Toast.makeText(mContext, "Asesores", Toast.LENGTH_SHORT).show();
-                    return true;
-                case R.id.nav_clientes:
-                    Toast.makeText(mContext, "Clientes", Toast.LENGTH_SHORT).show();
-                    return true;
-                case R.id.nav_enviar_a_email:
-                    Toast.makeText(mContext, "Email", Toast.LENGTH_SHORT).show();
-                    return true;
+                case R.id.sub_menu_reporte_clientes_email:
+                    final Dialog dialog = new Dialog(mContext);
+                    dialog.setContentView(R.layout.custom_layout);
+
+                    Button btn = (Button) dialog.findViewById(R.id.dialog_btn_enviar);
+                    Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
+
+                    // TODO: Spinner
+                    ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(mContext, R.layout.spinner_item_azul, Config.EMAIL);
+                    adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                    spinner.setAdapter(adapterSucursal);
+
+                    btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
+
+                            final String datoEditText = editText.getText().toString();
+                            Connected connected = new Connected();
+                            if(connected.estaConectado(mContext)){
+
+                                InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Service.INPUT_METHOD_SERVICE);
+                                imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                                Config.msjTime(mContext, "Enviando", "Se ha enviado el mensaje al destino", 4000);
+                                dialog.dismiss();
+                            }else{
+                                Config.msj(mContext,"Error conexión", "Por favor, revisa tu conexión a internet");
+                                dialog.dismiss();
+                            }
+                            //final String datoSpinner = spinner.getSelectedItem().toString()
+
+                        }
+                    });
+                    dialog.show();
+                    return  true;
                 default:
             }
             return false;
@@ -178,7 +209,7 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView campoLetra, campoNombreCliente, campoCuentaCliente, campoAsesorCliente, campoConCitaCliente, campoNoRetenidoCliente, campoSucursalCliente;
-        public Button btn;
+        public TextView btn;
         public CardView cardView;
         public MyViewHolder(View view){
             super(view);
@@ -189,7 +220,7 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
             campoConCitaCliente = (TextView) view.findViewById(R.id.dfrcll_tv_con_cita_cliente);
             campoNoRetenidoCliente = (TextView) view.findViewById(R.id.dfrcll_tv_retenidos_cliente);
             campoSucursalCliente = (TextView) view.findViewById(R.id.dfrcll_tv_sucursal_cliente);
-            btn = (Button) view.findViewById(R.id.dfrcll_btn_detalles);
+            btn = (TextView) view.findViewById(R.id.dfrcll_btn_detalles);
             cardView = (CardView) view.findViewById(R.id.dfrcll_cv);
         }
     }
