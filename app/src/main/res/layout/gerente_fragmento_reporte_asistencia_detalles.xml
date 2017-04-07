@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistenciaDetalles">
+    tools:context="com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistenciaDetalles">
 
     <TextView style="@style/tituloProceso" android:text="Asistencia " />
     <TextView android:id="@+id/gfrasd_tv_fecha" style="@style/fecha"/>
@@ -118,5 +118,6 @@
     </LinearLayout>
 
 </LinearLayout>
+
 
 

@@ -1,8 +1,11 @@
 package com.airmovil.profuturo.ti.retencion.gerenteFragmento;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +16,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,12 +30,15 @@ import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.Adapter.CitasClientesAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteAsistenciaAdapter;
+import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteAsistenciaAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.CitasClientesModel;
+import com.airmovil.profuturo.ti.retencion.model.GerenteReporteAsistenciaModel;
 import com.airmovil.profuturo.ti.retencion.model.GerenteReporteAsistenciaModel;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -58,9 +65,8 @@ import java.util.Map;
  */
 public class ReporteAsistencia extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM1 = "parametro1";
+    private static final String ARG_PARAM2 = "parametro2";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -85,7 +91,7 @@ public class ReporteAsistencia extends Fragment {
     // TODO: Elements XML
     private TextView tvFecha;
     private TextView tvATiempo, tvRetardados, tvSinAsistencia;
-    private Spinner spinnerSucursal;
+    private Spinner spinnerGerencia, spinnerSucursal;
     private EditText etAsesor;
     private TextView tvRangoFecha1, tvRangoFecha2;
     private Button btnFiltro;
@@ -98,7 +104,6 @@ public class ReporteAsistencia extends Fragment {
     private String fechaIni = "";
     private String fechaFin = "";
     private String fechaMostrar = "";
-
 
     private OnFragmentInteractionListener mListener;
 
@@ -141,6 +146,7 @@ public class ReporteAsistencia extends Fragment {
         tvATiempo = (TextView) rootView.findViewById(R.id.gfras_tv_a_tiempo);
         tvRetardados  = (TextView) rootView.findViewById(R.id.gfras_tv_retardados);
         tvSinAsistencia = (TextView) rootView.findViewById(R.id.gfras_tv_sin_asistencia);
+        spinnerGerencia = (Spinner) rootView.findViewById(R.id.gfras_spinner_gerencia);
         spinnerSucursal = (Spinner) rootView.findViewById(R.id.gfras_spinner_sucursal);
         etAsesor = (EditText) rootView.findViewById(R.id.gfras_et_asesor);
         tvRangoFecha1 = (TextView) rootView.findViewById(R.id.gfras_tv_fecha_rango1);
@@ -151,11 +157,18 @@ public class ReporteAsistencia extends Fragment {
         // TODO: ocultar teclado
         imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
 
+        // TODO: Spinner
+        ArrayAdapter<String> adapterGerencia = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.GERENCIAS);
+        adapterGerencia.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinnerGerencia.setAdapter(adapterGerencia);
 
         // TODO: Spinner
         ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.SUCURSALES);
         adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinnerSucursal.setAdapter(adapterSucursal);
+
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(etAsesor.getWindowToken(), 0);
 
         // TODO: modelo
         getDatos1 = new ArrayList<>();
@@ -175,21 +188,26 @@ public class ReporteAsistencia extends Fragment {
         mDay   = fechaDatos.get("dia");
 
         if(getArguments() != null){
-            fechaIni = getArguments().getString(ARG_PARAM1);
-            fechaFin = getArguments().getString(ARG_PARAM2);
-            //mParam2 = getArguments().getString(ARG_PARAM2);
-            //fechaIni = getArguments().getString("fechaIni", "");
-            //fechaFin = getArguments().getString("fechaFin", "");
-            //Log.d("ARG onCreateView","A1: "+fechaIni +" A2: "+fechaIni);
-            tvFecha.setText(fechaIni+" - "+fechaFin);
-            //Log.d("FECHA","SI");
+            fechaIni = getArguments().getString(ARG_PARAM1).trim();
+            fechaFin = getArguments().getString(ARG_PARAM2).trim();
+            if(fechaFin.equals("") && fechaIni.equals("")){
+                Map<String, String> fechas = Config.fechas(1);
+                fechaIni = fechas.get("fechaIni");
+                fechaMostrar = fechaIni;
+                tvFecha.setText(fechaMostrar);
+            }else if(fechaFin.equals("")){
+                tvFecha.setText(fechaIni);
+            }else if(fechaIni.matches("")){
+                tvFecha.setText(fechaFin);
+            }else{
+                tvFecha.setText(fechaIni + " - " + fechaFin);
+            }
         }else {
             Map<String, String> fechas = Config.fechas(1);
             fechaFin = fechas.get("fechaFin");
             fechaIni = fechas.get("fechaIni");
             fechaMostrar = fechaIni;
             tvFecha.setText(fechaMostrar);
-            //Log.d("FECHA","NO");
         }
 
         rangoInicial();
@@ -204,22 +222,98 @@ public class ReporteAsistencia extends Fragment {
 
                 String f1 = tvRangoFecha1.getText().toString();
                 String f2 = tvRangoFecha2.getText().toString();
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ReporteAsistencia fragmento = ReporteAsistencia.newInstance(
-                            (fechaIni.equals("") ? "" : fechaIni),
-                            (fechaFin.equals("") ? "" : fechaFin),
-                            rootView.getContext()
-                );
-                borrar.onDestroy();
-                ft.remove(borrar);
-                ft.replace(R.id.content_gerente, fragmento);
-                ft.addToBackStack(null);
-                ft.commit();
+                Connected connected = new Connected();
+                if(connected.estaConectado(getContext())){
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                    com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia fragmento = com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia.newInstance(f1,f2,rootView.getContext());
+                    borrar.onDestroy();
+                    ft.remove(borrar);
+                    ft.replace(R.id.content_gerente, fragmento);
+                    ft.addToBackStack(null);
+                    ft.commit();
+                }else{
+                    android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                    dlgAlert.setTitle("Error de conexión");
+                    dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
+                    dlgAlert.setCancelable(true);
+                    dlgAlert.setCancelable(true);
+                    dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            sendJson(true);
+                        }
+                    });
+                    dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    dlgAlert.create().show();
+                }
+
+
+
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+
+            }
+        });
+
+        etAsesor.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (event != null&& (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                    InputMethodManager in = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+                    in.hideSoftInputFromWindow(etAsesor.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                return false;
+            }
+        });
+
+        tvResultados.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Dialog dialog = new Dialog(getContext());
+                dialog.setContentView(R.layout.custom_layout);
+
+                Button btn = (Button) dialog.findViewById(R.id.dialog_btn_enviar);
+                Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
+
+                // TODO: Spinner
+                ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item_azul, Config.EMAIL);
+                adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                spinner.setAdapter(adapterSucursal);
+
+
+
+                btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
+
+                        Connected connected = new Connected();
+                        if(connected.estaConectado(getContext())){
+                            final String datoEditText = editText.getText().toString();
+                            //final String datoSpinner = spinner.getSelectedItem().toString();
+                            dialog.dismiss();
+
+                            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                            imm.hideSoftInputFromWindow(etAsesor.getWindowToken(), 0);
+                            Config.msjTime(getContext(), "Mensaje datos", "Se está enviado los datos a " + datoEditText + "@profuturo.com", 8000);
+                        }else{
+                            Config.msj(getContext(), "Error conexión", "Por favor, revisa tu conexión a internet");
+                            dialog.dismiss();
+                        }
+
+
+                    }
+                });
+                dialog.show();
             }
         });
 
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -301,8 +395,50 @@ public class ReporteAsistencia extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        loading.dismiss();
-                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                        try{
+                            loading.dismiss();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
+                        Connected connected = new Connected();
+                        if(connected.estaConectado(getContext())){
+                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                            dlgAlert.setTitle("Error");
+                            dlgAlert.setMessage("Se ha encontrado un problema, deseas volver intentarlo");
+                            dlgAlert.setCancelable(true);
+                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //sendJson(true);
+                                }
+                            });
+                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            dlgAlert.create().show();
+                        }else{
+                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                            dlgAlert.setTitle("Error de conexión");
+                            dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
+                            dlgAlert.setCancelable(true);
+                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //sendJson(true);
+                                }
+                            });
+                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            dlgAlert.create().show();
+                        }
                     }
                 }) {
             @Override
@@ -330,6 +466,7 @@ public class ReporteAsistencia extends Fragment {
             retardo = asistencia.getInt("retardo");
             inasistencia = asistencia.getInt("inasistencia");
             JSONArray empleado = obj.getJSONArray("Empleado");
+            totalFilas = 50;
             filas = obj.getInt("filasTotal");
             for(int i = 0; i < empleado.length(); i++){
                 GerenteReporteAsistenciaModel getDatos2 = new GerenteReporteAsistenciaModel();
