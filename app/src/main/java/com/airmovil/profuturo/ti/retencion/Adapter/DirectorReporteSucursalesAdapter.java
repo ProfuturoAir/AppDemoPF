@@ -1,5 +1,7 @@
 package com.airmovil.profuturo.ti.retencion.Adapter;
 
+import android.app.Dialog;
+import android.app.Service;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -11,7 +13,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +26,7 @@ import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsesores;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistencia;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientes;
+import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteSucursalesModel;
 
@@ -169,7 +177,33 @@ public class DirectorReporteSucursalesAdapter extends RecyclerView.Adapter{
                     assitencia.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoAsistencia).addToBackStack(null).commit();
                     return true;
                 case R.id.sub_menu_reporte_sucusal_email:
-                    Toast.makeText(mContext, "Email", Toast.LENGTH_SHORT).show();
+                    final Dialog dialog = new Dialog(mContext);
+                    dialog.setContentView(R.layout.custom_layout);
+
+                    Button btn = (Button) dialog.findViewById(R.id.dialog_btn_enviar);
+                    Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
+
+                    // TODO: Spinner
+                    ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(mContext, R.layout.spinner_item_azul, Config.EMAIL);
+                    adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                    spinner.setAdapter(adapterSucursal);
+
+                    btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
+
+                            final String datoEditText = editText.getText().toString();
+                            //final String datoSpinner = spinner.getSelectedItem().toString();
+
+                            InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Service.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                            Config.msjTime(mContext, "Enviando", "Se ha enviado el mensaje al destino", 4000);
+                            dialog.dismiss();
+
+                        }
+                    });
+                    dialog.show();
                     return true;
                 default:
             }

@@ -226,7 +226,7 @@ public class ReporteGerencias extends Fragment {
                 }else{
                     android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
                     dlgAlert.setTitle("Error de conexión");
-                    dlgAlert.setMessage("Se ha encontrado un problemaº, deseas volver intentarlo");
+                    dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
                     dlgAlert.setCancelable(true);
                     dlgAlert.setCancelable(true);
                     dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
@@ -269,13 +269,20 @@ public class ReporteGerencias extends Fragment {
                     public void onClick(View v) {
                         EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
 
-                        final String datoEditText = editText.getText().toString();
-                        //final String datoSpinner = spinner.getSelectedItem().toString();
-                        dialog.dismiss();
+                        Connected connected = new Connected();
+                        if(connected.estaConectado(getContext())){
+                            final String datoEditText = editText.getText().toString();
+                            //final String datoSpinner = spinner.getSelectedItem().toString();
+                            dialog.dismiss();
 
-                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-                        Config.msjTime(getContext(), "Mensaje datos", "Se está enviado los datos a " + datoEditText + "@profuturo.com", 8000);
+                            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                            Config.msjTime(getContext(), "Mensaje datos", "Se está enviado los datos a " + datoEditText + "@profuturo.com", 8000);
+                        }else{
+                            Config.msj(getContext(), "Error conexión", "Por favor, revisa tu conexión a internet");
+                        }
+
+
                     }
                 });
                 dialog.show();
@@ -370,23 +377,44 @@ public class ReporteGerencias extends Fragment {
                     public void onErrorResponse(VolleyError error) {
                         loading.dismiss();
 
-                        android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                        dlgAlert.setTitle("Error");
-                        dlgAlert.setMessage("Se ha encontrado un problema, deseas volver intentarlo");
-                        dlgAlert.setCancelable(true);
-                        dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                sendJson(true);
-                            }
-                        });
-                        dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                        Connected connected = new Connected();
+                        if(connected.estaConectado(getContext())){
+                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                            dlgAlert.setTitle("Error");
+                            dlgAlert.setMessage("Se ha encontrado un problema, deseas volver intentarlo");
+                            dlgAlert.setCancelable(true);
+                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    sendJson(true);
+                                }
+                            });
+                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
 
-                            }
-                        });
-                        dlgAlert.create().show();
+                                }
+                            });
+                            dlgAlert.create().show();
+                        }else{
+                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                            dlgAlert.setTitle("Error de conexión");
+                            dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
+                            dlgAlert.setCancelable(true);
+                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //sendJson(true);
+                                }
+                            });
+                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            dlgAlert.create().show();
+                        }
                     }
                 }) {
             @Override

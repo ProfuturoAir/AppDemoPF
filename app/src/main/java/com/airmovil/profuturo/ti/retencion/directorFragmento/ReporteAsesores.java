@@ -1,8 +1,11 @@
 package com.airmovil.profuturo.ti.retencion.directorFragmento;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,14 +21,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteAsesoresAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteAsesoresAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
@@ -63,7 +70,7 @@ public class ReporteAsesores extends Fragment {
     private String mParam2;
 
     // TODO: recycler
-    private GerenteReporteAsesoresAdapter adapter;
+    private DirectorReporteAsesoresAdapter adapter;
     private List<GerenteReporteAsesoresModel> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
@@ -191,18 +198,41 @@ public class ReporteAsesores extends Fragment {
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String f1 = tvRangoFecha1.getText().toString();
-                String f2 = tvRangoFecha2.getText().toString();
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ReporteAsesores fragmento = ReporteAsesores.newInstance(f1,f2, rootView.getContext());
-                borrar.onDestroy();
-                ft.remove(borrar);
-                ft.replace(R.id.content_director, fragmento);
-                ft.addToBackStack(null);
-                ft.commit();
 
-                // TODO: ocultar teclado
-                imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+                Connected connected = new Connected();
+                if(connected.estaConectado(getContext())){
+                    String f1 = tvRangoFecha1.getText().toString();
+                    String f2 = tvRangoFecha2.getText().toString();
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                    ReporteAsesores fragmento = ReporteAsesores.newInstance(f1,f2, rootView.getContext());
+                    borrar.onDestroy();
+                    ft.remove(borrar);
+                    ft.replace(R.id.content_director, fragmento);
+                    ft.addToBackStack(null);
+                    ft.commit();
+
+                    // TODO: ocultar teclado
+                    imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+                }else{
+                    android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                    dlgAlert.setTitle("Error en conexión");
+                    dlgAlert.setMessage("Por favor, revisa tu conexión a internet...");
+                    dlgAlert.setCancelable(true);
+                    dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    dlgAlert.create().show();
+                }
+
             }
         });
 
@@ -216,6 +246,40 @@ public class ReporteAsesores extends Fragment {
                     in.hideSoftInputFromWindow(etAsesor.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
                 }
                 return false;
+            }
+        });
+
+        tvTotalResultados.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Dialog dialog = new Dialog(getContext());
+                dialog.setContentView(R.layout.custom_layout);
+
+                Button btn = (Button) dialog.findViewById(R.id.dialog_btn_enviar);
+                Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
+
+                // TODO: Spinner
+                ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item_azul, Config.EMAIL);
+                adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                spinner.setAdapter(adapterSucursal);
+
+
+
+                btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
+
+                        final String datoEditText = editText.getText().toString();
+                        //final String datoSpinner = spinner.getSelectedItem().toString();
+                        dialog.dismiss();
+
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                        Config.msjTime(getContext(), "Mensaje email", "Se está enviado los datos a " + datoEditText + "@profuturo.com", 8000);
+                    }
+                });
+                dialog.show();
             }
         });
     }
@@ -305,8 +369,49 @@ public class ReporteAsesores extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        loading.dismiss();
-                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                        try{
+                            loading.dismiss();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        Connected connected = new Connected();
+                        if(connected.estaConectado(getContext())){
+                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                            dlgAlert.setTitle("Error");
+                            dlgAlert.setMessage("Se ha encontrado un problema, deseas volver intentarlo");
+                            dlgAlert.setCancelable(true);
+                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    sendJson(true);
+                                }
+                            });
+                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            dlgAlert.create().show();
+                        }else{
+                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                            dlgAlert.setTitle("Error de conexión");
+                            dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
+                            dlgAlert.setCancelable(true);
+                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    sendJson(true);
+                                }
+                            });
+                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            dlgAlert.create().show();
+                        }
                     }
                 }) {
             @Override
@@ -367,7 +472,7 @@ public class ReporteAsesores extends Fragment {
         tvTotalResultados.setText("" + filas + " Resultados ");
 
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
-        adapter = new GerenteReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView);
+        adapter = new DirectorReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/sub_menu_reporte_asesores_nav_clientes"
+        android:title="@string/texto_clientes" />
+    <item
+        android:id="@+id/sub_menu_reporte_asesores_nav_asistencia"
+        android:title="@string/texto_asistencia"/>
+    <item
+        android:id="@+id/sub_menu_reporte_asesores_email"
+        android:title="@string/texto_enviar_email" />
+</menu>
