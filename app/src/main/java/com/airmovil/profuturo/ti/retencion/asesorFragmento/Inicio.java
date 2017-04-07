@@ -3,6 +3,7 @@ package com.airmovil.profuturo.ti.retencion.asesorFragmento;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.android.volley.AuthFailureError;
@@ -304,8 +306,49 @@ public class Inicio extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        loading.dismiss();
-                        Config.msj(getContext(),"Error", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                        try{
+                            loading.dismiss();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        Connected connected = new Connected();
+                        if(connected.estaConectado(getContext())){
+                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                            dlgAlert.setTitle("Error");
+                            dlgAlert.setMessage("Se ha encontrado un problema, deseas volver intentarlo");
+                            dlgAlert.setCancelable(true);
+                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    sendJson(true);
+                                }
+                            });
+                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            dlgAlert.create().show();
+                        }else{
+                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                            dlgAlert.setTitle("Error de conexión");
+                            dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
+                            dlgAlert.setCancelable(true);
+                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //sendJson(true);
+                                }
+                            });
+                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            dlgAlert.create().show();
+                        }
                     }
                 })
         {
