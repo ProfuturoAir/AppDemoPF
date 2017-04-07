@@ -112,12 +112,12 @@ public class AsistenciaComidaEntrada extends Fragment {
             public void onClick(View v) {
                 AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
                 dialogo1.setTitle("Confirmar");
-                dialogo1.setMessage("¿Estás seguro que deseas cancelar y guardar los cambios del proceso 1.1.3.7?");
+                dialogo1.setMessage("¿Estás seguro que deseas cancelar y se perderan los cambios?");
                 dialogo1.setCancelable(false);
                 dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Fragment fragmentoGenerico = new ConCita();
+                        Fragment fragmentoGenerico = new Inicio();
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                         if (fragmentoGenerico != null) {
                             fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
