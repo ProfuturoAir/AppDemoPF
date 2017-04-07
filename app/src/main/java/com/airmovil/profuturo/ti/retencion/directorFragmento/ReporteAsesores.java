@@ -272,11 +272,16 @@ public class ReporteAsesores extends Fragment {
 
                         final String datoEditText = editText.getText().toString();
                         //final String datoSpinner = spinner.getSelectedItem().toString();
-                        dialog.dismiss();
-
                         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-                        Config.msjTime(getContext(), "Mensaje email", "Se está enviado los datos a " + datoEditText + "@profuturo.com", 8000);
+                        Connected connected = new Connected();
+                        if(connected.estaConectado(getContext())){
+                            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                            Config.msjTime(getContext(), "Mensaje datos1", "Se está enviado los datos a " + datoEditText + "@profuturo.com", 8000);
+                            dialog.dismiss();
+                        }else{
+                            Config.msj(getContext(), "Error conexión", "Por favor, revisa tu conexión a internet");
+                            dialog.dismiss();
+                        }
                     }
                 });
                 dialog.show();
@@ -401,7 +406,7 @@ public class ReporteAsesores extends Fragment {
                             dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    sendJson(true);
+                                    //sendJson(true);
                                 }
                             });
                             dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {

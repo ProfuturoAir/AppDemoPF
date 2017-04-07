@@ -391,7 +391,7 @@ public class ReporteGerencias extends Fragment {
                             dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    sendJson(true);
+                                    //sendJson(true);
                                 }
                             });
                             dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
