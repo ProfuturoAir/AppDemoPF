@@ -135,22 +135,29 @@ public class Inicio extends Fragment {
         mMonth = fechaDatos.get("mes");
         mDay   = fechaDatos.get("dia");
 
+
+
         if(getArguments() != null){
-            fechaIni = getArguments().getString(ARG_PARAM1);
-            fechaFin = getArguments().getString(ARG_PARAM2);
-            //mParam2 = getArguments().getString(ARG_PARAM2);
-            //fechaIni = getArguments().getString("fechaIni", "");
-            //fechaFin = getArguments().getString("fechaFin", "");
-            //Log.d("ARG onCreateView","A1: "+fechaIni +" A2: "+fechaIni);
-            tvFecha.setText(fechaIni+" - "+fechaFin);
-            //Log.d("FECHA","SI");
+            fechaIni = getArguments().getString(ARG_PARAM1).trim();
+            fechaFin = getArguments().getString(ARG_PARAM2).trim();
+            if(fechaFin.equals("") && fechaIni.equals("")){
+                Map<String, String> fechas = Config.fechas(1);
+                fechaIni = fechas.get("fechaIni");
+                fechaMostrar = fechaIni;
+                tvFecha.setText(fechaMostrar);
+            }else if(fechaFin.equals("")){
+                tvFecha.setText(fechaIni);
+            }else if(fechaIni.matches("")){
+                tvFecha.setText(fechaFin);
+            }else{
+                tvFecha.setText(fechaIni + " - " + fechaFin);
+            }
         }else {
             Map<String, String> fechas = Config.fechas(1);
             fechaFin = fechas.get("fechaFin");
             fechaIni = fechas.get("fechaIni");
             fechaMostrar = fechaIni;
             tvFecha.setText(fechaMostrar);
-            //Log.d("FECHA","NO");
         }
 
         tvInicial.setText(convertirATexto);
@@ -165,16 +172,16 @@ public class Inicio extends Fragment {
             @Override
             public void onClick(View v) {
 
-                String f1 = tvRangoFecha1.getText().toString();
-                String f2 = tvRangoFecha2.getText().toString();
+                final String fechaIncial = tvRangoFecha1.getText().toString();
+                final String fechaFinal = tvRangoFecha2.getText().toString();
 
-                if(f1.equals("Fecha Inicio")||f2.equals("Fecha final")){
+                if(fechaIncial.equals(" ")|| fechaFinal.equals(" ")){
                     Config.msj(v.getContext(),"Error de datos","Favor de introducir fechas para aplicar el filtro");
                 }else {
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    com.airmovil.profuturo.ti.retencion.gerenteFragmento.Inicio procesoDatosFiltroInicio = com.airmovil.profuturo.ti.retencion.gerenteFragmento.Inicio.newInstance(
-                            (fechaIni.equals("") ? "" : fechaIni),
-                            (fechaFin.equals("") ? "" : fechaFin),
+                    Inicio procesoDatosFiltroInicio = Inicio.newInstance(
+                            fechaIncial,
+                            fechaFinal,
                             rootView.getContext()
                     );
                     borrar.onDestroy();

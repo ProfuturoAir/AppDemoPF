@@ -33,6 +33,7 @@ import com.airmovil.profuturo.ti.retencion.Adapter.SinCitaAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.model.GerenteSinCitaModel;
@@ -211,41 +212,47 @@ public class SinCita extends Fragment {
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String valores = etDatos.getText().toString().trim();
-                String seleccion = spinner.getSelectedItem().toString();
-                Log.d(TAG, "Seleccion: --->" + seleccion);
+                Connected connected = new Connected();
+                if(connected.estaConectado(getContext())){
+                    String valores = etDatos.getText().toString().trim();
+                    String seleccion = spinner.getSelectedItem().toString();
+                    Log.d(TAG, "Seleccion: --->" + seleccion);
 
-                if(seleccion.equals("Selecciona...")) {
-                    Config.msj(getContext(), "Error", "Debes seleccionar el tipo de campo a solicitar");
-                }else{
-                    if(valores.isEmpty()) {
-                        switch (seleccion){
-                            case "Número de cuenta":
-                                Config.msj(getContext(), "Error", "Debes ingresar un Número de cuenta ");
-                                break;
-                            case "NSS":
-                                Config.msj(getContext(), "Error", "Debes ingresar un NSS");
-                                break;
-                            case "CURP":
-                                Config.msj(getContext(), "Error", "Debes ingresar un CURP");
-                                break;
-                        }
+                    if(seleccion.equals("Selecciona...")) {
+                        Config.msj(getContext(), "Error", "Debes seleccionar el tipo de campo a solicitar");
                     }else{
-                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        SinCita clase = SinCita.newInstance(
-                                valores, rootView.getContext()
-                        );
+                        if(valores.isEmpty()) {
+                            switch (seleccion){
+                                case "Número de cuenta":
+                                    Config.msj(getContext(), "Error", "Debes ingresar un Número de cuenta ");
+                                    break;
+                                case "NSS":
+                                    Config.msj(getContext(), "Error", "Debes ingresar un NSS");
+                                    break;
+                                case "CURP":
+                                    Config.msj(getContext(), "Error", "Debes ingresar un CURP");
+                                    break;
+                            }
+                        }else{
+                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                            SinCita clase = SinCita.newInstance(
+                                    valores, rootView.getContext()
+                            );
 
-                        borrar.onDestroy();
-                        ft.remove(borrar);
-                        ft.replace(R.id.content_gerente, clase);
-                        ft.addToBackStack(null);
-                        etDatos.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-                        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                            borrar.onDestroy();
+                            ft.remove(borrar);
+                            ft.replace(R.id.content_gerente, clase);
+                            ft.addToBackStack(null);
+                            etDatos.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+                            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 
-                        sendJson(true, seleccion, valores);
+                            sendJson(true, seleccion, valores);
+                        }
                     }
+                }else{
+                    Config.msj(getContext(), "Error en conexión", "Por favor, revisa tu conexión a internet");
                 }
+
 
             }
         });

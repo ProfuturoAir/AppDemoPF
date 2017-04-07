@@ -51,7 +51,7 @@
                         android:layout_weight="1">
                         <!-- TODO: campo 2 -->
                         <TextView style="@style/retenidoListaRed"/>
-                        <TextView android:id="@+id/gfrcll_tv_retenidos_cliente" style="@style/textoRedLista"/>
+                        <TextView android:id="@+id/gfrcll_tv_retenidos_cliente" android:text="No" style="@style/textoRedLista"/>
                     </LinearLayout>
 
                     <LinearLayout

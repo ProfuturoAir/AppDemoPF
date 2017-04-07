@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorWhite"
-    tools:context="com.airmovil.profuturo.ti.retencion.gerenteFragmento.Escaner">
+    tools:context="com.airmovil.profuturo.ti.retencion.asesorFragmento.Escaner">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -32,12 +32,12 @@
             android:drawableRight="@drawable/ic_menu_camera"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:text="Camera"
+            android:text="Camara"
             android:textColor="@color/colorPrimaryDark"
             android:textStyle="bold" />
 
         <ImageView
-            android:id="@+id/gerente_iv_captura"
+            android:id="@+id/scannedImage1"
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:layout_centerInParent="true" />
@@ -82,4 +82,3 @@
     </LinearLayout>
 
 </ScrollView>
-

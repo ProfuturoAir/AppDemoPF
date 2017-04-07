@@ -6,6 +6,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,6 +25,7 @@ import android.widget.ImageView;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.ConCita;
+import com.airmovil.profuturo.ti.retencion.helper.Config;
 
 import java.io.File;
 
@@ -97,7 +101,7 @@ public class Escaner extends Fragment {
         btnGuardar = (Button) view.findViewById(R.id.gfe_btn_guardar);
         btnCancelar= (Button) view.findViewById(R.id.gfe_btn_cancelar);
         btnBorrar= (Button) view.findViewById(R.id.gfe_btn_borrar);
-        imageView = (ImageView) rootView.findViewById(R.id.gerente_iv_captura);
+        imageView = (ImageView) rootView.findViewById(R.id.scannedImage1);
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,6 +127,47 @@ public class Escaner extends Fragment {
             }
         });
 
+        btnGuardar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(imageView.getDrawable() == null){
+                    Config.msj(getContext(), "Error", "Na existe un documento, favor de tomar captura");
+                }else {
+
+                    AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
+                    dialogo1.setTitle("Finalizando");
+                    dialogo1.setMessage("Se finalizara el proceso de implicaciones");
+                    dialogo1.setCancelable(false);
+                    dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            Fragment fragmentoGenerico = null;
+                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            final Fragment borrarFragmento;
+                            fragmentoGenerico = new ConCita();
+                            if (fragmentoGenerico != null) {
+                                fragmentManager
+                                        .beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                                        .replace(R.id.content_gerente, fragmentoGenerico)
+                                        .addToBackStack("F_MAIN")
+                                        .commit();
+                            }
+                        }
+                    });
+                    dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    dialogo1.show();
+                }
+            }
+        });
+
+
+        final Fragment borrar = this;
         btnCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,11 +181,10 @@ public class Escaner extends Fragment {
 
                         Fragment fragmentoGenerico = null;
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        final Fragment borrarFragmento;
-                        fragmentoGenerico = new ConCita();
+                        fragmentoGenerico = new SinCita();
                         if (fragmentoGenerico != null){
                             fragmentManager
-                                    .beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                                    .beginTransaction()//.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
                                     .replace(R.id.content_gerente, fragmentoGenerico)
                                     .addToBackStack("F_MAIN")
                                     .commit();
@@ -153,6 +197,16 @@ public class Escaner extends Fragment {
                     }
                 });
                 dialogo1.show();
+
+
+
+            }
+        });
+
+        btnBorrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageView.setImageResource(0);
             }
         });
     }
