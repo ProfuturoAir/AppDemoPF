@@ -16,7 +16,7 @@
             <TextView android:id="@+id/gfrsl_tv_letra" style="@style/letraLista"/>
         </LinearLayout>
         <LinearLayout style="@style/contenedorElementosLista">
-            <TextView android:id="@+id/afrcl_tv_id_sucursal" style="@style/campoLista" android:text="Nombre de sucursal"/>
+            <TextView android:id="@+id/gfrsl_tv_id_sucursal" style="@style/campoLista" android:text="Nombre de sucursal"/>
             <LinearLayout style="@style/contenedorDetalleLista">
 
                 <LinearLayout
@@ -55,7 +55,7 @@
                         <TextView style="@style/saldosLista"/>
                         <TextView android:id="@+id/gfrsl_tv_saldos_emitido" style="@style/textoGreenLista"/>
                         <TextView style="@style/separador" />
-                        <TextView android:id="@+id/gfrsl_tv_saldos_no_emitido" style="@style/textoRedLista"/>
+                        <TextView android:id="@+id/gfrsl_tv_saldos_no_emitido" style="@style/textoRedLista" android:text="32"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -67,8 +67,8 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <Button
-                    android:id="@+id/gfrcl_btn_detalles"
+                <TextView
+                    android:id="@+id/gfrsl_tv_menu"
                     android:layout_width="50dp"
                     android:layout_height="match_parent"
                     android:background="#f6f6f6"

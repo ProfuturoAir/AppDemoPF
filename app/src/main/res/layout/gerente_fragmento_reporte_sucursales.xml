@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteSucursales">
 
 
     <TextView style="@style/tituloProceso" android:text="Sucursales" />
@@ -150,8 +151,12 @@
     </LinearLayout>
 
     <LinearLayout style="@style/cabeceraLista">
-        <TextView style="@style/campoCliente"/>
-        <TextView android:id="@+id/gfsc_tv_total_registros" style="@style/campoCantidades"/>
+
+        <TextView style="@style/campoCliente" />
+
+        <TextView
+            android:id="@+id/gfrs_tv_registros"
+            style="@style/campoCantidadesMail" />
     </LinearLayout>
 
     <LinearLayout

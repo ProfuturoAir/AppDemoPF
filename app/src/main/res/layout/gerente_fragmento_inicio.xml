@@ -17,21 +17,21 @@
 
         <LinearLayout style="@style/contenedorRetenidosNoRetenidosSaldoAfavorSaldoEnContra">
             <LinearLayout style="@style/contenedorCantidadRetenidosSaldoAFavorColorFondo">
-                <TextView style="@style/textoRetenidos" android:text="Retenidos"/>
+                <TextView style="@style/textoRetenidos" android:text="Emitidas"/>
                 <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/gfi_tv_retenidos"/>
             </LinearLayout>
             <LinearLayout style="@style/contenedorCantidadRetenidosSaldoAFavorColorFondo" >
-                <TextView style="@style/textoNoRetenidos" android:text="No Retenidos"/>
+                <TextView style="@style/textoNoRetenidos" android:text="No Emitidas"/>
                 <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/gfi_tv_no_retenidos"/>
             </LinearLayout>
         </LinearLayout>
         <LinearLayout style="@style/contenedorRetenidosNoRetenidosSaldoAfavorSaldoEnContra">
             <LinearLayout style="@style/contenedorCantidadRetenidosSaldoRetenido">
-                <TextView style="@style/textoSaldoRetenido" />
+                <TextView style="@style/textoSaldoRetenido" android:text="Saldo Emitido" />
                 <TextView style="@style/textoCantidadSaldoRetenido" android:id="@+id/gfi_tv_saldo_a_favor" />
             </LinearLayout>
             <LinearLayout style="@style/contenedorCantidadNoRetenidosSaldoEnContra">
-                <TextView style="@style/textoSaldoEnContra"/>
+                <TextView style="@style/textoSaldoEnContra" android:text="Saldo No Emitido"/>
                 <TextView android:id="@+id/gfi_tv_saldo_retenido" style="@style/textoCantidadSaldoNoRetenido" />
             </LinearLayout>
         </LinearLayout>

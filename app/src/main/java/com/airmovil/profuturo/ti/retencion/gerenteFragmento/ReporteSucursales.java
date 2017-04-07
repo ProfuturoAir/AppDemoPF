@@ -1,8 +1,11 @@
 package com.airmovil.profuturo.ti.retencion.gerenteFragmento;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,21 +19,26 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.Adapter.CitasClientesAdapter;
+import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteSucursalesAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteSucursalesAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.*;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.CitasClientesModel;
+import com.airmovil.profuturo.ti.retencion.model.DirectorReporteSucursalesModel;
 import com.airmovil.profuturo.ti.retencion.model.GerenteReporteSucursalesModel;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -58,9 +66,8 @@ import java.util.Map;
 public class ReporteSucursales extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
+    private static final String ARG_PARAM1 = "parametro1";
+    private static final String ARG_PARAM2 = "parametro2";
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -93,7 +100,7 @@ public class ReporteSucursales extends Fragment {
     private Spinner spinnerSucursales;
     private TextView tvRangoFecha1, tvRangoFecha2;
     private Button btnBuscar;
-    private TextView tvTotalResultados;
+    private TextView tvResultados;
     int filas;
 
 
@@ -103,20 +110,13 @@ public class ReporteSucursales extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ReporteSucursales.
-     */
+
     // TODO: Rename and change types and number of parameters
-    public static ReporteSucursales newInstance(String param1, String param2, Context context) {
+    public static ReporteSucursales newInstance(String sParam1, String sParam2, Context context) {
         ReporteSucursales fragment = new ReporteSucursales();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString("parametro1", sParam1);
+        args.putString("parametro2", sParam2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -133,35 +133,19 @@ public class ReporteSucursales extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
+
         tvFecha = (TextView) rootView.findViewById(R.id.gfrs_tv_fecha);
         tvEmitidas = (TextView) rootView.findViewById(R.id.gfrs_tv_emitidas);
         tvNoEmitidas = (TextView) rootView.findViewById(R.id.gfrs_tv_no_emitidas);
         tvSaldoEmitido = (TextView) rootView.findViewById(R.id.gfrs_tv_saldo_emitido);
         tvSaldoNoEmitido = (TextView) rootView.findViewById(R.id.gfrs_tv_saldo_no_emitido);
-        spinnerSucursales = (Spinner) rootView.findViewById(R.id.gfrs_spinner_sucursales);
-        tvTotalResultados = (TextView) rootView.findViewById(R.id.gfsc_tv_total_registros);
         tvRangoFecha1 = (TextView) rootView.findViewById(R.id.gfrs_tv_fecha_rango1);
         tvRangoFecha2 = (TextView) rootView.findViewById(R.id.gfrs_tv_fecha_rango2);
+        spinnerSucursales = (Spinner) rootView.findViewById(R.id.gfrs_spinner_sucursales);
         btnBuscar = (Button) rootView.findViewById(R.id.gfrs_btn_buscar);
+        tvResultados = (TextView) rootView.findViewById(R.id.gfrs_tv_registros);
 
-        // TODO: fechas
-        Map<String, Integer> fechaDatos = Config.dias();
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
-
-        if(getArguments() != null){
-            fechaIni = getArguments().getString(ARG_PARAM1);
-            fechaFin = getArguments().getString(ARG_PARAM2);
-            tvFecha.setText(fechaIni+" - "+fechaFin);
-        }else {
-            Map<String, String> fechas = Config.fechas(1);
-            fechaFin = fechas.get("fechaFin");
-            fechaIni = fechas.get("fechaIni");
-            fechaMostrar = fechaIni;
-            tvFecha.setText(fechaMostrar);
-        }
-
+        // TODO: fechas dialog
         rangoInicial();
         rangoFinal();
 
@@ -169,6 +153,44 @@ public class ReporteSucursales extends Fragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.SUCURSALES);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinnerSucursales.setAdapter(adapter);
+
+        // TODO: inclucion de fecha
+        Map<String, Integer> fechaDatos = Config.dias();
+        mYear  = fechaDatos.get("anio");
+        mMonth = fechaDatos.get("mes");
+        mDay   = fechaDatos.get("dia");
+
+        try{
+            if(getArguments() != null){
+                fechaIni = getArguments().getString(ARG_PARAM1).trim();
+                fechaFin = getArguments().getString(ARG_PARAM2).trim();
+                String dato = getArguments().getString(ARG_PARAM2).trim();
+
+                if(fechaFin.equals("") && fechaIni.equals("")){
+                    Map<String, String> fechas = Config.fechas(1);
+                    fechaFin = fechas.get("fechaFin");
+                    fechaIni = fechas.get("fechaIni");
+                    fechaMostrar = fechaIni;
+                    tvFecha.setText(fechaMostrar);
+                }else if(fechaFin.equals("")){
+                    tvFecha.setText(fechaIni);
+                }else if(fechaIni.matches("")){
+                    tvFecha.setText(fechaFin);
+                }else{
+                    tvFecha.setText(fechaIni + " - " + fechaFin);
+                }
+
+                Log.d("getArguments", "Fecha inicio: " + fechaIni + "\nfecha fin: " + fechaFin + "\nTipo Sucursal: " + dato);
+            }else {
+                Map<String, String> fechas = Config.fechas(1);
+                fechaFin = fechas.get("fechaFin");
+                fechaIni = fechas.get("fechaIni");
+                fechaMostrar = fechaIni;
+                tvFecha.setText(fechaMostrar);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         // TODO: model
         getDatos1 = new ArrayList<>();
@@ -178,19 +200,25 @@ public class ReporteSucursales extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-
         sendJson(true);
-
         final Fragment borrar = this;
+        // TODO: Boton filtro
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String f1 = tvRangoFecha1.getText().toString();
-                String f2 = tvRangoFecha2.getText().toString();
-                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+
+                final String fechaIncial = tvRangoFecha1.getText().toString();
+                final String fechaFinal = tvRangoFecha2.getText().toString();
+                final String tipoSucursal = "Sucursal 123";
+
+                Log.d("Datos a enviar: ", "1. " + fechaIncial + " 2. " + fechaFinal + " 3. " + tipoSucursal);
+
+                Connected connected = new Connected();
+                if(connected.estaConectado(getContext())){
                     ReporteSucursales fragmento = ReporteSucursales.newInstance(
-                            (fechaIni.equals("") ? "" : fechaIni),
-                            (fechaFin.equals("") ? "" : fechaFin),
+                            fechaIncial,
+                            fechaFinal,
                             rootView.getContext()
                     );
                     borrar.onDestroy();
@@ -198,8 +226,79 @@ public class ReporteSucursales extends Fragment {
                     ft.replace(R.id.content_gerente, fragmento);
                     ft.addToBackStack(null);
                     ft.commit();
+                    Log.d("btnBuscar", "Fecha inicio: " + fechaIni + "\nFecha fin" + fechaFin);
+                    try{
+                        Log.d("btnBuscar", "Fecha inicio: " + fechaIni + "\nFecha fin" + fechaFin);
+                    } catch (Exception e){
+                        e.printStackTrace();
+                        Log.d("Exception", e.toString());
+                    }
+                }else{
+                    android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                    dlgAlert.setTitle("Error en conexión");
+                    dlgAlert.setMessage("Por favor, revisa tu conexión a internet...");
+                    dlgAlert.setCancelable(true);
+                    dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    dlgAlert.create().show();
+                }
+
+
             }
         });
+
+
+        tvResultados.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Dialog dialog = new Dialog(getContext());
+                dialog.setContentView(R.layout.custom_layout);
+
+                Button btn = (Button) dialog.findViewById(R.id.dialog_btn_enviar);
+                Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
+
+                // TODO: Spinner
+                ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item_azul, Config.EMAIL);
+                adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                spinner.setAdapter(adapterSucursal);
+
+
+
+                btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
+
+                        final String datoEditText = editText.getText().toString();
+                        //final String datoSpinner = spinner.getSelectedItem().toString();
+
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
+                        Connected connected = new Connected();
+                        if(connected.estaConectado(getContext())){
+                            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                            Config.msjTime(getContext(), "Mensaje datos1", "Se está enviado los datos a " + datoEditText + "@profuturo.com", 8000);
+                            dialog.dismiss();
+                        }else{
+                            Config.msj(getContext(), "Error conexión", "Por favor, revisa tu conexión a internet");
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                dialog.show();
+            }
+        });
+
+
     }
 
     @Override
@@ -287,8 +386,49 @@ public class ReporteSucursales extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        loading.dismiss();
-                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                        try{
+                            loading.dismiss();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        Connected connected = new Connected();
+                        if(connected.estaConectado(getContext())){
+                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                            dlgAlert.setTitle("Error");
+                            dlgAlert.setMessage("Se ha encontrado un problema, deseas volver intentarlo");
+                            dlgAlert.setCancelable(true);
+                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    sendJson(true);
+                                }
+                            });
+                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            dlgAlert.create().show();
+                        }else{
+                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                            dlgAlert.setTitle("Error de conexión");
+                            dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
+                            dlgAlert.setCancelable(true);
+                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //sendJson(true);
+                                }
+                            });
+                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            dlgAlert.create().show();
+                        }
                     }
                 }) {
             @Override
@@ -311,11 +451,12 @@ public class ReporteSucursales extends Fragment {
         try{
             JSONArray array = obj.getJSONArray("Sucursal");
             JSONObject objEmitidos = obj.getJSONObject("retenido");
-                emitidos = objEmitidos.getInt("retenido");
-                noEmitido = objEmitidos.getInt("noRetenido");
+            emitidos = objEmitidos.getInt("retenido");
+            noEmitido = objEmitidos.getInt("noRetenido");
+            totalFilas = 50;
             JSONObject objSaldo = obj.getJSONObject("saldo");
-                saldoEmitido = objSaldo.getInt("saldoRetenido");
-                saldoNoEmitido = objSaldo.getInt("saldoNoRetenido");
+            saldoEmitido = objSaldo.getInt("saldoRetenido");
+            saldoNoEmitido = objSaldo.getInt("saldoNoRetenido");
             filas = obj.getInt("filasTotal");
             for(int i = 0; i < array.length(); i++){
                 GerenteReporteSucursalesModel getDatos2 = new GerenteReporteSucursalesModel();
@@ -324,14 +465,14 @@ public class ReporteSucursales extends Fragment {
                     json = array.getJSONObject(i);
                     getDatos2.setIdSucursal(json.getInt("idSucursal"));
                     JSONObject cita = json.getJSONObject("cita");
-                        getDatos2.setConCita(cita.getInt("conCita"));
-                        getDatos2.setSinCita(cita.getInt("sinCita"));
+                    getDatos2.setConCita(cita.getInt("conCita"));
+                    getDatos2.setSinCita(cita.getInt("sinCita"));
                     JSONObject retenido = json.getJSONObject("retenido");
-                        getDatos2.setEmitido(retenido.getInt("retenido"));
-                        getDatos2.setNoEmitido(retenido.getInt("noRetenido"));
+                    getDatos2.setEmitido(retenido.getInt("retenido"));
+                    getDatos2.setNoEmitido(retenido.getInt("noRetenido"));
                     JSONObject saldo = json.getJSONObject("saldo");
-                        getDatos2.setSaldoEmitido(saldo.getInt("saldoRetenido"));
-                        getDatos2.setSaldoNoEmetido(saldo.getInt("saldoNoRetenido"));
+                    getDatos2.setSaldoEmitido(saldo.getInt("saldoRetenido"));
+                    getDatos2.setSaldoNoEmetido(saldo.getInt("saldoNoRetenido"));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -345,7 +486,7 @@ public class ReporteSucursales extends Fragment {
         tvNoEmitidas.setText("" + noEmitido);
         tvSaldoEmitido.setText("" + saldoEmitido);
         tvSaldoNoEmitido.setText("" + saldoNoEmitido);
-        tvTotalResultados.setText("" + filas + " Resultados ");
+        tvResultados.setText(filas + " Resultados ");
 
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         adapter = new GerenteReporteSucursalesAdapter(rootView.getContext(), getDatos1, recyclerView);

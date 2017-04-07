@@ -1,6 +1,9 @@
 package com.airmovil.profuturo.ti.retencion.Adapter;
 
+import android.app.Dialog;
+import android.app.Service;
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -10,14 +13,22 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsesores;
+import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.GerenteReporteSucursalesModel;
+
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -124,7 +135,7 @@ public class GerenteReporteSucursalesAdapter extends RecyclerView.Adapter{
         // inflate menu
         PopupMenu popup = new PopupMenu(mContext, view);
         MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.sub_menu_reporte_gerencia, popup.getMenu());
+        inflater.inflate(R.menu.sub_menu_reporte_sucursal, popup.getMenu());
         popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
         popup.show();
     }
@@ -150,17 +161,44 @@ public class GerenteReporteSucursalesAdapter extends RecyclerView.Adapter{
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.nav_sucursales:
-                    Toast.makeText(mContext, "Sucursales", Toast.LENGTH_SHORT).show();
+                case R.id.sub_menu_reporte_sucusal_nav_clientes:
+                    AppCompatActivity a2 = (AppCompatActivity) mRecyclerView.getContext();
+                    com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes f2 = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes();
+                    a2.getSupportFragmentManager().beginTransaction().replace(R.id.content_gerente, f2).addToBackStack(null).commit();
                     return true;
-                case R.id.nav_asesores:
-                    Toast.makeText(mContext, "Asesores", Toast.LENGTH_SHORT).show();
+                case R.id.sub_menu_reporte_sucusal_nav_asistencia:
+                    AppCompatActivity a3 = (AppCompatActivity) mRecyclerView.getContext();
+                    com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia f3 = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia();
+                    a3.getSupportFragmentManager().beginTransaction().replace(R.id.content_gerente, f3).addToBackStack(null).commit();
                     return true;
-                case R.id.nav_clientes:
-                    Toast.makeText(mContext, "Clientes", Toast.LENGTH_SHORT).show();
-                    return true;
-                case R.id.nav_enviar_a_email:
-                    Toast.makeText(mContext, "Email", Toast.LENGTH_SHORT).show();
+                case R.id.sub_menu_reporte_sucusal_email:
+                    final Dialog dialog = new Dialog(mContext);
+                    dialog.setContentView(R.layout.custom_layout);
+
+                    Button btn = (Button) dialog.findViewById(R.id.dialog_btn_enviar);
+                    Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
+
+                    // TODO: Spinner
+                    ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(mContext, R.layout.spinner_item_azul, Config.EMAIL);
+                    adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                    spinner.setAdapter(adapterSucursal);
+
+                    btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
+
+                            final String datoEditText = editText.getText().toString();
+                            //final String datoSpinner = spinner.getSelectedItem().toString();
+
+                            InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Service.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                            Config.msjTime(mContext, "Enviando", "Se ha enviado el mensaje al destino", 4000);
+                            dialog.dismiss();
+
+                        }
+                    });
+                    dialog.show();
                     return true;
                 default:
             }
@@ -179,19 +217,19 @@ public class GerenteReporteSucursalesAdapter extends RecyclerView.Adapter{
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView campoLetra, campoIdSucursal, campoConCita, campoSinCita, campoEmitidas, campoNoEmitidas, campoSaldoEmitido, campoSaldoNoEmitido;
-        public Button btn;
+        public TextView btn;
         public CardView cardView;
         public MyViewHolder(View view){
             super(view);
             campoLetra = (TextView) view.findViewById(R.id.gfrsl_tv_letra);
-            campoIdSucursal = (TextView) view.findViewById(R.id.afrcl_tv_id_sucursal);
+            campoIdSucursal = (TextView) view.findViewById(R.id.gfrsl_tv_id_sucursal);
             campoConCita = (TextView) view.findViewById(R.id.gfrsl_tv_con_cita);
             campoSinCita = (TextView) view.findViewById(R.id.gfrsl_tv_sin_cita);
             campoEmitidas = (TextView) view.findViewById(R.id.gfrsl_tv_emitidas);
             campoNoEmitidas = (TextView) view.findViewById(R.id.gfrsl_tv_no_emitidas);
             campoSaldoEmitido = (TextView) view.findViewById(R.id.gfrsl_tv_saldos_emitido);
             campoSaldoNoEmitido = (TextView) view.findViewById(R.id.gfrsl_tv_saldos_no_emitido);
-            btn = (Button) view.findViewById(R.id.gfrcl_btn_detalles);
+            btn = (TextView) view.findViewById(R.id.gfrsl_tv_menu);
             cardView = (CardView) view.findViewById(R.id.gfrsl_cv);
         }
     }

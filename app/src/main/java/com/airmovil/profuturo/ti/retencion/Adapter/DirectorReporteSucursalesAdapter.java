@@ -161,11 +161,6 @@ public class DirectorReporteSucursalesAdapter extends RecyclerView.Adapter{
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.sub_menu_reporte_sucusal_nav_asesores:
-                    AppCompatActivity asesores = (AppCompatActivity) mRecyclerView.getContext();
-                    ReporteAsesores ReporteAsesores = new ReporteAsesores();
-                    asesores.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, ReporteAsesores).addToBackStack(null).commit();
-                    return true;
                 case R.id.sub_menu_reporte_sucusal_nav_clientes:
                     AppCompatActivity clientes = (AppCompatActivity) mRecyclerView.getContext();
                     ReporteClientes fragmentoClientes = new ReporteClientes();
