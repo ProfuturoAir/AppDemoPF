@@ -220,12 +220,18 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
                             EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
 
                             final String datoEditText = editText.getText().toString();
-                            //final String datoSpinner = spinner.getSelectedItem().toString();
+                            Connected connected = new Connected();
+                            if(connected.estaConectado(mContext)){
 
-                            InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Service.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-                            Config.msjTime(mContext, "Enviando", "Se ha enviado el mensaje al destino", 4000);
-                            dialog.dismiss();
+                                InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Service.INPUT_METHOD_SERVICE);
+                                imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                                Config.msjTime(mContext, "Enviando", "Se ha enviado el mensaje al destino", 4000);
+                                dialog.dismiss();
+                            }else{
+                                Config.msj(mContext,"Error conexión", "Por favor, revisa tu conexión a internet");
+                                dialog.dismiss();
+                            }
+                            //final String datoSpinner = spinner.getSelectedItem().toString()
 
                         }
                     });

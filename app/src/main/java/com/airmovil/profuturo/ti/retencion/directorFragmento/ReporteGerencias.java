@@ -280,6 +280,7 @@ public class ReporteGerencias extends Fragment {
                             Config.msjTime(getContext(), "Mensaje datos", "Se está enviado los datos a " + datoEditText + "@profuturo.com", 8000);
                         }else{
                             Config.msj(getContext(), "Error conexión", "Por favor, revisa tu conexión a internet");
+                            dialog.dismiss();
                         }
 
 
@@ -375,7 +376,11 @@ public class ReporteGerencias extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        loading.dismiss();
+                        try{
+                            loading.dismiss();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
 
                         Connected connected = new Connected();
                         if(connected.estaConectado(getContext())){
