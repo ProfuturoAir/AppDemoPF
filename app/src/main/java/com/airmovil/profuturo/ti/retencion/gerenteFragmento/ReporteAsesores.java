@@ -1,8 +1,11 @@
 package com.airmovil.profuturo.ti.retencion.gerenteFragmento;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,17 +16,23 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteAsesoresAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteAsesoresAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
@@ -54,8 +63,8 @@ import java.util.Map;
 public class ReporteAsesores extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM1 = "parametro1";
+    private static final String ARG_PARAM2 = "parametro2";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -67,6 +76,8 @@ public class ReporteAsesores extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private RecyclerView.Adapter recyclerViewAdapter;
+
+    private InputMethodManager imm;
 
     // TODO: View, sessionManager, datePickerDialog
     private View rootView;
@@ -128,16 +139,19 @@ public class ReporteAsesores extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
-        tvFecha = (TextView) rootView.findViewById(R.id.gfra_tv_fecha);
-        tvEmitidas = (TextView) rootView.findViewById(R.id.gfra_tv_emitidas);
-        tvNoEmitidas = (TextView) rootView.findViewById(R.id.gfra_tv_no_emitidas);
-        tvSaldoEmitido = (TextView) rootView.findViewById(R.id.gfra_tv_saldo_emitido);
-        tvSaldoNoEmitido = (TextView) rootView.findViewById(R.id.gfra_tv_saldo_no_emitido);
-        etAsesor = (EditText) rootView.findViewById(R.id.gfra_et_asesor);
-        tvTotalResultados = (TextView) rootView.findViewById(R.id.gfra_tv_total_registros);
-        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.gfra_tv_fecha_rango1);
-        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.gfra_tv_fecha_rango2);
-        btnBuscar = (Button) rootView.findViewById(R.id.gfra_btn_buscar);
+        tvFecha = (TextView) rootView.findViewById(R.id.gfraa_tv_fecha);
+        tvEmitidas = (TextView) rootView.findViewById(R.id.gfraa_tv_emitidas);
+        tvNoEmitidas = (TextView) rootView.findViewById(R.id.gfraa_tv_no_emitidas);
+        tvSaldoEmitido = (TextView) rootView.findViewById(R.id.gfraa_tv_saldo_emitido);
+        tvSaldoNoEmitido = (TextView) rootView.findViewById(R.id.gfraa_tv_saldo_no_emitido);
+        etAsesor = (EditText) rootView.findViewById(R.id.gfraa_et_asesor);
+        tvTotalResultados = (TextView) rootView.findViewById(R.id.gfraa_tv_total_registros);
+        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.gfraa_tv_fecha_rango1);
+        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.gfraa_tv_fecha_rango2);
+        btnBuscar = (Button) rootView.findViewById(R.id.gfraa_btn_buscar);
+
+        // TODO: ocultar teclado
+        imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
 
         // TODO: fechas
         Map<String, Integer> fechaDatos = Config.dias();
@@ -146,9 +160,20 @@ public class ReporteAsesores extends Fragment {
         mDay   = fechaDatos.get("dia");
 
         if(getArguments() != null){
-            fechaIni = getArguments().getString(ARG_PARAM1);
-            fechaFin = getArguments().getString(ARG_PARAM2);
-            tvFecha.setText(fechaIni+" - "+fechaFin);
+            fechaIni = getArguments().getString(ARG_PARAM1).trim();
+            fechaFin = getArguments().getString(ARG_PARAM2).trim();
+            if(fechaFin.equals("") && fechaIni.equals("")){
+                Map<String, String> fechas = Config.fechas(1);
+                fechaIni = fechas.get("fechaIni");
+                fechaMostrar = fechaIni;
+                tvFecha.setText(fechaMostrar);
+            }else if(fechaFin.equals("")){
+                tvFecha.setText(fechaIni);
+            }else if(fechaIni.matches("")){
+                tvFecha.setText(fechaFin);
+            }else{
+                tvFecha.setText(fechaIni + " - " + fechaFin);
+            }
         }else {
             Map<String, String> fechas = Config.fechas(1);
             fechaFin = fechas.get("fechaFin");
@@ -164,7 +189,7 @@ public class ReporteAsesores extends Fragment {
         getDatos1 = new ArrayList<>();
 
         // TODO: Recycler
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.gfra_rv_lista);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.gfraa_rv_lista);
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
@@ -175,19 +200,93 @@ public class ReporteAsesores extends Fragment {
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String f1 = tvRangoFecha1.getText().toString();
-                String f2 = tvRangoFecha2.getText().toString();
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ReporteAsesores fragmento = ReporteAsesores.newInstance(
-                        (fechaIni.equals("") ? "" : fechaIni),
-                        (fechaFin.equals("") ? "" : fechaFin),
-                        rootView.getContext()
-                );
-                borrar.onDestroy();
-                ft.remove(borrar);
-                ft.replace(R.id.content_gerente, fragmento);
-                ft.addToBackStack(null);
-                ft.commit();
+
+                Connected connected = new Connected();
+                if(connected.estaConectado(getContext())){
+                    String f1 = tvRangoFecha1.getText().toString();
+                    String f2 = tvRangoFecha2.getText().toString();
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                    ReporteAsesores fragmento = ReporteAsesores.newInstance(f1,f2, rootView.getContext());
+                    borrar.onDestroy();
+                    ft.remove(borrar);
+                    ft.replace(R.id.content_gerente, fragmento);
+                    ft.addToBackStack(null);
+                    ft.commit();
+
+                    // TODO: ocultar teclado
+                    imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+                }else{
+                    android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                    dlgAlert.setTitle("Error en conexión");
+                    dlgAlert.setMessage("Por favor, revisa tu conexión a internet...");
+                    dlgAlert.setCancelable(true);
+                    dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    dlgAlert.create().show();
+                }
+
+            }
+        });
+
+
+
+        etAsesor.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (event != null&& (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                    InputMethodManager in = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+                    in.hideSoftInputFromWindow(etAsesor.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                return false;
+            }
+        });
+
+        tvTotalResultados.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Dialog dialog = new Dialog(getContext());
+                dialog.setContentView(R.layout.custom_layout);
+
+                Button btn = (Button) dialog.findViewById(R.id.dialog_btn_enviar);
+                Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
+
+                // TODO: Spinner
+                ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item_azul, Config.EMAIL);
+                adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                spinner.setAdapter(adapterSucursal);
+
+
+
+                btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
+
+                        final String datoEditText = editText.getText().toString();
+                        //final String datoSpinner = spinner.getSelectedItem().toString();
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
+                        Connected connected = new Connected();
+                        if(connected.estaConectado(getContext())){
+                            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                            Config.msjTime(getContext(), "Mensaje datos1", "Se está enviado los datos a " + datoEditText + "@profuturo.com", 8000);
+                            dialog.dismiss();
+                        }else{
+                            Config.msj(getContext(), "Error conexión", "Por favor, revisa tu conexión a internet");
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                dialog.show();
             }
         });
     }
@@ -277,8 +376,49 @@ public class ReporteAsesores extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        loading.dismiss();
-                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                        try{
+                            loading.dismiss();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        Connected connected = new Connected();
+                        if(connected.estaConectado(getContext())){
+                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                            dlgAlert.setTitle("Error");
+                            dlgAlert.setMessage("Se ha encontrado un problema, deseas volver intentarlo");
+                            dlgAlert.setCancelable(true);
+                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    sendJson(true);
+                                }
+                            });
+                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            dlgAlert.create().show();
+                        }else{
+                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                            dlgAlert.setTitle("Error de conexión");
+                            dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
+                            dlgAlert.setCancelable(true);
+                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //sendJson(true);
+                                }
+                            });
+                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            dlgAlert.create().show();
+                        }
                     }
                 }) {
             @Override
@@ -306,6 +446,7 @@ public class ReporteAsesores extends Fragment {
             JSONObject objSaldo = obj.getJSONObject("saldo");
             saldoEmitido = objSaldo.getInt("saldoRetenido");
             saldoNoEmitido = objSaldo.getInt("saldoNoRetenido");
+            totalFilas = 50;
             filas = obj.getInt("filasTotal");
             for(int i = 0; i < array.length(); i++){
                 GerenteReporteAsesoresModel getDatos2 = new GerenteReporteAsesoresModel();
