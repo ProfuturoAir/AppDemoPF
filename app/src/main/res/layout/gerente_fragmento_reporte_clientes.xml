@@ -1,10 +1,11 @@
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/white"
     android:orientation="vertical"
-    tools:context="com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes">
+    android:background="@android:color/white"
+    tools:context="com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientes">
     <TextView style="@style/tituloProceso" android:text="Clientes " />
     <TextView android:id="@+id/gfrc_tv_fecha" style="@style/fecha"/>
 
@@ -23,13 +24,20 @@
 
         <LinearLayout style="@style/linearLayoutHorizontal">
             <LinearLayout style="@style/contenedorSpinner">
+                <Spinner android:id="@+id/gfrc_spinner_gerencia"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:backgroundTint="@color/colorWhite"/>
+                <TextView style="@style/linea"/>
+            </LinearLayout>
+            <LinearLayout style="@style/contenedorSpinner">
                 <Spinner android:id="@+id/gfrc_spinner_sucursal"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:backgroundTint="@color/colorWhite"/>
                 <TextView style="@style/linea"/>
             </LinearLayout>
-            <EditText android:id="@+id/gfrc_et_asesor" style="@style/busquedaShort"/>
+            <EditText android:id="@+id/gfrc_et_asesor" style="@style/busqueda" android:inputType="number" android:hint="Ingresa un ID Asesor"/>
         </LinearLayout>
 
         <LinearLayout style="@style/linearLayoutHorizontal">
@@ -59,13 +67,14 @@
     </LinearLayout>
 
     <LinearLayout style="@style/cabeceraLista">
-        <TextView style="@style/tituloLista" android:text="@string/texto_asesores"/>
+        <TextView style="@style/tituloLista" android:text="@string/texto_gerencias"/>
         <TextView android:id="@+id/gfrc_tv_registros" style="@style/campoCantidadesMail"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         android:layout_weight=".6">
 
         <android.support.v7.widget.RecyclerView

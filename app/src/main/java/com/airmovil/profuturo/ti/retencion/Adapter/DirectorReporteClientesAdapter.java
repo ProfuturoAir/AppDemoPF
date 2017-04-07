@@ -160,7 +160,7 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
         // inflate menu
         PopupMenu popup = new PopupMenu(mContext, view);
         MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.sub_menu_reporte_clientes, popup.getMenu());
+        inflater.inflate(R.menu.sub_menu_reporte_gerencia, popup.getMenu());
         popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
         popup.show();
     }
