@@ -3,6 +3,8 @@ package com.airmovil.profuturo.ti.retencion.Adapter;
 import android.app.Dialog;
 import android.app.Service;
 import android.content.Context;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -22,6 +24,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Director;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.ReporteClientesDetalle;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientesDetalles;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteSucursales;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
@@ -102,6 +108,12 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
             final String inicial = Character.toString(dato);
 
             myholder.campoLetra.setText(inicial);
+            myholder.cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    fragmentJumpDatosUsuario("", v);
+                }
+            });
 
             myholder.btn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -111,6 +123,23 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
             });
         } else{
             ((LoadingViewHolder) holder).progressBar.setIndeterminate(true);
+        }
+    }
+
+    public void fragmentJumpDatosUsuario(String idClienteCuenta, View view) {
+        Fragment fragmento = new ReporteClientesDetalle();
+        if (view.getContext() == null)
+            return;
+        if (view.getContext() instanceof Director) {
+            Director director = (Director) view.getContext();
+
+            final Connected conected = new Connected();
+            if(conected.estaConectado(view.getContext())) {
+
+            }else{
+                Config.msj(view.getContext(),"Error conexión", "Sin Conexion por el momento.Cliente P-1.1.3");
+            }
+            director.switchContent(fragmento, idClienteCuenta);
         }
     }
 
@@ -157,6 +186,12 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
+                case R.id.sub_menu_reporte_clientes_detalles:
+                    AppCompatActivity ReporteClientesDetalles = (AppCompatActivity) mRecyclerView.getContext();
+                    ReporteClientesDetalles fragmentoClienteDetalles = new ReporteClientesDetalles();
+                    //Create a bundle to pass data, add data, set the bundle to your fragment and:
+                    ReporteClientesDetalles.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoClienteDetalles).addToBackStack(null).commit();
+                    return true;
                 case R.id.sub_menu_reporte_clientes_email:
                     final Dialog dialog = new Dialog(mContext);
                     dialog.setContentView(R.layout.custom_layout);

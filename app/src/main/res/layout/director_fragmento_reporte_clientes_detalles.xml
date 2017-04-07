@@ -41,26 +41,25 @@
         <LinearLayout style="@style/contenedorDatos">
             <!-- TODO: Nombre del asesor y dato a mostrar-->
             <TextView style="@style/tituloDato"  android:text="@string/texto_nombre" />
-            <TextView style="@style/datoMuestra" android:id="@+id/afda_tv_nombre_cliente" android:text="Nombre de prueba cliente"/>
+            <TextView style="@style/datoMuestra" android:id="@+id/tv_clientes_detalles1" android:text="Nombre de prueba cliente"/>
             <!-- TODO: Numero de cuenta y dato a mostrar-->
             <TextView style="@style/tituloDato" android:text="@string/texto_numero_cuenta" />
-            <TextView style="@style/datoMuestra" android:id="@+id/afda_tv_numero_cuenta_cliente" android:text="312312323"/>
+            <TextView style="@style/datoMuestra" android:id="@+id/tv_clientes_detalles2" android:text="312312323"/>
             <!-- TODO: NSS y dato a mostrar-->
             <TextView style="@style/tituloDato" android:text="NSS o CURP" />
-            <TextView style="@style/datoMuestra" android:id="@+id/afda_tv_nss_cliente" android:text="NSS: NRDAS12342 CURP: CURP1234562"/>
+            <TextView style="@style/datoMuestra" android:id="@+id/tv_clientes_detalles3" android:text="NSS: NRDAS12342 CURP: CURP1234562"/>
             <!-- TODO: CURP y dato a mostrar-->
             <TextView style="@style/tituloDato" android:text="Estatus" />
-            <TextView style="@style/datoMuestra" android:id="@+id/afda_tv_curp_cliente" android:text="Retenido"/>
+            <TextView style="@style/datoMuestra" android:id="@+id/tv_clientes_detalles4" android:text="Retenido"/>
             <!-- TODO: Fecha y dato a mostrar-->
             <TextView style="@style/tituloDato" android:text="@string/texto_saldo" />
-            <TextView style="@style/datoMuestra" android:id="@+id/afda_tv_fecha_cliente" android:text="$ 123,653.12" />
+            <TextView style="@style/datoMuestra" android:id="@+id/tv_clientes_detalles5" android:text="$ 123,653.12" />
             <!-- TODO: Saldo y dato a mostrar-->
             <TextView style="@style/tituloDato" android:text="@string/texto_sucursal" />
-            <TextView style="@style/datoMuestra" android:id="@+id/afda_tv_saldo_cliente" android:text="Sucursal Sur"/>
-
+            <TextView style="@style/datoMuestra" android:id="@+id/tv_clientes_detalles6" android:text="Sucursal Sur"/>
             <!-- TODO: Saldo y dato a mostrar-->
             <TextView style="@style/tituloDato" android:text="@string/texto_horario" />
-            <TextView style="@style/datoMuestra"  android:text="Cita: 12:00"/>
+            <TextView style="@style/datoMuestra" android:id="@+id/tv_clientes_detalles7"  android:text="Cita: 12:00"/>
         </LinearLayout>
     </LinearLayout>
 

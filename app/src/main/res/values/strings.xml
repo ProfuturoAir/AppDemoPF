@@ -69,6 +69,7 @@
     <string name="texto_sucursales">Sucursales</string>
     <string name="texto_enviar_email">Enviar a email</string>
     <string name="texto_asistencia">Asistencia</string>
+    <string name="texto_horario">Horario de Atención</string>
 
 
 </resources>
