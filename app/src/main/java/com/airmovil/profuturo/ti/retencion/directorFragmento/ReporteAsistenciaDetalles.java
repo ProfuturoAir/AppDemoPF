@@ -153,23 +153,27 @@ public class ReporteAsistenciaDetalles extends Fragment {
         mDay   = fechaDatos.get("dia");
         Map<String, String> fechas = Config.fechas(1);
         String fechaMuestra = fechas.get("fechaIni");
-        fechaIni = getArguments().getString(ARG_PARAM1);
-        fechaFin = getArguments().getString(ARG_PARAM2);
-        if(getArguments() != null){
-            Log.d("getArguments","fechas: " + fechaIni + " " + fechaFin);
-            if(fechaIni == null && fechaFin == null){
-                Log.d("datos Vacios", "FechaInicio" + fechaIni);
+        try{
+            fechaIni = getArguments().getString(ARG_PARAM1);
+            fechaFin = getArguments().getString(ARG_PARAM2);
+            if(getArguments() != null){
+                Log.d("getArguments","fechas: " + fechaIni + " " + fechaFin);
+                if(fechaIni == null && fechaFin == null){
+                    Log.d("datos Vacios", "FechaInicio" + fechaIni);
+                    tvFecha.setText(fechaMuestra);
+                }else if(fechaIni != null && fechaFin != null){
+                    tvFecha.setText(fechaIni + "  " + fechaFin);
+                }else{
+                    tvFecha.setText(fechaMuestra);
+                }
+            }else if(fechaIni == "" && fechaFin == ""){
                 tvFecha.setText(fechaMuestra);
-            }else if(fechaIni != null && fechaFin != null){
-                tvFecha.setText(fechaIni + "  " + fechaFin);
+                Log.d("vacios getParams","fechas: " + fechaIni + " " + fechaFin);
             }else{
-                tvFecha.setText(fechaMuestra);
+                Log.d("else getParams","fechas: " + fechaIni + " " + fechaFin);
             }
-        }else if(fechaIni == "" && fechaFin == ""){
-            tvFecha.setText(fechaMuestra);
-            Log.d("vacios getParams","fechas: " + fechaIni + " " + fechaFin);
-        }else{
-            Log.d("else getParams","fechas: " + fechaIni + " " + fechaFin);
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
         // TODO: fechas dialog

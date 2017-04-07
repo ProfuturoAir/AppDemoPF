@@ -1,21 +1,35 @@
 package com.airmovil.profuturo.ti.retencion.Adapter;
 
+import android.app.Dialog;
+import android.app.Service;
 import android.content.Context;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsesores;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistencia;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistenciaDetalles;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientes;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteSucursales;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
@@ -104,8 +118,84 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
                 }
             });
 
+            myholder.btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    surgirMenu(v);
+                }
+            });
+
         } else {
             ((LoadingViewHolder) holder).progressBar.setIndeterminate(true);
+        }
+    }
+
+    /**
+     * Muesta el menu cuando se hace click en los 3 botonos de la lista
+     */
+    private void surgirMenu(View view) {
+        // inflate menu
+        PopupMenu popup = new PopupMenu(mContext, view);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.sub_menu_reporte_asistencia, popup.getMenu());
+        popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
+        popup.show();
+    }
+
+    /**
+     * escucha el popup al dar click
+     */
+    class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
+
+        public MyMenuItemClickListener() {
+        }
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.sub_menu_reporte_asistencia_nav_detalle_asistencia:
+                    AppCompatActivity AsistenciaDetalles = (AppCompatActivity) mRecyclerView.getContext();
+                    ReporteAsistenciaDetalles fragmentoAsistenciaDetalles = new ReporteAsistenciaDetalles();
+                    //Create a bundle to pass data, add data, set the bundle to your fragment and:
+                    AsistenciaDetalles.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoAsistenciaDetalles).addToBackStack(null).commit();
+                    return true;
+                case R.id.sub_menu_reporte_asistencia_email:
+                    final Dialog dialog = new Dialog(mContext);
+                    dialog.setContentView(R.layout.custom_layout);
+
+                    Button btn = (Button) dialog.findViewById(R.id.dialog_btn_enviar);
+                    Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
+
+                    // TODO: Spinner
+                    ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(mContext, R.layout.spinner_item_azul, Config.EMAIL);
+                    adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                    spinner.setAdapter(adapterSucursal);
+
+                    btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
+
+                            final String datoEditText = editText.getText().toString();
+                            Connected connected = new Connected();
+                            if(connected.estaConectado(mContext)){
+
+                                InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Service.INPUT_METHOD_SERVICE);
+                                imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                                Config.msjTime(mContext, "Enviando", "Se ha enviado el mensaje al destino", 4000);
+                                dialog.dismiss();
+                            }else{
+                                Config.msj(mContext,"Error conexión", "Por favor, revisa tu conexión a internet");
+                                dialog.dismiss();
+                            }
+                            //final String datoSpinner = spinner.getSelectedItem().toString()
+
+                        }
+                    });
+                    dialog.show();
+                    return true;
+                default:
+            }
+            return false;
         }
     }
 
@@ -155,14 +245,14 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
     public class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView campoLetra, campoNombreAsesor, campoNumeroCuentaAsesor, campoSucursalAsesor;
         public CardView cardView;
-        public Button btn;
+        public TextView btn;
         public MyViewHolder(View view){
             super(view);
             campoLetra = (TextView) view.findViewById(R.id.ddfrasl_tv_letra);
             campoNombreAsesor = (TextView) view.findViewById(R.id.ddfrasl_tv_nombre_asesor);
             campoNumeroCuentaAsesor = (TextView) view.findViewById(R.id.ddfrasl_tv_numero_empleado_asesor);
             campoSucursalAsesor = (TextView) view.findViewById(R.id.ddfrasl_tv_numero_sucursal_asesor);
-            btn = (Button) view.findViewById(R.id.ddfrasl_btn_detalles);
+            btn = (TextView) view.findViewById(R.id.ddfrasl_btn_detalles);
             cardView = (CardView) view.findViewById(R.id.ddfrasl_cv);
         }
     }
