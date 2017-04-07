@@ -442,7 +442,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
             onTime = asistencia.getInt("onTime");
             retardo = asistencia.getInt("retardo");
             inasistencia = asistencia.getInt("inasistencia");
-            filas = obj.getInt("filasTotal");
+            totalFilas = obj.getInt("filasTotal");
             JSONArray registroHorario = obj.getJSONArray("RegistroHorario");
             for(int i = 0; i < registroHorario.length(); i++){
                 DirectorReporteAsistenciaDetalleModel getDatos2 = new DirectorReporteAsistenciaDetalleModel();
@@ -463,7 +463,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
         tvAtiempo.setText("" + onTime);
         tvRetardo.setText("" + retardo);
         tvSinAsistencia.setText("" + inasistencia);
-
+        tvResultados.setText("" + totalFilas + " ");
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         adapter = new DirectorReporteAsistenciaDetalleAdapter(rootView.getContext(), getDatos1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());

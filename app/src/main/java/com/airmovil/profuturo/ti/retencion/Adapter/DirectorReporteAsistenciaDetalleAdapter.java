@@ -80,7 +80,7 @@ public class DirectorReporteAsistenciaDetalleAdapter extends RecyclerView.Adapte
             final DirectorReporteAsistenciaDetalleModel lista = list.get(position);
             final MyViewHolder myholder = (MyViewHolder) holder;
 
-            myholder.campoFechaDetalle.setText(lista.getFechaAsistencia());
+            myholder.campoFechaDetalle.setText("01-12-2017");
 
             /*myholder.campoNombre.setText(lista.getClienteNombre());
             myholder.campoCuenta.setText(lista.getClienteCuenta());
