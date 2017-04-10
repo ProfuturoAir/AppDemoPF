@@ -102,11 +102,13 @@ public class DatosAsesor extends Fragment {
         btnContinuar = (Button) rootView.findViewById(R.id.afda_btn_continuar);
         btnCancelar = (Button) rootView.findViewById(R.id.afda_btn_cancelar);
 
+        // TODO: Fragmentos
+        final Fragment fragmentoDatosCliente = new DatosCliente();
+        final FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
         // TODO: obteniendo el numero del usuario
         HashMap<String, String> hashMap = sessionManager.getUserDetails();
         String numeroUsuario = hashMap.get(SessionManager.ID);
-
-        Log.d(TAG, "-->USUARIO " + numeroUsuario.toString());
 
         sendJson(true);
 
@@ -115,13 +117,7 @@ public class DatosAsesor extends Fragment {
             public void onClick(View v) {
                 Connected connected = new Connected();
                 if(connected.estaConectado(getContext())){
-                    Fragment fragmentoGenerico = new DatosCliente();
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    fragmentManager
-                            .beginTransaction()//.setCustomAnimations(android.R.anim.slide_out_right,android.R.anim.slide_in_left)
-                            .replace(R.id.content_asesor, fragmentoGenerico).commit();
-
-
+                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoDatosCliente).commit();
                 }else {
 
                     android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
@@ -133,9 +129,7 @@ public class DatosAsesor extends Fragment {
                         public void onClick(DialogInterface dialog, int which) {
                             Fragment fragmentoGenerico = new DatosCliente();
                             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                            fragmentManager
-                                    .beginTransaction()//.setCustomAnimations(android.R.anim.slide_out_right,android.R.anim.slide_in_left)
-                                    .replace(R.id.content_asesor, fragmentoGenerico).commit();
+                            fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                         }
                     });
                     dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -271,10 +265,19 @@ public class DatosAsesor extends Fragment {
         else
             loading = null;
 
+        HashMap<String, String> datos = sessionManager.getUserDetails();
+        String numeroUsuario = datos.get(SessionManager.ID);
+
         JSONObject obj = new JSONObject();
         // TODO: Formacion del JSON request
         JSONObject rqt = new JSONObject();
-        JSONObject filtros = new JSONObject();
+        try{
+            rqt.put("usuario", numeroUsuario);
+            obj.put("rqt", rqt);
+            Log.d("DatosAsesor", ":rqt -->" + obj);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
 
         //Creating a json array request
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_DATOS_ASESOR, obj,
@@ -354,13 +357,35 @@ public class DatosAsesor extends Fragment {
         String status = "";
         String statusText ="";
         String sucursal ="";
+
         try{
             status = obj.getString("status");
-            Log.d(TAG, status.toString());
-            JSONObject jsonAsesor = obj.getJSONObject("asesor");
-            nombreCliente = jsonAsesor.getString("nombre");
-            numeroCuenta = jsonAsesor.getString("numeroEmpleado");
-            sucursal = jsonAsesor.getString("nombreSucursal");
+            statusText = obj.getString("statusText");
+            if(Integer.parseInt(status) == 200){
+                Log.d(TAG, status.toString());
+                JSONObject jsonAsesor = obj.getJSONObject("asesor");
+                nombreCliente = jsonAsesor.getString("nombre");
+                numeroCuenta = jsonAsesor.getString("numeroEmpleado");
+                sucursal = jsonAsesor.getString("nombreSucursal");
+            }else{
+                android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                dlgAlert.setTitle(status);
+                dlgAlert.setMessage(statusText);
+                dlgAlert.setCancelable(true);
+                dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        sendJson(true);
+                    }
+                });
+                dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                dlgAlert.create().show();
+            }
         }catch (JSONException e){
             e.printStackTrace();
         }

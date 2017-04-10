@@ -29,6 +29,7 @@ import com.airmovil.profuturo.ti.retencion.asesorFragmento.DatosAsesor;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.DatosCliente;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.Encuesta1;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.Encuesta2;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.Escaner;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.Firma;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.Inicio;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.ReporteClientes;
@@ -198,8 +199,9 @@ public class Asesor extends AppCompatActivity{
         //Fragment f = getSupportFragmentManager().findFragmentById(R.id.a_content);
 
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.content_asesor);
-
-        if(f instanceof DatosCliente){
+        if(f instanceof DatosAsesor){
+            checkProccess = true;
+        }else if(f instanceof DatosCliente){
             Log.d("Envia","a patir datos Cliente");
             global = "1.1.3.3";
             checkProccess = true;
@@ -331,30 +333,17 @@ public class Asesor extends AppCompatActivity{
 
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-
-        Log.d("ACTIVITY","ENTRA EN LA ACTIVIDAD");
         switch (requestCode) {
-
             case REQUEST_CODE_OPENER:
-
                 if (resultCode == RESULT_OK) {
-
-                    mFileId = (DriveId) data.getParcelableExtra(
-                            OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
-
+                    mFileId = (DriveId) data.getParcelableExtra(OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
                     Log.e("file id", mFileId.getResourceId() + " ");
-
                     url = "https://drive.google.com/open?id="+ mFileId.getResourceId();
-
-                    //enviarURL(url);
-                    //change_fragment=true;
                     Intent i = new Intent(Intent.ACTION_VIEW);
                     i.setData(Uri.parse(url));
                     startActivity(i);
                 }
-
                 break;
-
             default:
                 super.onActivityResult(requestCode, resultCode, data);
                 break;
@@ -364,12 +353,15 @@ public class Asesor extends AppCompatActivity{
     public void switchContent(Fragment frag, String idClienteCuenta) {
         Bundle bundle=new Bundle();
         bundle.putString("idClienteCuenta",idClienteCuenta);
-        //Fragment fragment=new Fragment();
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_asesor, frag, frag.toString());
         ft.addToBackStack(null);
         ft.commit();
+    }
+
+    public void switchContent1(Fragment fragment, String datos){
+
     }
 
     public void salirFragment(Context context){
@@ -402,10 +394,10 @@ public class Asesor extends AppCompatActivity{
                 }else if(f instanceof Firma){
                     global = "1.1.3.7";
                     Log.d("Envia","a patir Firma");
-                }/*else if(f instanceof Documento){
+                }else if(f instanceof Escaner){
                     global = "1.1.3.8";
                     Log.d("Envia","a patir Documento");
-                }*/
+                }
 
                 Log.d("Estas en este fragment","FF: "+f);
 

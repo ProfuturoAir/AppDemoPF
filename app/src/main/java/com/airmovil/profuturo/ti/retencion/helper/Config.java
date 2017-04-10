@@ -144,6 +144,14 @@ public class Config extends Activity {
         return datos;
     }
 
+    public static final Map<String, String> usuario(Context context){
+        SessionManager sessionManager = new SessionManager(context.getApplicationContext());
+        HashMap<String, String> datos = sessionManager.getUserDetails();
+        datos.get(SessionManager.NOMBRE);
+        datos.get(SessionManager.ID);
+        return datos;
+    }
+
     /**
      * @param numero
      * @return el numero entre el que se generara el listado

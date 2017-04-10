@@ -21,6 +21,7 @@ import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -54,10 +55,12 @@ public class DatosCliente extends Fragment {
     private String mParam2;
 
     // TODO: XML
-    private TextView tvClienteNombre, tvClienteNumeroCuenta, tvClienteNSS,
-            tvClienteCURP, tvClienteFecha, tvClienteSaldo;
+    private TextView tvClienteNombre, tvClienteNumeroCuenta, tvClienteNSS, tvClienteCURP, tvClienteFecha, tvClienteSaldo;
     private Button btnContinuar, btnCancelar;
     private View rootView;
+
+    // TODO: Config
+    Map<String, String> usuario;
 
     private OnFragmentInteractionListener mListener;
 
@@ -74,7 +77,7 @@ public class DatosCliente extends Fragment {
      * @return A new instance of fragment DatosCliente.
      */
     // TODO: Rename and change types and number of parameters
-    public static DatosCliente newInstance(String param1, String param2) {
+    public static DatosCliente newInstance(String param1, String param2, Context context) {
         DatosCliente fragment = new DatosCliente();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
@@ -105,7 +108,18 @@ public class DatosCliente extends Fragment {
         btnContinuar = (Button) rootView.findViewById(R.id.afda_btn_continuar);
         btnCancelar = (Button) rootView.findViewById(R.id.afda_btn_cancelar);
 
+        // TODO: Config
+        usuario = Config.usuario(getContext());
+
         final Fragment borrar = this;
+
+        if(getArguments() != null){
+            mParam1 = getArguments().getString(ARG_PARAM1).trim();
+            mParam2 = getArguments().getString(ARG_PARAM2).trim();
+            Log.d("Datostos", "paramentro 1" + mParam1 + " parametro 2" + mParam2);
+        }else{
+            Log.d("NADA", "nada");
+        }
 
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,11 +132,8 @@ public class DatosCliente extends Fragment {
                 }
                 Fragment fragmentoGenerico = new Encuesta1();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                if (fragmentoGenerico != null) {
-                    fragmentManager
-                            .beginTransaction()//.setCustomAnimations(android.R.anim.slide_out_right,android.R.anim.slide_in_left)
-                            .replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();
-                }
+                fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();
+
             }
         });
 
@@ -241,13 +252,14 @@ public class DatosCliente extends Fragment {
     private void sendJson(final boolean primerPeticion) {
 
         JSONObject obj = new JSONObject();
+
         try {
             // TODO: Formacion del JSON request
 
             JSONObject rqt = new JSONObject();
             rqt.put("estatusTramite", 1133);
-            rqt.put("numeroCuenta", "302123698");
-            rqt.put("usuario", "3333");
+            rqt.put("numeroCuenta", "123123");
+            rqt.put("usuario", usuario.get(SessionManager.ID));
             obj.put("rqt", rqt);
             Log.d(TAG, "Primera peticion-->" + obj);
         } catch (JSONException e) {
@@ -260,9 +272,8 @@ public class DatosCliente extends Fragment {
                     @Override
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
-                        if (primerPeticion) {
+                        if (primerPeticion)
                             primerPaso(response);
-                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -338,30 +349,24 @@ public class DatosCliente extends Fragment {
             status = obj.getString("status");
             statusText = obj.getString("statusText");
 
-            switch (status){
-                case "200":
-                    JSONObject jsonCliente = obj.getJSONObject("cliente");
-                    Log.d(TAG, "--> JSON CLIENTE " + jsonCliente);
-                    nombre = jsonCliente.getString("nombre");
-                    cuenta = jsonCliente.getString("numeroCuenta");
-                    nss    = jsonCliente.getString("nss");
-                    curp   = jsonCliente.getString("curp");
-                    fechaConsulta = jsonCliente.getString("fecha_consulta");
-                    saldo = jsonCliente.getDouble("saldo");
+            if(Integer.parseInt(status) == 200){
+                JSONObject jsonCliente = obj.getJSONObject("cliente");
+                Log.d(TAG, "--> JSON CLIENTE " + jsonCliente);
+                nombre = jsonCliente.getString("nombre");
+                cuenta = jsonCliente.getString("numeroCuenta");
+                nss    = jsonCliente.getString("nss");
+                curp   = jsonCliente.getString("curp");
+                fechaConsulta = jsonCliente.getString("fecha_consulta");
+                saldo = jsonCliente.getDouble("saldo");
 
-                    tvClienteNombre.setText("" + nombre);
-                    tvClienteNumeroCuenta.setText("" + cuenta);
-                    tvClienteNSS.setText("" + nss);
-                    tvClienteCURP.setText("" + curp);
-                    tvClienteFecha.setText("" + fechaConsulta);
-                    tvClienteSaldo.setText("" + saldo);
-                    break;
-                case "400":
-                    Config.msj(getContext(), "Error", statusText);
-                    break;
-                case "404":
-                    Config.msj(getContext(), "Error", statusText);
-                    break;
+                tvClienteNombre.setText("" + nombre);
+                tvClienteNumeroCuenta.setText("" + cuenta);
+                tvClienteNSS.setText("" + nss);
+                tvClienteCURP.setText("" + curp);
+                tvClienteFecha.setText("" + fechaConsulta);
+                tvClienteSaldo.setText("" + saldo);
+            }else{
+                Config.msj(getContext(), "Error: " + status, statusText);
             }
         }catch (JSONException e){
             e.printStackTrace();
