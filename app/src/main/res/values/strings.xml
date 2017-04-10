@@ -71,5 +71,15 @@
     <string name="texto_asistencia">Asistencia</string>
     <string name="texto_horario">Horario de Atención</string>
 
+    <!-- TODO: Mensajes de dialog -->
+    <string name="error_conexion">Error de conexión</string>
+    <string name="error_json">Error en json</string>
+    <string name="error_datos">Error datos</string>
+    <string name="error_datos_vacios">Datos vacios</string>
+    <string name="msj_error_conexion">Por favor, revisa tu conexión a internet</string>
+    <string name="msj_error_json">Los datos no se han podido formar</string>
+    <string name="msj_error_fechas">Por favor, rellena los campos de fecha</string>
+    <string name="msj">mensaje</string>
+
 
 </resources>

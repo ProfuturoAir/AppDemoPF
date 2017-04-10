@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.IntegerRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -45,8 +46,8 @@ import java.util.Map;
 public class Inicio extends Fragment {
     // TODO: cambia el nombre de los argumentos de parámetros, elige los nombres que coinciden
     public static final String TAG = Inicio.class.getSimpleName();
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM1 = "parametro1";
+    private static final String ARG_PARAM2 = "parametro2";
     private String mParam1;
     private String mParam2;
 
@@ -71,6 +72,8 @@ public class Inicio extends Fragment {
     private String fechaFin = "";
     private String fechaMostrar = "";
     private String numeroUsuario;
+
+    private String f1, f2;
 
     public Inicio() {
         // Required empty public constructor
@@ -135,15 +138,28 @@ public class Inicio extends Fragment {
         mDay   = fechaDatos.get("dia");
 
         if(getArguments() != null){
-            fechaIni = getArguments().getString(ARG_PARAM1);
-            fechaFin = getArguments().getString(ARG_PARAM2);
-            tvFecha.setText(fechaIni+" - "+fechaFin);
+            fechaIni = getArguments().getString(ARG_PARAM1).trim();
+            fechaFin = getArguments().getString(ARG_PARAM2).trim();
+            if(fechaFin.equals("") && fechaIni.equals("")){
+                Map<String, String> fechas = Config.fechas(1);
+                fechaIni = fechas.get("fechaIni");
+                fechaMostrar = fechaIni;
+                tvFecha.setText(fechaMostrar);
+            }else if(fechaFin.equals("")){
+                tvFecha.setText(fechaIni);
+            }else if(fechaIni.matches("")){
+                tvFecha.setText(fechaFin);
+            }else{
+                tvFecha.setText(fechaIni + " - " + fechaFin);
+            }
+            sendJson(true, fechaIni, fechaFin);
         }else {
             Map<String, String> fechas = Config.fechas(1);
             fechaFin = fechas.get("fechaFin");
             fechaIni = fechas.get("fechaIni");
             fechaMostrar = fechaIni;
             tvFecha.setText(fechaMostrar);
+            sendJson(true, fechaIni, "");
         }
 
         tvInicial.setText(convertirATexto);
@@ -152,24 +168,20 @@ public class Inicio extends Fragment {
         rangoInicial();
         rangoFinal();
 
-        sendJson(true);
-
         final Fragment borrar = this;
+        //<editor-fold desc="Button filtro">
         btnFiltro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                String f1 = tvRangoFecha1.getText().toString();
-                String f2 = tvRangoFecha2.getText().toString();
+                f1 = tvRangoFecha1.getText().toString();
+                f2 = tvRangoFecha2.getText().toString();
 
-                if(f1.equals("Fecha Inicio1")||f2.equals("Fecha final")){
-                    Config.msj(v.getContext(),"Error de datos","Favor de introducir fechas para aplicar el filtro");
-                }else {
+                if (f1.isEmpty() || f2.isEmpty() ) {
+                    Config.msj(v.getContext(),getResources().getString(R.string.error_datos_vacios),getResources().getString(R.string.msj_error_fechas));
+                } else {
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    Inicio procesoDatosFiltroInicio = Inicio.newInstance(
-                            (fechaIni.equals("") ? "" : fechaIni),
-                            (fechaFin.equals("") ? "" : fechaFin),
-                            rootView.getContext()
+                    Inicio procesoDatosFiltroInicio = Inicio.newInstance(f1, f2, rootView.getContext()
                     );
                     borrar.onDestroy();
                     ft.remove(borrar);
@@ -181,11 +193,13 @@ public class Inicio extends Fragment {
                 }
             }
         });
+        //</editor-fold>
+
+        //sendJson(true, fechaIni, fechaFin);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.asesor_fragmento_inicio, container, false);
     }
@@ -235,6 +249,7 @@ public class Inicio extends Fragment {
         return enviarDatos;
     }
 
+    //<editor-fold desc="Fecha Inicial">
     private void rangoInicial(){
         tvRangoFecha1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -251,7 +266,9 @@ public class Inicio extends Fragment {
             }
         });
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Fecha final">
     private void rangoFinal(){
         tvRangoFecha2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -268,8 +285,10 @@ public class Inicio extends Fragment {
             }
         });
     }
+    //</editor-fold>
 
-    private void sendJson(final boolean primeraPeticion){
+
+    private void sendJson(final boolean primeraPeticion, final String f1, final String f2){
 
         final ProgressDialog loading;
         if (primeraPeticion)
@@ -277,14 +296,13 @@ public class Inicio extends Fragment {
         else
             loading = null;
 
-
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
         try{
             JSONObject periodo = new JSONObject();
             rqt.put("periodo", periodo);
-            periodo.put("fechaInicio", fechaIni);
-            periodo.put("fechaFin", fechaFin);
+            periodo.put("fechaInicio", f1);
+            periodo.put("fechaFin", f2);
             rqt.put("usuario", numeroUsuario);
             json.put("rqt", rqt);
             Log.d(TAG, "REQUEST -->" + json);
@@ -320,7 +338,7 @@ public class Inicio extends Fragment {
                             dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    sendJson(true);
+                                    //sendJson(true);
                                 }
                             });
                             dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -338,7 +356,7 @@ public class Inicio extends Fragment {
                             dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    //sendJson(true);
+                                    sendJson(true, f1, f2);
                                 }
                             });
                             dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -366,21 +384,39 @@ public class Inicio extends Fragment {
 
         Log.d(TAG, "primerPaso: "  + obj );
 
+
+
         JSONObject retenidos = null;
         int iRetenidos = 0;
         int iNoRetenidos = 0;
         JSONObject saldos = null;
         String iSaldoRetenido = "";
         String iSaldoNoRetenido = "";
+
+        String status = "";
+
         try{
-            JSONObject infoConsulta = obj.getJSONObject("infoConsulta");
-            retenidos = infoConsulta.getJSONObject("retenido");
-            iRetenidos = (Integer) retenidos.get("retenido");
-            iNoRetenidos = (Integer) retenidos.get("noRetenido");
-            saldos = infoConsulta.getJSONObject("saldo");
-            iSaldoRetenido = (String) saldos.get("saldoRetenido");
-            iSaldoNoRetenido = (String) saldos.get( "saldoNoRetenido");
-            Log.d("JSON", retenidos.toString());
+
+            status = obj.getString("status");
+            Log.d("objStatus", "" + status);
+
+            int i = Integer.parseInt(status);
+            String statusText = "";
+            if(i == 200){
+                JSONObject infoConsulta = obj.getJSONObject("infoConsulta");
+                retenidos = infoConsulta.getJSONObject("retenido");
+                iRetenidos = (Integer) retenidos.get("retenido");
+                iNoRetenidos = (Integer) retenidos.get("noRetenido");
+                saldos = infoConsulta.getJSONObject("saldo");
+                iSaldoRetenido = (String) saldos.get("saldoRetenido");
+                iSaldoNoRetenido = (String) saldos.get( "saldoNoRetenido");
+                Log.d("JSON", retenidos.toString());
+            }else{
+                statusText = obj.getString("statusText");
+                Config.msj(getContext(), "Error: " + i, statusText);
+            }
+
+
         }catch (JSONException e){
             Config.msj(getContext(), "Error", "Lo sentimos ocurrio un error con los datos");
         }
