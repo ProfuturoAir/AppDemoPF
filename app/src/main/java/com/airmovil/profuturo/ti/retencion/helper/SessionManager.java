@@ -46,6 +46,10 @@ public class SessionManager {
         editor.commit();
     }
 
+    public void createProceso(String idProceso, String numero){
+
+    }
+
     public void setLogin(boolean isLoggedIn) {
 
         editor.putBoolean(KEY_IS_LOGGEDIN, isLoggedIn);

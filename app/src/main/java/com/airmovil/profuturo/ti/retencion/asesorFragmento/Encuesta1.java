@@ -310,16 +310,18 @@ public class Encuesta1 extends Fragment {
             loading = null;
 
         JSONObject obj = new JSONObject();
+
+        String observaciones = etObservaciones.getText().toString();
         // TODO: Formacion del JSON request
         try{
             JSONObject rqt = new JSONObject();
             JSONObject encuesta = new JSONObject();
-            encuesta.put("observaciones", "observaciones mensaje de prueba");
+            encuesta.put("observaciones", observaciones);
             encuesta.put("pregunta3", true);
             encuesta.put("pregunta2", true);
             encuesta.put("pregunta1", true);
             rqt.put("encuesta", encuesta);
-            rqt.put("estatusTramite", 123);
+            rqt.put("estatusTramite", 1134);
             rqt.put("idTramite", "1");
             obj.put("rqt", rqt);
             Log.d(TAG, "REQUEST-->" + obj);
