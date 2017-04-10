@@ -3,12 +3,15 @@ package com.airmovil.profuturo.ti.retencion.asesorFragmento;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +21,8 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -28,6 +33,7 @@ import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.CitasClientesModel;
 import com.android.volley.AuthFailureError;
@@ -105,7 +111,7 @@ public class ConCita extends Fragment {
      * @return A new instance of fragment ConCita.
      */
     // TODO: Rename and change types and number of parameters
-    public static ConCita newInstance(String param1, String param2) {
+    public static ConCita newInstance(String param1, String param2, Context context) {
         ConCita fragment = new ConCita();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
@@ -125,6 +131,7 @@ public class ConCita extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        //<editor-fold desc="Casteo de elementos">
         // TODO: Casteo
         rootView = view;
         btnAplicar = (Button) rootView.findViewById(R.id.afcc_btn_aplicar);
@@ -132,16 +139,19 @@ public class ConCita extends Fragment {
         tvFecha = (TextView) rootView.findViewById(R.id.afcc_tv_fecha);
         spinner = (Spinner) rootView.findViewById(R.id.afcc_spinner_estados);
         tvRegistros = (TextView) rootView.findViewById(R.id.afcc_tv_registros);
+        //</editor-fold>
 
+        //<editor-fold desc="FECHA">
         Map<String, Integer> fechaDatos = Config.dias();
         mYear  = fechaDatos.get("anio");
         mMonth = fechaDatos.get("mes");
         mDay   = fechaDatos.get("dia");
 
         if(getArguments() != null){
+            Map<String, String> fechas = Config.fechas(1);
+            tvFecha.setText(fechas.get("fechaIni"));
             fechaIni = getArguments().getString(ARG_PARAM1);
             fechaFin = getArguments().getString(ARG_PARAM2);
-            tvFecha.setText(fechaIni+" - "+fechaFin);
         }else {
             Map<String, String> fechas = Config.fechas(1);
             fechaFin = fechas.get("fechaFin");
@@ -149,12 +159,26 @@ public class ConCita extends Fragment {
             fechaMostrar = fechaIni;
             tvFecha.setText(fechaMostrar);
         }
+        //</editor-fold>
 
+        //<editor-fold desc="SPINNER">
         // TODO: Spinner
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, ESTADOS_CITAS);
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.CITAS){
+            @Override
+            public boolean isEnabled(int position) {
+                if(position == 0)
+                    return false;
+                else
+                    return true;
 
+            }
+        };
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinner.setSelection(Adapter.NO_SELECTION,false);
+        spinner.setAdapter(adapter);
+        //</editor-fold>
+
+        //<editor-fold desc="RecyclerView">
         // TODO: modelos
         getDatos1 = new ArrayList<>();
         // TODO: Recycler
@@ -162,24 +186,30 @@ public class ConCita extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
+        //</editor-fold>
 
         sendJson(true);
-
+        final Fragment borrar = this;
         btnAplicar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                //Config.msjTime(getContext(), getResources().getString(R.string.msj_titulo_espera), getResources().getString(R.string.msj_espera), 4000);
+
                 Connected connected = new Connected();
                 if(connected.estaConectado(getContext())){
-                    Fragment fragmentoGenerico = new ConCita();
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    fragmentManager
-                            .beginTransaction()//.setCustomAnimations(android.R.anim.slide_out_right,android.R.anim.slide_in_left
-                            .replace(R.id.content_asesor, fragmentoGenerico).commit();
+
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                    ConCita newInstance = ConCita.newInstance("item3", "pagina3", rootView.getContext());
+                    borrar.onDestroy();
+                    ft.remove(borrar);
+                    ft.replace(R.id.content_asesor, newInstance);
+                    ft.addToBackStack(null);
+                    ft.commit();
                 }else{
                     android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                    dlgAlert.setTitle("Error de conexión");
-                    dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
+                    dlgAlert.setTitle(getResources().getString(R.string.error_conexion));
+                    dlgAlert.setMessage(getResources().getString(R.string.msj_error_conexion));
                     dlgAlert.setCancelable(true);
                     dlgAlert.setCancelable(true);
                     dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
@@ -200,6 +230,7 @@ public class ConCita extends Fragment {
             }
         });
 
+        //region Description: Buton cliente sin cita, llama a otro fragmento
         btnClienteSinCita.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -210,6 +241,7 @@ public class ConCita extends Fragment {
                         .replace(R.id.content_asesor, fragmentoGenerico).commit();
             }
         });
+        //endregion
     }
 
     @Override
@@ -282,16 +314,20 @@ public class ConCita extends Fragment {
         else
             loading = null;
 
+        final JSONObject obj = new JSONObject();
+        SessionManager sessionManager = new SessionManager(getActivity().getApplicationContext());
+        HashMap<String, String> datos = sessionManager.getUserDetails();
+        String nombre = datos.get(SessionManager.NOMBRE);
+        String numeroUsuario = datos.get(SessionManager.ID);
 
-        JSONObject jsonobject = new JSONObject();
-        JSONObject obj = new JSONObject();
+
         try {
             // TODO: Formacion del JSON request
 
             JSONObject rqt = new JSONObject();
-            rqt.put("estatusCita", "1");
+            rqt.put("estatusCita", spinner.getSelectedItemId());
             rqt.put("pagina", pagina);
-            rqt.put("usuario", "USUARIO");
+            rqt.put("usuario", numeroUsuario);
             obj.put("rqt", rqt);
             Log.d(TAG, "Primera peticion-->" + obj);
         } catch (JSONException e) {
@@ -370,76 +406,71 @@ public class ConCita extends Fragment {
     }
 
     private void primerPaso(JSONObject obj) {
-        //Log.d(TAG + "-->", obj.toString());
         int totalFilas = 1;
         try{
             JSONArray array = obj.getJSONArray("citas");
-            //Log.d(TAG + "-Citas->", array.toString());
             filas = obj.getInt(JSON_FILAS_TOTAL);
             totalFilas = obj.getInt(JSON_FILAS_TOTAL);
             Log.d(TAG, "*******->" + filas + totalFilas);
-            for(int i = 0; i < array.length(); i++){
-                CitasClientesModel getDatos2 = new CitasClientesModel();
-                JSONObject json = null;
-                try{
-                    json = array.getJSONObject(i);
-                    getDatos2.setHora(json.getString(JSON_HORA));
-                    getDatos2.setNombreCliente(json.getString(JSON_NOMBRE_CLIENTE));
-                    getDatos2.setNumeroCuenta(json.getString(JSON_NUMERO_CUENTA));
-                    //Log.d(TAG + "* LISTA * ", String.valueOf(json));
-                }catch (JSONException e){
-                    e.printStackTrace();
+            String status = obj.getString("status");
+            String statusText = obj.getString("statusText");
+            if(Integer.parseInt(status) == 200){
+                for(int i = 0; i < array.length(); i++){
+                    CitasClientesModel getDatos2 = new CitasClientesModel();
+                    JSONObject json = null;
+                    try{
+                        json = array.getJSONObject(i);
+                        getDatos2.setHora(json.getString(JSON_HORA));
+                        getDatos2.setNombreCliente(json.getString(JSON_NOMBRE_CLIENTE));
+                        getDatos2.setNumeroCuenta(json.getString(JSON_NUMERO_CUENTA));
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                    getDatos1.add(getDatos2);
                 }
-                getDatos1.add(getDatos2);
+            }else{
+                Config.msj(getContext(), status, statusText);
             }
         }catch (JSONException e){
             e.printStackTrace();
         }
         tvRegistros.setText(filas + " Registros");
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
-
-        Log.d("numeroMaximoPaginas", ""+numeroMaximoPaginas);
         adapter = new CitasClientesAdapter(rootView.getContext(), getDatos1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
         adapter.notifyDataSetChanged();
-        adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                Log.d(TAG, "pagina->" + pagina + "numeroMaximo" + numeroMaximoPaginas);
-                if (pagina >= numeroMaximoPaginas) {
-                    Log.d("FINALIZA", "termino proceso");
-                    return;
-                }
-                Log.e("haint", "Load More");
-                getDatos1.add(null);
-                adapter.notifyItemInserted(getDatos1.size() - 1);
-
-                //Load more data for reyclerview
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.e("haint", "Load More 2");
-                        //Remove loading item
-                        getDatos1.remove(getDatos1.size() - 1);
-                        adapter.notifyItemRemoved(getDatos1.size());
-                        //Load data
-                        Log.d("EnvioIndex", getDatos1.size() + "");
-                        pagina = Config.pidePagina(getDatos1);
-                        sendJson(false);
+            adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
+                @Override
+                public void onLoadMore() {
+                    if (pagina >= numeroMaximoPaginas) {
+                        return;
                     }
-                }, 5000);
-            }
-        });
+                    getDatos1.add(null);
+                    adapter.notifyItemInserted(getDatos1.size() - 1);
+
+                    //Load more data for reyclerview
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.e("haint", "Load More 2");
+                            //Remove loading item
+                            getDatos1.remove(getDatos1.size() - 1);
+                            adapter.notifyItemRemoved(getDatos1.size());
+                            //Load data
+                            Log.d("EnvioIndex", getDatos1.size() + "");
+                            pagina = Config.pidePagina(getDatos1);
+                            sendJson(false);
+                        }
+                    }, 5000);
+                }
+            });
     }
 
     private void segundoPaso(JSONObject obj) {
-
-
         try{
             JSONArray array = obj.getJSONArray("citas");
-            //Log.d(TAG + "-Citas->", array.toString());
             for(int i = 0; i < array.length(); i++){
                 CitasClientesModel getDatos2 = new CitasClientesModel();
                 JSONObject json = null;
@@ -448,7 +479,6 @@ public class ConCita extends Fragment {
                     getDatos2.setHora(json.getString(JSON_HORA));
                     getDatos2.setNombreCliente(json.getString(JSON_NOMBRE_CLIENTE));
                     getDatos2.setNumeroCuenta(json.getString(JSON_NUMERO_CUENTA));
-                    //Log.d(TAG + "* LISTA * ", String.valueOf(json));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -461,4 +491,5 @@ public class ConCita extends Fragment {
         adapter.notifyDataSetChanged();
         adapter.setLoaded();
     }
+
 }

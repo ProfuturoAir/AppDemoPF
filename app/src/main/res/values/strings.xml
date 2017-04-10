@@ -80,6 +80,8 @@
     <string name="msj_error_json">Los datos no se han podido formar</string>
     <string name="msj_error_fechas">Por favor, rellena los campos de fecha</string>
     <string name="msj">mensaje</string>
+    <string name="msj_titulo_espera">Cargando datos...</string>
+    <string name="msj_espera">Cargando contenido, espere por favor...</string>
 
 
 </resources>
