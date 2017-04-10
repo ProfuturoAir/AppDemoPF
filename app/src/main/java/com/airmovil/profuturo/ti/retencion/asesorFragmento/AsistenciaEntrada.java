@@ -1,5 +1,6 @@
 package com.airmovil.profuturo.ti.retencion.asesorFragmento;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -24,9 +25,21 @@ import android.widget.ToggleButton;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.DrawingView;
+import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -155,13 +168,15 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
         btnGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String latitud = (String) lblLatitud.getText();
+                /*final String latitud = (String) lblLatitud.getText();
                 final String longitud = (String) lblLongitud.getText();
                 if(!dvFirma.isActive()) {
                     Config.msj(v.getContext(),"Error", "Se requiere una firma");
                 }else if(latitud.equals("(desconocida)")||longitud.equals("(desconocida)")){
 
-                }
+                }*/
+
+                sendJson(true);
             }
         });
     }
@@ -211,21 +226,13 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == REQUEST_LOCATION) {
-            if (grantResults.length == 1
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                //Permiso concedido
-
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 @SuppressWarnings("MissingPermission")
-                Location lastLocation =
-                        LocationServices.FusedLocationApi.getLastLocation(apiClient);
-
+                Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(apiClient);
                 updateUI(lastLocation);
-
             } else {
                 //Permiso denegado:
                 //Deberíamos deshabilitar toda la funcionalidad relativa a la localización.
-
                 Log.e("LOGTAG", "Permiso denegado");
             }
         }
@@ -254,5 +261,59 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    // TODO: REST
+    private void sendJson(final boolean primerPeticion) {
+        final ProgressDialog loading;
+        if (primerPeticion)
+            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
+        else
+            loading = null;
+
+        JSONObject obj = new JSONObject();
+
+        // TODO: Formacion del JSON request
+        try{
+            JSONObject rqt = new JSONObject();
+            rqt.put("estatusTramite", 123);
+            rqt.put("firmaCliente", "CADENABASE64");
+            rqt.put("idTramite", 1);
+            JSONObject ubicacion = new JSONObject();
+            ubicacion.put("latitud", "90.2349");
+            ubicacion.put("longitud", "-23.9897");
+            rqt.put("ubicacion", ubicacion);
+            obj.put("rqt", rqt);
+            Log.d("datos", "REQUEST-->" + obj);
+        } catch (JSONException e){
+            Config.msj(getContext(), "Error", "Error al formar los datos");
+        }
+        //Creating a json array request
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_FIRMA, obj,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        //Dismissing progress dialog
+                        if (primerPeticion) {
+                            loading.dismiss();
+                            //primerPaso(response);
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        loading.dismiss();
+                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                return headers;
+            }
+        };
+        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
     }
 }

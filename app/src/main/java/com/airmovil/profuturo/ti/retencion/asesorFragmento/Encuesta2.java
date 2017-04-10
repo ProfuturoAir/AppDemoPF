@@ -1,5 +1,6 @@
 package com.airmovil.profuturo.ti.retencion.asesorFragmento;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
@@ -20,7 +21,19 @@ import android.widget.EditText;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -111,30 +124,19 @@ public class Encuesta2 extends Fragment {
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 String telefono = etEmail.getText().toString().trim();
                 String email    = etEmail.getText().toString().trim();
-
                 boolean validandoEmail;
-                if( verificarEmail(email)){
+
+                if( verificarEmail(email))
                     validandoEmail = true;
-                }else{
+                else
                     validandoEmail = false;
-                }
+
 
                 if(spinnerAfores.getText().toString().trim().equals("") || spinnerMotivos.getText().toString().trim().equals("") ||
                         spinnerEstatus.getText().toString().trim().equals("") || spinnerInstituto.getText().toString().trim().equals("") ||
                         spinnerRegimen.getText().toString().trim().equals("") || spinnerDocumentos.getText().toString().trim().equals("") ){
-
-                    Log.d("Llena todos los campos:",
-                            "\nSpinner 1: " + spinnerAfores.getText().toString() +
-                                    "\nSpinner 2: " + spinnerMotivos.getText().toString() +
-                                    "\nSpinner 3: " + spinnerEstatus.getText().toString() +
-                                    "\nSpinner 4: " + spinnerInstituto.getText().toString() +
-                                    "\nSpinner 5: " + spinnerRegimen.getText().toString() +
-                                    "\nSpinner 6: " + spinnerDocumentos.getText().toString() +
-                                    "\nEditText : " + etTelefono.getText().toString() +
-                                    "\nEmail : " + validandoEmail);
                     Config.msj(getContext(),"Error", "Faltan Respuestas Favor de Checar");
                 }else{
                     final Connected conected = new Connected();
@@ -142,65 +144,27 @@ public class Encuesta2 extends Fragment {
                         if(validandoEmail == false){
                             Config.msj(getContext(),"Error", "El correo electrónico es invalido");
                         }else{
-                            Log.d("Llena todos los campos:",
-                                    "\nSpinner 1: " + spinnerAfores.getText().toString() +
-                                            "\nSpinner 2: " + spinnerMotivos.getText().toString() +
-                                            "\nSpinner 3: " + spinnerEstatus.getText().toString() +
-                                            "\nSpinner 4: " + spinnerInstituto.getText().toString() +
-                                            "\nSpinner 5: " + spinnerRegimen.getText().toString() +
-                                            "\nSpinner 6: " + spinnerDocumentos.getText().toString() +
-                                            "\nEditText : " + etTelefono.getText().toString() + "\nEmail : " + validandoEmail +
-                                            "\nEMAIL: " + email +
-                                            "\nid spinner 1: " + spinnerAfores.getId()
-                            );
-
-
+                            sendJson(true);
                             Fragment fragmentoGenerico = new Firma();
                             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                            if (fragmentoGenerico != null) {
-                                fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.content_asesor, fragmentoGenerico).commit();
-                            }
+                            fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                         }
-
                     }else{
                         Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
                         if(validandoEmail == false){
                             Config.msj(getContext(),"Error", "El correo electrónico es invalido");
                         }else{
-                            Log.d("Llena todos los campos:",
-                                    "\nSpinner 1: " + spinnerAfores.getText().toString() +
-                                            "\nSpinner 2: " + spinnerMotivos.getText().toString() +
-                                            "\nSpinner 3: " + spinnerEstatus.getText().toString() +
-                                            "\nSpinner 4: " + spinnerInstituto.getText().toString() +
-                                            "\nSpinner 5: " + spinnerRegimen.getText().toString() +
-                                            "\nSpinner 6: " + spinnerDocumentos.getText().toString() +
-                                            "\nEditText : " + etTelefono.getText().toString() + "\nEmail : " + validandoEmail +
-                                            "\nEMAIL: " + email +
-                                            "\nid spinner 1: " + spinnerAfores.getId()
-                            );
-
-
                             Fragment fragmentoGenerico = new Firma();
                             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                            if (fragmentoGenerico != null) {
-                                fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.content_asesor, fragmentoGenerico).commit();
-                            }
+                            fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                         }
                     }
-
-
-
                 }
-
-
             }
         });
         //</editor-fold>
 
+        //<editor-fold desc="Boton cancelar">
         btnCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -225,6 +189,7 @@ public class Encuesta2 extends Fragment {
                 dialogo1.show();
             }
         });
+        //</editor-fold>
 
     }
 
@@ -320,5 +285,59 @@ public class Encuesta2 extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    // TODO: REST
+    private void sendJson(final boolean primerPeticion) {
+        final ProgressDialog loading;
+        if (primerPeticion)
+            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
+        else
+            loading = null;
+
+        JSONObject obj = new JSONObject();
+
+        // TODO: Formacion del JSON request
+        try{
+            JSONObject rqt = new JSONObject();
+            rqt.put("idAfore", spinnerAfores.getListSelection());
+            rqt.put("idMotivo", spinnerMotivos.getItemClickListener().toString());
+            rqt.put("idStatus", spinnerEstatus.getOnItemSelectedListener());
+            rqt.put("regimen", spinnerRegimen.getId());
+            rqt.put("documentos", spinnerDocumentos.getId());
+            rqt.put("telefono", etTelefono.getText().toString());
+            rqt.put("email", etEmail.getText().toString());
+            obj.put("rqt", rqt);
+            Log.d(TAG, "REQUEST-->" + obj);
+        } catch (JSONException e){
+            Config.msj(getContext(), "Error", "Error al formar los datos");
+        }
+        //Creating a json array request
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_ENCUESTA_2, obj,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        //Dismissing progress dialog
+                        if (primerPeticion) {
+                            loading.dismiss();
+                            //primerPaso(response);
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        loading.dismiss();
+                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                return headers;
+            }
+        };
+        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
     }
 }

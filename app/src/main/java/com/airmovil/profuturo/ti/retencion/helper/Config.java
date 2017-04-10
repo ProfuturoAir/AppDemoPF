@@ -33,6 +33,9 @@ public class Config extends Activity {
     public static final String URL_GENERAR_REPORTE_CLIENTE = URL_GENERAL + "Profuturo/generarReporteCliente.php";
 
     public static final String URL_ENVIAR_ENCUESTA = URL_GENERAL + "Profuturo/enviarEncuesta.php";
+    public static final String URL_ENVIAR_ENCUESTA_2 = URL_GENERAL + "Profuturo/enviarEncuestaObservacion.php";
+    public static final String URL_ENVIAR_FIRMA = URL_GENERAL + "Profuturo/guardarFirmaCliente.php";
+    public static final String URL_ENVIAR_DOCUMENTO_IFE_INE = URL_GENERAL + "Profuturo/guardarDocumentacionCliente.php";
 
     public static final String URL_CONSULTAR_REPORTE_RETENCION_GERENCIAS = URL_GENERAL + "Profuturo/consultarReporteRetencionesGerencia.php";
     public static final String URL_CONSULTAR_REPORTE_RETENCION_SUCURSALES = URL_GENERAL + "Profuturo/consultarReporteRetencionesSucursal.php";

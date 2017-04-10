@@ -88,7 +88,7 @@ public class DrawingView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        Log.d("----", "event");
+        //Log.d("----", "event");
         float touchX = event.getX();
         float touchY = event.getY();
         //respond to down, move and up events
@@ -130,8 +130,7 @@ public class DrawingView extends View {
         }
         else{
             //pattern
-            int patternID = getResources().getIdentifier(
-                    newColor, "drawable", "com.example.drawingfun");
+            int patternID = getResources().getIdentifier(newColor, "drawable", "com.example.drawingfun");
             //decode
             Bitmap patternBMP = BitmapFactory.decodeResource(getResources(), patternID);
             //create shader
@@ -145,8 +144,7 @@ public class DrawingView extends View {
 
     //set brush size
     public void setBrushSize(float newSize){
-        float pixelAmount = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                newSize, getResources().getDisplayMetrics());
+        float pixelAmount = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, newSize, getResources().getDisplayMetrics());
         brushSize=pixelAmount;
         drawPaint.setStrokeWidth(brushSize);
     }
@@ -168,9 +166,9 @@ public class DrawingView extends View {
 
     //start new drawing
     public void startNew(){
-        Log.d("++++","123");
+        //Log.d("++++","123");
         action = true;
-        Log.d("Action", "" + action);
+        //Log.d("Action", "" + action);
         started = false;
         drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
         invalidate();

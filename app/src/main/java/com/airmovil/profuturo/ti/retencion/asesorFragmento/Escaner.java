@@ -1,5 +1,6 @@
 package com.airmovil.profuturo.ti.retencion.asesorFragmento;
 
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,8 +23,19 @@ import android.widget.ImageView;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -318,5 +330,61 @@ public class Escaner extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    // TODO: REST
+    private void sendJson(final boolean primerPeticion) {
+        final ProgressDialog loading;
+        if (primerPeticion)
+            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
+        else
+            loading = null;
+
+        JSONObject obj = new JSONObject();
+
+        // TODO: Formacion del JSON request
+        try{
+            JSONObject rqt = new JSONObject();
+            rqt.put("estatusTramite", 123);
+            rqt.put("fechaHoraFina", "2017-04-10 ");
+            rqt.put("idTramite", 1);
+            rqt.put("ineIfe", "12312312312331233");
+            rqt.put("numeroCuenta", "123123");
+            JSONObject ubicacion = new JSONObject();
+            ubicacion.put("latitud", "90.2349");
+            ubicacion.put("longitud", "-23.9897");
+            rqt.put("ubicacion", ubicacion);
+            obj.put("rqt", rqt);
+            Log.d("datos", "REQUEST-->" + obj);
+        } catch (JSONException e){
+            Config.msj(getContext(), "Error", "Error al formar los datos");
+        }
+        //Creating a json array request
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_ENCUESTA_2, obj,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        //Dismissing progress dialog
+                        if (primerPeticion) {
+                            loading.dismiss();
+                            //primerPaso(response);
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        loading.dismiss();
+                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                return headers;
+            }
+        };
+        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
     }
 }
