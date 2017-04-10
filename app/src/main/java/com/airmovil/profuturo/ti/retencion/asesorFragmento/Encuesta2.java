@@ -14,6 +14,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -300,7 +301,21 @@ public class Encuesta2 extends Fragment {
         // TODO: Formacion del JSON request
         try{
             JSONObject rqt = new JSONObject();
-            rqt.put("idAfore", spinnerAfores.getListSelection());
+
+            spinnerAfores.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view,final int position, long id) {
+                    final int idAfores = position;
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+
+
+            rqt.put("idAfore", spinnerAfores.getText().toString() );
             rqt.put("idMotivo", spinnerMotivos.getItemClickListener().toString());
             rqt.put("idStatus", spinnerEstatus.getOnItemSelectedListener());
             rqt.put("regimen", spinnerRegimen.getId());

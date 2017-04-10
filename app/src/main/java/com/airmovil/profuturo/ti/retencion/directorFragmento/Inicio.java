@@ -297,7 +297,6 @@ public class Inicio extends Fragment {
         else
             loading = null;
 
-
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
         try{
@@ -390,16 +389,16 @@ public class Inicio extends Fragment {
         int iRetenidos = 0;
         int iNoRetenidos = 0;
         JSONObject saldos = null;
-        String iSaldoRetenido = "";
-        String iSaldoNoRetenido = "";
+        int iSaldoRetenido = 0;
+        int iSaldoNoRetenido = 0;
         try{
             JSONObject infoConsulta = obj.getJSONObject("infoConsulta");
             retenidos = infoConsulta.getJSONObject("retenido");
             iRetenidos = (Integer) retenidos.get("retenido");
             iNoRetenidos = (Integer) retenidos.get("noRetenido");
             saldos = infoConsulta.getJSONObject("saldo");
-            iSaldoRetenido = (String) saldos.get("saldoRetenido");
-            iSaldoNoRetenido = (String) saldos.get( "saldoNoRetenido");
+            iSaldoRetenido = (Integer) saldos.get("saldoRetenido");
+            iSaldoNoRetenido = (Integer) saldos.get( "saldoNoRetenido");
             Log.d("JSON", retenidos.toString());
         }catch (JSONException e){
             Config.msj(getContext(), "Error", "Lo sentimos ocurrio un error con los datos");

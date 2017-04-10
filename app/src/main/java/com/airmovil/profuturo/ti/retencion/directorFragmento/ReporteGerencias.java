@@ -102,6 +102,8 @@ public class ReporteGerencias extends Fragment {
     private DatePickerDialog datePickerDialog;
     private InputMethodManager imm;
 
+    private HashMap<String, String> usuario;
+
     public ReporteGerencias() {
         // Required empty public constructor
     }
@@ -154,6 +156,10 @@ public class ReporteGerencias extends Fragment {
         imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
+        // TODO: shearePreference
+        //usuario = sessionManager.getUserDetails();
+
+        sessionManager = new SessionManager(getContext());
 
         //</editor-fold>
         // TODO: dialog fechas
@@ -248,6 +254,7 @@ public class ReporteGerencias extends Fragment {
             }
         });
 
+        //<editor-fold desc="TextView Resultados de filas">
         tvResultados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -289,6 +296,7 @@ public class ReporteGerencias extends Fragment {
                 dialog.show();
             }
         });
+        //</editor-fold>
         //</editor-fold>
     }
 
@@ -344,21 +352,25 @@ public class ReporteGerencias extends Fragment {
         else
             loading = null;
 
-
-        JSONObject jsonobject = new JSONObject();
         JSONObject obj = new JSONObject();
-        /*try {
+        Log.d("*********", " -------------");
+        try {
             // TODO: Formacion del JSON request
+            Log.d("*********", " ------------->");
 
             JSONObject rqt = new JSONObject();
-            rqt.put("estatusCita", "1");
+            rqt.put("idGerencia", spinnerGerencias.getSelectedItemId());
             rqt.put("pagina", pagina);
-            rqt.put("usuario", "USUARIO");
+            JSONObject periodo = new JSONObject();
+            periodo.put("fechaFin", fechaFin);
+            periodo.put("fechaIni", fechaIni);
+            rqt.put("perido", periodo);
+            rqt.put("usuario", usuario);
             obj.put("rqt", rqt);
             Log.d(TAG, "Primera peticion-->" + obj);
         } catch (JSONException e) {
             Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
-        }*/
+        }
         //Creating a json array request
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_GERENCIAS, obj,
                 new Response.Listener<JSONObject>() {
@@ -433,7 +445,7 @@ public class ReporteGerencias extends Fragment {
     }
 
     private void primerPaso(JSONObject obj) {
-        Log.d(TAG, "RESPONSE Reporte Gerencias -->" + obj.toString());
+        //Log.d(TAG, "RESPONSE Reporte Gerencias -->" + obj.toString());
         int idGerencia = 0;
         // TODO: total de filas
         int filas = 0;
