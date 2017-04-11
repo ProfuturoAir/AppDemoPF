@@ -37,7 +37,8 @@ public class Config extends Activity {
     public static final String URL_ENVIAR_FIRMA = URL_GENERAL + "Profuturo/guardarFirmaCliente.php";
     public static final String URL_ENVIAR_DOCUMENTO_IFE_INE = URL_GENERAL + "Profuturo/guardarDocumentacionCliente.php";
 
-    public static final String URL_CONSULTAR_REPORTE_RETENCION_GERENCIAS = URL_GENERAL + "Profuturo/consultarReporteRetencionesGerencia.php";
+    // TODO: LISTO DIRECTOR
+    public static final String URL_CONSULTAR_REPORTE_RETENCION_GERENCIAS = URL_GENERAL + "mb/premium/rest/consultarReporteRetencionesGerencia.php";
     public static final String URL_CONSULTAR_REPORTE_RETENCION_SUCURSALES = URL_GENERAL + "Profuturo/consultarReporteRetencionesSucursal.php";
     public static final String URL_CONSULTAR_REPORTE_RETENCION_ASESORES = URL_GENERAL + "Profuturo/consultarReporteRetencionesAsesor.php";
     public static final String URL_CONSULTAR_REPORTE_RETENCION_CLIENTES = URL_GENERAL + "Profuturo/consultarReporteRetencionesCliente.php";

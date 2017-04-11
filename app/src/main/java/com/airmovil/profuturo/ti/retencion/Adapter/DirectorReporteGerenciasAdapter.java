@@ -109,6 +109,8 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
             myViewHolder.idGerencia.setText("Gerencia " + lista.getIdGerencia());
             myViewHolder.conCita.setText(" " + lista.getConCita() + " ");
             myViewHolder.sinCita.setText(" " + lista.getSinCita() + " ");
+            myViewHolder.saldoRetenido.setText(" " + lista.getdSaldoRetenido() + " ");
+            myViewHolder.saldoNoRetenido.setText(" " +lista.getdSaldoNoRetenido() + " ");
             myViewHolder.tvClick.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -270,7 +272,7 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        public TextView letra, idGerencia, conCita, sinCita, emitidas, saldos;
+        public TextView letra, idGerencia, conCita, sinCita, saldoRetenido, saldoNoRetenido;
         public CardView cardView;
         public TextView tvClick;
         public MyViewHolder(View view){
@@ -279,6 +281,8 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
             idGerencia = (TextView) view.findViewById(R.id.dfrgl_tv_id_gerencia);
             conCita = (TextView) view.findViewById(R.id.dfrgl_tv_con_cita);
             sinCita = (TextView) view.findViewById(R.id.dfrgl_tv_sin_cita);
+            saldoRetenido = (TextView) view.findViewById(R.id.dfrgl_tv_con_saldo);
+            saldoNoRetenido = (TextView) view.findViewById(R.id.dfrgl_tv_sin_saldo);
             tvClick = (TextView) view.findViewById(R.id.dfrcll_btn_detalles);
             cardView = (CardView) view.findViewById(R.id.ddfrgl_cardview);
         }

@@ -70,10 +70,12 @@ public class ReporteGerencias extends Fragment {
     public static final String TAG = ReporteGerencias.class.getSimpleName();
     private static final String ARG_PARAM1 = "parametro1";
     private static final String ARG_PARAM2 = "parametro2";
+    private static final String ARG_PARAM3 = "parametro3";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private int mParam3;
 
     private OnFragmentInteractionListener mListener;
 
@@ -86,6 +88,7 @@ public class ReporteGerencias extends Fragment {
     private String fechaMostrar = "";
     private int pagina = 1;
     private int numeroMaximoPaginas = 0;
+    private int idGerencia;
 
     private TextView tvFecha, tvEntidaes, tvNoEntidades, tvSaldoEmitido, tvSaldoNoEmitido;
     private Spinner spinnerGerencias;
@@ -118,11 +121,12 @@ public class ReporteGerencias extends Fragment {
      * @return A new instance of fragment ReporteGerencias.
      */
     // TODO: Rename and change types and number of parameters
-    public static ReporteGerencias newInstance(String param1, String param2, Context context) {
+    public static ReporteGerencias newInstance(String param1, String param2, int param3, Context context) {
         ReporteGerencias fragment = new ReporteGerencias();
         Bundle args = new Bundle();
-        args.putString("parametro1", param1);
-        args.putString("parametro2", param2);
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        args.putInt(ARG_PARAM3, param3);
         fragment.setArguments(args);
         return fragment;
     }
@@ -166,36 +170,8 @@ public class ReporteGerencias extends Fragment {
         // TODO: dialog fechas
         rangoInicial();
         rangoFinal();
-        // TODO: fecha
-        //<editor-fold desc="Fechas">
-        Map<String, Integer> fechaDatos = Config.dias();
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
 
-        if(getArguments() != null){
-            fechaIni = getArguments().getString("parametro1").trim();
-            fechaFin = getArguments().getString("parametro2").trim();
-            if(fechaFin.equals("") && fechaIni.equals("")){
-                Map<String, String> fechas = Config.fechas(1);
-                fechaIni = fechas.get("fechaIni");
-                fechaMostrar = fechaIni;
-                tvFecha.setText(fechaMostrar);
-            }else if(fechaFin.equals("")){
-                tvFecha.setText(fechaIni);
-            }else if(fechaIni.matches("")){
-                tvFecha.setText(fechaFin);
-            }else{
-                tvFecha.setText(fechaIni + " - " + fechaFin);
-            }
-        }else {
-            Map<String, String> fechas = Config.fechas(1);
-            fechaFin = fechas.get("fechaFin");
-            fechaIni = fechas.get("fechaIni");
-            fechaMostrar = fechaIni;
-            tvFecha.setText(fechaMostrar);
-        }
-        //</editor-fold>
+        fechas();
 
         // TODO: Spinner
         ArrayAdapter<String> adapterGerencias = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.GERENCIAS);
@@ -218,13 +194,13 @@ public class ReporteGerencias extends Fragment {
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Connected connected = new Connected();
                 if(connected.estaConectado(getContext())){
                     final String fechaIncial = tvRangoFecha1.getText().toString();
                     final String fechaFinal = tvRangoFecha2.getText().toString();
+                    idGerencia = spinnerGerencias.getSelectedItemPosition();
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    ReporteGerencias fragmento = ReporteGerencias.newInstance(fechaIncial,fechaFinal, rootView.getContext());
+                    ReporteGerencias fragmento = ReporteGerencias.newInstance(fechaIncial,fechaFinal, idGerencia, rootView.getContext());
                     borrar.onDestroy();
                     ft.remove(borrar);
                     ft.replace(R.id.content_director, fragmento);
@@ -254,7 +230,6 @@ public class ReporteGerencias extends Fragment {
 
             }
         });
-
         //<editor-fold desc="TextView Resultados de filas">
         tvResultados.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -354,25 +329,69 @@ public class ReporteGerencias extends Fragment {
             loading = null;
 
         JSONObject obj = new JSONObject();
-        Log.d("*********", " -------------");
-        try {
-            // TODO: Formacion del JSON request
-            Log.d("*********", " ------------->");
 
-            JSONObject rqt = new JSONObject();
-            rqt.put("idGerencia", spinnerGerencias.getSelectedItemId());
-            rqt.put("pagina", pagina);
-            JSONObject periodo = new JSONObject();
-            periodo.put("fechaFin", fechaFin);
-            periodo.put("fechaIni", fechaIni);
-            rqt.put("perido", periodo);
-            rqt.put("usuario", usuario);
-            obj.put("rqt", rqt);
+        Map<String, Integer> fechaDatos = Config.dias();
+        Map<String, String> fechaActual = Config.fechas(1);
+        HashMap<String, String> usuario = sessionManager.getUserDetails();
+        String numeroUsuario = usuario.get(SessionManager.ID);
+        mYear  = fechaDatos.get("anio");
+        mMonth = fechaDatos.get("mes");
+        mDay   = fechaDatos.get("dia");
+        String smParam1 = fechaActual.get("fechaIni");
+        String smParam2 = fechaActual.get("fechaFin");
+        mParam3 = 0;
+
+        try {
+            if(getArguments() != null) {
+                mParam1 = getArguments().getString(ARG_PARAM1);
+                mParam2 = getArguments().getString(ARG_PARAM2);
+                mParam3 = getArguments().getInt(ARG_PARAM3);
+
+                Map<String, String> fecha = Config.fechas(1);
+                String param1 = fecha.get("fechaIni");
+                String param2 = fecha.get("fechaFin");
+
+                JSONObject rqt = new JSONObject();
+                JSONObject periodo = new JSONObject();
+
+                rqt.put("idGerencia", mParam3);
+                rqt.put("pagina", pagina);
+
+                if (mParam1.isEmpty() && mParam2.isEmpty()) {
+                    periodo.put("fechaFin", mParam1);
+                    periodo.put("fechaIni", mParam2);
+                } else if (mParam1.isEmpty()){
+                    periodo.put("fechaFin", mParam2);
+                    periodo.put("fechaIni", "");
+                }else if(mParam2.isEmpty()) {
+                    periodo.put("fechaFin", "");
+                    periodo.put("fechaIni", mParam1);
+                }else {
+                    periodo.put("fechaFin", mParam2);
+                    periodo.put("fechaIni", mParam1);
+                    rqt.put("idGerencia", mParam3);
+                }
+                rqt.put("perido", periodo);
+                rqt.put("usuario", numeroUsuario);
+                obj.put("rqt", rqt);
+            }else{
+                JSONObject rqt = new JSONObject();
+                rqt.put("idGerencia", mParam3);
+                rqt.put("pagina", pagina);
+                JSONObject periodo = new JSONObject();
+                periodo.put("fechaFin", smParam2);
+                periodo.put("fechaIni", smParam1);
+                rqt.put("perido", periodo);
+                rqt.put("usuario", numeroUsuario);
+                obj.put("rqt", rqt);
+                tvFecha.setText(smParam1 + " - " + smParam2);
+            }
+
             Log.d(TAG, "Primera peticion-->" + obj);
         } catch (JSONException e) {
             Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
         }
-        //Creating a json array request
+        //<editor-fold desc="jsonArrayRequest">
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_GERENCIAS, obj,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -449,10 +468,11 @@ public class ReporteGerencias extends Fragment {
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+        //</editor-fold>
     }
 
     private void primerPaso(JSONObject obj) {
-        //Log.d(TAG, "RESPONSE Reporte Gerencias -->" + obj.toString());
+        Log.d(TAG, "RESPONSE Reporte Gerencias -->" + obj.toString());
         int idGerencia = 0;
         // TODO: total de filas
         int filas = 0;
@@ -470,8 +490,8 @@ public class ReporteGerencias extends Fragment {
         int sinCita = 0;
         int retenido = 0;
         int noRetenido = 0;
-        String saldoRetenido = "";
-        String saldoNoRetenido = "";
+        int saldoRetenido = 0;
+        int saldoNoRetenido = 0;
         try{
             // TODO: jsonArray de gerencias
             JSONArray array = obj.getJSONArray("Gerencia");
@@ -496,8 +516,8 @@ public class ReporteGerencias extends Fragment {
                     getDatos2.setConCita(citas.getInt("conCita"));
                     getDatos2.setSinCita(citas.getInt("sinCita"));
                     JSONObject saldo = json.getJSONObject("saldo");
-                    getDatos2.setSaldoRetenido(saldo.getString("saldoRetenido"));
-                    getDatos2.setSaldoNoRetenido(saldo.getString("saldoNoRetenido"));
+                    getDatos2.setdSaldoRetenido(saldo.getInt("saldoRetenido"));
+                    getDatos2.setdSaldoNoRetenido(saldo.getInt("saldoNoRetenido"));
                     JSONObject retenidoss = json.getJSONObject("retenido");
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -570,8 +590,8 @@ public class ReporteGerencias extends Fragment {
                     getDatos2.setConCita(citas.getInt("conCita"));
                     getDatos2.setSinCita(citas.getInt("sinCita"));
                     JSONObject saldo = json.getJSONObject("saldo");
-                    getDatos2.setSaldoRetenido(saldo.getString("saldoRetenido"));
-                    getDatos2.setSaldoNoRetenido(saldo.getString("saldoNoRetenido"));
+                    getDatos2.setdSaldoRetenido(saldo.getInt("saldoRetenido"));
+                    getDatos2.setdSaldoNoRetenido(saldo.getInt("saldoNoRetenido"));
                     JSONObject retenidoss = json.getJSONObject("retenido");
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -586,6 +606,7 @@ public class ReporteGerencias extends Fragment {
         adapter.setLoaded();
     }
 
+    //<editor-fold desc="Rango inicial de fecha">
     private void rangoInicial(){
         tvRangoFecha1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -602,7 +623,9 @@ public class ReporteGerencias extends Fragment {
             }
         });
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Rango final de fecha">
     private void rangoFinal(){
         tvRangoFecha2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -618,5 +641,43 @@ public class ReporteGerencias extends Fragment {
                 datePickerDialog.show();
             }
         });
+    }
+    //</editor-fold>
+
+    private void fechas(){
+        // TODO: fecha
+        //<editor-fold desc="Fechas">
+        Map<String, Integer> fechaDatos = Config.dias();
+        Map<String, String> fechaActual = Config.fechas(1);
+        mYear  = fechaDatos.get("anio");
+        mMonth = fechaDatos.get("mes");
+        mDay   = fechaDatos.get("dia");
+        String smParam1 = fechaActual.get("fechaIni");
+        String smParam2 = fechaActual.get("fechaFin");
+        mParam3 = 0;
+
+
+        if(getArguments() != null){
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+            mParam3 = getArguments().getInt(ARG_PARAM3);
+
+            Map<String, String> fecha = Config.fechas(1);
+            String param1 = fecha.get("fechaIni");
+            String param2 = fecha.get("fechaFin");
+
+            if(mParam1.isEmpty() && mParam2.isEmpty())
+                tvFecha.setText(param1+" - "+param2 + " " + mParam3);
+            else if(mParam1.isEmpty())
+                tvFecha.setText(mParam2 + " " + mParam3);
+            else if(mParam2.isEmpty())
+                tvFecha.setText(mParam1 + " " + mParam3);
+            else
+                tvFecha.setText(mParam1 + " - " + mParam2 + " -> " + mParam3);
+
+        }else{
+            tvFecha.setText(smParam1 + " - " + smParam2);
+        }
+        //</editor-fold>
     }
 }

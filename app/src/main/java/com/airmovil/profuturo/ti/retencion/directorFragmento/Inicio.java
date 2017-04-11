@@ -172,7 +172,7 @@ public class Inicio extends Fragment {
             fechaFin = fechas.get("fechaFin");
             fechaIni = fechas.get("fechaIni");
             fechaMostrar = fechaIni;
-            tvFecha.setText(fechaMostrar);
+            tvFecha.setText(fechaIni + " - " + fechaFin);
         }
 
         tvInicial.setText(convertirATexto);

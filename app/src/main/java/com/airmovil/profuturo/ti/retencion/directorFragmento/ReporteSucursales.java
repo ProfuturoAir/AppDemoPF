@@ -69,6 +69,7 @@ public class ReporteSucursales extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private int mParam3;
 
     private OnFragmentInteractionListener mListener;
 
@@ -83,6 +84,7 @@ public class ReporteSucursales extends Fragment {
     private View rootView;
     private SessionManager sessionManager;
     private DatePickerDialog datePickerDialog;
+    private Connected connected;
 
     // TODO: datas
     private int mYear;
@@ -94,6 +96,7 @@ public class ReporteSucursales extends Fragment {
     private int posicion;
     private int pagina = 1;
     private int numeroMaximoPaginas = 0;
+    private int idSucursal;
     // TODO: Elementos XML
     private TextView tvFecha;
     private TextView tvEmitidas, tvNoEmitidas, tvSaldoEmitido, tvSaldoNoEmitido;
@@ -140,43 +143,12 @@ public class ReporteSucursales extends Fragment {
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinnerSucursales.setAdapter(adapter);
 
-        // TODO: inclucion de fecha
-        Map<String, Integer> fechaDatos = Config.dias();
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
+        // TODO: Conexion, fragmentoTransaction, sessionManager
+        sessionManager = new SessionManager(getContext());
+        final FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        connected = new Connected();
 
-        try{
-            if(getArguments() != null){
-                fechaIni = getArguments().getString(ARG_PARAM1).trim();
-                fechaFin = getArguments().getString(ARG_PARAM2).trim();
-                String dato = getArguments().getString(ARG_PARAM2).trim();
-
-                if(fechaFin.equals("") && fechaIni.equals("")){
-                    Map<String, String> fechas = Config.fechas(1);
-                    fechaFin = fechas.get("fechaFin");
-                    fechaIni = fechas.get("fechaIni");
-                    fechaMostrar = fechaIni;
-                    tvFecha.setText(fechaMostrar);
-                }else if(fechaFin.equals("")){
-                    tvFecha.setText(fechaIni);
-                }else if(fechaIni.matches("")){
-                    tvFecha.setText(fechaFin);
-                }else{
-                    tvFecha.setText(fechaIni + " - " + fechaFin);
-                }
-
-                Log.d("getArguments", "Fecha inicio: " + fechaIni + "\nfecha fin: " + fechaFin + "\nTipo Sucursal: " + dato);
-            }else {
-                Map<String, String> fechas = Config.fechas(1);
-                fechaFin = fechas.get("fechaFin");
-                fechaIni = fechas.get("fechaIni");
-                fechaMostrar = fechaIni;
-                tvFecha.setText(fechaMostrar);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        fechas();
 
         // TODO: model
         getDatos1 = new ArrayList<>();
@@ -192,59 +164,23 @@ public class ReporteSucursales extends Fragment {
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-
-                final String fechaIncial = tvRangoFecha1.getText().toString();
-                final String fechaFinal = tvRangoFecha2.getText().toString();
-                final String tipoSucursal = "Sucursal 123";
-
-                Log.d("Datos a enviar: ", "1. " + fechaIncial + " 2. " + fechaFinal + " 3. " + tipoSucursal);
-
-                Connected connected = new Connected();
                 if(connected.estaConectado(getContext())){
-                    ReporteSucursales fragmento = ReporteSucursales.newInstance(
-                            fechaIncial,
-                            fechaFinal,
-                            tipoSucursal,
-                            rootView.getContext()
-                    );
+                    final String fechaIncial = tvRangoFecha1.getText().toString();
+                    final String fechaFinal = tvRangoFecha2.getText().toString();
+                    idSucursal = spinnerSucursales.getSelectedItemPosition();
+                    ReporteSucursales fragmento = ReporteSucursales.newInstance(fechaIncial, fechaFinal, idSucursal, rootView.getContext());
                     borrar.onDestroy();
                     ft.remove(borrar);
                     ft.replace(R.id.content_director, fragmento);
                     ft.addToBackStack(null);
                     ft.commit();
-                    Log.d("btnBuscar", "Fecha inicio: " + fechaIni + "\nFecha fin" + fechaFin);
-                    try{
-                        Log.d("btnBuscar", "Fecha inicio: " + fechaIni + "\nFecha fin" + fechaFin);
-                    } catch (Exception e){
-                        e.printStackTrace();
-                        Log.d("Exception", e.toString());
-                    }
-                }else{
-                    android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                    dlgAlert.setTitle("Error en conexión");
-                    dlgAlert.setMessage("Por favor, revisa tu conexión a internet...");
-                    dlgAlert.setCancelable(true);
-                    dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
 
-                        }
-                    });
-                    dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-                    dlgAlert.create().show();
                 }
-
-
             }
         });
 
 
+        //<editor-fold desc="icono email enviar">
         tvResultados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -258,8 +194,6 @@ public class ReporteSucursales extends Fragment {
                 ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item_azul, Config.EMAIL);
                 adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinner.setAdapter(adapterSucursal);
-
-
 
                 btn.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -284,16 +218,17 @@ public class ReporteSucursales extends Fragment {
                 dialog.show();
             }
         });
+        //</editor-fold>
 
 
     }
 
-    public static ReporteSucursales newInstance(String sParam1, String sParam2, String sParam3, Context context){
+    public static ReporteSucursales newInstance(String param1, String param2, int param3, Context context){
         ReporteSucursales fragment = new ReporteSucursales();
         Bundle args = new Bundle();
-        args.putString("parametro1", sParam1);
-        args.putString("parametro2", sParam2);
-        args.putString("parametro3", sParam3);
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        args.putInt(ARG_PARAM3, param3);
         fragment.setArguments(args);
         return fragment;
     }
@@ -349,19 +284,65 @@ public class ReporteSucursales extends Fragment {
             loading = null;
 
         JSONObject obj = new JSONObject();
+
+        Map<String, Integer> fechaDatos = Config.dias();
+        Map<String, String> fechaActual = Config.fechas(1);
+        HashMap<String, String> usuario = sessionManager.getUserDetails();
+        String numeroUsuario = usuario.get(SessionManager.ID);
+        mYear  = fechaDatos.get("anio");
+        mMonth = fechaDatos.get("mes");
+        mDay   = fechaDatos.get("dia");
+        String smParam1 = fechaActual.get("fechaIni");
+        String smParam2 = fechaActual.get("fechaFin");
+        mParam3 = 0;
+
         try {
-            // TODO: Formacion del JSON request
-            JSONObject rqt = new JSONObject();
-            rqt.put("idSucursal", 1);
-            rqt.put("pagina", pagina);
-            rqt.put("usuario", "USUARIO");
-            JSONObject periodo = new JSONObject();
-            rqt.put("periodo", periodo);
-            periodo.put("fechaInicio", "");
-            periodo.put("fechaFin", "");
-            rqt.put("usuario", "2222");
-            obj.put("rqt", rqt);
-            Log.d("ReporteSucursales ", "RQT --> " + obj);
+            if(getArguments() != null) {
+                mParam1 = getArguments().getString(ARG_PARAM1);
+                mParam2 = getArguments().getString(ARG_PARAM2);
+                mParam3 = getArguments().getInt(ARG_PARAM3);
+
+                Map<String, String> fecha = Config.fechas(1);
+                String param1 = fecha.get("fechaIni");
+                String param2 = fecha.get("fechaFin");
+
+                JSONObject rqt = new JSONObject();
+                JSONObject periodo = new JSONObject();
+
+                rqt.put("idGerencia", mParam3);
+                rqt.put("pagina", pagina);
+
+                if (mParam1.isEmpty() && mParam2.isEmpty()) {
+                    periodo.put("fechaFin", mParam1);
+                    periodo.put("fechaIni", mParam2);
+                } else if (mParam1.isEmpty()){
+                    periodo.put("fechaFin", mParam2);
+                    periodo.put("fechaIni", "");
+                }else if(mParam2.isEmpty()) {
+                    periodo.put("fechaFin", "");
+                    periodo.put("fechaIni", mParam1);
+                }else {
+                    periodo.put("fechaFin", mParam2);
+                    periodo.put("fechaIni", mParam1);
+                    rqt.put("idGerencia", mParam3);
+                }
+                rqt.put("perido", periodo);
+                rqt.put("usuario", numeroUsuario);
+                obj.put("rqt", rqt);
+            }else{
+                JSONObject rqt = new JSONObject();
+                rqt.put("idGerencia", mParam3);
+                rqt.put("pagina", pagina);
+                JSONObject periodo = new JSONObject();
+                periodo.put("fechaFin", smParam2);
+                periodo.put("fechaIni", smParam1);
+                rqt.put("perido", periodo);
+                rqt.put("usuario", numeroUsuario);
+                obj.put("rqt", rqt);
+                tvFecha.setText(smParam1 + " - " + smParam2);
+            }
+
+            Log.d("ReporteSucursales", " RQT -->" + obj);
         } catch (JSONException e) {
             Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
         }
@@ -563,6 +544,7 @@ public class ReporteSucursales extends Fragment {
         adapter.setLoaded();
     }
 
+    //<editor-fold desc="Fecha rango inicial">
     private void rangoInicial(){
         tvRangoFecha1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -579,7 +561,9 @@ public class ReporteSucursales extends Fragment {
             }
         });
     }
+    //</editor-fold>
 
+    //<editor-fold desc="fecha rango final">
     private void rangoFinal(){
         tvRangoFecha2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -595,5 +579,42 @@ public class ReporteSucursales extends Fragment {
                 datePickerDialog.show();
             }
         });
+    }
+    //</editor-fold>
+
+    private void fechas(){
+        // TODO: fecha
+        //<editor-fold desc="Fechas">
+        Map<String, Integer> fechaDatos = Config.dias();
+        Map<String, String> fechaActual = Config.fechas(1);
+        mYear  = fechaDatos.get("anio");
+        mMonth = fechaDatos.get("mes");
+        mDay   = fechaDatos.get("dia");
+        String smParam1 = fechaActual.get("fechaIni");
+        String smParam2 = fechaActual.get("fechaFin");
+        mParam3 = 0;
+
+        if(getArguments() != null){
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+            mParam3 = getArguments().getInt(ARG_PARAM3);
+
+            Map<String, String> fecha = Config.fechas(1);
+            String param1 = fecha.get("fechaIni");
+            String param2 = fecha.get("fechaFin");
+
+            if(mParam1.isEmpty() && mParam2.isEmpty())
+                tvFecha.setText(param1 + " - " + param2);
+            else if(mParam1.isEmpty())
+                tvFecha.setText(mParam2 + " " + mParam3);
+            else if(mParam2.isEmpty())
+                tvFecha.setText(mParam1 + " " + mParam3);
+            else
+                tvFecha.setText(mParam1 + " - " + mParam2);
+
+        }else{
+            tvFecha.setText(smParam1 + " - " + smParam2);
+        }
+        //</editor-fold>
     }
 }

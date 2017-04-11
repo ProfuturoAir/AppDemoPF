@@ -10,9 +10,11 @@ public class DirectorReporteGerenciasModel {
     public int sinCita;
     public int emitidas;
     public int noEmitidas;
-    public String saldoRetenido;
-    public String saldoNoRetenido;
     public int retenidos;
+
+    public int dSaldoRetenido;
+    public int dSaldoNoRetenido;
+
 
     public int getRetenidos() {
         return retenidos;
@@ -62,22 +64,19 @@ public class DirectorReporteGerenciasModel {
         this.noEmitidas = noEmitidas;
     }
 
-
-
-
-    public String getSaldoRetenido() {
-        return saldoRetenido;
+    public int getdSaldoRetenido() {
+        return dSaldoRetenido;
     }
 
-    public void setSaldoRetenido(String saldoRetenido) {
-        this.saldoRetenido = saldoRetenido;
+    public void setdSaldoRetenido(int dSaldoRetenido) {
+        this.dSaldoRetenido = dSaldoRetenido;
     }
 
-    public String getSaldoNoRetenido() {
-        return saldoNoRetenido;
+    public int getdSaldoNoRetenido() {
+        return dSaldoNoRetenido;
     }
 
-    public void setSaldoNoRetenido(String saldoNoRetenido) {
-        this.saldoNoRetenido = saldoNoRetenido;
+    public void setdSaldoNoRetenido(int dSaldoNoRetenido) {
+        this.dSaldoNoRetenido = dSaldoNoRetenido;
     }
 }
