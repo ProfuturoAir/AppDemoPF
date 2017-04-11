@@ -167,14 +167,19 @@ public class ReporteSucursales extends Fragment {
                 if(connected.estaConectado(getContext())){
                     final String fechaIncial = tvRangoFecha1.getText().toString();
                     final String fechaFinal = tvRangoFecha2.getText().toString();
-                    idSucursal = spinnerSucursales.getSelectedItemPosition();
-                    ReporteSucursales fragmento = ReporteSucursales.newInstance(fechaIncial, fechaFinal, idSucursal, rootView.getContext());
-                    borrar.onDestroy();
-                    ft.remove(borrar);
-                    ft.replace(R.id.content_director, fragmento);
-                    ft.addToBackStack(null);
-                    ft.commit();
-
+                    if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
+                        Config.msj(getContext(), getResources().getString(R.string.msj_error_fechas),getResources().getString(R.string.msj_error_fechas));
+                    }else{
+                        idSucursal = spinnerSucursales.getSelectedItemPosition();
+                        ReporteSucursales fragmento = ReporteSucursales.newInstance(fechaIncial, fechaFinal, idSucursal, rootView.getContext());
+                        borrar.onDestroy();
+                        ft.remove(borrar);
+                        ft.replace(R.id.content_director, fragmento);
+                        ft.addToBackStack(null);
+                        ft.commit();
+                    }
+                }else{
+                    Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                 }
             }
         });
@@ -388,23 +393,7 @@ public class ReporteSucursales extends Fragment {
                             });
                             dlgAlert.create().show();
                         }else{
-                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                            dlgAlert.setTitle("Error de conexión");
-                            dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
-                            dlgAlert.setCancelable(true);
-                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    //sendJson(true);
-                                }
-                            });
-                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                            dlgAlert.create().show();
+                            Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                         }
                     }
                 }) {

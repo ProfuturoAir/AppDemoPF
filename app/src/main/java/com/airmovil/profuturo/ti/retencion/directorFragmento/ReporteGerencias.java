@@ -199,35 +199,20 @@ public class ReporteGerencias extends Fragment {
                     final String fechaIncial = tvRangoFecha1.getText().toString();
                     final String fechaFinal = tvRangoFecha2.getText().toString();
                     idGerencia = spinnerGerencias.getSelectedItemPosition();
-                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    ReporteGerencias fragmento = ReporteGerencias.newInstance(fechaIncial,fechaFinal, idGerencia, rootView.getContext());
-                    borrar.onDestroy();
-                    ft.remove(borrar);
-                    ft.replace(R.id.content_director, fragmento);
-                    ft.addToBackStack(null);
-                    ft.commit();
+                    if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
+                        Config.msj(getContext(), getResources().getString(R.string.msj_error_fechas),getResources().getString(R.string.msj_error_fechas));
+                    }else{
+                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        ReporteGerencias fragmento = ReporteGerencias.newInstance(fechaIncial,fechaFinal, idGerencia, rootView.getContext());
+                        borrar.onDestroy();
+                        ft.remove(borrar);
+                        ft.replace(R.id.content_director, fragmento);
+                        ft.addToBackStack(null);
+                        ft.commit();
+                    }
                 }else{
-                    android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                    dlgAlert.setTitle("Error de conexión");
-                    dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
-                    dlgAlert.setCancelable(true);
-                    dlgAlert.setCancelable(true);
-                    dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            sendJson(true);
-                        }
-                    });
-                    dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-                    dlgAlert.create().show();
+                    Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                 }
-
-
             }
         });
         //<editor-fold desc="TextView Resultados de filas">
@@ -434,23 +419,7 @@ public class ReporteGerencias extends Fragment {
                             });
                             dlgAlert.create().show();
                         }else{
-                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                            dlgAlert.setTitle("Error de conexión");
-                            dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
-                            dlgAlert.setCancelable(true);
-                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    //sendJson(true);
-                                }
-                            });
-                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                            dlgAlert.create().show();
+                            Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                         }
                     }
                 }) {
@@ -667,13 +636,13 @@ public class ReporteGerencias extends Fragment {
             String param2 = fecha.get("fechaFin");
 
             if(mParam1.isEmpty() && mParam2.isEmpty())
-                tvFecha.setText(param1+" - "+param2 + " " + mParam3);
+                tvFecha.setText(param1+" - "+param2);
             else if(mParam1.isEmpty())
                 tvFecha.setText(mParam2 + " " + mParam3);
             else if(mParam2.isEmpty())
                 tvFecha.setText(mParam1 + " " + mParam3);
             else
-                tvFecha.setText(mParam1 + " - " + mParam2 + " -> " + mParam3);
+                tvFecha.setText(mParam1 + " - " + mParam2);
 
         }else{
             tvFecha.setText(smParam1 + " - " + smParam2);
