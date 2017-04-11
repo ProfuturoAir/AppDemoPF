@@ -24,6 +24,7 @@ import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.airmovil.profuturo.ti.retencion.helper.SQLiteHandler;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -50,6 +51,7 @@ public class Encuesta1 extends Fragment {
     public static final String TAG = Encuesta1.class.getSimpleName();
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private SQLiteHandler db;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -90,6 +92,7 @@ public class Encuesta1 extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        db = new SQLiteHandler(getContext());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -184,6 +187,17 @@ public class Encuesta1 extends Fragment {
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                         fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                     }else{
+                        JSONObject rqt = new JSONObject();
+                        JSONObject encuesta = new JSONObject();
+                        /*encuesta.put("observaciones", observaciones);
+                        encuesta.put("pregunta3", true);
+                        encuesta.put("pregunta2", true);
+                        encuesta.put("pregunta1", true);
+                        rqt.put("encuesta", encuesta);
+                        rqt.put("estatusTramite", 1134);
+                        rqt.put("idTramite", "1");
+                        obj.put("rqt", rqt);*/
+                        db.addEncuesta("1","1134",true,true,true,observaciones);
                         Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
                         Fragment fragmentoGenerico = new Encuesta2();
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
