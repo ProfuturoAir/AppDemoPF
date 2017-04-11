@@ -1,15 +1,19 @@
 package com.airmovil.profuturo.ti.retencion.asesorFragmento;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
@@ -34,6 +38,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.identity.intents.Address;
 import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONException;
@@ -41,6 +46,8 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -51,7 +58,7 @@ import java.util.Map;
  * Use the {@link Firma#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Firma extends Fragment implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks{
+public class Firma extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -108,22 +115,12 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
 
         Button btnLimpiar = (Button) view.findViewById(R.id.aff_btn_limpiar);
         Button btnGuardar = (Button) view.findViewById(R.id.aff_btn_guardar);
-        Button btnCancelar= (Button) view.findViewById(R.id.aff_btn_cancelar);
+        Button btnCancelar = (Button) view.findViewById(R.id.aff_btn_cancelar);
 
         lblLatitud = (TextView) view.findViewById(R.id.aff_lbl_Latitud);
         lblLongitud = (TextView) view.findViewById(R.id.aff_lbl_Longitud);
         btnActualizar = (ToggleButton) view.findViewById(R.id.aff_btn_actualizar);
 
-        try{
-            apiClient = new GoogleApiClient.Builder(getActivity())
-                    .enableAutoManage(getActivity(),this)
-                    .addConnectionCallbacks(this)
-                    .addApi(LocationServices.API)
-                    .build();
-
-        } catch (Exception e){
-
-        }
 
         dvFirma = (DrawingView) view.findViewById(R.id.aff_dv_firma);
         dvFirma.setBrushSize(5);
@@ -217,9 +214,6 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-                                sendJson(true);
-
-
                                 dvFirma.setDrawingCacheEnabled(true);
                                 String base64 = encodeTobase64(dvFirma.getDrawingCache());
                                 Bitmap emBit = Bitmap.createBitmap(dvFirma.getWidth(), dvFirma.getHeight(), Bitmap.Config.ARGB_8888);
@@ -231,6 +225,8 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                                     fragmentManager
                                             .beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                                 }
+
+                                sendJson(true, base64);
                             }
                         });
                         dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener(){
@@ -299,66 +295,14 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                     dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-
                         }
                     });
                     dialogo1.show();
-
                     return true;
-
                 }
-
                 return false;
             }
         });
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == REQUEST_LOCATION) {
-            if (grantResults.length == 1
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                //Permiso concedido
-
-                @SuppressWarnings("MissingPermission")
-                Location lastLocation =
-                        LocationServices.FusedLocationApi.getLastLocation(apiClient);
-
-                updateUI(lastLocation);
-
-            } else {
-                //Permiso denegado:
-                //Deberíamos deshabilitar toda la funcionalidad relativa a la localización.
-
-                Log.e("LOGTAG", "Permiso denegado");
-            }
-        }
-    }
-
-    private void updateUI(Location loc){
-        if (loc != null){
-            lblLatitud.setText(String.valueOf(loc.getLatitude()));
-            lblLongitud.setText(String.valueOf(loc.getLongitude()));
-        }/*else{
-            lblLatitud.setText("(desconocida)");
-            lblLongitud.setText("(desconocida)");
-        }*/
     }
 
     public String encodeTobase64(Bitmap image) {
@@ -429,7 +373,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
     }
 
     // TODO: REST
-    private void sendJson(final boolean primerPeticion) {
+    private void sendJson(final boolean primerPeticion, String base64) {
         final ProgressDialog loading;
         if (primerPeticion)
             loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
@@ -442,7 +386,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
         try{
             JSONObject rqt = new JSONObject();
             rqt.put("estatusTramite", 123);
-            rqt.put("firmaCliente", "CADENABASE64");
+            rqt.put("firmaCliente", base64);
             rqt.put("idTramite", 1);
             JSONObject ubicacion = new JSONObject();
             ubicacion.put("latitud", "90.2349");
@@ -453,7 +397,8 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
         } catch (JSONException e){
             Config.msj(getContext(), "Error", "Error al formar los datos");
         }
-        //Creating a json array request
+
+        //<editor-fold desc="Creating a json array request">
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_DOCUMENTO_IFE_INE, obj,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -486,5 +431,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+        //</editor-fold>
     }
+
 }

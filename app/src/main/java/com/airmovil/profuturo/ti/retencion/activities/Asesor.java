@@ -265,7 +265,7 @@ public class Asesor extends AppCompatActivity{
             case R.id.asesor_nav_constancia_implicaciones:
                 if(checkProccess == false) {
                     checkMapsFragment = false;
-                    fragmentoGenerico = new ConCita();
+                    fragmentoGenerico = new Firma();
                 }else{
                     salirFragment(getApplicationContext());
                 }
