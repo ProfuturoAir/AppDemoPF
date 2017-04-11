@@ -192,12 +192,6 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
                     //Create a bundle to pass data, add data, set the bundle to your fragment and:
                     sucursales.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoSucursales).addToBackStack(null).commit();
                     return true;
-                case R.id.nav_asesores:
-                    AppCompatActivity asesores = (AppCompatActivity) mRecyclerView.getContext();
-                    ReporteAsesores fragmentoAsesores = new ReporteAsesores();
-                    //Create a bundle to pass data, add data, set the bundle to your fragment and:
-                    asesores.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoAsesores).addToBackStack(null).commit();
-                    return true;
                 case R.id.nav_clientes:
                     AppCompatActivity Clientes = (AppCompatActivity) mRecyclerView.getContext();
                     ReporteClientes fragmentoClientes = new ReporteClientes();
