@@ -1,5 +1,6 @@
 package com.airmovil.profuturo.ti.retencion.gerenteFragmento;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
@@ -8,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -22,7 +24,19 @@ import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.*;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -285,5 +299,69 @@ public class Encuesta2 extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    // TODO: REST
+    private void sendJson(final boolean primerPeticion) {
+        final ProgressDialog loading;
+        if (primerPeticion)
+            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
+        else
+            loading = null;
+
+        JSONObject obj = new JSONObject();
+        // TODO: Formacion del JSON request
+        try{
+            JSONObject rqt = new JSONObject();
+            JSONObject encuesta = new JSONObject();
+            encuesta.put("observaciones", "observaciones mensaje de prueba");
+            encuesta.put("pregunta3", true);
+            encuesta.put("pregunta2", true);
+            encuesta.put("pregunta1", true);
+            rqt.put("encuesta", encuesta);
+            rqt.put("estatusTramite", 123);
+            rqt.put("idTramite", "1");
+            obj.put("rqt", rqt);
+            Log.d(TAG, "REQUEST-->" + obj);
+        } catch (JSONException e){
+            Config.msj(getContext(), "Error", "Error al formar los datos");
+        }
+        //Creating a json array request
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_ENCUESTA, obj,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        //Dismissing progress dialog
+                        if (primerPeticion) {
+                            loading.dismiss();
+                            primerPaso(response);
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        loading.dismiss();
+                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                String credentials = Config.USERNAME+":"+Config.PASSWORD;
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(),
+                        Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+
+                return headers;
+            }
+        };
+        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+    }
+
+    private void primerPaso(JSONObject obj){
+        Log.d(TAG, "RESPONSE: ->" + obj);
     }
 }

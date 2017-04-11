@@ -1,16 +1,40 @@
 package com.airmovil.profuturo.ti.retencion.gerenteFragmento;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteClientesAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
+import com.airmovil.profuturo.ti.retencion.model.GerenteReporteClientesModel;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -119,5 +143,111 @@ public class ReporteClientesDetalles extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private void sendJson(final boolean primeraPeticion){
+
+        final ProgressDialog loading;
+        if (primeraPeticion)
+            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Porfavor espere...", false, false);
+        else
+            loading = null;
+
+
+        JSONObject json = new JSONObject();
+        JSONObject rqt = new JSONObject();
+        try{
+            JSONObject periodo = new JSONObject();
+            rqt.put("periodo", periodo);
+            periodo.put("fechaInicio", "");
+            periodo.put("fechaFin", "");
+            rqt.put("usuario", "");
+            json.put("rqt", rqt);
+            Log.d("sendJson", " REQUEST -->" + json);
+
+        } catch (JSONException e){
+            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
+        }
+
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_CLIENTES, json,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        if(primeraPeticion){
+                            loading.dismiss();
+                            primerPaso(response);
+                        } else {
+                            //segundoPaso(response);
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        try{
+                            loading.dismiss();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
+                        Connected connected = new Connected();
+                        if(connected.estaConectado(getContext())){
+                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                            dlgAlert.setTitle("Error");
+                            dlgAlert.setMessage("Se ha encontrado un problema, deseas volver intentarlo");
+                            dlgAlert.setCancelable(true);
+                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //sendJson(true);
+                                }
+                            });
+                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            dlgAlert.create().show();
+                        }else{
+                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                            dlgAlert.setTitle("Error de conexión");
+                            dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
+                            dlgAlert.setCancelable(true);
+                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //sendJson(true);
+                                }
+                            });
+                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            dlgAlert.create().show();
+                        }
+                    }
+                })
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                String credentials = Config.USERNAME+":"+Config.PASSWORD;
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(),
+                        Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+
+                return headers;
+            }
+        };
+        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+    }
+
+    private void primerPaso(JSONObject obj){
+        Log.d("primer paso", "Response: "  + obj );
     }
 }
