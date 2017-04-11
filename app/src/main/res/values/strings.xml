@@ -76,9 +76,12 @@
     <string name="error_json">Error en json</string>
     <string name="error_datos">Error datos</string>
     <string name="error_datos_vacios">Datos vacios</string>
+    <string name="error_email_incorrecto">Error en email</string>
     <string name="msj_error_conexion">Por favor, revisa tu conexión a internet</string>
     <string name="msj_error_json">Los datos no se han podido formar</string>
     <string name="msj_error_fechas">Por favor, rellena los campos de fecha</string>
+    <string name="msj_error_datos_vacios">Debes rellenar todos los campos</string>
+    <string name="msj_error_email">El email no es valido, favor de verificar</string>
     <string name="msj">mensaje</string>
     <string name="msj_titulo_espera">Cargando datos...</string>
     <string name="msj_espera">Cargando contenido, espere por favor...</string>

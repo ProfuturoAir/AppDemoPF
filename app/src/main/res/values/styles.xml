@@ -147,6 +147,18 @@
         <!--item name="android:layout_marginLeft">10dp</item-->
         <item name="android:layout_marginRight">5dp</item>
     </style>
+    <!-- TODO: Contenedor, contiene el spinner y la linea(View) del fondo-->
+    <style name="contenedorSpinner1">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
+        <!--item name="android:layout_marginLeft">10dp</item-->
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
     <style name="contenedorSpinnerLarge">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

@@ -419,6 +419,15 @@ public class ReporteClientes extends Fragment {
         else
             loading = null;
 
+        Map<String, Integer> fechaDatos = Config.dias();
+        Map<String, String> fechaActual = Config.fechas(1);
+        HashMap<String, String> usuario = sessionManager.getUserDetails();
+        String numeroUsuario = usuario.get(SessionManager.ID);
+        mYear  = fechaDatos.get("anio");
+        mMonth = fechaDatos.get("mes");
+        mDay   = fechaDatos.get("dia");
+        String smParam1 = fechaActual.get("fechaIni");
+        String smParam2 = fechaActual.get("fechaFin");
 
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
@@ -430,18 +439,18 @@ public class ReporteClientes extends Fragment {
 
             }else {
                 rqt.put("cita", 1);
-                filtroCliente.put("curp","CURP");
-                filtroCliente.put("nss", "NSS");
-                filtroCliente.put("numeroCuenta", "CUENTA");
+                filtroCliente.put("curp","");
+                filtroCliente.put("nss", "");
+                filtroCliente.put("numeroCuenta", "");
                 rqt.put("filtroCliente", filtroCliente);
-                rqt.put("idGerencia", 1);
-                rqt.put("idSucursal", 1);
+                rqt.put("idGerencia", 0);
+                rqt.put("idSucursal", 0);
                 rqt.put("pagina", pagina);
-                periodo.put("fechaFin", "fechaFIN");
-                periodo.put("fechaInicio", "fechINICIO");
+                periodo.put("fechaFin", smParam1);
+                periodo.put("fechaInicio", smParam2);
                 rqt.put("periodo", periodo);
                 rqt.put("retenido", 1);
-                rqt.put("usuario", "USUARIO");
+                rqt.put("usuario", numeroUsuario);
                 json.put("rqt", rqt);
             }
             Log.d("sendJson", " REQUEST -->" + json);
