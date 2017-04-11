@@ -10,6 +10,7 @@ import android.support.annotation.IntegerRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -374,6 +375,12 @@ public class Inicio extends Fragment {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
                 headers.put("Content-Type", "application/json; charset=utf-8");
+                String credentials = Config.USERNAME+":"+Config.PASSWORD;
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(),
+                        Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+
                 return headers;
             }
         };
@@ -390,8 +397,8 @@ public class Inicio extends Fragment {
         int iRetenidos = 0;
         int iNoRetenidos = 0;
         JSONObject saldos = null;
-        String iSaldoRetenido = "";
-        String iSaldoNoRetenido = "";
+        int iSaldoRetenido = 0;
+        int iSaldoNoRetenido = 0;
 
         String status = "";
 
@@ -408,8 +415,8 @@ public class Inicio extends Fragment {
                 iRetenidos = (Integer) retenidos.get("retenido");
                 iNoRetenidos = (Integer) retenidos.get("noRetenido");
                 saldos = infoConsulta.getJSONObject("saldo");
-                iSaldoRetenido = (String) saldos.get("saldoRetenido");
-                iSaldoNoRetenido = (String) saldos.get( "saldoNoRetenido");
+                iSaldoRetenido = (int) saldos.get("saldoRetenido");
+                iSaldoNoRetenido = (int) saldos.get( "saldoNoRetenido");
                 Log.d("JSON", retenidos.toString());
             }else{
                 statusText = obj.getString("statusText");

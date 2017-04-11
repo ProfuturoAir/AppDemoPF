@@ -150,8 +150,8 @@ public class Gerente extends AppCompatActivity{
 
         View hView = navigationView.getHeaderView(0);
 
-        TextView navPrimeraLetra = (TextView) hView.findViewById(R.id.gerente_nav_tv_letra);
-        TextView navDatosGerente = (TextView) hView.findViewById(R.id.gerente_nav_tv_datos);
+        //TextView navPrimeraLetra = (TextView) hView.findViewById(R.id.gerente_nav_tv_letra);
+        //TextView navDatosGerente = (TextView) hView.findViewById(R.id.gerente_nav_tv_datos);
 
         char letra = sNombreEmpleado.charAt(0);
         String primeraLetra = Character.toString(letra);

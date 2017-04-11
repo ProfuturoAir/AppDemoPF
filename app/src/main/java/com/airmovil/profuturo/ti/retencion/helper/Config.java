@@ -60,6 +60,8 @@ public class Config extends Activity {
     public static final String[] EMAIL = new String[]{"Seleciona un email","profuturo.com.mx", "profuturo.com", "profuturo.mx"};
 
     // TODO: Variables
+    public static final String USERNAME = "profuturo";
+    public static final String PASSWORD = "123123";
     public static final long SPLASH_SCREEN_DELEY = 3500;
     private static Timer mTimer = new Timer();
     private static ProgressDialog dialog;
