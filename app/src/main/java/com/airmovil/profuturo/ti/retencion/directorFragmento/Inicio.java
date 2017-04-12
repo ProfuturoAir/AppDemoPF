@@ -40,7 +40,9 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -53,11 +55,9 @@ import java.util.Map;
  */
 public class Inicio extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String TAG = Inicio.class.getSimpleName();
     private static final String ARG_PARAM1 = "parametro1";
     private static final String ARG_PARAM2 = "parametro2";
-    private static final String ARG_PARAM3 = "parametro3";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -65,10 +65,10 @@ public class Inicio extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    // TODO: View, sessionManager, datePickerDialog
+    // TODO: View, datePickerDialog,
     private View rootView;
-    private SessionManager sessionManager;
     private DatePickerDialog datePickerDialog;
+    final Fragment borrar = this;
 
     // TODO: XML
     private TextView tvInicial, tvNombre, tvFecha;
@@ -82,10 +82,15 @@ public class Inicio extends Fragment {
     private int mDay;
     private String fechaIni = "";
     private String fechaFin = "";
-    private String fechaMostrar = "";
     private String numeroUsuario;
 
-    // TODO; variable de
+    // TODO: variable del Response
+    private JSONObject retenidos = null;
+    private int iRetenidos = 0;
+    private int iNoRetenidos = 0;
+    private JSONObject saldos = null;
+    private int iSaldoRetenido = 0;
+    private int iSaldoNoRetenido = 0;
 
     public Inicio() {
         // Required empty public constructor
@@ -118,76 +123,32 @@ public class Inicio extends Fragment {
         }
     }
 
+    /**
+     *
+     * @param view regresa la vista
+     * @param savedInstanceState parametros a enviar para conservar en el bundle
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // TODO: Lineas para ocultar el teclado virtual (Hide keyboard)
         rootView = view;
-        sessionManager = new SessionManager(getActivity().getApplicationContext());
-        HashMap<String, String> datos = sessionManager.getUserDetails();
-        String nombre = datos.get(SessionManager.NOMBRE);
-        numeroUsuario = datos.get(SessionManager.ID);
-
-
-        // CASTEO DE ELEMENTOS
-        tvInicial = (TextView) view.findViewById(R.id.dfi_tv_inicial);
-        tvNombre = (TextView) view.findViewById(R.id.dfi_tv_nombre);
-        tvFecha = (TextView) view.findViewById(R.id.dfi_tv_fecha);
-        tvRetenidos = (TextView) view.findViewById(R.id.dfi_tv_retenidos);
-        tvNoRetenidos = (TextView) view.findViewById(R.id.dfi_tv_no_retenidos);
-        tvSaldoRetenido = (TextView) view.findViewById(R.id.dfi_tv_saldo_a_favor);
-        tvSaldoNoRetenido = (TextView) view.findViewById(R.id.dfi_tv_saldo_retenido);
-        tvRangoFecha1 = (TextView) view.findViewById(R.id.dfi_tv_fecha_rango1);
-        tvRangoFecha2 = (TextView) view.findViewById(R.id.dfi_tv_fecha_rango2);
-        btnFiltro = (Button) view.findViewById(R.id.dfi_btn_filtro);
-
-        tvSaldoRetenido.setSelected(true);
-
-        char letra = nombre.charAt(0);
-        String convertirATexto = Character.toString(letra);
-
-        Map<String, Integer> fechaDatos = Config.dias();
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
-
-
-
-        if(getArguments() != null){
-            fechaIni = getArguments().getString(ARG_PARAM1).trim();
-            fechaFin = getArguments().getString(ARG_PARAM2).trim();
-            if(fechaFin.equals("") && fechaIni.equals("")){
-                Map<String, String> fechas = Config.fechas(1);
-                fechaIni = fechas.get("fechaIni");
-                fechaMostrar = fechaIni;
-                tvFecha.setText(fechaMostrar);
-            }else if(fechaFin.equals("")){
-                tvFecha.setText(fechaIni);
-            }else if(fechaIni.matches("")){
-                tvFecha.setText(fechaFin);
-            }else{
-                tvFecha.setText(fechaIni + " - " + fechaFin);
-            }
-        }else {
-            Map<String, String> fechas = Config.fechas(1);
-            fechaFin = fechas.get("fechaFin");
-            fechaIni = fechas.get("fechaIni");
-            fechaMostrar = fechaIni;
-            tvFecha.setText(fechaIni + " - " + fechaFin);
-        }
-
-        tvInicial.setText(convertirATexto);
-        tvNombre.setText(nombre);
-
+        // TODO: CASTEO DE ELEMENTOS
+        variables(rootView);
+        // TODO: Colocando la parte superior de la seccion: 1er letra del nombre, Nombre
+        detalleSuperior();
+        // TODO: inclucion de fechas
+        fechas();
+        // TODO: Rango inicial y final para seleccionar el dialogo de fechas
         rangoInicial();
         rangoFinal();
 
+        // TODO: Peticion via REST
         sendJson(true);
 
-        final Fragment borrar = this;
+
         btnFiltro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 final String fechaIncial = tvRangoFecha1.getText().toString();
                 final String fechaFinal = tvRangoFecha2.getText().toString();
 
@@ -290,6 +251,7 @@ public class Inicio extends Fragment {
         });
     }
 
+
     private void sendJson(final boolean primeraPeticion){
 
         final ProgressDialog loading;
@@ -301,12 +263,28 @@ public class Inicio extends Fragment {
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
         try{
-            JSONObject periodo = new JSONObject();
-            rqt.put("periodo", periodo);
-            periodo.put("fechaInicio", fechaIni);
-            periodo.put("fechaFin", fechaFin);
-            rqt.put("usuario", numeroUsuario);
-            json.put("rqt", rqt);
+            if(getArguments() != null){
+                JSONObject periodo = new JSONObject();
+
+                mParam1 = getArguments().getString(ARG_PARAM1);
+                mParam2 = getArguments().getString(ARG_PARAM2);
+                rqt.put("periodo", periodo);
+                periodo.put("fechaInicio", mParam1);
+                periodo.put("fechaFin", mParam2);
+                rqt.put("usuario", numeroUsuario);
+                json.put("rqt", rqt);
+            }else{
+                Map<String, String> fecha = Config.fechas(1);
+                String param1 = fecha.get("fechaIni");
+                String param2 = fecha.get("fechaFin");
+                JSONObject periodo = new JSONObject();
+                rqt.put("periodo", periodo);
+                periodo.put("fechaInicio", param1);
+                periodo.put("fechaFin", param2);
+                rqt.put("usuario", numeroUsuario);
+                json.put("rqt", rqt);
+            }
+
             Log.d(TAG, "REQUEST -->" + json);
 
         } catch (JSONException e){
@@ -389,15 +367,7 @@ public class Inicio extends Fragment {
     }
 
     private void primerPaso(JSONObject obj){
-
         Log.d(TAG, "primerPaso: "  + obj );
-
-        JSONObject retenidos = null;
-        int iRetenidos = 0;
-        int iNoRetenidos = 0;
-        JSONObject saldos = null;
-        int iSaldoRetenido = 0;
-        int iSaldoNoRetenido = 0;
         try{
             JSONObject infoConsulta = obj.getJSONObject("infoConsulta");
             retenidos = infoConsulta.getJSONObject("retenido");
@@ -410,10 +380,61 @@ public class Inicio extends Fragment {
         }catch (JSONException e){
             Config.msj(getContext(), "Error", "Lo sentimos ocurrio un error con los datos");
         }
-
         tvRetenidos.setText("" + iRetenidos);
         tvNoRetenidos.setText("" + iNoRetenidos);
-        tvSaldoRetenido.setText("" + iSaldoRetenido);
-        tvSaldoNoRetenido.setText("" + iSaldoNoRetenido);
+        tvSaldoRetenido.setText("" + Config.nf.format(iSaldoRetenido));
+        tvSaldoNoRetenido.setText("" + Config.nf.format(iSaldoNoRetenido));
+    }
+
+    /**
+     *  Espera el regreso de fechas incial (hoy y el dia siguiente)
+     *  y cuando se realiza una nueva busqueda, retorna las fechas seleccionadas
+     */
+    private void fechas(){
+        // TODO: fecha
+        //<editor-fold desc="Fechas">
+        Map<String, String> fechaActual = Config.fechas(1);
+        String smParam1 = fechaActual.get("fechaIni");
+        String smParam2 = fechaActual.get("fechaFin");
+        if(getArguments() != null){
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+            tvFecha.setText(mParam1 + " - " + mParam2);
+        }else{
+            tvFecha.setText(smParam1 + " - " + smParam2);
+        }
+    }
+
+    /**
+     * Setear las variables de xml
+     */
+    public void variables(View view){
+        tvInicial = (TextView) view.findViewById(R.id.dfi_tv_inicial);
+        tvNombre = (TextView) view.findViewById(R.id.dfi_tv_nombre);
+        tvFecha = (TextView) view.findViewById(R.id.dfi_tv_fecha);
+        tvRetenidos = (TextView) view.findViewById(R.id.dfi_tv_retenidos);
+        tvNoRetenidos = (TextView) view.findViewById(R.id.dfi_tv_no_retenidos);
+        tvSaldoRetenido = (TextView) view.findViewById(R.id.dfi_tv_saldo_a_favor);
+        tvSaldoNoRetenido = (TextView) view.findViewById(R.id.dfi_tv_saldo_retenido);
+        tvRangoFecha1 = (TextView) view.findViewById(R.id.dfi_tv_fecha_rango1);
+        tvRangoFecha2 = (TextView) view.findViewById(R.id.dfi_tv_fecha_rango2);
+        btnFiltro = (Button) view.findViewById(R.id.dfi_btn_filtro);
+    }
+
+    /**
+     * Obteniendo los valores del apartado superior, nombre
+     */
+    public void detalleSuperior(){
+        Map<String, Integer> fechaDatos = Config.dias();
+        mYear  = fechaDatos.get("anio");
+        mMonth = fechaDatos.get("mes");
+        mDay   = fechaDatos.get("dia");
+        Map<String, String> datosUsuario = Config.usuario(getContext());
+        String nombreX = datosUsuario.get(SessionManager.NOMBRE);
+        numeroUsuario = datosUsuario.get(SessionManager.ID);
+        char letra = nombreX.charAt(0);
+        String convertirATexto = Character.toString(letra);
+        tvInicial.setText(convertirATexto);
+        tvNombre.setText(nombreX);
     }
 }

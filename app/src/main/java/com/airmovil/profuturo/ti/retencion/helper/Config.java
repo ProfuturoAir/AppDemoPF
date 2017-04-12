@@ -6,11 +6,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -68,6 +70,9 @@ public class Config extends Activity {
     private static Timer mTimer = new Timer();
     private static ProgressDialog dialog;
     public static final int numVistaPagina = 10;
+
+    // TODO: formato para convertir (int) a valor monetario
+    public static final NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.getDefault());
 
     /**
      * @param ctx parametro 1,
