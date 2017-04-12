@@ -74,6 +74,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
     private View rootView;
     private SessionManager sessionManager;
     private DatePickerDialog datePickerDialog;
+    private Connected connected;
 
     // TODO: XML
     private TextView tvFecha;
@@ -159,30 +160,10 @@ public class ReporteAsistenciaDetalles extends Fragment {
         mYear  = fechaDatos.get("anio");
         mMonth = fechaDatos.get("mes");
         mDay   = fechaDatos.get("dia");
-        Map<String, String> fechas = Config.fechas(1);
-        String fechaMuestra = fechas.get("fechaIni");
-        try{
-            fechaIni = getArguments().getString(ARG_PARAM1);
-            fechaFin = getArguments().getString(ARG_PARAM2);
-            if(getArguments() != null){
-                Log.d("getArguments","fechas: " + fechaIni + " " + fechaFin);
-                if(fechaIni == null && fechaFin == null){
-                    Log.d("datos Vacios", "FechaInicio" + fechaIni);
-                    tvFecha.setText(fechaMuestra);
-                }else if(fechaIni != null && fechaFin != null){
-                    tvFecha.setText(fechaIni + "  " + fechaFin);
-                }else{
-                    tvFecha.setText(fechaMuestra);
-                }
-            }else if(fechaIni == "" && fechaFin == ""){
-                tvFecha.setText(fechaMuestra);
-                Log.d("vacios getParams","fechas: " + fechaIni + " " + fechaFin);
-            }else{
-                Log.d("else getParams","fechas: " + fechaIni + " " + fechaFin);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+
+        connected = new Connected();
+
+        fechas();
 
         // TODO: fechas dialog
         rangoInicial();
@@ -203,39 +184,27 @@ public class ReporteAsistenciaDetalles extends Fragment {
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String fechaIncial = tvRangoFecha1.getText().toString();
-                final String fechaFinal = tvRangoFecha2.getText().toString();
-
-
-                Connected connected = new Connected();
                 if(connected.estaConectado(getContext())){
-                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    ReporteAsistenciaDetalles fragmento = ReporteAsistenciaDetalles.newInstance(fechaIncial,fechaFinal,rootView.getContext());
-                    borrar.onDestroy();
-                    ft.remove(borrar);
-                    ft.replace(R.id.content_director, fragmento);
-                    ft.addToBackStack(null);
-                    ft.commit();
-                }else{
-                    android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                    dlgAlert.setTitle("Error de conexión");
-                    dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
-                    dlgAlert.setCancelable(true);
-                    dlgAlert.setCancelable(true);
-                    dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            sendJson(true);
-                        }
-                    });
-                    dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                    final String fechaIncial = tvRangoFecha1.getText().toString();
+                    final String fechaFinal = tvRangoFecha2.getText().toString();
 
-                        }
-                    });
-                    dlgAlert.create().show();
+                    if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
+                        Config.msj(getContext(), getResources().getString(R.string.error_fechas_vacias),getResources().getString(R.string.msj_error_fechas));
+                    }else{
+                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        ReporteAsistenciaDetalles fragmento = ReporteAsistenciaDetalles.newInstance(fechaIncial, fechaFinal, rootView.getContext());
+                        borrar.onDestroy();
+                        ft.remove(borrar);
+                        ft.replace(R.id.content_director, fragmento);
+                        ft.addToBackStack(null);
+                        ft.commit();
+                    }
+                    // TODO: ocultar teclado
+                    //imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+                }else{
+                    Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                 }
+
             }
         });
 
@@ -335,22 +304,35 @@ public class ReporteAsistenciaDetalles extends Fragment {
         else
             loading = null;
 
-        JSONObject obj = new JSONObject();
+        SessionManager sessionManager = new SessionManager(getContext());
+        HashMap<String, String> usuario = sessionManager.getUserDetails();
+        String numeroEmpleado = usuario.get(SessionManager.ID);
 
+        JSONObject obj = new JSONObject();
+        JSONObject rqt = new JSONObject();
+        JSONObject periodo = new JSONObject();
         try{
-            JSONObject rqt = new JSONObject();
-            JSONObject filtros = new JSONObject();
-            JSONObject periodo = new JSONObject();
-            filtros.put("curp", "");
-            filtros.put("nss", "");
-            filtros.put("numeroCuenta", "");
-            rqt.put("filtro", filtros);
-            rqt.put("idTramite", 1);
-            periodo.put("fechaInicio", fechaIni);
-            periodo.put("fechaFin", fechaFin);
-            rqt.put("periodo", periodo);
-            rqt.put("usuario", "");
-            obj.put("rqt", rqt);
+            if(getArguments() != null){
+                mParam1 = getArguments().getString(ARG_PARAM1);
+                mParam2 = getArguments().getString(ARG_PARAM2);
+                rqt.put("numeroEmpleado", numeroEmpleado);
+                rqt.put("pagina", pagina);
+                periodo.put("fechaInicio", mParam2);
+                periodo.put("fechaFin", mParam1);
+                rqt.put("periodo", periodo);
+                obj.put("rqt", rqt);
+            }else{
+                Map<String, String> fecha = Config.fechas(1);
+                String param1 = fecha.get("fechaIni");
+                String param2 = fecha.get("fechaFin");
+                rqt.put("numeroEmpleado", numeroEmpleado);
+                rqt.put("pagina", pagina);
+                periodo.put("fechaInicio", param1);
+                periodo.put("fechaFin", param2);
+                rqt.put("periodo", periodo);
+                obj.put("rqt", rqt);
+            }
+
             Log.d("", "PETICION VACIA-->" + obj);
         }catch (JSONException e){
             e.printStackTrace();
@@ -534,7 +516,6 @@ public class ReporteAsistenciaDetalles extends Fragment {
         adapter.setLoaded();
     }
 
-
     private void rangoInicial(){
         tvRangoFecha1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -568,4 +549,21 @@ public class ReporteAsistenciaDetalles extends Fragment {
             }
         });
     }
+
+    private void fechas(){
+        // TODO: fecha
+        //<editor-fold desc="Fechas">
+        Map<String, String> fechaActual = Config.fechas(1);
+        final String smParam1 = fechaActual.get("fechaIni");
+        final String smParam2 = fechaActual.get("fechaFin");
+        if(getArguments() != null){
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+            tvFecha.setText(mParam1 + " - " + mParam2);
+        }else{
+            tvFecha.setText("15-04-2017");
+        }
+    }
+
+
 }

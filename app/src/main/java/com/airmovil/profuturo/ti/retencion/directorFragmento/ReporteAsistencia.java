@@ -219,9 +219,11 @@ public class ReporteAsistencia extends Fragment {
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         ReporteAsistencia fragmento = ReporteAsistencia.newInstance(fechaIncial, fechaFinal, idGerencia, idSucursal, idAsesor, rootView.getContext());
+                        ReporteAsistenciaDetalles pass = ReporteAsistenciaDetalles.newInstance(fechaIncial, fechaFinal, rootView.getContext());
                         borrar.onDestroy();
                         ft.remove(borrar);
                         ft.replace(R.id.content_director, fragmento);
+                        ft.replace(R.id.content_director, pass);
                         ft.addToBackStack(null);
                         ft.commit();
                     }
