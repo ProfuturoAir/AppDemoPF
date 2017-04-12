@@ -184,7 +184,7 @@ public class ReporteAsesores extends Fragment {
                     final String idAsesor = etAsesor.getText().toString();
 
                     if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
-                        Config.msj(getContext(), getResources().getString(R.string.msj_error_fechas),getResources().getString(R.string.msj_error_fechas));
+                        Config.msj(getContext(), getResources().getString(R.string.error_fechas_vacias),getResources().getString(R.string.msj_error_fechas));
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         ReporteAsesores fragmento = ReporteAsesores.newInstance(fechaIncial, fechaFinal, idAsesor, rootView.getContext());
@@ -336,7 +336,7 @@ public class ReporteAsesores extends Fragment {
                 periodo.put("fechaFin", mParam1);
                 periodo.put("fechaIni", mParam2);
                 rqt.put("perido", periodo);
-                rqt.put("usuario", numeroUsuario);
+                rqt.put("usuario", usuario.get(SessionManager.ID));
                 obj.put("rqt", rqt);
             }else{
                 JSONObject rqt = new JSONObject();
@@ -346,7 +346,7 @@ public class ReporteAsesores extends Fragment {
                 periodo.put("fechaFin", smParam2);
                 periodo.put("fechaIni", smParam1);
                 rqt.put("perido", periodo);
-                rqt.put("usuario", numeroUsuario);
+                rqt.put("usuario", usuario.get(SessionManager.ID));
                 obj.put("rqt", rqt);
             }
 
@@ -475,8 +475,8 @@ public class ReporteAsesores extends Fragment {
 
         tvEmitidas.setText("" + emitidos);
         tvNoEmitidas.setText("" + noEmitido);
-        tvSaldoEmitido.setText("" + saldoEmitido);
-        tvSaldoNoEmitido.setText("" + saldoNoEmitido);
+        tvSaldoEmitido.setText("" + Config.nf.format(saldoEmitido));
+        tvSaldoNoEmitido.setText("" + Config.nf.format(saldoNoEmitido));
         tvTotalResultados.setText("" + filas + " Resultados ");
 
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
@@ -592,8 +592,6 @@ public class ReporteAsesores extends Fragment {
     //</editor-fold>
 
     private void fechas(){
-        // TODO: fecha
-        //<editor-fold desc="Fechas">
         Map<String, Integer> fechaDatos = Config.dias();
         Map<String, String> fechaActual = Config.fechas(1);
         mYear  = fechaDatos.get("anio");
@@ -601,28 +599,13 @@ public class ReporteAsesores extends Fragment {
         mDay   = fechaDatos.get("dia");
         String smParam1 = fechaActual.get("fechaIni");
         String smParam2 = fechaActual.get("fechaFin");
-
         if(getArguments() != null){
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
             mParam3 = getArguments().getString(ARG_PARAM3);
-
-            Map<String, String> fecha = Config.fechas(1);
-            String param1 = fecha.get("fechaIni");
-            String param2 = fecha.get("fechaFin");
-
-            if(mParam1.isEmpty() && mParam2.isEmpty())
-                tvFecha.setText(param1 + " - " + param2);
-            else if(mParam1.isEmpty())
-                tvFecha.setText(mParam2 + " " + mParam3);
-            else if(mParam2.isEmpty())
-                tvFecha.setText(mParam1 + " " + mParam3);
-            else
-                tvFecha.setText(mParam1 + " - " + mParam2);
-
+            tvFecha.setText(mParam1 + " - " + mParam2);
         }else{
             tvFecha.setText(smParam1 + " - " + smParam2);
         }
-        //</editor-fold>
     }
 }

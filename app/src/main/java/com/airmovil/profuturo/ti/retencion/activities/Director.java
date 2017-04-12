@@ -190,7 +190,7 @@ public class Director extends AppCompatActivity{
 
         switch (itemDrawer.getItemId()){
             case R.id.director_nav_inicio:
-                fragmentoGenerico = new ReporteGerencias();
+                fragmentoGenerico = new ReporteAsesores();
                 break;
             case R.id.director_nav_calculadora:
                 fragmentoGenerico = new Calculadora();

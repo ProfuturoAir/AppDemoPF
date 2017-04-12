@@ -614,8 +614,6 @@ public class ReporteGerencias extends Fragment {
     //</editor-fold>
 
     private void fechas(){
-        // TODO: fecha
-        //<editor-fold desc="Fechas">
         Map<String, Integer> fechaDatos = Config.dias();
         Map<String, String> fechaActual = Config.fechas(1);
         mYear  = fechaDatos.get("anio");
@@ -632,6 +630,5 @@ public class ReporteGerencias extends Fragment {
         }else{
             tvFecha.setText(smParam1 + " - " + smParam2);
         }
-        //</editor-fold>
     }
 }

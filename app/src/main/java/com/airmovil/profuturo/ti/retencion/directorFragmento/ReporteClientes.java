@@ -75,6 +75,7 @@ public class ReporteClientes extends Fragment {
     private static final String ARG_PARAM6 = "parametroIngresaIdAsesor";
     private static final String ARG_PARAM7 = "parametroEstatus";
     private static final String ARG_PARAM8 = "parametroCita";
+    private static final String ARG_PARAM9 = "parametrosSelecionId";
     // TODO: Rename and change types of parameters
     private String mParam1; // fecha ini
     private String mParam2; // fecha fin
@@ -84,6 +85,7 @@ public class ReporteClientes extends Fragment {
     private String mParam6; // idAsesor
     private int mParam7; // idRetenidos
     private int mParam8; // idCitas
+    private int mParam9; // Seleccion
 
     private Spinner spinnerId, spinnerSucursal, spinnerRetenido, spinnerCita, spinnerGerencias;
     private EditText etIngresarDato, etIngresarAsesor;
@@ -133,7 +135,7 @@ public class ReporteClientes extends Fragment {
      */
     // TODO: Rename and change types and number of parameters
     public static ReporteClientes newInstance(String param1, String param2, String param3, int param4,
-                                              int param5, String param6, int param7, int param8, Context context) {
+                                              int param5, String param6, int param7, int param8, int param9, Context context) {
         ReporteClientes fragment = new ReporteClientes();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
@@ -144,6 +146,7 @@ public class ReporteClientes extends Fragment {
         args.putString(ARG_PARAM6, param6);
         args.putInt(ARG_PARAM7, param7);
         args.putInt(ARG_PARAM8, param8);
+        args.putInt(ARG_PARAM9, param9);
         fragment.setArguments(args);
         return fragment;
     }
@@ -178,7 +181,7 @@ public class ReporteClientes extends Fragment {
 
         // TODO: ocultar teclado
         imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-
+        connect = new Connected();
 
         Map<String, Integer> fechaDatos = Config.dias();
         mYear  = fechaDatos.get("anio");
@@ -277,11 +280,13 @@ public class ReporteClientes extends Fragment {
                     mParam6 = etIngresarAsesor.getText().toString();
                     mParam7 = spinnerRetenido.getSelectedItemPosition();
                     mParam8 = spinnerCita.getSelectedItemPosition();
-                    //mParam3 = sp.getSelectedItemPosition();
+                    mParam9 = spinnerId.getSelectedItemPosition();
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                     if(mParam1.isEmpty() || mParam2.isEmpty()){
+                        Config.msj(getContext(), getResources().getString(R.string.error_fechas_vacias), getResources().getString(R.string.msj_error_fechas));
+                    }else{
                         ReporteClientes procesoDatosFiltroInicio = ReporteClientes.newInstance(
-                                mParam1, mParam2, mParam3, mParam4, mParam5, mParam6, mParam7, mParam8,
+                                mParam1, mParam2, mParam3, mParam4, mParam5, mParam6, mParam7, mParam8, mParam9,
                                 rootView.getContext()
                         );
                         borrar.onDestroy();
@@ -294,8 +299,6 @@ public class ReporteClientes extends Fragment {
                     Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                 }
 
-                String f1 = tvRangoFecha1.getText().toString();
-                String f2 = tvRangoFecha2.getText().toString();
 
             }
         });
@@ -419,26 +422,57 @@ public class ReporteClientes extends Fragment {
         else
             loading = null;
 
-        Map<String, Integer> fechaDatos = Config.dias();
-        Map<String, String> fechaActual = Config.fechas(1);
-        HashMap<String, String> usuario = sessionManager.getUserDetails();
-        String numeroUsuario = usuario.get(SessionManager.ID);
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
-        String smParam1 = fechaActual.get("fechaIni");
-        String smParam2 = fechaActual.get("fechaFin");
 
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
         JSONObject filtroCliente = new JSONObject();
         JSONObject periodo = new JSONObject();
         try{
-
             if(getArguments() != null){
+                mParam1 = getArguments().getString(ARG_PARAM1);
+                mParam2 = getArguments().getString(ARG_PARAM2);
+                mParam3 = getArguments().getString(ARG_PARAM3);
+                mParam4 = getArguments().getInt(ARG_PARAM4);
+                mParam5 = getArguments().getInt(ARG_PARAM5);
+                mParam6 = getArguments().getString(ARG_PARAM6);
+                mParam7 = getArguments().getInt(ARG_PARAM7);
+                mParam8 = getArguments().getInt(ARG_PARAM8);
+                mParam9 = getArguments().getInt(ARG_PARAM9);
 
+                rqt.put("cita", mParam8);
+                if(mParam9 == 1){
+                    filtroCliente.put("curp", "");
+                    filtroCliente.put("nss", "");
+                    filtroCliente.put("numeroCuenta", mParam3);
+                } else if(mParam9 == 2){
+                    filtroCliente.put("curp", "");
+                    filtroCliente.put("nss", mParam3);
+                    filtroCliente.put("numeroCuenta", "");
+                }else if(mParam9 == 3){
+                    filtroCliente.put("curp", mParam3);
+                    filtroCliente.put("nss", "");
+                    filtroCliente.put("numeroCuenta", "");
+                } else{
+                    filtroCliente.put("curp", "");
+                    filtroCliente.put("nss", "");
+                    filtroCliente.put("numeroCuenta", "");
+                }
+
+                rqt.put("filtroCliente", filtroCliente);
+                rqt.put("idGerencia", mParam4);
+                rqt.put("idSucursal", mParam5);
+                rqt.put("pagina", pagina);
+                periodo.put("fechaFin", mParam1);
+                periodo.put("fechaInicio", mParam2);
+                rqt.put("periodo", periodo);
+                rqt.put("retenido", mParam7);
+                rqt.put("usuario", mParam6);
+                json.put("rqt", rqt);
             }else {
-                rqt.put("cita", 1);
+                Map<String, String> fechaActual = Config.fechas(1);
+                String smParam1 = fechaActual.get("fechaIni");
+                String smParam2 = fechaActual.get("fechaFin");
+                rqt.put("cita", 0);
                 filtroCliente.put("curp","");
                 filtroCliente.put("nss", "");
                 filtroCliente.put("numeroCuenta", "");
@@ -446,10 +480,10 @@ public class ReporteClientes extends Fragment {
                 rqt.put("idGerencia", 0);
                 rqt.put("idSucursal", 0);
                 rqt.put("pagina", pagina);
-                periodo.put("fechaFin", smParam1);
-                periodo.put("fechaInicio", smParam2);
+                periodo.put("fechaFin", smParam2);
+                periodo.put("fechaInicio", smParam1);
                 rqt.put("periodo", periodo);
-                rqt.put("retenido", 1);
+                rqt.put("retenido", 0);
                 rqt.put("usuario", numeroUsuario);
                 json.put("rqt", rqt);
             }
@@ -540,7 +574,7 @@ public class ReporteClientes extends Fragment {
     }
 
     private void primerPaso(JSONObject obj){
-        //Log.d("primer paso", "Response: "  + obj );
+        Log.d("RESPONSE", " " + obj );
         int totalFilas = 1;
         try{
             JSONArray array = obj.getJSONArray("Cliente");

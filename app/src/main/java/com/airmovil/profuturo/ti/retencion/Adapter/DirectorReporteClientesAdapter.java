@@ -95,11 +95,23 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
             final DirectorReporteClientesModel lista = list.get(position);
             final MyViewHolder myholder = (MyViewHolder) holder;
 
-            myholder.campoNombreCliente.setText("Asesor: " + lista.getNombreCliente());
-            myholder.campoCuentaCliente.setText(" " + lista.getNumeroCuenta());
-            myholder.campoAsesorCliente.setText(" " + lista.getNumeroEmpleado());
-            myholder.campoNoRetenidoCliente.setText(lista.getRetenido());
-            //myholder.campoSucursalCliente.setText(lista.getIdSucursal());
+            myholder.campoNombreCliente.setText("Nombre del cliente: " + lista.getNombreCliente());
+            myholder.campoCuentaCliente.setText("Número de cuenta: " + lista.getNumeroCuenta());
+            myholder.campoAsesorCliente.setText("Asesor: " + lista.getNumeroEmpleado());
+
+            boolean citas = Boolean.parseBoolean(lista.getCita());
+            if (citas == true)
+                myholder.campoConCitaCliente.setText("Con cita");
+            else
+                myholder.campoConCitaCliente.setText("Sin cita");
+
+            boolean retenido = Boolean.parseBoolean(lista.getRetenido());
+            if(retenido == true)
+                myholder.campoNoRetenidoCliente.setText("Retenido");
+            else
+                myholder.campoNoRetenidoCliente.setText("No retenido");
+
+            myholder.campoSucursalCliente.setText("Sucursal" + lista.getIdSucursal());
             //myholder.campoSaldoNoEmitido.setText(lista.getSaldoNoEmetido());
 
             int var = lista.getIdSucursal();
@@ -115,12 +127,12 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
                 }
             });
 
-            myholder.btn.setOnClickListener(new View.OnClickListener() {
+            /*myholder.btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     surgirMenu(v);
                 }
-            });
+            });*/
         } else{
             ((LoadingViewHolder) holder).progressBar.setIndeterminate(true);
         }
@@ -161,8 +173,8 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
         PopupMenu popup = new PopupMenu(mContext, view);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.sub_menu_reporte_gerencia, popup.getMenu());
-        popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
-        popup.show();
+        //popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
+        //popup.show();
     }
 
     public void setLoaded() {
@@ -255,7 +267,7 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
             campoConCitaCliente = (TextView) view.findViewById(R.id.dfrcll_tv_con_cita_cliente);
             campoNoRetenidoCliente = (TextView) view.findViewById(R.id.dfrcll_tv_retenidos_cliente);
             campoSucursalCliente = (TextView) view.findViewById(R.id.dfrcll_tv_sucursal_cliente);
-            btn = (TextView) view.findViewById(R.id.dfrcll_btn_detalles);
+            //btn = (TextView) view.findViewById(R.id.dfrcll_btn_detalles);
             cardView = (CardView) view.findViewById(R.id.dfrcll_cv);
         }
     }

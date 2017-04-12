@@ -302,51 +302,32 @@ public class ReporteSucursales extends Fragment {
         mParam3 = 0;
 
         try {
-            if(getArguments() != null) {
+            JSONObject periodo = new JSONObject();
+            JSONObject rqt = new JSONObject();
+
+            if(getArguments() != null){
                 mParam1 = getArguments().getString(ARG_PARAM1);
                 mParam2 = getArguments().getString(ARG_PARAM2);
                 mParam3 = getArguments().getInt(ARG_PARAM3);
-
-                Map<String, String> fecha = Config.fechas(1);
-                String param1 = fecha.get("fechaIni");
-                String param2 = fecha.get("fechaFin");
-
-                JSONObject rqt = new JSONObject();
-                JSONObject periodo = new JSONObject();
-
                 rqt.put("idGerencia", mParam3);
                 rqt.put("pagina", pagina);
-
-                if (mParam1.isEmpty() && mParam2.isEmpty()) {
-                    periodo.put("fechaFin", mParam1);
-                    periodo.put("fechaIni", mParam2);
-                } else if (mParam1.isEmpty()){
-                    periodo.put("fechaFin", mParam2);
-                    periodo.put("fechaIni", "");
-                }else if(mParam2.isEmpty()) {
-                    periodo.put("fechaFin", "");
-                    periodo.put("fechaIni", mParam1);
-                }else {
-                    periodo.put("fechaFin", mParam2);
-                    periodo.put("fechaIni", mParam1);
-                    rqt.put("idGerencia", mParam3);
-                }
+                periodo.put("fechaFin", mParam1);
+                periodo.put("fechaIni", mParam2);
                 rqt.put("perido", periodo);
                 rqt.put("usuario", numeroUsuario);
                 obj.put("rqt", rqt);
             }else{
-                JSONObject rqt = new JSONObject();
-                rqt.put("idGerencia", mParam3);
+                Map<String, String> fecha = Config.fechas(1);
+                String sparam1 = fecha.get("fechaIni");
+                String sparam2 = fecha.get("fechaFin");
+                rqt.put("idGerencia", 0);
                 rqt.put("pagina", pagina);
-                JSONObject periodo = new JSONObject();
-                periodo.put("fechaFin", smParam2);
-                periodo.put("fechaIni", smParam1);
+                periodo.put("fechaFin", sparam1);
+                periodo.put("fechaIni", sparam2);
                 rqt.put("perido", periodo);
                 rqt.put("usuario", numeroUsuario);
                 obj.put("rqt", rqt);
-                tvFecha.setText(smParam1 + " - " + smParam2);
             }
-
             Log.d("ReporteSucursales", " RQT -->" + obj);
         } catch (JSONException e) {
             Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
@@ -414,6 +395,9 @@ public class ReporteSucursales extends Fragment {
     }
 
     private void primerPaso(JSONObject obj) {
+
+        Log.d("response -->", "" + obj);
+
         int emitidos = 0;
         int noEmitido = 0;
         int saldoEmitido = 0;
@@ -456,8 +440,8 @@ public class ReporteSucursales extends Fragment {
 
         tvEmitidas.setText("" + emitidos);
         tvNoEmitidas.setText("" + noEmitido);
-        tvSaldoEmitido.setText("" + saldoEmitido);
-        tvSaldoNoEmitido.setText("" + saldoNoEmitido);
+        tvSaldoEmitido.setText("" + Config.nf.format(saldoEmitido));
+        tvSaldoNoEmitido.setText("" + Config.nf.format(saldoNoEmitido));
         tvResultados.setText(filas + " Resultados ");
 
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
@@ -572,8 +556,6 @@ public class ReporteSucursales extends Fragment {
     //</editor-fold>
 
     private void fechas(){
-        // TODO: fecha
-        //<editor-fold desc="Fechas">
         Map<String, Integer> fechaDatos = Config.dias();
         Map<String, String> fechaActual = Config.fechas(1);
         mYear  = fechaDatos.get("anio");
@@ -582,28 +564,13 @@ public class ReporteSucursales extends Fragment {
         String smParam1 = fechaActual.get("fechaIni");
         String smParam2 = fechaActual.get("fechaFin");
         mParam3 = 0;
-
         if(getArguments() != null){
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
             mParam3 = getArguments().getInt(ARG_PARAM3);
-
-            Map<String, String> fecha = Config.fechas(1);
-            String param1 = fecha.get("fechaIni");
-            String param2 = fecha.get("fechaFin");
-
-            if(mParam1.isEmpty() && mParam2.isEmpty())
-                tvFecha.setText(param1 + " - " + param2);
-            else if(mParam1.isEmpty())
-                tvFecha.setText(mParam2 + " " + mParam3);
-            else if(mParam2.isEmpty())
-                tvFecha.setText(mParam1 + " " + mParam3);
-            else
-                tvFecha.setText(mParam1 + " - " + mParam2);
-
+            tvFecha.setText(mParam1 + " - " + mParam2);
         }else{
             tvFecha.setText(smParam1 + " - " + smParam2);
         }
-        //</editor-fold>
     }
 }

@@ -98,7 +98,7 @@ public class DirectorReporteSucursalesAdapter extends RecyclerView.Adapter{
             myholder.campoEmitidas.setText(" " + lista.getEmitido());
             myholder.campoNoEmitidas.setText( lista.getNoEmitido() + " ");
             myholder.campoSaldoEmitido.setText(" " + lista.getSaldoEmitido());
-            //myholder.campoSaldoNoEmitido.setText(lista.getSaldoNoEmetido());
+            myholder.campoSaldoNoEmitido.setText(" " + lista.getSaldoNoEmetido());
 
             int var = lista.getIdSucursal();
             String intToString = String.valueOf(var);

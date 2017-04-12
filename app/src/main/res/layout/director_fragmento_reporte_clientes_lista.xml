@@ -32,8 +32,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1">
                             <!-- TODO: campo 1 -->
-                            <TextView style="@style/asesorLista"/>
-                            <TextView android:id="@+id/dfrcll_tv_asesor_cliente" style="@style/textoGreenLista"/>
+                            <TextView android:id="@+id/dfrcll_tv_asesor_cliente" style="@style/textoLista"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -41,7 +40,6 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1">
                             <!-- TODO: campo 2 -->
-                            <TextView style="@style/conCitaListaGreen"/>
                             <TextView android:id="@+id/dfrcll_tv_con_cita_cliente" android:text="1531" style="@style/textoGreenLista"/>
                         </LinearLayout>
 
@@ -50,7 +48,6 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1">
                             <!-- TODO: campo 2 -->
-                            <TextView style="@style/retenidoListaRed"/>
                             <TextView android:id="@+id/dfrcll_tv_retenidos_cliente" style="@style/textoRedLista"/>
                         </LinearLayout>
 
@@ -65,13 +62,13 @@
                     </LinearLayout>
                 </LinearLayout>
         </LinearLayout>
-        <TextView
+        <!--TextView
             android:id="@+id/dfrcll_btn_detalles"
             android:layout_width="50dp"
             android:layout_marginLeft="-50dp"
             android:layout_height="wrap_content"
             android:background="#f6f6f6"
             android:layout_gravity="center_vertical"
-            android:drawableTop="@drawable/icono_menu_vertical"/>
+            android:drawableTop="@drawable/icono_menu_vertical"/-->
     </LinearLayout>
 </android.support.v7.widget.CardView>
