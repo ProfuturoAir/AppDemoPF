@@ -62,6 +62,9 @@ public class DatosCliente extends Fragment {
     private View rootView;
 
     private String idTramite;
+    private String nombre;
+    private String numeroDeCuenta;
+    private String hora;
 
     // TODO: Config
     Map<String, String> usuario;
@@ -117,13 +120,20 @@ public class DatosCliente extends Fragment {
 
         final Fragment borrar = this;
 
+        nombre = getArguments().getString("nombre");
+        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+        hora = getArguments().getString("hora");
+
+        Log.d("NOMBRES CLI ", "1 " + nombre + " numero " + numeroDeCuenta);
+
+        /*
         if(getArguments() != null){
             mParam1 = getArguments().getString(ARG_PARAM1).trim();
             mParam2 = getArguments().getString(ARG_PARAM2).trim();
             Log.d("Datostos", "paramentro 1" + mParam1 + " parametro 2" + mParam2);
         }else{
             Log.d("NADA", "nada");
-        }
+        }*/
 
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,7 +144,7 @@ public class DatosCliente extends Fragment {
                     /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
                     Asesor asesor = (Asesor) getContext();
-                    asesor.switchEncuesta1(fragmentoGenerico, idTramite,borrar);
+                    asesor.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
                     //
                 }else{
                     Config.msj(v.getContext(),"Error en conexión", "Sin Conexion por el momento.Datos Cliente P-1.1.3.3");
@@ -349,6 +359,7 @@ public class DatosCliente extends Fragment {
     }
 
     private void primerPaso(JSONObject obj){
+        Log.d(TAG, "--> JSON OBJ " + obj);
         String status = "";
         String statusText = "";
         String nombre = "";
@@ -361,6 +372,7 @@ public class DatosCliente extends Fragment {
         try{
             status = obj.getString("status");
             statusText = obj.getString("statusText");
+            idTramite = obj.getString("idTramite");
 
             if(Integer.parseInt(status) == 200){
                 JSONObject jsonCliente = obj.getJSONObject("cliente");
@@ -369,9 +381,9 @@ public class DatosCliente extends Fragment {
                 cuenta = jsonCliente.getString("numeroCuenta");
                 nss    = jsonCliente.getString("nss");
                 curp   = jsonCliente.getString("curp");
-                fechaConsulta = jsonCliente.getString("fecha_consulta");
+                fechaConsulta = jsonCliente.getString("fechaConsulta");
                 saldo = jsonCliente.getDouble("saldo");
-                idTramite = jsonCliente.getString("idTramite");
+
 
                 tvClienteNombre.setText("" + nombre);
                 tvClienteNumeroCuenta.setText("" + cuenta);

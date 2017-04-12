@@ -70,6 +70,9 @@ public class Encuesta2 extends Fragment {
     String iParam8Email;
 
     String idTramite;
+    String nombre;
+    String numeroDeCuenta;
+    String hora;
 
     // TODO: XML
     private ArrayAdapter arrayAdapterAfores, arrayAdapterMotivo, arrayAdapterEstatus, arrayAdapterInstituto, arrayAdapterRegimen, arrayAdapterDocumentos;
@@ -129,6 +132,9 @@ public class Encuesta2 extends Fragment {
 
         connected = new Connected();
         idTramite = getArguments().getString("idTramite");
+        nombre = getArguments().getString("nombre");
+        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+        hora = getArguments().getString("hora");
 
         arrayAdapterAfores = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.AFORES);
         arrayAdapterMotivo = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.MOTIVOS);
@@ -199,7 +205,7 @@ public class Encuesta2 extends Fragment {
                     /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
                 Asesor asesor = (Asesor) getContext();
-                asesor.switchFirma(fragmentoGenerico, idTramite,borrar);
+                asesor.switchFirma(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
             }
         });
         //</editor-fold>

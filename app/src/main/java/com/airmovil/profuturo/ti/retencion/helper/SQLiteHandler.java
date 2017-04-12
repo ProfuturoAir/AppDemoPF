@@ -22,6 +22,9 @@ public class SQLiteHandler extends SQLiteOpenHelper{
     private static final String TABLE_TRAMITE = "tramite";
     private static final String KEY_ID = "id_t";
     public static final String FK_ID_TRAMITE = "idTramite";
+    public static final String KEY_NOMBRE = "nombre";
+    public static final String KEY_HORA = "hora";
+
 
     public static final String TABLE_RETENCION_ENCUESTA = "retencion_encuesta";
     public static final String KEY_ESTATUS_TRAMITE = "estatusTramite";
@@ -82,7 +85,10 @@ public class SQLiteHandler extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_TRAMITE_TABLE = "CREATE TABLE " + TABLE_TRAMITE + "("
-                + KEY_ID + " INTEGER PRIMARY KEY," + FK_ID_TRAMITE + " INTEGER"+ ")";
+                + FK_ID_TRAMITE + " INTEGER PRIMARY KEY,"
+                + KEY_NOMBRE + " TEXT,"
+                + KEY_NUMERO_CUENTA + " TEXT,"
+                + KEY_HORA + " TEXT"+ ")";
 
         String CREATE_ENCUESTA_TABLE = "CREATE TABLE " + TABLE_RETENCION_ENCUESTA+ "("
                 + FK_ID_TRAMITE + " INTEGER PRIMARY KEY,"
@@ -147,13 +153,16 @@ public class SQLiteHandler extends SQLiteOpenHelper{
         onCreate(db);
     }
 
-    public void addIDTramite(String idTramite){
+    public void addIDTramite(String idTramite,String nombre,String numeroDeCuenta,String hora){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
 
 
         values.put(FK_ID_TRAMITE,idTramite); // fk id
+        values.put(KEY_NOMBRE,nombre);
+        values.put(KEY_NUMERO_CUENTA,numeroDeCuenta);
+        values.put(KEY_HORA,hora);
         // Inserting Row
         long id =(int) db.insertWithOnConflict(TABLE_TRAMITE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         if (id == -1) {
@@ -290,6 +299,37 @@ public class SQLiteHandler extends SQLiteOpenHelper{
      * Getting user data from database
      * */
 
+    public Cursor getAllPending() {
+        //HashMap<String, String> encuesta = new HashMap<>();
+        String selectQuery = "SELECT  * FROM " + TABLE_TRAMITE;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        return cursor;
+    }
+
+    public HashMap<String, String> getTramite(String idTramite) {
+        HashMap<String, String> tramite = new HashMap<>();
+        String selectQuery = "SELECT  * FROM " + TABLE_TRAMITE + " WHERE " + FK_ID_TRAMITE + "=?";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[] {idTramite});
+        // Move to first row
+        cursor.moveToFirst();
+        if (cursor.getCount() > 0) {
+            tramite.put(FK_ID_TRAMITE, cursor.getString(0));
+            tramite.put(KEY_NOMBRE, cursor.getString(1));
+            tramite.put(KEY_NUMERO_CUENTA, cursor.getString(2));
+            tramite.put(KEY_HORA, cursor.getString(3));
+        }
+        cursor.close();
+        db.close();
+        // return tramite
+        Log.d(TAG, "Fetching tramite from Sqlite: " + tramite.toString());
+
+        return tramite;
+    }
 
     public HashMap<String, String> getEncuesta(String idTramite) {
         HashMap<String, String> encuesta = new HashMap<>();
@@ -395,6 +435,14 @@ public class SQLiteHandler extends SQLiteOpenHelper{
         return documento;
     }
 
+    public Integer deleteTramite(String idTramite) {
+        Log.d(TAG, "Deleted all user info from sqlite");
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Delete All Rows
+        return db.delete(TABLE_TRAMITE,
+                FK_ID_TRAMITE + " = ? ",
+                new String[] { idTramite });
+    }
 
     public Integer deleteEncuesta(String idTramite) {
         Log.d(TAG, "Deleted all user info from sqlite");

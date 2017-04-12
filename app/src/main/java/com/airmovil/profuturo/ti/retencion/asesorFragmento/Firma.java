@@ -80,6 +80,9 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
     private SQLiteHandler db;
 
     String idTramite;
+    String nombre;
+    String numeroDeCuenta;
+    String hora;
 
     public Firma() {
         // Required empty public constructor
@@ -121,7 +124,11 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
         Button btnCancelar= (Button) view.findViewById(R.id.aff_btn_cancelar);
 
         connected = new Connected();
+        //idTramite = "1";
         idTramite = getArguments().getString("idTramite");
+        nombre = getArguments().getString("nombre");
+        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+        hora = getArguments().getString("hora");
 
         lblLatitud = (TextView) view.findViewById(R.id.aff_lbl_Latitud);
         lblLongitud = (TextView) view.findViewById(R.id.aff_lbl_Longitud);
@@ -258,6 +265,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                                     ubicacion.put("latitud", "90.2349");
                                     ubicacion.put("longitud", "-23.9897");*/
                                     db.addFirma(idTramite,123,base64,90.2349,-23.9897);
+                                    db.addIDTramite(idTramite);
                                     //Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                                     Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
                                     /*Fragment fragmentoGenerico = new Escaner();
@@ -270,7 +278,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
 
                                 Fragment fragmentoGenerico = new Escaner();
                                 Asesor asesor = (Asesor) getContext();
-                                asesor.switchDocumento(fragmentoGenerico, idTramite,borrar);
+                                asesor.switchDocumento(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
 
                             }
                         });

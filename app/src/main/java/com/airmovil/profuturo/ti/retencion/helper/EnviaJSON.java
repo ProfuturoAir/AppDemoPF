@@ -197,7 +197,7 @@ public class EnviaJSON {
     }
 
     // TODO: REST
-    public void sendJsonEncuesta2(final boolean primerPeticion,String idTramite, int idGerencia, int idMotivo, int IdEstatus,
+    public void sendJsonEncuesta2(final boolean primerPeticion,final String idTramite, int idGerencia, int idMotivo, int IdEstatus,
                           int idTitulo, int idRegimentPensionario, int idDocumentacion, String telefono, String email,int estatusTramite, final Context context) {
         final ProgressDialog loading;
         if (primerPeticion)
@@ -232,6 +232,15 @@ public class EnviaJSON {
                         //Dismissing progress dialog
                         if (primerPeticion) {
                             loading.dismiss();
+                            Log.d(TAG, "RESPONSE: ->" + response);
+                            try {
+                                statusRs = response.getString("status");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            if(statusRs == "200") {
+                                db.deleteObservaciones(idTramite);
+                            }
                             //primerPaso(response);
                         }
                     }
@@ -272,7 +281,7 @@ public class EnviaJSON {
         }
     }
 
-    private void sendJsonFirma(final boolean primerPeticion,String idTramite,int estatusTramite,String firmaString,Double latitud,Double longitud,final Context context) {
+    private void sendJsonFirma(final boolean primerPeticion,final String idTramite,int estatusTramite,String firmaString,Double latitud,Double longitud,final Context context) {
         final ProgressDialog loading;
         if (primerPeticion)
             loading = ProgressDialog.show(context, "Loading Data", "Please wait...", false, false);
@@ -304,6 +313,15 @@ public class EnviaJSON {
                         //Dismissing progress dialog
                         if (primerPeticion) {
                             loading.dismiss();
+                            Log.d(TAG, "RESPONSE: ->" + response);
+                            try {
+                                statusRs = response.getString("status");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            if(statusRs == "200") {
+                                db.deleteFirma(idTramite);
+                            }
                             //primerPaso(response);
                         }
                     }
@@ -332,7 +350,7 @@ public class EnviaJSON {
     }
 
 
-    private void sendJsonDocumento(final boolean primerPeticion,String idTramite,String fechaHoraFin,int estatusTramite,String ineIfe,int numeroCuenta,String usuario,Double latitud,Double longitud,final Context context) {
+    private void sendJsonDocumento(final boolean primerPeticion,final String idTramite,String fechaHoraFin,int estatusTramite,String ineIfe,int numeroCuenta,String usuario,Double latitud,Double longitud,final Context context) {
         final ProgressDialog loading;
         if (primerPeticion)
             loading = ProgressDialog.show(context, "Loading Data", "Please wait...", false, false);
@@ -366,6 +384,15 @@ public class EnviaJSON {
                         //Dismissing progress dialog
                         if (primerPeticion) {
                             loading.dismiss();
+                            Log.d(TAG, "RESPONSE: ->" + response);
+                            try {
+                                statusRs = response.getString("status");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            if(statusRs == "200") {
+                                db.deleteDocumentacion(idTramite);
+                            }
                             //primerPaso(response);
                         }
                     }

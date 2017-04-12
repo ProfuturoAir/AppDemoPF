@@ -99,7 +99,7 @@ public class CitasClientesAdapter extends RecyclerView.Adapter {
             myholder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    fragmentJumpDatosUsuario(pLetra, v);
+                    fragmentJumpDatosUsuario(pLetra, v,lista.getNombreCliente(),lista.getNumeroCuenta(),lista.getHora());
                 }
             });
 
@@ -130,7 +130,7 @@ public class CitasClientesAdapter extends RecyclerView.Adapter {
 
     }
 
-    public void fragmentJumpDatosUsuario(String idClienteCuenta, View view) {
+    public void fragmentJumpDatosUsuario(String idClienteCuenta, View view,String nombre,String numeroDeCuenta,String hora) {
         Fragment fragmento = new DatosAsesor();
         if (view.getContext() == null)
             return;
@@ -143,7 +143,7 @@ public class CitasClientesAdapter extends RecyclerView.Adapter {
             }else{
                 Config.msj(view.getContext(),"Error conexión", "Sin Conexion por el momento.Cliente P-1.1.3");
             }
-            asesor.switchContent(fragmento, idClienteCuenta);
+            asesor.switchDatosAsesor(fragmento, idClienteCuenta,nombre,numeroDeCuenta,hora);
         }
     }
 

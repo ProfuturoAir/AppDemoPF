@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
@@ -58,6 +59,11 @@ public class DatosAsesor extends Fragment {
     private TextView tvNombre, tvNumeroEmpleado, tvSucursal;
     private Button btnContinuar, btnCancelar;
     private SessionManager sessionManager;
+
+    String nombre;
+    String numeroDeCuenta;
+    String hora;
+    String idClienteCuenta;
 
     private OnFragmentInteractionListener mListener;
 
@@ -103,6 +109,13 @@ public class DatosAsesor extends Fragment {
         btnContinuar = (Button) rootView.findViewById(R.id.afda_btn_continuar);
         btnCancelar = (Button) rootView.findViewById(R.id.afda_btn_cancelar);
 
+        idClienteCuenta =getArguments().getString("idClienteCuenta");
+        nombre = getArguments().getString("nombre");
+        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+        hora = getArguments().getString("hora");
+
+        Log.d("NOMBRES 1 ++", "1" + nombre + " numero" + numeroDeCuenta);
+
         // TODO: Fragmentos
         final Fragment fragmentoDatosCliente = new DatosCliente();
         final FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
@@ -118,7 +131,10 @@ public class DatosAsesor extends Fragment {
             public void onClick(View v) {
                 Connected connected = new Connected();
                 if(connected.estaConectado(getContext())){
-                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoDatosCliente).commit();
+                    //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoDatosCliente).commit();
+                    Fragment fragmentoGenerico = new DatosCliente();
+                    Asesor asesor = (Asesor) getContext();
+                    asesor.switchDatosCliente(fragmentoGenerico,nombre,numeroDeCuenta,hora);
                 }else {
 
                     android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
@@ -128,9 +144,12 @@ public class DatosAsesor extends Fragment {
                     dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Fragment fragmentoGenerico = new DatosCliente();
+                            /*Fragment fragmentoGenerico = new DatosCliente();
                             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                            fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                            fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();*/
+                            Fragment fragmentoGenerico = new DatosCliente();
+                            Asesor asesor = (Asesor) getContext();
+                            asesor.switchDatosCliente(fragmentoGenerico,nombre,numeroDeCuenta,hora);
                         }
                     });
                     dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {

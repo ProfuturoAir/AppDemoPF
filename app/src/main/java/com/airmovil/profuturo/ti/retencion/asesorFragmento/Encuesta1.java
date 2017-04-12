@@ -54,6 +54,9 @@ public class Encuesta1 extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private SQLiteHandler db;
     private String idTramite;
+    String nombre;
+    String numeroDeCuenta;
+    String hora;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -118,6 +121,9 @@ public class Encuesta1 extends Fragment {
         etObservaciones = (EditText) rootView.findViewById(R.id.afe1_et_observaciones);
 
         idTramite = getArguments().getString("idTramite");
+        nombre = getArguments().getString("nombre");
+        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+        hora = getArguments().getString("hora");
 
         cb1si.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -204,7 +210,7 @@ public class Encuesta1 extends Fragment {
                     /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
                     Asesor asesor = (Asesor) getContext();
-                    asesor.switchEncuesta2(fragmentoGenerico, idTramite,borrar);
+                    asesor.switchEncuesta2(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
 
                 }
             }

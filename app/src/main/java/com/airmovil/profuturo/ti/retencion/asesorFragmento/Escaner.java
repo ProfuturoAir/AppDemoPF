@@ -80,6 +80,9 @@ public class Escaner extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     String idTramite;
+    String nombre;
+    String numeroDeCuenta;
+    String hora;
 
     public Escaner() {
         // Required empty public constructor
@@ -126,6 +129,11 @@ public class Escaner extends Fragment {
 
         connected = new Connected();
         idTramite = getArguments().getString("idTramite");
+        nombre = getArguments().getString("nombre");
+        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+        hora = getArguments().getString("hora");
+
+        Log.d("AL FINAL ", "1 " + nombre + " numero " + numeroDeCuenta);
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,6 +224,13 @@ public class Escaner extends Fragment {
                                 enviaPrevio.sendPrevios(idTramite, getContext());
                             }else {
                                 db.addDocumento(idTramite,"2017-04-10",1,base64,"12344","Cesar",90.2349, -23.9897);
+                                /*
+                                idTramite = getArguments().getString("idTramite");
+                                nombre = getArguments().getString("nombre");
+                                numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+                                hora
+                                 */
+                                db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
                                 //db.addFirma("1", 123, base64, 90.2349, -23.9897);
                             }
 
