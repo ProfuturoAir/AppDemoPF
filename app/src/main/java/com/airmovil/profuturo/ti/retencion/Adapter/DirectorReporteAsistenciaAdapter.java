@@ -101,9 +101,9 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
             final DirectorReporteAsistenciaModel lista = list.get(position);
             final MyViewHolder myholder = (MyViewHolder) holder;
 
-            myholder.campoNombreAsesor.setText(lista.getNombre());
-            myholder.campoNumeroCuentaAsesor.setText("Numero empleado " + "123123");
-            //myholder.campoSucursalAsesor.setText(lista.getIdSucursal());
+            myholder.campoNombreAsesor.setText("Asesor: " + lista.getNombre());
+            myholder.campoNumeroCuentaAsesor.setText("Sucursal: " + lista.getIdSucursal());
+            myholder.campoSucursalAsesor.setText("Numero de empleado: " + lista.getnEmpleado());
 
 
             char nombre = lista.getNombre().charAt(0);

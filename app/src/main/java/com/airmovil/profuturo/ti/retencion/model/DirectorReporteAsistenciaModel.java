@@ -8,6 +8,7 @@ public class DirectorReporteAsistenciaModel {
     public int idSucursal;
     public String nombre;
     public int numeroEmpleado;
+    public String nEmpleado;
 
     public int getIdSucursal() {
         return idSucursal;
@@ -31,5 +32,13 @@ public class DirectorReporteAsistenciaModel {
 
     public void setNumeroEmpleado(int numeroEmpleado) {
         this.numeroEmpleado = numeroEmpleado;
+    }
+
+    public String getnEmpleado() {
+        return nEmpleado;
+    }
+
+    public void setnEmpleado(String nEmpleado) {
+        this.nEmpleado = nEmpleado;
     }
 }
