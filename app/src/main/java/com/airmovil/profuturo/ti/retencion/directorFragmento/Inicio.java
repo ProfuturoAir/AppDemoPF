@@ -425,10 +425,6 @@ public class Inicio extends Fragment {
      * Obteniendo los valores del apartado superior, nombre
      */
     public void detalleSuperior(){
-        Map<String, Integer> fechaDatos = Config.dias();
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
         Map<String, String> datosUsuario = Config.usuario(getContext());
         String nombreX = datosUsuario.get(SessionManager.NOMBRE);
         numeroUsuario = datosUsuario.get(SessionManager.ID);
