@@ -450,8 +450,8 @@ public class ReporteGerencias extends Fragment {
         int totalEntidades = 0;
         int totalNoEntidades = 0;
         // TODO: Datos de cantidades generales de saldos
-        String totalSaldosEmitodos= "";
-        String totalSaldoNoEmitidos = "";
+        int totalSaldosEmitodos= 0;
+        int totalSaldoNoEmitidos = 0;
         // TODO: Mensaje de estatus
         String status = "";
         // TODO: datos de lista
@@ -472,8 +472,8 @@ public class ReporteGerencias extends Fragment {
                 totalEntidades = jsonObjectRetenido.getInt("retenido");
                 totalNoEntidades = jsonObjectRetenido.getInt("noRetenido");
             JSONObject jsonObjectSaldos = obj.getJSONObject("saldo");
-                totalSaldosEmitodos= jsonObjectSaldos.getString("saldoRetenido");
-                totalSaldoNoEmitidos = jsonObjectSaldos.getString("saldoNoRetenido");
+                totalSaldosEmitodos= jsonObjectSaldos.getInt("saldoRetenido");
+                totalSaldoNoEmitidos = jsonObjectSaldos.getInt("saldoNoRetenido");
             Log.d("filas json", "Total de filas " + totalFilas);
             for(int i = 0; i < array.length(); i++){
                 DirectorReporteGerenciasModel getDatos2 = new DirectorReporteGerenciasModel();
@@ -499,8 +499,8 @@ public class ReporteGerencias extends Fragment {
         tvResultados.setText("" + totalFilas + " Resultados");
         tvEntidaes.setText("" + totalEntidades);
         tvNoEntidades.setText("" + totalNoEntidades);
-        tvSaldoEmitido.setText("" + totalSaldosEmitodos);
-        tvSaldoNoEmitido.setText("" + totalSaldoNoEmitidos);
+        tvSaldoEmitido.setText("" + Config.nf.format(totalSaldosEmitodos));
+        tvSaldoNoEmitido.setText("" + Config.nf.format(totalSaldoNoEmitidos));
 
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         Log.d("numeroMaximoPaginas", ""+numeroMaximoPaginas);
@@ -624,26 +624,11 @@ public class ReporteGerencias extends Fragment {
         String smParam1 = fechaActual.get("fechaIni");
         String smParam2 = fechaActual.get("fechaFin");
         mParam3 = 0;
-
-
         if(getArguments() != null){
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
             mParam3 = getArguments().getInt(ARG_PARAM3);
-
-            Map<String, String> fecha = Config.fechas(1);
-            String param1 = fecha.get("fechaIni");
-            String param2 = fecha.get("fechaFin");
-
-            if(mParam1.isEmpty() && mParam2.isEmpty())
-                tvFecha.setText(param1+" - "+param2);
-            else if(mParam1.isEmpty())
-                tvFecha.setText(mParam2 + " " + mParam3);
-            else if(mParam2.isEmpty())
-                tvFecha.setText(mParam1 + " " + mParam3);
-            else
-                tvFecha.setText(mParam1 + " - " + mParam2);
-
+            tvFecha.setText(mParam1 + " - " + mParam2);
         }else{
             tvFecha.setText(smParam1 + " - " + smParam2);
         }
