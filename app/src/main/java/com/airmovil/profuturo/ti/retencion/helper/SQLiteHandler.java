@@ -21,49 +21,54 @@ public class SQLiteHandler extends SQLiteOpenHelper{
     // Login table name
     private static final String TABLE_TRAMITE = "tramite";
     private static final String KEY_ID = "id_t";
-    private static final String FK_ID_TRAMITE = "idTramite";
+    public static final String FK_ID_TRAMITE = "idTramite";
 
-    private static final String TABLE_RETENCION_ENCUESTA = "retencion_encuesta";
-    private static final String KEY_ESTATUS_TRAMITE = "estatusTramite";
-    private static final String KEY_PREGUNTA1 = "pregunta1";
-    private static final String KEY_PREGUNTA2 ="pregunta2";
-    private static final String KEY_PREGUNTA3 ="pregunta3";
-    private static final String KEY_PREGUNTA4 ="pregunta4";
-    private static final String KEY_PREGUNTA5 ="pregunta5";
-    private static final String KEY_PREGUNTA6 ="pregunta6";
+    public static final String TABLE_RETENCION_ENCUESTA = "retencion_encuesta";
+    public static final String KEY_ESTATUS_TRAMITE = "estatusTramite";
+    public static final String KEY_PREGUNTA1 = "pregunta1";
+    public static final String KEY_PREGUNTA2 ="pregunta2";
+    public static final String KEY_PREGUNTA3 ="pregunta3";
+    public static final String KEY_PREGUNTA4 ="pregunta4";
+    public static final String KEY_PREGUNTA5 ="pregunta5";
+    public static final String KEY_PREGUNTA6 ="pregunta6";
 
-    private static final String TABLE_OBSERVACIONES_ENCUESTA = "retencion_encuesta_observaciones";
-    private static final String KEY_CLAVE_AFORE = "claveAfore";
-    private static final String KEY_EMAIL = "email";
-    private static final String KEY_PREGUNTA7 = "pregunta7";
-    private static final String KEY_PREGUNTA8 ="pregunta8";
-    private static final String KEY_PREGUNTA9 ="pregunta9";
-    private static final String KEY_ESTATUS = "estatus";
-    //private static final String KEY_ESTATUS_TRAMITE = "estatusTramite";
-    private static final String KEY_ID_MOTIVO = "idMotivo";
-    //private static final String FK_ID_TRAMITE = "idTramite";
-    private static final String KEY_LEY_REGIMEN = "leyRegimen";
-    private static final String KEY_OBSERVACION = "observacion";
-    private static final String KEY_REGIMEN = "regimen";
-    private static final String KEY_TELEFONO = "telefono";
+    public static final String TABLE_OBSERVACIONES_ENCUESTA = "retencion_encuesta_observaciones";
+    public static final String KEY_CLAVE_AFORE = "claveAfore";
+    public static final String KEY_EMAIL = "email";
+    public static final String KEY_PREGUNTA7 = "pregunta7";
+    public static final String KEY_PREGUNTA8 ="pregunta8";
+    public static final String KEY_PREGUNTA9 ="pregunta9";
+    public static final String KEY_ESTATUS = "estatus";
+    //public static final String KEY_ESTATUS_TRAMITE = "estatusTramite";
+    public static final String KEY_ID_MOTIVO = "idMotivo";
+    //public static final String FK_ID_TRAMITE = "idTramite";
+    public static final String KEY_LEY_REGIMEN = "leyRegimen";
+    public static final String KEY_OBSERVACION = "observacion";
+    public static final String KEY_REGIMEN = "regimen";
+    public static final String KEY_TELEFONO = "telefono";
+    public static final String KEY_ID_AFORE = "idAfore";
+    public static final String KEY_ID_ESTATUS = "idEstatus";
+    public static final String KEY_ID_INSTITUTO = "idInstituto";
+    public static final String KEY_ID_REGIMEN_PENSIONARIO = "idRegimenPensionario";
+    public static final String KEY_ID_DOCUMENTACION = "idDocumentacion";
 
 
-    private static final String TABLE_FIRMA = "retencion_firma";
-    //private static final String KEY_ESTATUS_TRAMITE = "estatusTramite";
-    private static final String KEY_FIRMA = "firmaCliente";
-    //private static final String FK_ID_TRAMITE = "idTramite";
-    private static final String KEY_LONGITUD = "longitud";
-    private static final String KEY_LATITUD = "latitud";
+    public static final String TABLE_FIRMA = "retencion_firma";
+    //public static final String KEY_ESTATUS_TRAMITE = "estatusTramite";
+    public static final String KEY_FIRMA = "firmaCliente";
+    //public static final String FK_ID_TRAMITE = "idTramite";
+    public static final String KEY_LONGITUD = "longitud";
+    public static final String KEY_LATITUD = "latitud";
 
-    private static final String TABLE_DOCUMENTACION = "retencion_documentacion";
-    //private static final String KEY_ESTATUS_TRAMITE = "estatusTramite";
-    private static final String KEY_FECHAHORAFIN = "fechaHoraFin";
-    //private static final String FK_ID_TRAMITE = "idTramite";
-    private static final String KEY_INEIFE = "ineIfe";
-    private static final String KEY_NUMERO_CUENTA = "numeroCuenta";
-    //private static final String KEY_LONGITUD = "longitud";
-    //private static final String KEY_LATITUD = "latitud";
-    private static final String KEY_USUARIO = "usuario";
+    public static final String TABLE_DOCUMENTACION = "retencion_documentacion";
+    //public static final String KEY_ESTATUS_TRAMITE = "estatusTramite";
+    public static final String KEY_FECHAHORAFIN = "fechaHoraFin";
+    //public static final String FK_ID_TRAMITE = "idTramite";
+    public static final String KEY_INEIFE = "ineIfe";
+    public static final String KEY_NUMERO_CUENTA = "numeroCuenta";
+    //public static final String KEY_LONGITUD = "longitud";
+    //public static final String KEY_LATITUD = "latitud";
+    public static final String KEY_USUARIO = "usuario";
 
     //private static String DB_PATH = "/data/data/com.airmovil.it.chato/databases/";
     //final Context myContext;
@@ -89,18 +94,15 @@ public class SQLiteHandler extends SQLiteOpenHelper{
 
         String CREATE_OBSERVACIONES_TABLE = "CREATE TABLE " + TABLE_OBSERVACIONES_ENCUESTA + "("
                 + FK_ID_TRAMITE + " INTEGER PRIMARY KEY,"
-                + KEY_CLAVE_AFORE + " INTEGER,"
-                + KEY_EMAIL + " TEXT,"
-                + KEY_PREGUNTA7 + " BOOLEAN,"
-                + KEY_PREGUNTA8 + " BOOLEAN,"
-                + KEY_PREGUNTA9 + " BOOLEAN,"
-                + KEY_ESTATUS + " INTEGER,"
-                + KEY_ESTATUS_TRAMITE + " INTEGER,"
+                + KEY_ID_AFORE + " INTEGER,"
                 + KEY_ID_MOTIVO + " INTEGER,"
-                + KEY_LEY_REGIMEN + " INTEGER,"
-                + KEY_OBSERVACION + " TEXT,"
-                + KEY_REGIMEN + " INTEGER,"
-                + KEY_TELEFONO + " TEXT"+")";
+                + KEY_ID_ESTATUS + " INTEGER,"
+                + KEY_ID_INSTITUTO + " INTEGER,"
+                + KEY_ID_REGIMEN_PENSIONARIO + " INTEGER,"
+                + KEY_ID_DOCUMENTACION + " INTEGER,"
+                + KEY_TELEFONO + " TEXT,"
+                + KEY_EMAIL + " TEXT,"
+                + KEY_ESTATUS_TRAMITE + " INTEGER"+")";
 
         String CREATE_FIRMA_TABLE = "CREATE TABLE " + TABLE_FIRMA + "("
                 + FK_ID_TRAMITE + " INTEGER PRIMARY KEY,"
@@ -167,7 +169,7 @@ public class SQLiteHandler extends SQLiteOpenHelper{
     }
 
 
-    public void addEncuesta(String idTramite,String statusTramite,Boolean pregunta1,Boolean pregunta2,Boolean pregunta3,String observaciones) {
+    public void addEncuesta(String idTramite,int statusTramite,Boolean pregunta1,Boolean pregunta2,Boolean pregunta3,String observaciones) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -197,25 +199,23 @@ public class SQLiteHandler extends SQLiteOpenHelper{
 
 
 
-    public void addObservaciones(String idTramite,String claveAfore,Boolean pregunta7,Boolean pregunta8
-            ,Boolean pregunta9,int status,int statusTramite,int idMotivo,int leyRegimen,String observacion,int regimen,String telefono) {
+    public void addObservaciones(String idTramite,int idAfore,int idMotivo,int idEstatus,int idInstituto,int idRegimenPensionario,int idDocumentacion,String telefono,String email,int statusTramite) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
 
 
         values.put(FK_ID_TRAMITE,idTramite); // fk id
-        values.put(KEY_CLAVE_AFORE,claveAfore);
-        values.put(KEY_PREGUNTA7,pregunta7);
-        values.put(KEY_PREGUNTA8,pregunta8);
-        values.put(KEY_PREGUNTA9,pregunta9);
-        values.put(KEY_ESTATUS,status);
-        values.put(KEY_ESTATUS_TRAMITE,statusTramite);
+        values.put(KEY_ID_AFORE ,idAfore);
         values.put(KEY_ID_MOTIVO,idMotivo);
-        values.put(KEY_LEY_REGIMEN,leyRegimen);
-        values.put(KEY_OBSERVACION,observacion);
-        values.put(KEY_REGIMEN,regimen);
-        values.put(KEY_TELEFONO,telefono);
+        values.put(KEY_ID_ESTATUS ,idEstatus);
+        values.put(KEY_ID_INSTITUTO ,idInstituto);
+        values.put(KEY_ID_REGIMEN_PENSIONARIO,idRegimenPensionario);
+        values.put(KEY_ID_DOCUMENTACION ,idDocumentacion);
+        values.put(KEY_TELEFONO ,telefono);
+        values.put(KEY_EMAIL,email);
+        values.put(KEY_ESTATUS_TRAMITE,statusTramite);
+
         // Inserting Row
         long id =(int) db.insertWithOnConflict(TABLE_OBSERVACIONES_ENCUESTA, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         if (id == -1) {
@@ -328,17 +328,15 @@ public class SQLiteHandler extends SQLiteOpenHelper{
         cursor.moveToFirst();
         if (cursor.getCount() > 0) {
             observaciones.put(FK_ID_TRAMITE, cursor.getString(0));
-            observaciones.put(KEY_CLAVE_AFORE, cursor.getString(1));
-            observaciones.put(KEY_PREGUNTA7, cursor.getString(2));
-            observaciones.put(KEY_PREGUNTA8, cursor.getString(3));
-            observaciones.put(KEY_PREGUNTA9, cursor.getString(4));
-            observaciones.put(KEY_ESTATUS, cursor.getString(5));
-            observaciones.put(KEY_ESTATUS_TRAMITE, cursor.getString(6));
-            observaciones.put(KEY_ID_MOTIVO, cursor.getString(7));
-            observaciones.put(KEY_LEY_REGIMEN, cursor.getString(8));
-            observaciones.put(KEY_OBSERVACION, cursor.getString(9));
-            observaciones.put(KEY_REGIMEN, cursor.getString(10));
-            observaciones.put(KEY_TELEFONO, cursor.getString(11));
+            observaciones.put(KEY_ID_AFORE, cursor.getString(1));
+            observaciones.put(KEY_ID_MOTIVO, cursor.getString(2));
+            observaciones.put(KEY_ID_ESTATUS, cursor.getString(3));
+            observaciones.put(KEY_ID_INSTITUTO, cursor.getString(4));
+            observaciones.put(KEY_ID_REGIMEN_PENSIONARIO, cursor.getString(5));
+            observaciones.put(KEY_ID_DOCUMENTACION, cursor.getString(6));
+            observaciones.put(KEY_TELEFONO, cursor.getString(7));
+            observaciones.put(KEY_EMAIL, cursor.getString(8));
+            observaciones.put(KEY_ESTATUS_TRAMITE, cursor.getString(9));
         }
         cursor.close();
         db.close();
@@ -398,39 +396,39 @@ public class SQLiteHandler extends SQLiteOpenHelper{
     }
 
 
-    public Integer deleteEncuesta(int idTramite) {
+    public Integer deleteEncuesta(String idTramite) {
         Log.d(TAG, "Deleted all user info from sqlite");
         SQLiteDatabase db = this.getWritableDatabase();
         // Delete All Rows
         return db.delete(TABLE_RETENCION_ENCUESTA,
                 FK_ID_TRAMITE + " = ? ",
-                new String[] { Integer.toString(idTramite) });
+                new String[] { idTramite});
     }
 
-    public Integer deleteObservaciones(int idTramite) {
+    public Integer deleteObservaciones(String idTramite) {
         Log.d(TAG, "Deleted all user info from sqlite");
         SQLiteDatabase db = this.getWritableDatabase();
         // Delete All Rows
         return db.delete(TABLE_OBSERVACIONES_ENCUESTA,
                 FK_ID_TRAMITE + " = ? ",
-                new String[] { Integer.toString(idTramite) });
+                new String[] { idTramite });
     }
 
-    public Integer deleteFirma(int idTramite) {
+    public Integer deleteFirma(String idTramite) {
         Log.d(TAG, "Deleted all user info from sqlite");
         SQLiteDatabase db = this.getWritableDatabase();
         // Delete All Rows
         return db.delete(TABLE_FIRMA,
                 FK_ID_TRAMITE + " = ? ",
-                new String[] { Integer.toString(idTramite) });
+                new String[] {idTramite});
     }
 
-    public Integer deleteDocumentacion(int idTramite) {
+    public Integer deleteDocumentacion(String idTramite) {
         Log.d(TAG, "Deleted all user info from sqlite");
         SQLiteDatabase db = this.getWritableDatabase();
         // Delete All Rows
         return db.delete(TABLE_DOCUMENTACION,
                 FK_ID_TRAMITE + " = ? ",
-                new String[] { Integer.toString(idTramite) });
+                new String[] { idTramite });
     }
 }

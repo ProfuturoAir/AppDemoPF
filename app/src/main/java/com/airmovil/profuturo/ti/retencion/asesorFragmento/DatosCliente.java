@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
@@ -59,6 +60,8 @@ public class DatosCliente extends Fragment {
     private TextView tvClienteNombre, tvClienteNumeroCuenta, tvClienteNSS, tvClienteCURP, tvClienteFecha, tvClienteSaldo;
     private Button btnContinuar, btnCancelar;
     private View rootView;
+
+    private String idTramite;
 
     // TODO: Config
     Map<String, String> usuario;
@@ -127,13 +130,16 @@ public class DatosCliente extends Fragment {
             public void onClick(View v) {
                 final Connected conected = new Connected();
                 if(conected.estaConectado(v.getContext())) {
+                    Fragment fragmentoGenerico = new Encuesta1();
+                    /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
+                    Asesor asesor = (Asesor) getContext();
+                    asesor.switchEncuesta1(fragmentoGenerico, idTramite,borrar);
                     //
                 }else{
                     Config.msj(v.getContext(),"Error en conexión", "Sin Conexion por el momento.Datos Cliente P-1.1.3.3");
                 }
-                Fragment fragmentoGenerico = new Encuesta1();
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();
+
 
             }
         });
@@ -365,6 +371,7 @@ public class DatosCliente extends Fragment {
                 curp   = jsonCliente.getString("curp");
                 fechaConsulta = jsonCliente.getString("fecha_consulta");
                 saldo = jsonCliente.getDouble("saldo");
+                idTramite = jsonCliente.getString("idTramite");
 
                 tvClienteNombre.setText("" + nombre);
                 tvClienteNumeroCuenta.setText("" + cuenta);
@@ -372,6 +379,8 @@ public class DatosCliente extends Fragment {
                 tvClienteCURP.setText("" + curp);
                 tvClienteFecha.setText("" + fechaConsulta);
                 tvClienteSaldo.setText("" + saldo);
+
+
             }else{
                 Config.msj(getContext(), "Error: " + status, statusText);
             }

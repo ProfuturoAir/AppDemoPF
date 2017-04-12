@@ -21,6 +21,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
@@ -52,6 +53,7 @@ public class Encuesta1 extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private SQLiteHandler db;
+    private String idTramite;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -66,6 +68,7 @@ public class Encuesta1 extends Fragment {
     private boolean respuesta1, respuesta2, respuesta3;
     private Boolean r1, r2, r3;
     private String observaciones;
+    private int estatusTramite = 1134;
 
     public Encuesta1() {
         // Required empty public constructor
@@ -113,6 +116,8 @@ public class Encuesta1 extends Fragment {
         cb3si        = (CheckBox) rootView.findViewById(R.id.afe1_cb_pregunta3_si);
         cb3no        = (CheckBox) rootView.findViewById(R.id.afe1_cb_pregunta3_no);
         etObservaciones = (EditText) rootView.findViewById(R.id.afe1_et_observaciones);
+
+        idTramite = getArguments().getString("idTramite");
 
         cb1si.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -174,6 +179,8 @@ public class Encuesta1 extends Fragment {
             }
         });
 
+        final Fragment borrar = this;
+
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,26 +190,21 @@ public class Encuesta1 extends Fragment {
                     final Connected conectado = new Connected();
                     if(conectado.estaConectado(getContext())){
                         sendJson(true);
-                        Fragment fragmentoGenerico = new Encuesta2();
-                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                        //Fragment fragmentoGenerico = new Encuesta2();
+                        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                     }else{
-                        JSONObject rqt = new JSONObject();
-                        JSONObject encuesta = new JSONObject();
-                        /*encuesta.put("observaciones", observaciones);
-                        encuesta.put("pregunta3", true);
-                        encuesta.put("pregunta2", true);
-                        encuesta.put("pregunta1", true);
-                        rqt.put("encuesta", encuesta);
-                        rqt.put("estatusTramite", 1134);
-                        rqt.put("idTramite", "1");
-                        obj.put("rqt", rqt);*/
-                        db.addEncuesta("1","1134",true,true,true,observaciones);
+                        db.addEncuesta(idTramite,estatusTramite,r1,r2,r3,etObservaciones.getText().toString().trim());
                         Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
-                        Fragment fragmentoGenerico = new Encuesta2();
-                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                        //Fragment fragmentoGenerico = new Encuesta2();
+                        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                     }
+                    Fragment fragmentoGenerico = new Encuesta2();
+                    /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
+                    Asesor asesor = (Asesor) getContext();
+                    asesor.switchEncuesta2(fragmentoGenerico, idTramite,borrar);
 
                 }
             }

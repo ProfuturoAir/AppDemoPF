@@ -24,7 +24,10 @@ import android.widget.ImageView;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.EnviaJSON;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.airmovil.profuturo.ti.retencion.helper.SQLiteHandler;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -34,6 +37,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -70,7 +74,12 @@ public class Escaner extends Fragment {
     private ImageView imageView;
     private Button btnFinalizar;
 
+    private Connected connected;
+    private SQLiteHandler db;
+
     private OnFragmentInteractionListener mListener;
+
+    String idTramite;
 
     public Escaner() {
         // Required empty public constructor
@@ -97,6 +106,7 @@ public class Escaner extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        db = new SQLiteHandler(getContext());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -113,6 +123,9 @@ public class Escaner extends Fragment {
 
         btnBorrar= (Button) view.findViewById(R.id.af_btn_borrar);
         imageView = (ImageView) rootView.findViewById(R.id.scannedImage);
+
+        connected = new Connected();
+        idTramite = getArguments().getString("idTramite");
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,6 +187,8 @@ public class Escaner extends Fragment {
             }
         });
 
+        final Fragment borrar = this;
+
         btnFinalizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -189,7 +204,22 @@ public class Escaner extends Fragment {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
-                            Fragment fragmentoGenerico = null;
+                            imageView.setDrawingCacheEnabled(true);
+                            String base64 = encodeTobase64(imageView.getDrawingCache());
+                            //Bitmap emBit = Bitmap.createBitmap(imageView.getWidth(), imageView.getHeight(), Bitmap.Config.ARGB_8888);
+                            Log.d("BASE64-->", base64);
+                            imageView.setDrawingCacheEnabled(false);
+
+                            if(connected.estaConectado(getContext())) {
+                                sendJson(true);
+                                final EnviaJSON enviaPrevio = new EnviaJSON();
+                                enviaPrevio.sendPrevios(idTramite, getContext());
+                            }else {
+                                db.addDocumento(idTramite,"2017-04-10",1,base64,"12344","Cesar",90.2349, -23.9897);
+                                //db.addFirma("1", 123, base64, 90.2349, -23.9897);
+                            }
+
+                            /*Fragment fragmentoGenerico = null;
                             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                             final Fragment borrarFragmento;
                             fragmentoGenerico = new ConCita();
@@ -199,6 +229,11 @@ public class Escaner extends Fragment {
                                         .replace(R.id.content_gerente, fragmentoGenerico)
                                         .addToBackStack("F_MAIN")
                                         .commit();
+                            }*/
+                            Fragment fragmentoGenerico = new ConCita();
+                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            if (fragmentoGenerico != null) {
+                                fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                             }
                         }
                     });
@@ -393,5 +428,58 @@ public class Escaner extends Fragment {
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+    }
+
+
+    public String encodeTobase64(Bitmap image) {
+        //Bitmap immagex = image;
+        /*ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        immagex.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] b = baos.toByteArray();
+        String imageEncoded = android.util.Base64.encodeToString(b, android.util.Base64.DEFAULT);*/
+
+        float bmW=image.getWidth();
+        float bmH= image.getHeight();
+
+        Log.d("PIXELES", "ORIGINAL ANCHO"+bmW+"Original ALTO:"+bmH );
+
+        int widthPixels = getContext().getResources().getDisplayMetrics().widthPixels;
+
+        Bitmap resize;
+        Log.d("PIXELES", "TELEFONO"+widthPixels );
+        if(bmW>=widthPixels){
+            float newWidth=widthPixels;
+            float newHeight=(bmH/bmW)*widthPixels;
+
+            Log.d("PIXELES", "NUEVO ANCHO" + widthPixels + "NUEVO ALTO:" + newHeight + " W" + bmW + " H" + bmH);
+            //resize the bit map
+            resize = Bitmap.createBitmap(image,0,0,(int)newWidth,(int)newHeight);
+            //resize =Bitmap.createScaledBitmap(image, 200,200, true);
+        }else{
+            Log.d("PIXELES", "PASA SIN CAMBIO" );
+            resize = image;
+        }
+
+        //resize =Bitmap.createScaledBitmap(image, 500,500, true);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        resize.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] b = baos.toByteArray();
+        //String imageEncoded = Base64.encode(b);
+        //String imageEncoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+        //Log.e("LOOK", imageEncoded);
+        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+        //Log.d("ARRAY","BASE64:"+encImage);
+        imageEncoded = imageEncoded.replace(" ","");
+        String foto="data:image/jpeg;base64,"+imageEncoded;
+
+        int maxLogSize = 1000;
+        for(int i = 0; i <= foto.length() / maxLogSize; i++) {
+            int start = i * maxLogSize;
+            int end = (i+1) * maxLogSize;
+            end = end > foto.length() ? foto.length() : end;
+            Log.d("n-"+i, foto.substring(start, end));
+        }
+        return foto;
     }
 }

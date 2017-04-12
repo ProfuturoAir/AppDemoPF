@@ -22,8 +22,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.EnviaJSON;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SQLiteHandler;
 import com.android.volley.AuthFailureError;
@@ -66,6 +68,8 @@ public class Encuesta2 extends Fragment {
     int iParam6IdDocumentacion;
     String iParam7Telefono;
     String iParam8Email;
+
+    String idTramite;
 
     // TODO: XML
     private ArrayAdapter arrayAdapterAfores, arrayAdapterMotivo, arrayAdapterEstatus, arrayAdapterInstituto, arrayAdapterRegimen, arrayAdapterDocumentos;
@@ -124,6 +128,7 @@ public class Encuesta2 extends Fragment {
         etEmail = (EditText) view.findViewById(R.id.afe2_et_email);
 
         connected = new Connected();
+        idTramite = getArguments().getString("idTramite");
 
         arrayAdapterAfores = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.AFORES);
         arrayAdapterMotivo = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.MOTIVOS);
@@ -139,6 +144,7 @@ public class Encuesta2 extends Fragment {
         spinnerRegimen.setAdapter(arrayAdapterRegimen);
         spinnerDocumentos.setAdapter(arrayAdapterDocumentos);
 
+        final Fragment borrar = this;
         //<editor-fold desc="btn continuar">
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,24 +169,37 @@ public class Encuesta2 extends Fragment {
                 Log.d(" Retorno de email: ", " " + val);
 
                 if(connected.estaConectado(getContext())){
+                    final EnviaJSON enviaPrevio = new EnviaJSON();
+
+                    enviaPrevio.sendPrevios("1",getContext());
+
                     if(iParam1IdGerencia == 0 || iParam2IdMotivos == 0 || iParam3IdEstatus == 0 || iParam4IdTitulo == 0 ||
                             iParam5IdRegimentPensionario == 0 || iParam6IdDocumentacion == 0 || iParam7Telefono.isEmpty() || iParam8Email.isEmpty() ){
                         Config.msj(getContext(), getResources().getString(R.string.error_datos_vacios), getResources().getString(R.string.msj_error_datos_vacios));
                     }else {
                         if(val == true){
                             sendJson(true, iParam1IdGerencia, iParam2IdMotivos, iParam3IdEstatus, iParam4IdTitulo, iParam5IdRegimentPensionario, iParam6IdDocumentacion, iParam7Telefono, iParam8Email);
-                            Fragment fragmentoGenerico = new Firma();
-                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                            fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                            //Fragment fragmentoGenerico = new Firma();
+                            //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                         }else{
                             Config.msj(getContext(), getResources().getString(R.string.error_email_incorrecto), getResources().getString(R.string.msj_error_email));
                         }
                     }
                 }else{
-                    db.getEncuesta("1");
-                    //db.addObservaciones();
-                    Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
+                    db.addObservaciones(idTramite,iParam1IdGerencia,iParam2IdMotivos,iParam3IdEstatus,iParam4IdTitulo,iParam5IdRegimentPensionario,iParam6IdDocumentacion,iParam7Telefono,iParam8Email,123);
+                    //Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
+                    Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
+                    //Fragment fragmentoGenerico = new Firma();
+                    //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                 }
+
+                Fragment fragmentoGenerico = new Firma();
+                    /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
+                Asesor asesor = (Asesor) getContext();
+                asesor.switchFirma(fragmentoGenerico, idTramite,borrar);
             }
         });
         //</editor-fold>

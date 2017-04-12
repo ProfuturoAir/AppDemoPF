@@ -422,4 +422,61 @@ public class Asesor extends AppCompatActivity{
         });
         dialogo1.show();
     }
+
+    public void switchEncuesta1(Fragment frag,String idTramite,Fragment borrar) {
+        Bundle bundle=new Bundle();
+        bundle.putString("idTramite",idTramite);
+
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_asesor, frag);
+        ft.remove(borrar);
+        ft.addToBackStack(null);
+        ft.commit();
+        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();
+    }
+
+    public void switchEncuesta2(Fragment frag,String idTramite,Fragment borrar) {
+        Bundle bundle=new Bundle();
+        bundle.putString("idTramite",idTramite);
+
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_asesor, frag);
+        ft.remove(borrar);
+        ft.addToBackStack(null);
+        ft.commit();
+        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();
+    }
+
+    public void switchFirma(Fragment frag,String idTramite,Fragment borrar) {
+        Bundle bundle=new Bundle();
+        bundle.putString("idTramite",idTramite);
+
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_asesor, frag);
+        ft.remove(borrar);
+        ft.addToBackStack(null);
+        ft.commit();
+        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();
+    }
+
+
+    public void switchDocumento(Fragment frag,String idTramite,Fragment borrar) {
+        Bundle bundle=new Bundle();
+        bundle.putString("idTramite",idTramite);
+
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_asesor, frag);
+        ft.remove(borrar);
+        ft.addToBackStack(null);
+        ft.commit();
+        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();
+    }
 }
