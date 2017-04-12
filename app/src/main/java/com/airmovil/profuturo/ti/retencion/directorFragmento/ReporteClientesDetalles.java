@@ -18,12 +18,14 @@ import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -49,6 +51,7 @@ public class ReporteClientesDetalles extends Fragment {
     private String mParam2;
 
     private TextView tv1, tv2, tv3, tv4, tv5, tv6, tv7;
+    private SessionManager sessionManager;
 
     private OnFragmentInteractionListener mListener;
 
@@ -93,12 +96,11 @@ public class ReporteClientesDetalles extends Fragment {
         tv6 = (TextView) view.findViewById(R.id.tv_clientes_detalles6);
         tv7 = (TextView) view.findViewById(R.id.tv_clientes_detalles7);
 
-
+        sendJson(true);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.director_fragmento_reporte_clientes_detalles, container, false);
     }
@@ -163,13 +165,13 @@ public class ReporteClientesDetalles extends Fragment {
             Config.msj(getContext(),"Error","Existe un error al formar la peticion");
         }
 
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_CLIENTES, json,
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_CLIENTE_DETALLE, json,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         if(primeraPeticion){
                             loading.dismiss();
-                            //primerPaso(response);
+                            primerPaso(response);
                         } else {
                             //segundoPaso(response);
                         }
@@ -239,5 +241,9 @@ public class ReporteClientesDetalles extends Fragment {
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+    }
+
+    private void primerPaso(JSONObject obj){
+        Log.d("response -> 1", "" + obj);
     }
 }

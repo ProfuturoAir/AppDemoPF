@@ -139,7 +139,7 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
     }
 
     public void fragmentJumpDatosUsuario(String idClienteCuenta, View view) {
-        Fragment fragmento = new ReporteClientesDetalle();
+        Fragment fragmento = new ReporteClientesDetalles();
         if (view.getContext() == null)
             return;
         if (view.getContext() instanceof Director) {
