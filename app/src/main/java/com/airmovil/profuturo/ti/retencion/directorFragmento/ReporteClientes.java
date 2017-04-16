@@ -118,6 +118,7 @@ public class ReporteClientes extends Fragment {
     private int pagina = 1;
     private int numeroMaximoPaginas = 0;
     private int totalF;
+    final Fragment borrar = this;
 
     private OnFragmentInteractionListener mListener;
 
@@ -163,6 +164,9 @@ public class ReporteClientes extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
+
+        primeraPeticion();
+
         sessionManager = new SessionManager(getActivity().getApplicationContext());
         HashMap<String, String> datos = sessionManager.getUserDetails();
         // CASTEO DE ELEMENTOS
@@ -265,8 +269,6 @@ public class ReporteClientes extends Fragment {
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
 
-        sendJson(true);
-        final Fragment borrar = this;
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -283,7 +285,7 @@ public class ReporteClientes extends Fragment {
                     mParam9 = spinnerId.getSelectedItemPosition();
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                     if(mParam1.isEmpty() || mParam2.isEmpty()){
-                        Config.msj(getContext(), getResources().getString(R.string.error_fechas_vacias), getResources().getString(R.string.msj_error_fechas));
+                        Config.dialogoFechasVacias(getContext());
                     }else{
                         ReporteClientes procesoDatosFiltroInicio = ReporteClientes.newInstance(
                                 mParam1, mParam2, mParam3, mParam4, mParam5, mParam6, mParam7, mParam8, mParam9,
@@ -414,14 +416,23 @@ public class ReporteClientes extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    private void primeraPeticion(){
+        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIcon(R.drawable.icono_abrir);
+        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
+        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
+        progressDialog.show();
+        // TODO: Implement your own authentication logic here.
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        progressDialog.dismiss();
+                        sendJson(true);
+                    }
+                }, 3000);
+    }
+
     private void sendJson(final boolean primeraPeticion){
-
-        final ProgressDialog loading;
-        if (primeraPeticion)
-            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Porfavor espere...", false, false);
-        else
-            loading = null;
-
 
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
@@ -499,7 +510,6 @@ public class ReporteClientes extends Fragment {
                     @Override
                     public void onResponse(JSONObject response) {
                         if(primeraPeticion){
-                            loading.dismiss();
                             primerPaso(response);
                         } else {
                             segundoPaso(response);
@@ -510,7 +520,6 @@ public class ReporteClientes extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         try{
-                            loading.dismiss();
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -659,7 +668,6 @@ public class ReporteClientes extends Fragment {
         adapter.setLoaded();
     }
 
-    //<editor-fold desc="Rango fecha inicial">
     private void rangoInicial(){
         tvRangoFecha1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -676,9 +684,7 @@ public class ReporteClientes extends Fragment {
             }
         });
     }
-    //</editor-fold>
 
-    //<editor-fold desc="Rango fecha final">
     private void rangoFinal(){
         tvRangoFecha2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -695,7 +701,6 @@ public class ReporteClientes extends Fragment {
             }
         });
     }
-    //</editor-fold>
 
     private void fechas(){
         // TODO: fecha

@@ -145,24 +145,14 @@ public class ReporteAsistencia extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
-        progressDialog.setMessage(getResources().getString(R.string.msj_verificando));
-        progressDialog.show();
-        // TODO: Implement your own authentication logic here.
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        progressDialog.dismiss();
-                    }
-                }, 2000);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-
         rootView = view;
+
+        primeraPeticion();
+
         // TODO: casteo
         tvFecha = (TextView) rootView.findViewById(R.id.ddfras_tv_fecha);
         tvATiempo = (TextView) rootView.findViewById(R.id.ddfras_tv_a_tiempo);
@@ -201,9 +191,6 @@ public class ReporteAsistencia extends Fragment {
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
 
-        // TODO: JSON
-        sendJson(true);
-
         // TODO: fechas
         Map<String, Integer> fechaDatos = Config.dias();
         mYear  = fechaDatos.get("anio");
@@ -229,7 +216,7 @@ public class ReporteAsistencia extends Fragment {
                     final String idAsesor = etAsesor.getText().toString();
 
                     if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
-                        Config.msj(getContext(), getResources().getString(R.string.error_fechas_vacias),getResources().getString(R.string.msj_error_fechas));
+                        Config.dialogoFechasVacias(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         ReporteAsistencia fragmento = ReporteAsistencia.newInstance(fechaIncial, fechaFinal, idGerencia, idSucursal, idAsesor, rootView.getContext());
@@ -347,14 +334,24 @@ public class ReporteAsistencia extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    private void primeraPeticion(){
+        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIcon(R.drawable.icono_abrir);
+        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
+        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
+        progressDialog.show();
+        // TODO: Implement your own authentication logic here.
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        progressDialog.dismiss();
+                        sendJson(true);
+                    }
+                }, 3000);
+    }
+
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
-
-        final ProgressDialog loading;
-        if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
-        else
-            loading = null;
 
         SessionManager sessionManager = new SessionManager(getContext());
         HashMap<String, String> usuario = sessionManager.getUserDetails();
@@ -405,7 +402,6 @@ public class ReporteAsistencia extends Fragment {
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
-                            loading.dismiss();
                             primerPaso(response);
                         } else {
                             segundoPaso(response);
@@ -416,7 +412,6 @@ public class ReporteAsistencia extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         try{
-                            loading.dismiss();
                         }catch (Exception e){
                             e.printStackTrace();
                         }

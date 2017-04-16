@@ -105,6 +105,7 @@ public class ReporteSucursales extends Fragment {
     private Button btnBuscar;
     private TextView tvResultados;
     int filas;
+    final Fragment borrar = this;
 
     public ReporteSucursales() {
         // Required empty public constructor
@@ -123,44 +124,31 @@ public class ReporteSucursales extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
 
-        tvFecha = (TextView) rootView.findViewById(R.id.dfrs_tv_fecha);
-        tvEmitidas = (TextView) rootView.findViewById(R.id.dfrs_tv_emitidas);
-        tvNoEmitidas = (TextView) rootView.findViewById(R.id.dfrs_tv_no_emitidas);
-        tvSaldoEmitido = (TextView) rootView.findViewById(R.id.dfrs_tv_saldo_emitido);
-        tvSaldoNoEmitido = (TextView) rootView.findViewById(R.id.dfrs_tv_saldo_no_emitido);
-        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.dfrs_tv_fecha_rango1);
-        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.dfrs_tv_fecha_rango2);
-        spinnerSucursales = (Spinner) rootView.findViewById(R.id.dfrs_spinner_sucursales);
-        btnBuscar = (Button) rootView.findViewById(R.id.dfrs_btn_buscar);
-        tvResultados = (TextView) rootView.findViewById(R.id.gfsc_tv_registros);
-
+        variables();
         // TODO: fechas dialog
         rangoInicial();
         rangoFinal();
-
         // TODO: Spinner
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.SUCURSALES);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinnerSucursales.setAdapter(adapter);
-
         // TODO: Conexion, fragmentoTransaction, sessionManager
         sessionManager = new SessionManager(getContext());
         final FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         connected = new Connected();
 
+        primeraPeticion();
         fechas();
 
-        // TODO: model
-        getDatos1 = new ArrayList<>();
-
         // TODO: Recycler
+        getDatos1 = new ArrayList<>();
         recyclerView = (RecyclerView) rootView.findViewById(R.id.dfrs_rv_lista);
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-        sendJson(true);
-        final Fragment borrar = this;
+
         // TODO: Boton filtro
+        //<editor-fold desc="Boton filtro">
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -168,7 +156,7 @@ public class ReporteSucursales extends Fragment {
                     final String fechaIncial = tvRangoFecha1.getText().toString();
                     final String fechaFinal = tvRangoFecha2.getText().toString();
                     if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
-                        Config.msj(getContext(), getResources().getString(R.string.msj_error_fechas),getResources().getString(R.string.msj_error_fechas));
+                        Config.dialogoFechasVacias(getContext());
                     }else{
                         idSucursal = spinnerSucursales.getSelectedItemPosition();
                         ReporteSucursales fragmento = ReporteSucursales.newInstance(fechaIncial, fechaFinal, idSucursal, rootView.getContext());
@@ -183,7 +171,7 @@ public class ReporteSucursales extends Fragment {
                 }
             }
         });
-
+        //</editor-fold>
 
         //<editor-fold desc="icono email enviar">
         tvResultados.setOnClickListener(new View.OnClickListener() {
@@ -224,7 +212,6 @@ public class ReporteSucursales extends Fragment {
             }
         });
         //</editor-fold>
-
 
     }
 
@@ -280,13 +267,36 @@ public class ReporteSucursales extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private void sendJson(final boolean primerPeticion) {
+    private void primeraPeticion(){
+        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIcon(R.drawable.icono_abrir);
+        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
+        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
+        progressDialog.show();
+        // TODO: Implement your own authentication logic here.
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        progressDialog.dismiss();
+                        sendJson(true);
+                    }
+                }, 3000);
+    }
 
-        final ProgressDialog loading;
-        if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
-        else
-            loading = null;
+    private void variables(){
+        tvFecha = (TextView) rootView.findViewById(R.id.dfrs_tv_fecha);
+        tvEmitidas = (TextView) rootView.findViewById(R.id.dfrs_tv_emitidas);
+        tvNoEmitidas = (TextView) rootView.findViewById(R.id.dfrs_tv_no_emitidas);
+        tvSaldoEmitido = (TextView) rootView.findViewById(R.id.dfrs_tv_saldo_emitido);
+        tvSaldoNoEmitido = (TextView) rootView.findViewById(R.id.dfrs_tv_saldo_no_emitido);
+        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.dfrs_tv_fecha_rango1);
+        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.dfrs_tv_fecha_rango2);
+        spinnerSucursales = (Spinner) rootView.findViewById(R.id.dfrs_spinner_sucursales);
+        btnBuscar = (Button) rootView.findViewById(R.id.dfrs_btn_buscar);
+        tvResultados = (TextView) rootView.findViewById(R.id.gfsc_tv_registros);
+    }
+
+    private void sendJson(final boolean primerPeticion) {
 
         JSONObject obj = new JSONObject();
 
@@ -339,7 +349,6 @@ public class ReporteSucursales extends Fragment {
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
-                            loading.dismiss();
                             primerPaso(response);
                         } else {
                             segundoPaso(response);
@@ -350,7 +359,6 @@ public class ReporteSucursales extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         try{
-                            loading.dismiss();
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -509,7 +517,6 @@ public class ReporteSucursales extends Fragment {
         adapter.setLoaded();
     }
 
-    //<editor-fold desc="Fecha rango inicial">
     private void rangoInicial(){
         tvRangoFecha1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -526,9 +533,7 @@ public class ReporteSucursales extends Fragment {
             }
         });
     }
-    //</editor-fold>
 
-    //<editor-fold desc="fecha rango final">
     private void rangoFinal(){
         tvRangoFecha2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -545,7 +550,6 @@ public class ReporteSucursales extends Fragment {
             }
         });
     }
-    //</editor-fold>
 
     private void fechas(){
         Map<String, Integer> fechaDatos = Config.dias();

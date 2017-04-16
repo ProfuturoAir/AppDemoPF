@@ -192,9 +192,23 @@ public class Inicio extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+    /**
+     * Setear las variables de xml
+     */
+    public void variables(View view){
+        tvInicial = (TextView) view.findViewById(R.id.dfi_tv_inicial);
+        tvNombre = (TextView) view.findViewById(R.id.dfi_tv_nombre);
+        tvFecha = (TextView) view.findViewById(R.id.dfi_tv_fecha);
+        tvRetenidos = (TextView) view.findViewById(R.id.dfi_tv_retenidos);
+        tvNoRetenidos = (TextView) view.findViewById(R.id.dfi_tv_no_retenidos);
+        tvSaldoRetenido = (TextView) view.findViewById(R.id.dfi_tv_saldo_a_favor);
+        tvSaldoNoRetenido = (TextView) view.findViewById(R.id.dfi_tv_saldo_retenido);
+        tvRangoFecha1 = (TextView) view.findViewById(R.id.dfi_tv_fecha_rango1);
+        tvRangoFecha2 = (TextView) view.findViewById(R.id.dfi_tv_fecha_rango2);
+        btnFiltro = (Button) view.findViewById(R.id.dfi_btn_filtro);
+    }
 
-    public void primeraPeticion(){
-        // TODO: Peticion via REST
+    private void primeraPeticion(){
         final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
         progressDialog.setIcon(R.drawable.icono_abrir);
         progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
@@ -208,6 +222,39 @@ public class Inicio extends Fragment {
                         sendJson(true);
                     }
                 }, 3000);
+    }
+
+    /**
+     *  Espera el regreso de fechas incial (hoy y el dia siguiente)
+     *  y cuando se realiza una nueva busqueda, retorna las fechas seleccionadas
+     */
+    private void fechas(){
+        Map<String, Integer> fechaDatos = Config.dias();
+        mYear  = fechaDatos.get("anio");
+        mMonth = fechaDatos.get("mes");
+        mDay   = fechaDatos.get("dia");
+        // TODO: fecha
+        Map<String, String> fechaActual = Config.fechas(1);
+        String smParam1 = fechaActual.get("fechaIni");
+        String smParam2 = fechaActual.get("fechaFin");
+        if(getArguments() != null){
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+            tvFecha.setText(mParam1 + " - " + mParam2);
+        }else{
+            tvFecha.setText(smParam1 + " - " + smParam2);
+        }
+    }
+
+    /**
+     * Obteniendo los valores del apartado superior, nombre
+     */
+    public void detalleSuperior(){
+        Map<String, String> usuarioDatos = Config.datosUsuario(getContext());
+        String nombre = usuarioDatos.get(SessionManager.USUARIO_NOMBRE);
+        String apePaterno = usuarioDatos.get(SessionManager.USUARIO_APELLIDO_PATERNO);
+        String apeMaterno = usuarioDatos.get(SessionManager.USUARIO_APELLIDO_MATERNO);
+        tvNombre.setText(nombre + " " + apePaterno + " " + apeMaterno);
     }
 
     private void rangoInicial(){
@@ -244,7 +291,7 @@ public class Inicio extends Fragment {
         });
     }
 
-    private void sendJson(final boolean primeraPeticion){
+    public void sendJson(final boolean primeraPeticion){
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
         try{
@@ -359,54 +406,5 @@ public class Inicio extends Fragment {
         tvNoRetenidos.setText("" + iNoRetenidos);
         tvSaldoRetenido.setText("" + Config.nf.format(iSaldoRetenido));
         tvSaldoNoRetenido.setText("" + Config.nf.format(iSaldoNoRetenido));
-    }
-
-    /**
-     *  Espera el regreso de fechas incial (hoy y el dia siguiente)
-     *  y cuando se realiza una nueva busqueda, retorna las fechas seleccionadas
-     */
-    private void fechas(){
-        Map<String, Integer> fechaDatos = Config.dias();
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
-        // TODO: fecha
-        Map<String, String> fechaActual = Config.fechas(1);
-        String smParam1 = fechaActual.get("fechaIni");
-        String smParam2 = fechaActual.get("fechaFin");
-        if(getArguments() != null){
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-            tvFecha.setText(mParam1 + " - " + mParam2);
-        }else{
-            tvFecha.setText(smParam1 + " - " + smParam2);
-        }
-    }
-
-    /**
-     * Setear las variables de xml
-     */
-    public void variables(View view){
-        tvInicial = (TextView) view.findViewById(R.id.dfi_tv_inicial);
-        tvNombre = (TextView) view.findViewById(R.id.dfi_tv_nombre);
-        tvFecha = (TextView) view.findViewById(R.id.dfi_tv_fecha);
-        tvRetenidos = (TextView) view.findViewById(R.id.dfi_tv_retenidos);
-        tvNoRetenidos = (TextView) view.findViewById(R.id.dfi_tv_no_retenidos);
-        tvSaldoRetenido = (TextView) view.findViewById(R.id.dfi_tv_saldo_a_favor);
-        tvSaldoNoRetenido = (TextView) view.findViewById(R.id.dfi_tv_saldo_retenido);
-        tvRangoFecha1 = (TextView) view.findViewById(R.id.dfi_tv_fecha_rango1);
-        tvRangoFecha2 = (TextView) view.findViewById(R.id.dfi_tv_fecha_rango2);
-        btnFiltro = (Button) view.findViewById(R.id.dfi_btn_filtro);
-    }
-
-    /**
-     * Obteniendo los valores del apartado superior, nombre
-     */
-    public void detalleSuperior(){
-        Map<String, String> usuarioDatos = Config.datosUsuario(getContext());
-        String nombre = usuarioDatos.get(SessionManager.USUARIO_NOMBRE);
-        String apePaterno = usuarioDatos.get(SessionManager.USUARIO_APELLIDO_PATERNO);
-        String apeMaterno = usuarioDatos.get(SessionManager.USUARIO_APELLIDO_MATERNO);
-        tvNombre.setText(nombre + " " + apePaterno + " " + apeMaterno);
     }
 }

@@ -96,7 +96,7 @@ public class ReporteClientesDetalles extends Fragment {
         tv6 = (TextView) view.findViewById(R.id.tv_clientes_detalles6);
         tv7 = (TextView) view.findViewById(R.id.tv_clientes_detalles7);
 
-        sendJson(true);
+        primeraPeticion();
     }
 
     @Override
@@ -139,6 +139,22 @@ public class ReporteClientesDetalles extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private void primeraPeticion(){
+        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIcon(R.drawable.icono_abrir);
+        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
+        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
+        progressDialog.show();
+        // TODO: Implement your own authentication logic here.
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        progressDialog.dismiss();
+                        sendJson(true);
+                    }
+                }, 3000);
     }
 
     private void sendJson(final boolean primeraPeticion){

@@ -138,7 +138,7 @@ public class Asesor extends AppCompatActivity{
             //añadir caracteristicas
             setupDrawerContent(navigationView);
             //Cambiar el numero para poner el fragmento que inicia en el arranque de la aplicacion
-            seleccionarItem(navigationView.getMenu().getItem(0));
+            seleccionarItem(navigationView.getMenu().getItem(4));
         }
     }
 
@@ -152,6 +152,8 @@ public class Asesor extends AppCompatActivity{
         View hView = navigationView.getHeaderView(0);
         TextView navPrimeraLetra = (TextView) hView.findViewById(R.id.asesor_nav_tv_letra);
         TextView navDatosGerente = (TextView) hView.findViewById(R.id.asesor_nav_tv_datos);
+
+        navigationView.getMenu().hasVisibleItems();
 
         // TODO: obteniendo datos del sharePreference
         HashMap<String, String> informacion = sessionManager.getUserDetails();
@@ -361,8 +363,6 @@ public class Asesor extends AppCompatActivity{
         ft.addToBackStack(null);
         ft.commit();
     }
-
-
 
     public void switchContent1(Fragment fragment, String datos){
 

@@ -141,6 +141,8 @@ public class ReporteAsistenciaDetalles extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
+
+        primeraPeticion();
         // TODO: Casteo
         tvFecha = (TextView) rootView.findViewById(R.id.ddfrasd_tv_fecha);
         tvLetra = (TextView) rootView.findViewById(R.id.ddfrasd_tv_letra);
@@ -189,7 +191,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
                     final String fechaFinal = tvRangoFecha2.getText().toString();
 
                     if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
-                        Config.msj(getContext(), getResources().getString(R.string.error_fechas_vacias),getResources().getString(R.string.msj_error_fechas));
+                        Config.dialogoFechasVacias(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         ReporteAsistenciaDetalles fragmento = ReporteAsistenciaDetalles.newInstance(fechaIncial, fechaFinal, rootView.getContext());
@@ -293,6 +295,22 @@ public class ReporteAsistenciaDetalles extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private void primeraPeticion(){
+        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIcon(R.drawable.icono_abrir);
+        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
+        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
+        progressDialog.show();
+        // TODO: Implement your own authentication logic here.
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        progressDialog.dismiss();
+                        sendJson(true);
+                    }
+                }, 3000);
     }
 
     // TODO: REST

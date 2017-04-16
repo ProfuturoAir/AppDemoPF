@@ -104,6 +104,7 @@ public class ReporteAsesores extends Fragment {
     private Button btnBuscar;
     private TextView tvTotalResultados;
     int filas;
+    final Fragment borrar = this;
 
     private OnFragmentInteractionListener mListener;
 
@@ -142,6 +143,9 @@ public class ReporteAsesores extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
+
+        primeraPeticion();
+
         tvFecha = (TextView) rootView.findViewById(R.id.dfra_tv_fecha);
         tvEmitidas = (TextView) rootView.findViewById(R.id.dfra_tv_emitidas);
         tvNoEmitidas = (TextView) rootView.findViewById(R.id.dfra_tv_no_emitidas);
@@ -172,9 +176,6 @@ public class ReporteAsesores extends Fragment {
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
 
-        sendJson(true);
-
-        final Fragment borrar = this;
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -184,7 +185,7 @@ public class ReporteAsesores extends Fragment {
                     final String idAsesor = etAsesor.getText().toString();
 
                     if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
-                        Config.msj(getContext(), getResources().getString(R.string.error_fechas_vacias),getResources().getString(R.string.msj_error_fechas));
+                        Config.dialogoFechasVacias(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         ReporteAsesores fragmento = ReporteAsesores.newInstance(fechaIncial, fechaFinal, idAsesor, rootView.getContext());
@@ -230,15 +231,12 @@ public class ReporteAsesores extends Fragment {
                 adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinner.setAdapter(adapterSucursal);
 
-
-
                 btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
 
                         final String datoEditText = editText.getText().toString();
-                        //final String datoSpinner = spinner.getSelectedItem().toString();
                         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
                         Connected connected = new Connected();
                         if(connected.estaConectado(getContext())){
@@ -298,14 +296,24 @@ public class ReporteAsesores extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    private void primeraPeticion(){
+        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIcon(R.drawable.icono_abrir);
+        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
+        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
+        progressDialog.show();
+        // TODO: Implement your own authentication logic here.
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        progressDialog.dismiss();
+                        sendJson(true);
+                    }
+                }, 3000);
+    }
+
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
-
-        final ProgressDialog loading;
-        if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
-        else
-            loading = null;
 
         JSONObject obj = new JSONObject();
         Map<String, Integer> fechaDatos = Config.dias();
@@ -361,7 +369,6 @@ public class ReporteAsesores extends Fragment {
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
-                            loading.dismiss();
                             primerPaso(response);
                         } else {
                             segundoPaso(response);
@@ -372,7 +379,6 @@ public class ReporteAsesores extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         try{
-                            loading.dismiss();
                         }catch (Exception e){
                             e.printStackTrace();
                         }

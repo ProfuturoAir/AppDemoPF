@@ -105,6 +105,7 @@ public class ReporteGerencias extends Fragment {
     private SessionManager sessionManager;
     private DatePickerDialog datePickerDialog;
     private InputMethodManager imm;
+    final Fragment borrar = this;
 
     private HashMap<String, String> usuario;
 
@@ -144,34 +145,19 @@ public class ReporteGerencias extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
         // TODO: Casteo
-        //<editor-fold desc="Casteo">
-        tvFecha = (TextView) rootView.findViewById(R.id.dfrg_tv_fecha);
-        tvEntidaes = (TextView) rootView.findViewById(R.id.dfrg_tv_entidades);
-        tvNoEntidades = (TextView) rootView.findViewById(R.id.dfrg_tv_no_entidades);
-        tvSaldoEmitido = (TextView) rootView.findViewById(R.id.dfrg_tv_saldo_emitido);
-        tvSaldoNoEmitido = (TextView) rootView.findViewById(R.id.dfrg_tv_saldo_no_emitido);
-        spinnerGerencias = (Spinner) rootView.findViewById(R.id.dfrg_spinner_gerencias);
-        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.dfrg_tv_fecha_inicio);
-        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.dfrg_tv_fecha_final);
-        btnBuscar = (Button) rootView.findViewById(R.id.dfrg_btn_buscar);
-        tvResultados = (TextView) rootView.findViewById(R.id.dfrg_tv_registros);
-        tvMail = (TextView) rootView.findViewById(R.id.dfrg_tv_mail);
+        variables();
 
         // TODO: ocultar teclado
         imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        // TODO: shearePreference
-        //usuario = sessionManager.getUserDetails();
-
         sessionManager = new SessionManager(getContext());
-
-        //</editor-fold>
         // TODO: dialog fechas
         rangoInicial();
         rangoFinal();
 
         fechas();
+
 
         // TODO: Spinner
         ArrayAdapter<String> adapterGerencias = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.GERENCIAS);
@@ -179,17 +165,15 @@ public class ReporteGerencias extends Fragment {
         spinnerGerencias.setAdapter(adapterGerencias);
 
 
-        sendJson(true);
-        // TODO: modelo
-        getDato1 = new ArrayList<>();
-        // TODO: Recycler
+        primeraPeticion();
         //<editor-fold desc="RecyclerView">
+        getDato1 = new ArrayList<>();
         recyclerView = (RecyclerView) rootView.findViewById(R.id.dfrg_rv_gerencias);
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
         //</editor-fold>
-        final Fragment borrar = this;
+
         //<editor-fold desc="Boton buscar contenido">
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -200,7 +184,7 @@ public class ReporteGerencias extends Fragment {
                     final String fechaFinal = tvRangoFecha2.getText().toString();
                     idGerencia = spinnerGerencias.getSelectedItemPosition();
                     if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
-                        Config.msj(getContext(), getResources().getString(R.string.msj_error_fechas),getResources().getString(R.string.msj_error_fechas));
+                        Config.dialogoFechasVacias(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         ReporteGerencias fragmento = ReporteGerencias.newInstance(fechaIncial,fechaFinal, idGerencia, rootView.getContext());
@@ -215,6 +199,8 @@ public class ReporteGerencias extends Fragment {
                 }
             }
         });
+        //</editor-fold>
+
         //<editor-fold desc="TextView Resultados de filas">
         tvResultados.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -258,13 +244,12 @@ public class ReporteGerencias extends Fragment {
             }
         });
         //</editor-fold>
-        //</editor-fold>
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
         return inflater.inflate(R.layout.director_fragmento_reporte_gerencias, container, false);
     }
 
@@ -304,17 +289,40 @@ public class ReporteGerencias extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    private void variables(){
+        tvFecha = (TextView) rootView.findViewById(R.id.dfrg_tv_fecha);
+        tvEntidaes = (TextView) rootView.findViewById(R.id.dfrg_tv_entidades);
+        tvNoEntidades = (TextView) rootView.findViewById(R.id.dfrg_tv_no_entidades);
+        tvSaldoEmitido = (TextView) rootView.findViewById(R.id.dfrg_tv_saldo_emitido);
+        tvSaldoNoEmitido = (TextView) rootView.findViewById(R.id.dfrg_tv_saldo_no_emitido);
+        spinnerGerencias = (Spinner) rootView.findViewById(R.id.dfrg_spinner_gerencias);
+        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.dfrg_tv_fecha_inicio);
+        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.dfrg_tv_fecha_final);
+        btnBuscar = (Button) rootView.findViewById(R.id.dfrg_btn_buscar);
+        tvResultados = (TextView) rootView.findViewById(R.id.dfrg_tv_registros);
+        tvMail = (TextView) rootView.findViewById(R.id.dfrg_tv_mail);
+    }
+
+    public void primeraPeticion(){
+        // TODO: Peticion via REST
+        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIcon(R.drawable.icono_abrir);
+        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
+        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
+        progressDialog.show();
+        // TODO: Implement your own authentication logic here.
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        progressDialog.dismiss();
+                        sendJson(true);
+                    }
+                }, 3000);
+    }
+
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
-
-        final ProgressDialog loading;
-        if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
-        else
-            loading = null;
-
         JSONObject obj = new JSONObject();
-
         Map<String, Integer> fechaDatos = Config.dias();
         Map<String, String> fechaActual = Config.fechas(1);
         HashMap<String, String> usuario = sessionManager.getUserDetails();
@@ -383,7 +391,6 @@ public class ReporteGerencias extends Fragment {
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
-                            loading.dismiss();
                             primerPaso(response);
                         } else {
                             segundoPaso(response);
@@ -394,7 +401,6 @@ public class ReporteGerencias extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         try{
-                            loading.dismiss();
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -567,7 +573,6 @@ public class ReporteGerencias extends Fragment {
         adapter.setLoaded();
     }
 
-    //<editor-fold desc="Rango inicial de fecha">
     private void rangoInicial(){
         tvRangoFecha1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -584,9 +589,7 @@ public class ReporteGerencias extends Fragment {
             }
         });
     }
-    //</editor-fold>
 
-    //<editor-fold desc="Rango final de fecha">
     private void rangoFinal(){
         tvRangoFecha2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -603,7 +606,6 @@ public class ReporteGerencias extends Fragment {
             }
         });
     }
-    //</editor-fold>
 
     private void fechas(){
         Map<String, Integer> fechaDatos = Config.dias();
