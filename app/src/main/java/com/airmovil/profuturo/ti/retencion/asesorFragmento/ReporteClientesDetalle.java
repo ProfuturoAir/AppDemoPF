@@ -142,7 +142,7 @@ public class ReporteClientesDetalle extends Fragment {
             Log.d("TAG", "REQUEST -->" + json);
 
         } catch (JSONException e){
-            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
+            Config.msj(getContext(),"Error","Existe un right_in al formar la peticion");
         }
 
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_RESUMEN_RETENCIONES, json,

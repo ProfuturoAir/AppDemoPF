@@ -9,4 +9,8 @@
     <color name="colorGrey">#F6F6F6</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorGreyDark">#DDDDDD</color>
+
+    <color name="error_stroke_color">#F27474</color>
+    <color name="red_btn_bg_color">#DD6B55</color>
+    <color name="red_btn_bg_pressed_color">#CD5B55</color>
 </resources>

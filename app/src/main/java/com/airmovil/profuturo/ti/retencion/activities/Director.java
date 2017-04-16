@@ -43,7 +43,7 @@ public class Director extends AppCompatActivity{
     private Boolean checkMapsFragment = false;
     private Boolean checkProccess = false;
     private DriveId mFileId;
-    NavigationView navigationView;
+    private NavigationView navigationView;
     private static final  int REQUEST_CODE_OPENER = 2;
     String url;
     private InputMethodManager imm;
@@ -56,13 +56,11 @@ public class Director extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.director);
-        sessionManager = new SessionManager(getApplicationContext());
-        // TODO: Mantener el estado de la pantalla Vertical
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        // TODO: ocultar teclado
         InputMethodManager imm = (InputMethodManager) getSystemService(getApplicationContext().INPUT_METHOD_SERVICE);
         NavigationView navigationView = (NavigationView) findViewById(R.id.director_nav_view);
-
+        sessionManager = new SessionManager(getApplicationContext());
+        HashMap<String, String> datosUsuario = sessionManager.obtencionDatosUsuario();
+        String nombre = datosUsuario.get(SessionManager.USUARIO_NOMBRE);
         validateSession();
 
     }
@@ -77,6 +75,7 @@ public class Director extends AppCompatActivity{
         if(sessionManager.isLoggedIn() == false){
             Log.d(TAG, "Sesión: false");
         }else{
+            Log.d(TAG, "Sesion: true");
             setToolbar();
             setDrawerLayout();
             setToggle();

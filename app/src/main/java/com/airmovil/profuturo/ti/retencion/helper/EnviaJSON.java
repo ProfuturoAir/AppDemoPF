@@ -177,7 +177,7 @@ public class EnviaJSON {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         loading.dismiss();
-                        Config.msj(context,"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                        Config.msj(context,"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
                     }
                 }) {
             @Override
@@ -249,7 +249,7 @@ public class EnviaJSON {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         loading.dismiss();
-                        Config.msj(context,"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                        Config.msj(context,"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
                     }
                 }) {
             @Override
@@ -330,7 +330,7 @@ public class EnviaJSON {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         loading.dismiss();
-                        Config.msj(context,"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                        Config.msj(context,"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
                     }
                 }) {
             @Override
@@ -401,7 +401,7 @@ public class EnviaJSON {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         loading.dismiss();
-                        Config.msj(context,"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                        Config.msj(context,"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
                     }
                 }) {
             @Override

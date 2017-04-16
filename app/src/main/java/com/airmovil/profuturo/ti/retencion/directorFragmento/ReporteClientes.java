@@ -490,7 +490,7 @@ public class ReporteClientes extends Fragment {
             Log.d("sendJson", " REQUEST -->" + json);
 
         } catch (JSONException e){
-            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
+            Config.msj(getContext(),"Error","Existe un right_in al formar la peticion");
         }
 
         //<editor-fold desc="jsonObjetRequst">
@@ -558,15 +558,7 @@ public class ReporteClientes extends Fragment {
         {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+                return Config.credenciales(getContext());
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);

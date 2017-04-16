@@ -257,7 +257,7 @@ public class DatosCliente extends Fragment {
             obj.put("rqt", rqt);
             Log.d(TAG, "Primera peticion-->" + obj);
         } catch (JSONException e) {
-            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
+            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un right_in al formar los datos.");
         }
 
         //Creating a json array request
@@ -277,7 +277,7 @@ public class DatosCliente extends Fragment {
                         if (primerPeticion)
                             //loading.dismiss();
                             Log.d("JSON ERROR", error.toString());
-                        Config.msj(getActivity(),"Error en datos", "Lo sentimos ocurrio un error con los datos.");
+                        Config.msj(getActivity(),"Error en datos", "Lo sentimos ocurrio un right_in con los datos.");
                     }
                 }) {
             @Override

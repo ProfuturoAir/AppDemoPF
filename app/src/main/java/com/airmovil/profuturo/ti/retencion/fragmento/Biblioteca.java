@@ -123,7 +123,7 @@ public class Biblioteca extends Fragment implements GoogleApiClient.ConnectionCa
 
         if (!result.hasResolution()) {
 
-            // show the localized error dialog.
+            // show the localized right_in dialog.
             GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), result.getErrorCode(), 0).show();
             return;
         }

@@ -25,9 +25,20 @@ public class SessionManager {
     // Shared pref mode
     final int PRIVATE_MODE = 0;
     // Shared preferences file name
-    private static final String KEY_CT="create_time";
-    private static final String PREF_NAME = "Login";
-    private static final String KEY_IS_LOGGEDIN = "isLoggedIn";
+    public static final String KEY_CT="create_time";
+    public static final String PREF_NAME = "Login";
+    public static final String KEY_IS_LOGGEDIN = "isLoggedIn";
+    public static final String USUARIO_APELLIDO_MATERNO = "apellidoMaterno";
+    public static final String USUARIO_APELLIDO_PATERNO = "apellidoPaterno";
+    public static final String USUARIO_CENTRO_COSTO = "centroCosto";
+    public static final String USUARIO_CLAVE_CONSAR = "claveConsar";
+    public static final String USUARIO_CURP = "curp";
+    public static final String USUARIO_EMAIL = "email";
+    public static final String USUARIO_FECHA_ALTA_CONSAR = "fechaAltaConsar";
+    public static final String USUARIO_NOMBRE = "nombre";
+    public static final String USUARIO_NUMERO_EMPLEADO = "numeroEmpleado";
+    public static final String USUARIO_USER_ID = "userId";
+    public static final String USUARIO_PERFIL = "perfil";
 
     public SessionManager(Context context) {
         this._context = context;
@@ -43,6 +54,23 @@ public class SessionManager {
         editor.putString(NOMBRE,nombre);
         editor.putString(CAT,cat);
         // commit changes
+        editor.commit();
+    }
+
+    public void crearSesion(String apellidoMaterno, String apellidoPaterno, String centroCosto, String claveConsar,
+                            String curp, String email, String fechaAltaConsar, String nombre, String numeroEmpleado, String userId, String perfil){
+        editor.putBoolean(KEY_IS_LOGGEDIN, true);
+        editor.putString(USUARIO_APELLIDO_MATERNO, apellidoMaterno);
+        editor.putString(USUARIO_APELLIDO_PATERNO, apellidoPaterno);
+        editor.putString(USUARIO_CENTRO_COSTO, centroCosto);
+        editor.putString(USUARIO_CLAVE_CONSAR, claveConsar);
+        editor.putString(USUARIO_CURP, curp);
+        editor.putString(USUARIO_EMAIL, email);
+        editor.putString(USUARIO_FECHA_ALTA_CONSAR, fechaAltaConsar);
+        editor.putString(USUARIO_NOMBRE, nombre);
+        editor.putString(USUARIO_NUMERO_EMPLEADO, numeroEmpleado);
+        editor.putString(USUARIO_USER_ID, userId);
+        editor.putString(USUARIO_PERFIL, perfil);
         editor.commit();
     }
 
@@ -70,6 +98,22 @@ public class SessionManager {
         user.put(NOMBRE, pref.getString(NOMBRE, null));
         user.put(CAT,pref.getString(CAT,null));
         return user;
+    }
+
+    public HashMap<String, String> obtencionDatosUsuario(){
+        HashMap<String, String> usuario = new HashMap<>();
+        usuario.put(USUARIO_APELLIDO_MATERNO, pref.getString(USUARIO_APELLIDO_MATERNO, null));
+        usuario.put(USUARIO_APELLIDO_PATERNO, pref.getString(USUARIO_APELLIDO_PATERNO, null));
+        usuario.put(USUARIO_CENTRO_COSTO, pref.getString(USUARIO_CENTRO_COSTO, null));
+        usuario.put(USUARIO_CLAVE_CONSAR, pref.getString(USUARIO_CLAVE_CONSAR, null));
+        usuario.put(USUARIO_CURP, pref.getString(USUARIO_CURP, null));
+        usuario.put(USUARIO_EMAIL, pref.getString(USUARIO_EMAIL, null));
+        usuario.put(USUARIO_FECHA_ALTA_CONSAR, pref.getString(USUARIO_FECHA_ALTA_CONSAR, null));
+        usuario.put(USUARIO_NOMBRE, pref.getString(USUARIO_NOMBRE,null));
+        usuario.put(USUARIO_NUMERO_EMPLEADO, pref.getString(USUARIO_NUMERO_EMPLEADO, null));
+        usuario.put(USUARIO_USER_ID, pref.getString(USUARIO_USER_ID, null));
+        usuario.put(USUARIO_PERFIL, pref.getString(USUARIO_PERFIL, null));
+        return usuario;
     }
 
 

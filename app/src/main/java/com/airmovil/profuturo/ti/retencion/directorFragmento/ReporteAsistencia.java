@@ -144,10 +144,24 @@ public class ReporteAsistencia extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
+        progressDialog.setMessage(getResources().getString(R.string.msj_verificando));
+        progressDialog.show();
+        // TODO: Implement your own authentication logic here.
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        progressDialog.dismiss();
+                    }
+                }, 2000);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+
         rootView = view;
         // TODO: casteo
         tvFecha = (TextView) rootView.findViewById(R.id.ddfras_tv_fecha);
@@ -382,7 +396,7 @@ public class ReporteAsistencia extends Fragment {
             Log.d("Rqt", "" + obj);
 
         } catch (JSONException e) {
-            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
+            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un right_in al formar los datos.");
         }
         //Creating a json array request
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_ASISTENCIA, obj,
@@ -449,15 +463,7 @@ public class ReporteAsistencia extends Fragment {
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+                return Config.credenciales(getContext());
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);

@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.renderscript.Sampler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -265,7 +266,8 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                                     ubicacion.put("latitud", "90.2349");
                                     ubicacion.put("longitud", "-23.9897");*/
                                     db.addFirma(idTramite,123,base64,90.2349,-23.9897);
-                                    db.addIDTramite(idTramite);
+
+                                    //db.addIDTramite(idTramite);
                                     //Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                                     Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
                                     /*Fragment fragmentoGenerico = new Escaner();
@@ -518,7 +520,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         loading.dismiss();
-                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
                     }
                 }) {
             @Override

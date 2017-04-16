@@ -5,7 +5,11 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Base64;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
+import java.net.ConnectException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,6 +21,8 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.airmovil.profuturo.ti.retencion.R;
+
 /**
  * Created by tecnicoairmovil on 13/03/17.
  */
@@ -26,7 +32,8 @@ public class Config extends Activity {
     public static final String URL_CALCULA_RETIRO_AFORE = "https://asesorprofuturo.mx/content/wps/portal/Calcula-tu-pension-de-retiro";
 
     public static final String URL_GENERAL = "http://52.38.211.22:90/";
-    public static final String URL_AUTENTIFICACION = URL_GENERAL + "Profuturo/autenticacionUsuario1.php";
+    public static final String URL_AUTENTIFICACION = URL_GENERAL + "mb/cusp/rest/autenticacionUsuario.php";
+    public static final String URL_CONSULTA_INFORMACION_USUARIO = URL_GENERAL + "mb/cusp/rest/consultaInformacionUsuario.php";
     public static final String URL_CONSULTAR_RESUMEN_RETENCIONES = URL_GENERAL + "mb/premium/rest/consultarResumenRetenciones.php";
     public static final String URL_CONSULTAR_RESUMEN_CITAS = URL_GENERAL + "Profuturo/consultarResumenCitas.php";
     public static final String URL_CONSULTAR_CLIENTE_SIN_CITA = URL_GENERAL + "Profuturo/consultarClienteSinCita.php";
@@ -82,17 +89,58 @@ public class Config extends Activity {
      * @return Dialogo de mensaje
      */
     public static final void msj(Context ctx, String titulo, String msj){
-        AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(ctx);
-        dlgAlert.setTitle(titulo);
-        dlgAlert.setMessage(msj);
-        dlgAlert.setCancelable(true);
-        dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+        AlertDialog.Builder dialog  = new AlertDialog.Builder(ctx);
+        dialog.setTitle(titulo);
+        dialog.setMessage(msj);
+        dialog.setCancelable(true);
+        dialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
             }
         });
-        dlgAlert.create().show();
+        dialog.create().show();
+    }
+
+    public static final void msj1(Context ctx, String titulo, String msj){
+        AlertDialog.Builder dialog  = new AlertDialog.Builder(ctx);
+        dialog.setTitle(titulo);
+        dialog.setMessage(msj);
+        dialog.setCancelable(true);
+        dialog.create().show();
+    }
+
+    public static final void msjDatosVacios(Context ctx){
+        final ProgressDialog progressDialog = new ProgressDialog(ctx, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(ctx.getResources().getDrawable(R.drawable.icono_peligro));
+        progressDialog.setTitle(ctx.getResources().getString(R.string.error_datos_vacios));
+        progressDialog.setMessage(ctx.getResources().getString(R.string.msj_error_datos_vacios));
+        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Aceptar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        progressDialog.show();
+    }
+
+    /**
+     * Muestra mensaje de fechas vacias
+     * @param context
+     */
+    public static final void dialogoFechasVacias(Context context){
+        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_peligro));
+        progressDialog.setTitle(context.getResources().getString(R.string.error_fechas_vacias));
+        progressDialog.setMessage(context.getResources().getString(R.string.msj_error_fechas));
+        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog.dismiss();
+                    }
+                });
+        progressDialog.show();
     }
 
     public static ProgressDialog msjTime(Context context, CharSequence title, CharSequence message, int time) {
@@ -104,11 +152,9 @@ public class Config extends Activity {
     }
 
     static class MyTask extends TimerTask {
-
         public void run() {
             // Do what you wish here with the dialog
-            if (dialog != null)
-            {
+            if (dialog != null) {
                 dialog.cancel();
             }
         }
@@ -166,6 +212,37 @@ public class Config extends Activity {
     }
 
     /**
+     * Consulta la informacion existente en el sharePreference
+     * @param context
+     * @return datos del usuario a iniciar sesion
+     */
+
+    public static final Map<String, String> datosUsuario(Context context){
+        SessionManager sessionManager = new SessionManager(context.getApplicationContext());
+        HashMap<String, String> informacion = sessionManager.obtencionDatosUsuario();
+        informacion.get(SessionManager.USUARIO_APELLIDO_MATERNO);
+        informacion.get(SessionManager.USUARIO_APELLIDO_PATERNO);
+        informacion.get(SessionManager.USUARIO_NOMBRE);
+        informacion.get(SessionManager.USUARIO_PERFIL);
+        informacion.get(SessionManager.USUARIO_CENTRO_COSTO);
+        informacion.get(SessionManager.USUARIO_CLAVE_CONSAR);
+        informacion.get(SessionManager.USUARIO_CURP);
+        informacion.get(SessionManager.USUARIO_EMAIL);
+        informacion.get(SessionManager.USUARIO_NUMERO_EMPLEADO);
+        informacion.get(SessionManager.USUARIO_USER_ID);
+        return informacion;
+    }
+
+    public static final Map<String, String> credenciales(Context context){
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json; charset=utf-8");
+        String credentials = Config.USERNAME+":"+Config.PASSWORD;
+        String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        headers.put("Authorization", auth);
+        return headers;
+    }
+
+    /**
      * @param numero
      * @return el numero entre el que se generara el listado
      */
@@ -179,6 +256,11 @@ public class Config extends Activity {
      */
     public static final int pidePagina(List list){
         return (int) Math.ceil((list.size() / Config.numVistaPagina) + 1);
+    }
+
+    public static final void teclado(Context context, EditText editText){
+        InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
     }
 
 }

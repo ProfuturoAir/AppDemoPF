@@ -375,7 +375,7 @@ public class SinCita extends Fragment {
             obj.put("rqt", rqt);
             Log.d(TAG, "PETICION VACIA-->" + obj);
         } catch (JSONException e) {
-            Config.msj(getContext(),"Error json","1 Lo sentimos ocurrio un error al formar los datos.");
+            Config.msj(getContext(),"Error json","1 Lo sentimos ocurrio un right_in al formar los datos.");
         }
         //Creating a json array request
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_CLIENTE_SIN_CITA, obj,
@@ -393,7 +393,7 @@ public class SinCita extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         loading.dismiss();
-                        //Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                        //Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
                     }
                 }) {
             @Override

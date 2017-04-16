@@ -1,29 +1,20 @@
 package com.airmovil.profuturo.ti.retencion.directorFragmento;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.DrawerLayout;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
@@ -40,9 +31,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -141,39 +129,27 @@ public class Inicio extends Fragment {
         // TODO: Rango inicial y final para seleccionar el dialogo de fechas
         rangoInicial();
         rangoFinal();
-
-        // TODO: Peticion via REST
-        sendJson(true);
-
-
+        // TODO: inicio de la primera peticion REST
+        primeraPeticion();
         btnFiltro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String fechaIncial = tvRangoFecha1.getText().toString();
                 final String fechaFinal = tvRangoFecha2.getText().toString();
-
-                if(fechaIncial.equals("")|| fechaFinal.equals("")){
-                    Config.msj(v.getContext(),"Error de datos","Favor de introducir fechas para aplicar el filtro");
+                if(fechaIncial.equals("") || fechaFinal.equals("")){
+                    Config.dialogoFechasVacias(getContext());
                 }else {
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    Inicio procesoDatosFiltroInicio = Inicio.newInstance(
-                            fechaIncial,
-                            fechaFinal,
-                            rootView.getContext()
-                    );
+                    Inicio procesoDatosFiltroInicio = Inicio.newInstance(fechaIncial, fechaFinal, rootView.getContext());
                     borrar.onDestroy();
                     ft.remove(borrar);
                     ft.replace(R.id.content_director, procesoDatosFiltroInicio);
                     ft.addToBackStack(null);
-
-
                     ft.commit();
                 }
             }
         });
     }
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -217,6 +193,23 @@ public class Inicio extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    public void primeraPeticion(){
+        // TODO: Peticion via REST
+        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIcon(R.drawable.icono_abrir);
+        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
+        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
+        progressDialog.show();
+        // TODO: Implement your own authentication logic here.
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        progressDialog.dismiss();
+                        sendJson(true);
+                    }
+                }, 3000);
+    }
+
     private void rangoInicial(){
         tvRangoFecha1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -251,21 +244,12 @@ public class Inicio extends Fragment {
         });
     }
 
-
     private void sendJson(final boolean primeraPeticion){
-
-        final ProgressDialog loading;
-        if (primeraPeticion)
-            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Porfavor espere...", false, false);
-        else
-            loading = null;
-
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
         try{
             if(getArguments() != null){
                 JSONObject periodo = new JSONObject();
-
                 mParam1 = getArguments().getString(ARG_PARAM1);
                 mParam2 = getArguments().getString(ARG_PARAM2);
                 rqt.put("periodo", periodo);
@@ -284,9 +268,7 @@ public class Inicio extends Fragment {
                 rqt.put("usuario", numeroUsuario);
                 json.put("rqt", rqt);
             }
-
             Log.d(TAG, "REQUEST -->" + json);
-
         } catch (JSONException e){
             Config.msj(getContext(),"Error","Existe un error al formar la peticion");
         }
@@ -296,16 +278,16 @@ public class Inicio extends Fragment {
                     @Override
                     public void onResponse(JSONObject response) {
                         if(primeraPeticion){
-                            loading.dismiss();
                             primerPaso(response);
                         }
                     }
                 },
                 new Response.ErrorListener() {
+                    //<editor-fold desc="Response error">
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         try{
-                            loading.dismiss();
+                            // loading.dismiss();
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -348,19 +330,12 @@ public class Inicio extends Fragment {
                             dlgAlert.create().show();
                         }
                     }
+                    //</editor-fold>
                 })
         {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+                return Config.credenciales(getContext());
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
@@ -378,7 +353,7 @@ public class Inicio extends Fragment {
             iSaldoNoRetenido = (Integer) saldos.get( "saldoNoRetenido");
             Log.d("JSON", retenidos.toString());
         }catch (JSONException e){
-            Config.msj(getContext(), "Error", "Lo sentimos ocurrio un error con los datos");
+            Config.msj(getContext(), "Error", "Lo sentimos ocurrio un right_in con los datos");
         }
         tvRetenidos.setText("" + iRetenidos);
         tvNoRetenidos.setText("" + iNoRetenidos);
@@ -391,8 +366,11 @@ public class Inicio extends Fragment {
      *  y cuando se realiza una nueva busqueda, retorna las fechas seleccionadas
      */
     private void fechas(){
+        Map<String, Integer> fechaDatos = Config.dias();
+        mYear  = fechaDatos.get("anio");
+        mMonth = fechaDatos.get("mes");
+        mDay   = fechaDatos.get("dia");
         // TODO: fecha
-        //<editor-fold desc="Fechas">
         Map<String, String> fechaActual = Config.fechas(1);
         String smParam1 = fechaActual.get("fechaIni");
         String smParam2 = fechaActual.get("fechaFin");
@@ -425,12 +403,10 @@ public class Inicio extends Fragment {
      * Obteniendo los valores del apartado superior, nombre
      */
     public void detalleSuperior(){
-        Map<String, String> datosUsuario = Config.usuario(getContext());
-        String nombreX = datosUsuario.get(SessionManager.NOMBRE);
-        numeroUsuario = datosUsuario.get(SessionManager.ID);
-        char letra = nombreX.charAt(0);
-        String convertirATexto = Character.toString(letra);
-        tvInicial.setText(convertirATexto);
-        tvNombre.setText(nombreX);
+        Map<String, String> usuarioDatos = Config.datosUsuario(getContext());
+        String nombre = usuarioDatos.get(SessionManager.USUARIO_NOMBRE);
+        String apePaterno = usuarioDatos.get(SessionManager.USUARIO_APELLIDO_PATERNO);
+        String apeMaterno = usuarioDatos.get(SessionManager.USUARIO_APELLIDO_MATERNO);
+        tvNombre.setText(nombre + " " + apePaterno + " " + apeMaterno);
     }
 }

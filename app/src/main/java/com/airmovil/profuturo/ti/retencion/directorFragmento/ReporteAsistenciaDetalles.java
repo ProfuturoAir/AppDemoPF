@@ -405,15 +405,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+                return Config.credenciales(getContext());
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);

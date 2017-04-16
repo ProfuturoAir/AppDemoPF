@@ -352,7 +352,7 @@ public class ReporteAsesores extends Fragment {
 
             Log.d("ReporteSucursales", " RQT -->" + obj);
         } catch (JSONException e) {
-            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
+            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un right_in al formar los datos.");
         }
         //Creating a json array request
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_ASESORES, obj,
@@ -418,15 +418,7 @@ public class ReporteAsesores extends Fragment {
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+                return Config.credenciales(getContext());
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);

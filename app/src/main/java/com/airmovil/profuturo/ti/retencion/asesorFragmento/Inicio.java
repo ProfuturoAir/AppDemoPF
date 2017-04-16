@@ -309,7 +309,7 @@ public class Inicio extends Fragment {
             Log.d(TAG, "REQUEST -->" + json);
 
         } catch (JSONException e){
-            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
+            Config.msj(getContext(),"Error","Existe un right_in al formar la peticion");
         }
 
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_RESUMEN_RETENCIONES, json,
@@ -425,7 +425,7 @@ public class Inicio extends Fragment {
 
 
         }catch (JSONException e){
-            Config.msj(getContext(), "Error", "Lo sentimos ocurrio un error con los datos");
+            Config.msj(getContext(), "Error", "Lo sentimos ocurrio un right_in con los datos");
         }
 
         tvRetenidos.setText("" + iRetenidos);

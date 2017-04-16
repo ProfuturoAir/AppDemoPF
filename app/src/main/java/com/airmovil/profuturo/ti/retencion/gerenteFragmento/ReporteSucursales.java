@@ -368,7 +368,7 @@ public class ReporteSucursales extends Fragment {
             obj.put("rqt", rqt);
             Log.d("ReporteSucursales ", "RQT --> " + obj);
         } catch (JSONException e) {
-            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
+            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un right_in al formar los datos.");
         }
         //Creating a json array request
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_SUCURSALES, obj,

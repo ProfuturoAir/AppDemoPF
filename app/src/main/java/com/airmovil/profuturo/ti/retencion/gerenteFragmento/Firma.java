@@ -481,7 +481,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         loading.dismiss();
-                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
                     }
                 }) {
             @Override

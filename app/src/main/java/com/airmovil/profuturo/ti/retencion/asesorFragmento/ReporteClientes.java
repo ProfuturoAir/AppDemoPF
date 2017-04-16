@@ -401,7 +401,7 @@ public class ReporteClientes extends Fragment {
             obj.put("rqt", rqt);
             Log.d(TAG, "PETICION VACIA-->" + obj);
         } catch (JSONException e) {
-            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
+            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un right_in al formar los datos.");
         }*/
         //Creating a json array request
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_GENERAR_REPORTE_CLIENTE, obj,

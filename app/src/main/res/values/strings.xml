@@ -71,6 +71,8 @@
     <string name="texto_asistencia">Asistencia</string>
     <string name="texto_horario">Horario de Atención</string>
 
+    <string name="aceptar">Aceptar</string>
+
     <!-- TODO: Mensajes de dialog -->
     <string name="error_conexion">Error de conexión</string>
     <string name="error_json">Error en json</string>
@@ -87,5 +89,9 @@
     <string name="msj_titulo_espera">Cargando datos...</string>
     <string name="msj_espera">Cargando contenido, espere por favor...</string>
 
+    <string name="msj_esperando">Espere un momento</string>
+    <string name="msj_verificando">Se están verificando los datos</string>
+
+    <string name="titulo_espera">Espere un momento</string>
 
 </resources>
