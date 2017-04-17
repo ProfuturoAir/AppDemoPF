@@ -404,4 +404,103 @@ public class Gerente extends AppCompatActivity{
         ft.commit();
     }
 
+    public void switchDatosAsesor(Fragment frag, String idClienteCuenta,String nombre,String numeroDeCuenta,String hora) {
+        Bundle bundle=new Bundle();
+        bundle.putString("idClienteCuenta",idClienteCuenta);
+        bundle.putString("nombre",nombre);
+        bundle.putString("numeroDeCuenta",numeroDeCuenta);
+        bundle.putString("hora",hora);
+
+        Log.d("NOMBRES ASE", "1" + nombre + " numero" + numeroDeCuenta);
+
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_gerente, frag, frag.toString());
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
+    public void switchDatosCliente(Fragment frag,String nombre,String numeroDeCuenta,String hora) {
+        Bundle bundle=new Bundle();
+        bundle.putString("nombre",nombre);
+        bundle.putString("numeroDeCuenta",numeroDeCuenta);
+        bundle.putString("hora",hora);
+
+        frag.setArguments(bundle);
+        Log.d("NOMBRES PRE ", "1" + nombre + " numero" + numeroDeCuenta);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_gerente, frag, frag.toString());
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
+    public void switchEncuesta1(Fragment frag,String idTramite,Fragment borrar,String nombre,String numeroDeCuenta,String hora) {
+        Bundle bundle=new Bundle();
+        bundle.putString("idTramite",idTramite);
+        bundle.putString("nombre",nombre);
+        bundle.putString("numeroDeCuenta",numeroDeCuenta);
+        bundle.putString("hora",hora);
+
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_gerente, frag);
+        ft.remove(borrar);
+        ft.addToBackStack(null);
+        ft.commit();
+        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        //fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).remove(borrar).commit();
+    }
+
+    public void switchEncuesta2(Fragment frag,String idTramite,Fragment borrar,String nombre,String numeroDeCuenta,String hora) {
+        Bundle bundle=new Bundle();
+        bundle.putString("idTramite",idTramite);
+        bundle.putString("nombre",nombre);
+        bundle.putString("numeroDeCuenta",numeroDeCuenta);
+        bundle.putString("hora",hora);
+
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_gerente, frag);
+        ft.remove(borrar);
+        ft.addToBackStack(null);
+        ft.commit();
+        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        //fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).remove(borrar).commit();
+    }
+
+    public void switchFirma(Fragment frag,String idTramite,Fragment borrar,String nombre,String numeroDeCuenta,String hora) {
+        Bundle bundle=new Bundle();
+        bundle.putString("idTramite",idTramite);
+        bundle.putString("nombre",nombre);
+        bundle.putString("numeroDeCuenta",numeroDeCuenta);
+        bundle.putString("hora",hora);
+
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_gerente, frag);
+        ft.remove(borrar);
+        ft.addToBackStack(null);
+        ft.commit();
+        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        //fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).remove(borrar).commit();
+    }
+
+
+    public void switchDocumento(Fragment frag,String idTramite,Fragment borrar,String nombre,String numeroDeCuenta,String hora) {
+        Bundle bundle=new Bundle();
+        bundle.putString("idTramite",idTramite);
+        bundle.putString("nombre",nombre);
+        bundle.putString("numeroDeCuenta",numeroDeCuenta);
+        bundle.putString("hora",hora);
+
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_gerente, frag);
+        ft.remove(borrar);
+        ft.addToBackStack(null);
+        ft.commit();
+        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        //fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).remove(borrar).commit();
+    }
+
 }

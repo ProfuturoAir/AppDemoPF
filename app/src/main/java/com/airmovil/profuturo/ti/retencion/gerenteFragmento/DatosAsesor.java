@@ -19,8 +19,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Asesor;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.*;
 import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.android.volley.AuthFailureError;
@@ -60,6 +63,10 @@ public class DatosAsesor extends Fragment {
     private TextView tvNombre, tvNumeroEmpleado, tvSucursal;
     private Button btnContinuar, btnCancelar;
     private SessionManager sessionManager;
+
+    String nombre;
+    String numeroDeCuenta;
+    String hora;
 
     public DatosAsesor() {
         // Required empty public constructor
@@ -103,11 +110,16 @@ public class DatosAsesor extends Fragment {
         btnContinuar = (Button) rootView.findViewById(R.id.gfda_btn_continuar);
         btnCancelar = (Button) rootView.findViewById(R.id.gfda_btn_cancelar);
 
+        nombre = getArguments().getString("nombre");
+        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+        hora = getArguments().getString("hora");
+
         // TODO: obteniendo el numero del usuario
         HashMap<String, String> hashMap = sessionManager.getUserDetails();
         String numeroUsuario = hashMap.get(SessionManager.ID);
 
-        Log.d(TAG, "-->USUARIO " + numeroUsuario.toString());
+        Log.d("HOLA","DESDE GERENTE");
+        Log.d(TAG, "-->USUARIO " + numeroUsuario);
 
         sendJson(true);
 
@@ -115,9 +127,41 @@ public class DatosAsesor extends Fragment {
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*
                 Fragment fragmentoGenerico = new DatosCliente();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
+                fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();*/
+                Connected connected = new Connected();
+                if(connected.estaConectado(getContext())){
+                    //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoDatosCliente).commit();
+                    Fragment fragmentoGenerico = new DatosCliente();
+                    Asesor asesor = (Asesor) getContext();
+                    asesor.switchDatosCliente(fragmentoGenerico,nombre,numeroDeCuenta,hora);
+                }else {
+
+                    android.app.AlertDialog.Builder dlgAlert = new android.app.AlertDialog.Builder(getContext());
+                    dlgAlert.setTitle("Error de conexión");
+                    dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
+                    dlgAlert.setCancelable(true);
+                    dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            /*Fragment fragmentoGenerico = new DatosCliente();
+                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();*/
+                            Fragment fragmentoGenerico = new DatosCliente();
+                            Asesor asesor = (Asesor) getContext();
+                            asesor.switchDatosCliente(fragmentoGenerico, nombre, numeroDeCuenta, hora);
+                        }
+                    });
+                    dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    dlgAlert.create().show();
+                }
             }
         });
 
