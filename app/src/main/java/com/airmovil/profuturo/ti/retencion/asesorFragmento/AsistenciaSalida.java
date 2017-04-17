@@ -40,6 +40,8 @@ import com.google.android.gms.location.LocationServices;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.FieldPosition;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -127,6 +129,22 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
                 .addConnectionCallbacks(this)
                 .addApi(LocationServices.API)
                 .build();
+
+
+        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ") {
+            @Override
+            public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition pos) {
+                StringBuffer rfcFormat = super.format(date, toAppendTo, pos);
+                return rfcFormat.insert(rfcFormat.length() - 2, ":");
+            }
+            @Override
+            public Date parse(String text, ParsePosition pos) {
+                if (text.length() > 3) {
+                    text = text.substring(0, text.length() - 3) + text.substring(text.length() - 2);
+                }
+                return super.parse(text, pos);
+            }
+        };
 
         btnLimpiar.setOnClickListener(new View.OnClickListener() {
             @Override
