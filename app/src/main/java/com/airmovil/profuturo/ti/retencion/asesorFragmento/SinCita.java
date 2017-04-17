@@ -371,7 +371,7 @@ public class SinCita extends Fragment {
             HashMap<String, String> usuario = sessionManager.getUserDetails();
             String usuarioCUSP = usuario.get(SessionManager.ID);
 
-            rqt.put("usuario", usuarioCUSP.toString());
+            rqt.put("usuario", "3333");
             obj.put("rqt", rqt);
             Log.d(TAG, "PETICION VACIA-->" + obj);
         } catch (JSONException e) {

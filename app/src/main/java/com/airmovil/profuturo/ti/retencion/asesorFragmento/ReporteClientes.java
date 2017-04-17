@@ -141,6 +141,7 @@ public class ReporteClientes extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
+        primeraPeticion();
         variables();
         fechas();
 
@@ -172,36 +173,22 @@ public class ReporteClientes extends Fragment {
 
                 String valores = etIngresar.getText().toString().trim();
                 String seleccion = spinnerIds.getSelectedItem().toString();
-                Log.d(TAG, "Seleccion: --->" + seleccion);
 
-                    if(valores.isEmpty()) {
-                        switch (seleccion){
-                            case "Número de cuenta":
-                                Config.msj(getContext(), "Error", "Debes ingresar un Número de cuenta ");
-                                break;
-                            case "NSS":
-                                Config.msj(getContext(), "Error", "Debes ingresar un NSS");
-                                break;
-                            case "CURP":
-                                Config.msj(getContext(), "Error", "Debes ingresar un CURP");
-                                break;
-                        }
-                    }else{
-
-                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        SinCita clase = SinCita.newInstance(
-                                valores, rootView.getContext()
-                        );
-
-                        borrar.onDestroy();
-                        ft.remove(borrar);
-                        ft.replace(R.id.content_asesor, clase);
-                        ft.addToBackStack(null);
-                        etIngresar.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-                        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-
-
-                    }
+                mParam1 = tvRangoFecha1.getText().toString();
+                mParam2 = tvRangoFecha2.getText().toString();
+                if (mParam1.isEmpty() || mParam2.isEmpty() ) {
+                    Config.dialogoFechasVacias(getContext());
+                } else {
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                    ReporteClientes procesoDatosFiltroInicio = ReporteClientes.newInstance(mParam1, mParam2, rootView.getContext()
+                    );
+                    borrar.onDestroy();
+                    ft.remove(borrar);
+                    ft.replace(R.id.content_asesor, procesoDatosFiltroInicio);
+                    ft.addToBackStack(null);
+                    ft.commit();
+                    Config.teclado(getContext(), etIngresar);
+                }
             }
         });
 
@@ -247,6 +234,22 @@ public class ReporteClientes extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private void primeraPeticion(){
+        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIcon(R.drawable.icono_abrir);
+        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
+        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
+        progressDialog.show();
+        // TODO: Implement your own authentication logic here.
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        progressDialog.dismiss();
+                        sendJson(true);
+                    }
+                }, Config.TIME_HANDLER);
     }
 
     private void variables(){
@@ -471,15 +474,7 @@ public class ReporteClientes extends Fragment {
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+                return Config.credenciales(getContext());
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
@@ -488,9 +483,23 @@ public class ReporteClientes extends Fragment {
     private void primerPaso(JSONObject obj) {
         Log.d(TAG + "-->", obj.toString());
         int totalFilas = 1;
+        int retenido = 0;
+        int noRetenido = 0;
+        int saldoAfavor = 0;
+        int saldoNoRetenido = 0;
         try{
             totalFilas = obj.getInt("filasTotal");
-            JSONArray array = obj.getJSONArray("cliente");
+
+            JSONObject infoConsulta = obj.getJSONObject("infoConsulta");
+            JSONObject oRetenido = infoConsulta.getJSONObject("retenido");
+            JSONObject oSaldos = infoConsulta.getJSONObject("saldo");
+
+            retenido = oRetenido.getInt("retenido");
+            noRetenido = oRetenido.getInt("noRetenido");
+            saldoAfavor = oSaldos.getInt("saldoRetenido");
+            saldoNoRetenido = oSaldos.getInt("saldoNoRetenido");
+
+            JSONArray array = obj.getJSONArray("clientes");
             for(int i = 0; i < array.length(); i++){
                 AsesorReporteClientesModel getDatos2 = new AsesorReporteClientesModel();
                 JSONObject json = null;
@@ -499,7 +508,6 @@ public class ReporteClientes extends Fragment {
                     getDatos2.setNombreCliente(json.getString("nombre"));
                     getDatos2.setNumeroCuenta(json.getString("numeroCuenta"));
                     getDatos2.setConCita(json.getString("cita"));
-                    getDatos2.setNoEmitido(json.getString("noEmitido"));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -509,7 +517,13 @@ public class ReporteClientes extends Fragment {
         }catch (JSONException e){
             e.printStackTrace();
         }
-        tvRegistros.setText(filas + " Registros");
+
+        tvEmitidos.setText("" + retenido);
+        tvNoEmitidos.setText("" + noRetenido);
+        tvSaldoEmitido.setText("" + Config.nf.format(saldoAfavor));
+        tvSaldoNoEmitido.setText("" + Config.nf.format(saldoNoRetenido));
+
+        tvRegistros.setText("" + totalFilas + " Registros");
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         adapter = new AsesorReporteClientesAdapter(rootView.getContext(), getDatos1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -550,7 +564,7 @@ public class ReporteClientes extends Fragment {
 
     private void segundoPaso(JSONObject obj) {
         try {
-            JSONArray array = obj.getJSONArray("citas");
+            JSONArray array = obj.getJSONArray("clientes");
             for (int i = 0; i < array.length(); i++) {
                 AsesorReporteClientesModel getDatos2 = new AsesorReporteClientesModel();
                 JSONObject json = null;
@@ -559,7 +573,6 @@ public class ReporteClientes extends Fragment {
                     getDatos2.setNombreCliente(json.getString("nombre"));
                     getDatos2.setNumeroCuenta(json.getString("numeroCuenta"));
                     getDatos2.setConCita(json.getString("cita"));
-                    getDatos2.setNoEmitido(json.getString("noEmitido"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

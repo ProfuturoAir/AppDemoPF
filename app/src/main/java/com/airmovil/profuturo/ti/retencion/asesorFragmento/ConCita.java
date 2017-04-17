@@ -91,8 +91,6 @@ public class ConCita extends Fragment {
     private int numeroMaximoPaginas = 0;
     private int totalF;
 
-    final Fragment borrar = this;
-
     private OnFragmentInteractionListener mListener;
 
     // TODO: XML
@@ -137,8 +135,12 @@ public class ConCita extends Fragment {
         // TODO: Casteo
         rootView = view;
 
-        primeraPeticion();
-        variables();
+        spinner = (Spinner) rootView.findViewById(R.id.afcc_spinner_estados);
+        btnAplicar = (Button) rootView.findViewById(R.id.afcc_btn_aplicar);
+        btnClienteSinCita = (Button) rootView.findViewById(R.id.afcc_btn_sin_cita);
+        tvFecha = (TextView) rootView.findViewById(R.id.afcc_tv_fecha);
+        tvRegistros = (TextView) rootView.findViewById(R.id.afcc_tv_registros);
+
         fechas();
 
         //<editor-fold desc="SPINNER">
@@ -168,11 +170,17 @@ public class ConCita extends Fragment {
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
         //</editor-fold>
 
+        sendJson(true);
+        final Fragment borrar = this;
         btnAplicar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //Config.msjTime(getContext(), getResources().getString(R.string.msj_titulo_espera), getResources().getString(R.string.msj_espera), 4000);
+
                 Connected connected = new Connected();
                 if(connected.estaConectado(getContext())){
+
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                     ConCita newInstance = ConCita.newInstance("item3", "pagina3", rootView.getContext());
                     borrar.onDestroy();
@@ -279,39 +287,35 @@ public class ConCita extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private void primeraPeticion(){
-        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIcon(R.drawable.icono_abrir);
-        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
-        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
-        progressDialog.show();
-        // TODO: Implement your own authentication logic here.
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        progressDialog.dismiss();
-                        sendJson(true);
-                    }
-                }, Config.TIME_HANDLER);
-    }
 
-    private void variables(){
-        btnAplicar = (Button) rootView.findViewById(R.id.afcc_btn_aplicar);
-        btnClienteSinCita = (Button) rootView.findViewById(R.id.afcc_btn_sin_cita);
-        tvFecha = (TextView) rootView.findViewById(R.id.afcc_tv_fecha);
-        spinner = (Spinner) rootView.findViewById(R.id.afcc_spinner_estados);
-        tvRegistros = (TextView) rootView.findViewById(R.id.afcc_tv_registros);
-
-    }
 
     private void fechas(){
+        Map<String, Integer> fechaDatos = Config.dias();
+        mYear  = fechaDatos.get("anio");
+        mMonth = fechaDatos.get("mes");
+        mDay   = fechaDatos.get("dia");
+        // TODO: fecha
         Map<String, String> fechaActual = Config.fechas(1);
         String smParam1 = fechaActual.get("fechaIni");
-        tvFecha.setText(smParam1);
+        String smParam2 = fechaActual.get("fechaFin");
+        if(getArguments() != null){
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+            tvFecha.setText(mParam1 + " - " + mParam2);
+        }else{
+            tvFecha.setText(smParam1 + " - " + smParam2);
+        }
     }
 
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
+
+        final ProgressDialog loading;
+        if (primerPeticion)
+            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
+        else
+            loading = null;
+
         final JSONObject obj = new JSONObject();
         SessionManager sessionManager = new SessionManager(getActivity().getApplicationContext());
         HashMap<String, String> datos = sessionManager.getUserDetails();
@@ -338,6 +342,7 @@ public class ConCita extends Fragment {
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
+                            loading.dismiss();
                             primerPaso(response);
                         } else {
                             segundoPaso(response);
@@ -348,6 +353,7 @@ public class ConCita extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         try{
+                            loading.dismiss();
                         }catch (Exception e){
                             e.printStackTrace();
                         }

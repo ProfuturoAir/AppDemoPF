@@ -41,8 +41,7 @@ public class Config extends Activity {
     public static final String URL_CONSULTAR_CLIENTE_SIN_CITA = URL_GENERAL + "Profuturo/consultarClienteSinCita.php";
     public static final String URL_CONSULTAR_DATOS_ASESOR = URL_GENERAL + "Profuturo/consultarDatosAsesor.php";
     public static final String URL_CUNSULTAR_DATOS_CLIENTE = URL_GENERAL + "mb/premium/rest/consultarDatosCliente.php";
-    //public static final String URL_CUNSULTAR_DATOS_CLIENTE = URL_GENERAL + "Profuturo/consultarDatosCliente.php";
-    public static final String URL_GENERAR_REPORTE_CLIENTE = URL_GENERAL + "Profuturo/generarReporteCliente.php";
+    public static final String URL_GENERAR_REPORTE_CLIENTE = URL_GENERAL + "mb/premium/rest/generarReporteAsesor.php";
 
     public static final String URL_ENVIAR_ENCUESTA = URL_GENERAL + "Profuturo/enviarEncuesta.php";
     public static final String URL_ENVIAR_ENCUESTA_2 = URL_GENERAL + "Profuturo/enviarEncuestaObservacion.php";
@@ -77,7 +76,7 @@ public class Config extends Activity {
     public static final String USERNAME = "profuturo";
     public static final String PASSWORD = "123123";
     public static final long SPLASH_SCREEN_DELEY = 3500;
-    public static final long TIME_HANDLER = 3000;
+    public static final long TIME_HANDLER = 2000;
     private static Timer mTimer = new Timer();
     private static ProgressDialog dialog;
     public static final int numVistaPagina = 10;
