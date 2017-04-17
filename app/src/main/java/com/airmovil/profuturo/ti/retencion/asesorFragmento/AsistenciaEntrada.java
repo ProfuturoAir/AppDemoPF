@@ -7,6 +7,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -18,6 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,7 +33,10 @@ import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.DrawingView;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -68,18 +75,15 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
     private static final int REQUEST_LOCATION = 0;
     private GoogleApiClient apiClient;
     private boolean firsStarted = true;
-    private TextView textView1, textView2;
+    private DrawingView dvFirma;
+
+    private TextView textViewLongitud, textViewLatitud;
+    private Button btnLimpiar, btnGuardar, btnCancelar;
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     // TODO: DATOS
-    LocationManager locationManager;
-    double longitudeBest, latitudeBest;
-    double longitudeGPS, latitudeGPS;
-    double longitudeNetwork, latitudeNetwork;
-    TextView longitudeValueBest, latitudeValueBest;
-    TextView longitudeValueGPS, latitudeValueGPS;
-    TextView longitudeValueNetwork, latitudeValueNetwork;
     View rootView;
 
     private OnFragmentInteractionListener mListener;
@@ -119,20 +123,82 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
 
-        textView1 = (TextView) view.findViewById(R.id.textv1);
-        textView2 = (TextView) view.findViewById(R.id.textv2);
+        textViewLongitud = (TextView) rootView.findViewById(R.id.textViewLogintud1);
+        textViewLatitud = (TextView) rootView.findViewById(R.id.textViewLatitud1);
+        btnLimpiar = (Button) rootView.findViewById(R.id.buttonLimpiar1);
+        btnGuardar = (Button) rootView.findViewById(R.id.buttonGuardar1);
+        btnCancelar = (Button) rootView.findViewById(R.id.buttonCancelar1);
 
-        try {
-            apiClient = new GoogleApiClient.Builder(getActivity())
-                    .enableAutoManage(getActivity(),this)
-                    .addConnectionCallbacks(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        final String getLongitud = textViewLongitud.getText().toString();
+        final String getLatitud = textViewLatitud.getText().toString();
 
+        dvFirma = (DrawingView) rootView.findViewById(R.id.drawinView1);
+        dvFirma.setBrushSize(5);
+        dvFirma.setColor("#000000");
+        dvFirma.setFocusable(true);
 
+        apiClient = new GoogleApiClient.Builder(getActivity())
+                .enableAutoManage(getActivity(),this)
+                .addConnectionCallbacks(this)
+                .addApi(LocationServices.API)
+                .build();
+
+        btnLimpiar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    dvFirma.startNew();
+                    dvFirma.setDrawingCacheEnabled(true);
+                    Config.dialogoContenidoLimpio(getContext());
+            }
+        });
+
+        btnGuardar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String getLongitud1 = textViewLongitud.getText().toString();
+                String getLatitud1 = textViewLatitud.getText().toString();
+                if(!dvFirma.isActive()) {
+                    Config.dialogoRequiereFirma(getContext());
+                }else if(getLatitud1.isEmpty() && getLongitud1.isEmpty()){
+                    final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                    progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_coordenadas));
+                    progressDialog.setTitle(getResources().getString(R.string.msj_titulo_sin_coordenadas));
+                    progressDialog.setMessage(getResources().getString(R.string.msj_cotentido_sin_coordenadas));
+                    progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    progressDialog.dismiss();
+                                }
+                            });
+                    progressDialog.show();
+                }else {
+                    sendJson(true);
+                }
+            }
+        });
+
+        btnCancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        apiClient.stopAutoManage(getActivity());
+        apiClient.disconnect();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        apiClient.stopAutoManage(getActivity());
+        apiClient.disconnect();
     }
 
     @Override
@@ -169,20 +235,16 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(getContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_LOCATION);
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
         } else {
-
-            Location lastLocation =
-                    LocationServices.FusedLocationApi.getLastLocation(apiClient);
-
+            Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(apiClient);
             updateUI(lastLocation);
         }
     }
+
+
+
 
     @Override
     public void onConnectionSuspended(int i) {
@@ -235,15 +297,127 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
 
     private void updateUI(Location loc){
         if (loc != null){
-            textView1.setText(String.valueOf("--> " + loc.getLatitude()));
-            textView2.setText(String.valueOf("--> " + loc.getLongitude()));
+            textViewLongitud.setText(String.valueOf(loc.getLatitude()));
+            textViewLatitud.setText(String.valueOf(loc.getLongitude()));
             Log.d("------->", "\n" + loc.getLongitude());
             Log.d("------->", "\n" + loc.getLatitude());
-        }/*else{
-            lblLatitud.setText("(desconocida)");
-            lblLongitud.setText("(desconocida)");
-        }*/
+        }
     }
 
+    private void sendJson(final boolean primeraPeticion){
+
+        Map<String, String> usuarioDatos = Config.datosUsuario(getContext());
+        Map<String, String> fechaActual = Config.fechas(1);
+        String fecha = fechaActual.get("fechaIni");
+        String idUsuario = usuarioDatos.get(SessionManager.USUARIO_USER_ID);
+        String longitud = textViewLongitud.getText().toString();
+        String latitud = textViewLatitud.getText().toString();
+        Log.d("------>->->", "" + idUsuario);
+        JSONObject json = new JSONObject();
+        JSONObject rqt = new JSONObject();
+        JSONObject ubicacion = new JSONObject();
+
+        double w, z;
+        try {
+            z = new Double(textViewLatitud.getText().toString());
+            w = new Double(textViewLongitud.getText().toString());
+        } catch (NumberFormatException e) {
+            z = 0;
+            w = 0;
+        }
+
+        try{
+            rqt.put("fechaHoraCheck", fecha);
+            rqt.put("idTipoCheck", 1);
+            ubicacion.put("latitud", z);
+            ubicacion.put("longitud", w);
+            rqt.put("ubicacion", ubicacion);
+            rqt.put("usuario", idUsuario);
+            json.put("rqt", rqt);
+            Log.d("TAG", "REQUEST -->" + json);
+        } catch (JSONException e){
+            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
+        }
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_REGISTRAR_ASISTENCIA, json,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        if(primeraPeticion){
+                            primerPaso(response);
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        try{
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        Connected connected = new Connected();
+                        if(connected.estaConectado(getContext())){
+                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                            dlgAlert.setTitle("Error");
+                            dlgAlert.setMessage("Se ha encontrado un problema, deseas volver intentarlo");
+                            dlgAlert.setCancelable(true);
+                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //sendJson(true);
+                                }
+                            });
+                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            dlgAlert.create().show();
+                        }else{
+                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                            dlgAlert.setTitle("Error de conexión");
+                            dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
+                            dlgAlert.setCancelable(true);
+                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //sendJson(true, f1, f2);
+                                }
+                            });
+                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            dlgAlert.create().show();
+                        }
+                    }
+                })
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return Config.credenciales(getContext());
+            }
+        };
+        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+    }
+
+    private void primerPaso(JSONObject obj){
+        Log.d("TAG", "primerPaso: "  + obj );
+        String status = "";
+        String statusText = "";
+        try{
+            status = obj.getString("status");
+            statusText = obj.getString("statusText");
+            if(Integer.parseInt(status) == 200){
+
+            }else{
+                Config.msj(getContext(), "Error: " + status, statusText);
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+    }
 
 }

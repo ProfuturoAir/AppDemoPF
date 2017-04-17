@@ -52,21 +52,23 @@ public class Login extends AppCompatActivity {
         _contrasenia = (EditText) findViewById(R.id.login_et_contrasenia);
         btnIngresar = (Button) findViewById(R.id.login_btn_ingresar);
 
-        if(sessionManager.isLoggedIn()){
-            Log.d("--------->","" + nombre);
-            if(sessionManager.obtencionDatosUsuario().get("perfil").equals("1")){
-                Intent intentGerenteRegional = new Intent(this, Director.class);
-                startActivity(intentGerenteRegional);
-            }else if(sessionManager.obtencionDatosUsuario().get("perfil").equals("2")){
-                Intent intentGerenteGerencias = new Intent(this, Gerente.class);
-                startActivity(intentGerenteGerencias);
-            }else {
-                Intent intentAsesor = new Intent(this, Asesor.class);
-                startActivity(intentAsesor);
+        try {
+            if (sessionManager.isLoggedIn()) {
+                //Log.d("--------->", "" + nombre);
+                if (sessionManager.obtencionDatosUsuario().get("perfil").equals("1")) {
+                    Intent intentGerenteRegional = new Intent(this, Director.class);
+                    startActivity(intentGerenteRegional);
+                } else if (sessionManager.obtencionDatosUsuario().get("perfil").equals("2")) {
+                    Intent intentGerenteGerencias = new Intent(this, Gerente.class);
+                    startActivity(intentGerenteGerencias);
+                } else {
+                    Intent intentAsesor = new Intent(this, Asesor.class);
+                    startActivity(intentAsesor);
+                }
+                finish();
             }
-
-
-            finish();
+        } catch (Exception e){
+            e.printStackTrace();
         }
 
         btnIngresar.performClick();

@@ -4,8 +4,20 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/textViewLogintud4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="texto1" />
+
+    <TextView
+        android:id="@+id/textViewLatitud4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="texto2" />
+
     <com.airmovil.profuturo.ti.retencion.helper.DrawingView
-        android:id="@+id/afas_dv_firma"
+        android:id="@+id/drawinView4"
         android:layout_width="match_parent"
         android:layout_height="650dp"
         android:layout_weight="1"
@@ -15,11 +27,8 @@
 
     </com.airmovil.profuturo.ti.retencion.helper.DrawingView>
 
-    <TextView android:id="@+id/afas_lbl_Latitud" style="@style/tvlatitud"/>
-    <TextView android:id="@+id/afas_lbl_Longitud" style="@style/tvLogintud"/>
+    <Button android:id="@+id/buttonLimpiar4" style="@style/btnLimpiar"/>
+    <Button android:id="@+id/buttonGuardar4" style="@style/btnGuardar" />
+    <Button android:id="@+id/buttonCancelar4" style="@style/btnCancelar" />
 
-    <ToggleButton android:id="@+id/afas_btn_actualizar" style="@style/btnActualizar"/>
-    <Button android:id="@+id/afas_btn_limpiar" style="@style/btnLimpiar"/>
-    <Button android:id="@+id/afas_btn_guardar" style="@style/btnGuardar" />
-    <Button android:id="@+id/afas_btn_cancelar" style="@style/btnCancelar" />
 </LinearLayout>

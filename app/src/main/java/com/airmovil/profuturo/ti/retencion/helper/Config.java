@@ -22,6 +22,10 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.Inicio;
 
@@ -47,6 +51,8 @@ public class Config extends Activity {
     public static final String URL_ENVIAR_ENCUESTA_2 = URL_GENERAL + "Profuturo/enviarEncuestaObservacion.php";
     public static final String URL_ENVIAR_FIRMA = URL_GENERAL + "Profuturo/guardarFirmaCliente.php";
     public static final String URL_ENVIAR_DOCUMENTO_IFE_INE = URL_GENERAL + "Profuturo/guardarDocumentacionCliente.php";
+
+    public static final String URL_REGISTRAR_ASISTENCIA = URL_GENERAL + "mb/premium/rest/registrarAsistencia.php";
 
     // TODO: LISTO DIRECTOR
     public static final String URL_CONSULTAR_REPORTE_RETENCION_GERENCIAS = URL_GENERAL + "mb/premium/rest/consultarReporteRetencionesGerencia.php";
@@ -83,6 +89,7 @@ public class Config extends Activity {
 
     // TODO: formato para convertir (int) a valor monetario
     public static final NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.getDefault());
+
 
     /**
      * @param ctx parametro 1,
@@ -165,7 +172,7 @@ public class Config extends Activity {
     }
 
     /**
-     * Muestra mensaje de fechas vacias
+     * Muestra mensaje de error, en documento no existente (INE o IFE)
      * @param context
      */
     public static final void dialogoNoExisteUnDocumento(Context context){
@@ -173,6 +180,63 @@ public class Config extends Activity {
         progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_peligro));
         progressDialog.setTitle(context.getResources().getString(R.string.error_en_documento));
         progressDialog.setMessage(context.getResources().getString(R.string.msj_error_documento));
+        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog.dismiss();
+                    }
+                });
+        progressDialog.show();
+    }
+
+    /**
+     * Muestra mensaje, aviso de contenido limpio en firma
+     * @param context
+     */
+    public static final void dialogoContenidoLimpio(Context context){
+        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_limpio));
+        progressDialog.setTitle(context.getResources().getString(R.string.msj_titulo_limpiar));
+        progressDialog.setMessage(context.getResources().getString(R.string.msj_contenido_limpio));
+        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog.dismiss();
+                    }
+                });
+        progressDialog.show();
+    }
+
+    /**
+     * Muestra mensaje de error, se requiere una firma
+     * @param context
+     */
+    public static final void dialogoRequiereFirma(Context context){
+        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_firma));
+        progressDialog.setTitle(context.getResources().getString(R.string.msj_titulo_firma));
+        progressDialog.setMessage(context.getResources().getString(R.string.msj_contenido_vacio_firma));
+        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog.dismiss();
+                    }
+                });
+        progressDialog.show();
+    }
+
+    /**
+     * Muestra mensaje de error, se requiere una firma
+     * @param context
+     */
+    public static final void dialogoSinCoordenadas(Context context){
+        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_coordenadas));
+        progressDialog.setTitle(context.getResources().getString(R.string.msj_titulo_sin_coordenadas));
+        progressDialog.setMessage(context.getResources().getString(R.string.msj_cotentido_sin_coordenadas));
         progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
                 new DialogInterface.OnClickListener() {
                     @Override

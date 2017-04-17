@@ -1,24 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.airmovil.profuturo.ti.retencion.activities.Test">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
     <TextView
-        android:id="@+id/textv1"
-        android:layout_width="match_parent"
+        android:id="@+id/textViewLogintud1"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1"/>
+        android:text="texto1" />
+
     <TextView
-        android:id="@+id/textv2"
-        android:layout_width="match_parent"
+        android:id="@+id/textViewLatitud1"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1"/>
-    <Button
-        android:id="@+id/btn"
+        android:text="texto2" />
+
+    <com.airmovil.profuturo.ti.retencion.helper.DrawingView
+        android:id="@+id/drawinView1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="btn"/>
+        android:layout_height="650dp"
+        android:layout_weight="1"
+        android:background="@android:color/white"
+        android:gravity="center_vertical|center_horizontal"
+        android:visibility="visible">
+
+    </com.airmovil.profuturo.ti.retencion.helper.DrawingView>
+
+    <Button android:id="@+id/buttonLimpiar1" style="@style/btnLimpiar"/>
+    <Button android:id="@+id/buttonGuardar1" style="@style/btnGuardar" />
+    <Button android:id="@+id/buttonCancelar1" style="@style/btnCancelar" />
+
 </LinearLayout>

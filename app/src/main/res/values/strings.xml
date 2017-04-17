@@ -89,8 +89,15 @@
     <string name="msj_error_email">El email no es valido, favor de verificar</string>
     <string name="msj">mensaje</string>
     <string name="msj_titulo_espera">Cargando datos...</string>
+    <string name="msj_titulo_limpiar">Contenido limpio</string>
+    <string name="msj_titulo_firma">Firma vacia</string>
+    <string name="msj_titulo_sin_coordenadas">Error en coordenadas</string>
+    <string name="msj_titulo_confirmacion">Confirmación</string>
+    <string name="msj_cotentido_sin_coordenadas">No existen una ubicación, activa tu GPS</string>
+    <string name="msj_contenido_vacio_firma">Se requiere una firma, favor de firmar</string>
+    <string name="msj_contenido_envio">Se enviara los datos de </string>
     <string name="msj_espera">Cargando contenido, espere por favor...</string>
-
+    <string name="msj_contenido_limpio">El contenido se ha limpiado</string>
     <string name="msj_esperando">Espere un momento</string>
     <string name="msj_verificando">Se están verificando los datos</string>
 
