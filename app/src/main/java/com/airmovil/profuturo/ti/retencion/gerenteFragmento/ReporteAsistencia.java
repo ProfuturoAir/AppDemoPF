@@ -33,6 +33,7 @@ import com.airmovil.profuturo.ti.retencion.Adapter.CitasClientesAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteAsistenciaAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteAsistenciaAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.*;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
@@ -68,10 +69,16 @@ public class ReporteAsistencia extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     private static final String ARG_PARAM1 = "parametro1";
     private static final String ARG_PARAM2 = "parametro2";
+    private static final String ARG_PARAM3 = "parametro3IdGerencia";
+    private static final String ARG_PARAM4 = "parametro4IdSucursal";
+    private static final String ARG_PARAM5 = "parametro5IdAsesor";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String mParam1;// fechaInicial
+    private String mParam2;// fechaFinal
+    private int mParam3;// idGerencia
+    private int mParam4;// idSucursal
+    private String mParam5;// idAsesor
 
     // TODO: LIST
     private List<GerenteReporteAsistenciaModel> getDatos1;
@@ -92,7 +99,7 @@ public class ReporteAsistencia extends Fragment {
     // TODO: Elements XML
     private TextView tvFecha;
     private TextView tvATiempo, tvRetardados, tvSinAsistencia;
-    private Spinner spinnerGerencia, spinnerSucursal;
+    private Spinner spinnerSucursal;
     private EditText etAsesor;
     private TextView tvRangoFecha1, tvRangoFecha2;
     private Button btnFiltro;
@@ -105,6 +112,7 @@ public class ReporteAsistencia extends Fragment {
     private String fechaIni = "";
     private String fechaFin = "";
     private String fechaMostrar = "";
+    private Connected connected;
 
     private OnFragmentInteractionListener mListener;
 
@@ -121,11 +129,13 @@ public class ReporteAsistencia extends Fragment {
      * @return A new instance of fragment ReporteAsistencia.
      */
     // TODO: Rename and change types and number of parameters
-    public static ReporteAsistencia newInstance(String param1, String param2, Context context) {
+    public static ReporteAsistencia newInstance(String param1, String param2, int param4, String param5, Context context) {
         ReporteAsistencia fragment = new ReporteAsistencia();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
+        args.putInt(ARG_PARAM4, param4);
+        args.putString(ARG_PARAM5, param5);
         fragment.setArguments(args);
         return fragment;
     }
@@ -142,26 +152,12 @@ public class ReporteAsistencia extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
-        // TODO: casteo
-        tvFecha = (TextView) rootView.findViewById(R.id.gfras_tv_fecha);
-        tvATiempo = (TextView) rootView.findViewById(R.id.gfras_tv_a_tiempo);
-        tvRetardados  = (TextView) rootView.findViewById(R.id.gfras_tv_retardados);
-        tvSinAsistencia = (TextView) rootView.findViewById(R.id.gfras_tv_sin_asistencia);
-        spinnerGerencia = (Spinner) rootView.findViewById(R.id.gfras_spinner_gerencia);
-        spinnerSucursal = (Spinner) rootView.findViewById(R.id.gfras_spinner_sucursal);
-        etAsesor = (EditText) rootView.findViewById(R.id.gfras_et_asesor);
-        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.gfras_tv_fecha_rango1);
-        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.gfras_tv_fecha_rango2);
-        btnFiltro = (Button) rootView.findViewById(R.id.gfras_btn_filtro);
-        tvResultados = (TextView) rootView.findViewById(R.id.gfras_tv_registros);
 
-        // TODO: ocultar teclado
-        imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+        primeraPeticion();
+        variables();
+        fechas();
 
-        // TODO: Spinner
-        ArrayAdapter<String> adapterGerencia = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.GERENCIAS);
-        adapterGerencia.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerGerencia.setAdapter(adapterGerencia);
+        connected = new Connected();
 
         // TODO: Spinner
         ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.SUCURSALES);
@@ -171,92 +167,39 @@ public class ReporteAsistencia extends Fragment {
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(etAsesor.getWindowToken(), 0);
 
-        // TODO: modelo
+        // TODO: Recycler y modelo
         getDatos1 = new ArrayList<>();
-        // TODO: Recycler
         recyclerView = (RecyclerView) rootView.findViewById(R.id.gfras_rv_lista);
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
 
-        // TODO: JSON
-        sendJson(true);
-
-        // TODO: fechas
-        Map<String, Integer> fechaDatos = Config.dias();
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
-
-        if(getArguments() != null){
-            fechaIni = getArguments().getString(ARG_PARAM1).trim();
-            fechaFin = getArguments().getString(ARG_PARAM2).trim();
-            if(fechaFin.equals("") && fechaIni.equals("")){
-                Map<String, String> fechas = Config.fechas(1);
-                fechaIni = fechas.get("fechaIni");
-                fechaMostrar = fechaIni;
-                tvFecha.setText(fechaMostrar);
-            }else if(fechaFin.equals("")){
-                tvFecha.setText(fechaIni);
-            }else if(fechaIni.matches("")){
-                tvFecha.setText(fechaFin);
-            }else{
-                tvFecha.setText(fechaIni + " - " + fechaFin);
-            }
-        }else {
-            Map<String, String> fechas = Config.fechas(1);
-            fechaFin = fechas.get("fechaFin");
-            fechaIni = fechas.get("fechaIni");
-            fechaMostrar = fechaIni;
-            tvFecha.setText(fechaMostrar);
-        }
-
-        rangoInicial();
-        rangoFinal();
-
         // TODO: btn filtro
-
         final Fragment borrar = this;
         btnFiltro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                String f1 = tvRangoFecha1.getText().toString();
-                String f2 = tvRangoFecha2.getText().toString();
-                Connected connected = new Connected();
                 if(connected.estaConectado(getContext())){
-                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia fragmento = com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia.newInstance(f1,f2,rootView.getContext());
-                    borrar.onDestroy();
-                    ft.remove(borrar);
-                    ft.replace(R.id.content_gerente, fragmento);
-                    ft.addToBackStack(null);
-                    ft.commit();
+                    final String fechaIncial = tvRangoFecha1.getText().toString();
+                    final String fechaFinal = tvRangoFecha2.getText().toString();
+                    final int idSucursal = spinnerSucursal.getSelectedItemPosition();
+                    final String idAsesor = etAsesor.getText().toString();
+
+                    if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
+                        Config.dialogoFechasVacias(getContext());
+                    }else{
+                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        ReporteAsistencia fragmento = ReporteAsistencia.newInstance(fechaIncial, fechaFinal, idSucursal, idAsesor, rootView.getContext());
+                        borrar.onDestroy();
+                        ft.remove(borrar);
+                        ft.replace(R.id.content_gerente, fragmento);
+                        ft.addToBackStack(null);
+                        ft.commit();
+                        Config.teclado(getContext(), etAsesor);
+                    }
                 }else{
-                    android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                    dlgAlert.setTitle("Error de conexión");
-                    dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
-                    dlgAlert.setCancelable(true);
-                    dlgAlert.setCancelable(true);
-                    dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            sendJson(true);
-                        }
-                    });
-                    dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-                    dlgAlert.create().show();
+                    Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                 }
-
-
-
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-
             }
         });
 
@@ -285,13 +228,10 @@ public class ReporteAsistencia extends Fragment {
                 adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinner.setAdapter(adapterSucursal);
 
-
-
                 btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
-
                         Connected connected = new Connected();
                         if(connected.estaConectado(getContext())){
                             final String datoEditText = editText.getText().toString();
@@ -306,8 +246,6 @@ public class ReporteAsistencia extends Fragment {
                             Config.msj(getContext(), "Error conexión", "Por favor, revisa tu conexión a internet");
                             dialog.dismiss();
                         }
-
-
                     }
                 });
                 dialog.show();
@@ -357,27 +295,91 @@ public class ReporteAsistencia extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    private void primeraPeticion(){
+        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIcon(R.drawable.icono_abrir);
+        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
+        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
+        progressDialog.show();
+        // TODO: Implement your own authentication logic here.
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        progressDialog.dismiss();
+                        sendJson(true);
+                    }
+                }, Config.TIME_HANDLER);
+    }
+
+    private void variables(){
+        tvFecha = (TextView) rootView.findViewById(R.id.gfras_tv_fecha);
+        tvATiempo = (TextView) rootView.findViewById(R.id.gfras_tv_a_tiempo);
+        tvRetardados  = (TextView) rootView.findViewById(R.id.gfras_tv_retardados);
+        tvSinAsistencia = (TextView) rootView.findViewById(R.id.gfras_tv_sin_asistencia);
+        spinnerSucursal = (Spinner) rootView.findViewById(R.id.gfras_spinner_sucursal);
+        etAsesor = (EditText) rootView.findViewById(R.id.gfras_et_asesor);
+        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.gfras_tv_fecha_rango1);
+        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.gfras_tv_fecha_rango2);
+        btnFiltro = (Button) rootView.findViewById(R.id.gfras_btn_filtro);
+        tvResultados = (TextView) rootView.findViewById(R.id.gfras_tv_registros);
+    }
+
+    private void fechas(){
+        rangoInicial();
+        rangoFinal();
+        Map<String, Integer> fechaDatos = Config.dias();
+        Map<String, String> fechaActual = Config.fechas(1);
+        mYear  = fechaDatos.get("anio");
+        mMonth = fechaDatos.get("mes");
+        mDay   = fechaDatos.get("dia");
+        String smParam1 = fechaActual.get("fechaIni");
+        String smParam2 = fechaActual.get("fechaFin");
+        if(getArguments() != null){
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+            tvFecha.setText(mParam1 + " - " + mParam2);
+        }else{
+            tvFecha.setText(smParam1 + " - " + smParam2);
+        }
+    }
+
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
-
-        final ProgressDialog loading;
-        if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
-        else
-            loading = null;
-
         JSONObject obj = new JSONObject();
+        JSONObject rqt = new JSONObject();
+        JSONObject periodo = new JSONObject();
+        SessionManager sessionManager = new SessionManager(getContext());
+        HashMap<String, String> usuario = sessionManager.getUserDetails();
+        String numeroEmpleado = usuario.get(SessionManager.ID);
         try {
             // TODO: Formacion del JSON request
-
-            JSONObject rqt = new JSONObject();
-            rqt.put("estatusCita", "1");
-            rqt.put("pagina", pagina);
-            rqt.put("usuario", "USUARIO");
-            obj.put("rqt", rqt);
-            Log.d("RQT", " sendJson -->" + obj);
+            if(getArguments() != null) {
+                mParam1 = getArguments().getString(ARG_PARAM1);
+                mParam2 = getArguments().getString(ARG_PARAM2);
+                mParam4 = getArguments().getInt(ARG_PARAM4);
+                mParam5 = getArguments().getString(ARG_PARAM5);
+                rqt.put("idSucursal", mParam4);
+                rqt.put("numeroEmpleado", mParam5);
+                rqt.put("pagina", pagina);
+                periodo.put("fechaFin", mParam2);
+                periodo.put("fechaIni", mParam1);
+                rqt.put("perido", periodo);
+                obj.put("rqt", rqt);
+            }else{
+                Map<String, String> fecha = Config.fechas(1);
+                String param1 = fecha.get("fechaIni");
+                String param2 = fecha.get("fechaFin");
+                rqt.put("idSucursal", 0);
+                rqt.put("numeroEmpleado", numeroEmpleado);
+                rqt.put("pagina", pagina);
+                periodo.put("fechaFin", param1);
+                periodo.put("fechaIni", param2);
+                rqt.put("perido", periodo);
+                obj.put("rqt", rqt);
+            }
+            Log.d("Rqt", "" + obj);
         } catch (JSONException e) {
-            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un right_in al formar los datos.");
+            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
         }
         //Creating a json array request
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_ASISTENCIA, obj,
@@ -386,7 +388,6 @@ public class ReporteAsistencia extends Fragment {
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
-                            loading.dismiss();
                             primerPaso(response);
                         } else {
                             segundoPaso(response);
@@ -397,7 +398,6 @@ public class ReporteAsistencia extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         try{
-                            loading.dismiss();
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -444,15 +444,7 @@ public class ReporteAsistencia extends Fragment {
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+                return Config.credenciales(getContext());
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
@@ -464,9 +456,7 @@ public class ReporteAsistencia extends Fragment {
         int retardo = 0;
         int inasistencia = 0;
         int totalFilas = 1;
-
         int filas = 0;
-
         try{
             JSONObject asistencia = obj.getJSONObject("Asistencia");
             onTime = asistencia.getInt("onTime");
@@ -493,7 +483,6 @@ public class ReporteAsistencia extends Fragment {
         }
 
         tvResultados.setText(filas + " Resulatdos");
-
         tvATiempo.setText("" + onTime);
         tvRetardados.setText("" + retardo);
         tvSinAsistencia.setText("" + inasistencia);
@@ -535,8 +524,6 @@ public class ReporteAsistencia extends Fragment {
     }
 
     private void segundoPaso(JSONObject obj) {
-
-
         try{
             JSONObject asistencia = obj.getJSONObject("Asistencia");
             JSONArray empleado = obj.getJSONArray("Empleado");
@@ -557,7 +544,6 @@ public class ReporteAsistencia extends Fragment {
         }catch (JSONException e){
             e.printStackTrace();
         }
-
         adapter.notifyDataSetChanged();
         adapter.setLoaded();
     }

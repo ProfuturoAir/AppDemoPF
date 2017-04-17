@@ -77,6 +77,7 @@ public class Config extends Activity {
     public static final String USERNAME = "profuturo";
     public static final String PASSWORD = "123123";
     public static final long SPLASH_SCREEN_DELEY = 3500;
+    public static final long TIME_HANDLER = 3000;
     private static Timer mTimer = new Timer();
     private static ProgressDialog dialog;
     public static final int numVistaPagina = 10;

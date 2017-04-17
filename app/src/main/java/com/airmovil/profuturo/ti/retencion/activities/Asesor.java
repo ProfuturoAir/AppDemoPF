@@ -138,7 +138,7 @@ public class Asesor extends AppCompatActivity{
             //añadir caracteristicas
             setupDrawerContent(navigationView);
             //Cambiar el numero para poner el fragmento que inicia en el arranque de la aplicacion
-            seleccionarItem(navigationView.getMenu().getItem(4));
+            seleccionarItem(navigationView.getMenu().getItem(0));
         }
     }
 

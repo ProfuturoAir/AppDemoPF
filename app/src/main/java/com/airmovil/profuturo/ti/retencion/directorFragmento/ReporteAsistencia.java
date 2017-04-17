@@ -151,20 +151,8 @@ public class ReporteAsistencia extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
 
+        variables();
         primeraPeticion();
-
-        // TODO: casteo
-        tvFecha = (TextView) rootView.findViewById(R.id.ddfras_tv_fecha);
-        tvATiempo = (TextView) rootView.findViewById(R.id.ddfras_tv_a_tiempo);
-        tvRetardados  = (TextView) rootView.findViewById(R.id.ddfras_tv_retardados);
-        tvSinAsistencia = (TextView) rootView.findViewById(R.id.ddfras_tv_sin_asistencia);
-        spinnerGerencia = (Spinner) rootView.findViewById(R.id.ddfras_spinner_gerencia);
-        spinnerSucursal = (Spinner) rootView.findViewById(R.id.ddfras_spinner_sucursal);
-        etAsesor = (EditText) rootView.findViewById(R.id.ddfras_et_asesor);
-        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.ddfras_tv_fecha_rango1);
-        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.ddfras_tv_fecha_rango2);
-        btnFiltro = (Button) rootView.findViewById(R.id.ddfras_btn_filtro);
-        tvResultados = (TextView) rootView.findViewById(R.id.ddfras_tv_registros);
 
         // TODO: ocultar teclado
         imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
@@ -347,7 +335,21 @@ public class ReporteAsistencia extends Fragment {
                         progressDialog.dismiss();
                         sendJson(true);
                     }
-                }, 3000);
+                }, Config.TIME_HANDLER);
+    }
+
+    private void variables(){
+        tvFecha = (TextView) rootView.findViewById(R.id.ddfras_tv_fecha);
+        tvATiempo = (TextView) rootView.findViewById(R.id.ddfras_tv_a_tiempo);
+        tvRetardados  = (TextView) rootView.findViewById(R.id.ddfras_tv_retardados);
+        tvSinAsistencia = (TextView) rootView.findViewById(R.id.ddfras_tv_sin_asistencia);
+        spinnerGerencia = (Spinner) rootView.findViewById(R.id.ddfras_spinner_gerencia);
+        spinnerSucursal = (Spinner) rootView.findViewById(R.id.ddfras_spinner_sucursal);
+        etAsesor = (EditText) rootView.findViewById(R.id.ddfras_et_asesor);
+        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.ddfras_tv_fecha_rango1);
+        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.ddfras_tv_fecha_rango2);
+        btnFiltro = (Button) rootView.findViewById(R.id.ddfras_btn_filtro);
+        tvResultados = (TextView) rootView.findViewById(R.id.ddfras_tv_registros);
     }
 
     // TODO: REST
@@ -391,7 +393,6 @@ public class ReporteAsistencia extends Fragment {
                 obj.put("rqt", rqt);
             }
             Log.d("Rqt", "" + obj);
-
         } catch (JSONException e) {
             Config.msj(getContext(),"Error json","Lo sentimos ocurrio un right_in al formar los datos.");
         }

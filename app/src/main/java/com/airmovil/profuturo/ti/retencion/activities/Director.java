@@ -56,11 +56,11 @@ public class Director extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.director);
-        InputMethodManager imm = (InputMethodManager) getSystemService(getApplicationContext().INPUT_METHOD_SERVICE);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.director_nav_view);
+        // TODO: Mantener el estado de la pantalla Vertical
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        // TODO: nueva instancia para el sharePreference
         sessionManager = new SessionManager(getApplicationContext());
-        HashMap<String, String> datosUsuario = sessionManager.obtencionDatosUsuario();
-        String nombre = datosUsuario.get(SessionManager.USUARIO_NOMBRE);
+        // TODO: Validacion de la sesion del usuario
         validateSession();
 
     }

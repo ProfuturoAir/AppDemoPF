@@ -63,13 +63,13 @@ import java.util.Map;
  */
 public class ReporteAsesores extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "parametro1";
     private static final String ARG_PARAM2 = "parametro2";
-
+    private static final String ARG_PARAM3 = "parametro3";
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private String mParam3;
 
     // TODO: recycler
     private GerenteReporteAsesoresAdapter adapter;
@@ -103,6 +103,8 @@ public class ReporteAsesores extends Fragment {
     private Button btnBuscar;
     private TextView tvTotalResultados;
     int filas;
+    private Connected connected;
+    final Fragment borrar = this;
 
     private OnFragmentInteractionListener mListener;
 
@@ -119,11 +121,12 @@ public class ReporteAsesores extends Fragment {
      * @return A new instance of fragment ReporteAsesores.
      */
     // TODO: Rename and change types and number of parameters
-    public static ReporteAsesores newInstance(String param1, String param2, Context context) {
+    public static ReporteAsesores newInstance(String param1, String param2, String param3, Context context) {
         ReporteAsesores fragment = new ReporteAsesores();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM3, param3);
         fragment.setArguments(args);
         return fragment;
     }
@@ -140,51 +143,13 @@ public class ReporteAsesores extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
-        tvFecha = (TextView) rootView.findViewById(R.id.gfraa_tv_fecha);
-        tvEmitidas = (TextView) rootView.findViewById(R.id.gfraa_tv_emitidas);
-        tvNoEmitidas = (TextView) rootView.findViewById(R.id.gfraa_tv_no_emitidas);
-        tvSaldoEmitido = (TextView) rootView.findViewById(R.id.gfraa_tv_saldo_emitido);
-        tvSaldoNoEmitido = (TextView) rootView.findViewById(R.id.gfraa_tv_saldo_no_emitido);
-        etAsesor = (EditText) rootView.findViewById(R.id.gfraa_et_asesor);
-        tvTotalResultados = (TextView) rootView.findViewById(R.id.gfraa_tv_total_registros);
-        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.gfraa_tv_fecha_rango1);
-        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.gfraa_tv_fecha_rango2);
-        btnBuscar = (Button) rootView.findViewById(R.id.gfraa_btn_buscar);
+        primeraPeticion();
+        variables();
+        fechas();
 
         // TODO: ocultar teclado
         imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-
-        // TODO: fechas
-        Map<String, Integer> fechaDatos = Config.dias();
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
-
-        if(getArguments() != null){
-            fechaIni = getArguments().getString(ARG_PARAM1).trim();
-            fechaFin = getArguments().getString(ARG_PARAM2).trim();
-            if(fechaFin.equals("") && fechaIni.equals("")){
-                Map<String, String> fechas = Config.fechas(1);
-                fechaIni = fechas.get("fechaIni");
-                fechaMostrar = fechaIni;
-                tvFecha.setText(fechaMostrar);
-            }else if(fechaFin.equals("")){
-                tvFecha.setText(fechaIni);
-            }else if(fechaIni.matches("")){
-                tvFecha.setText(fechaFin);
-            }else{
-                tvFecha.setText(fechaIni + " - " + fechaFin);
-            }
-        }else {
-            Map<String, String> fechas = Config.fechas(1);
-            fechaFin = fechas.get("fechaFin");
-            fechaIni = fechas.get("fechaIni");
-            fechaMostrar = fechaIni;
-            tvFecha.setText(fechaMostrar);
-        }
-
-        rangoInicial();
-        rangoFinal();
+        connected = new Connected();
 
         // TODO: model
         getDatos1 = new ArrayList<>();
@@ -195,47 +160,35 @@ public class ReporteAsesores extends Fragment {
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
 
-        sendJson(true);
-
-        final Fragment borrar = this;
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnBuscar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(connected.estaConectado(getContext())){
+                            final String fechaIncial = tvRangoFecha1.getText().toString();
+                            final String fechaFinal = tvRangoFecha2.getText().toString();
+                            final String idAsesor = etAsesor.getText().toString();
 
-                Connected connected = new Connected();
-                if(connected.estaConectado(getContext())){
-                    String f1 = tvRangoFecha1.getText().toString();
-                    String f2 = tvRangoFecha2.getText().toString();
-                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    ReporteAsesores fragmento = ReporteAsesores.newInstance(f1,f2, rootView.getContext());
-                    borrar.onDestroy();
-                    ft.remove(borrar);
-                    ft.replace(R.id.content_gerente, fragmento);
-                    ft.addToBackStack(null);
-                    ft.commit();
-
-                    // TODO: ocultar teclado
-                    imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-                }else{
-                    android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                    dlgAlert.setTitle("Error en conexión");
-                    dlgAlert.setMessage("Por favor, revisa tu conexión a internet...");
-                    dlgAlert.setCancelable(true);
-                    dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
+                            if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
+                                Config.dialogoFechasVacias(getContext());
+                            }else{
+                                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                                ReporteAsesores fragmento = ReporteAsesores.newInstance(fechaIncial, fechaFinal, idAsesor, rootView.getContext());
+                                borrar.onDestroy();
+                                ft.remove(borrar);
+                                ft.replace(R.id.content_gerente, fragmento);
+                                ft.addToBackStack(null);
+                                ft.commit();
+                            }
+                            // TODO: ocultar teclado
+                            imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+                        }else{
+                            Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                         }
-                    });
-                    dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-                    dlgAlert.create().show();
-                }
-
+                    }
+                });
             }
         });
 
@@ -268,13 +221,12 @@ public class ReporteAsesores extends Fragment {
 
 
 
-                btn.setOnClickListener(new View.OnClickListener() {
+                /*btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
 
                         final String datoEditText = editText.getText().toString();
-                        //final String datoSpinner = spinner.getSelectedItem().toString();
                         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
                         Connected connected = new Connected();
                         if(connected.estaConectado(getContext())){
@@ -287,7 +239,7 @@ public class ReporteAsesores extends Fragment {
                         }
                     }
                 });
-                dialog.show();
+                dialog.show();*/
             }
         });
     }
@@ -334,15 +286,61 @@ public class ReporteAsesores extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    private void primeraPeticion(){
+        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIcon(R.drawable.icono_abrir);
+        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
+        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
+        progressDialog.show();
+        // TODO: Implement your own authentication logic here.
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        progressDialog.dismiss();
+                        sendJson(true);
+                    }
+                }, Config.TIME_HANDLER);
+    }
+
+    private void variables(){
+        tvFecha = (TextView) rootView.findViewById(R.id.gfraa_tv_fecha);
+        tvEmitidas = (TextView) rootView.findViewById(R.id.gfraa_tv_emitidas);
+        tvNoEmitidas = (TextView) rootView.findViewById(R.id.gfraa_tv_no_emitidas);
+        tvSaldoEmitido = (TextView) rootView.findViewById(R.id.gfraa_tv_saldo_emitido);
+        tvSaldoNoEmitido = (TextView) rootView.findViewById(R.id.gfraa_tv_saldo_no_emitido);
+        etAsesor = (EditText) rootView.findViewById(R.id.gfraa_et_asesor);
+        tvTotalResultados = (TextView) rootView.findViewById(R.id.gfraa_tv_total_registros);
+        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.gfraa_tv_fecha_rango1);
+        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.gfraa_tv_fecha_rango2);
+        btnBuscar = (Button) rootView.findViewById(R.id.gfraa_btn_buscar);
+    }
+
+    /**
+     *  Espera el regreso de fechas incial (hoy y el dia siguiente)
+     *  y cuando se realiza una nueva busqueda, retorna las fechas seleccionadas
+     */
+    private void fechas(){
+        rangoInicial();
+        rangoFinal();
+        Map<String, Integer> fechaDatos = Config.dias();
+        mYear  = fechaDatos.get("anio");
+        mMonth = fechaDatos.get("mes");
+        mDay   = fechaDatos.get("dia");
+        // TODO: fecha
+        Map<String, String> fechaActual = Config.fechas(1);
+        String smParam1 = fechaActual.get("fechaIni");
+        String smParam2 = fechaActual.get("fechaFin");
+        if(getArguments() != null){
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+            tvFecha.setText(mParam1 + " - " + mParam2);
+        }else{
+            tvFecha.setText(smParam1 + " - " + smParam2);
+        }
+    }
+
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
-
-        final ProgressDialog loading;
-        if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
-        else
-            loading = null;
-
         JSONObject obj = new JSONObject();
         try {
             // TODO: Formacion del JSON request
@@ -367,7 +365,6 @@ public class ReporteAsesores extends Fragment {
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
-                            loading.dismiss();
                             primerPaso(response);
                         } else {
                             segundoPaso(response);
@@ -378,7 +375,6 @@ public class ReporteAsesores extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         try{
-                            loading.dismiss();
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -481,8 +477,8 @@ public class ReporteAsesores extends Fragment {
 
         tvEmitidas.setText("" + emitidos);
         tvNoEmitidas.setText("" + noEmitido);
-        tvSaldoEmitido.setText("" + saldoEmitido);
-        tvSaldoNoEmitido.setText("" + saldoNoEmitido);
+        tvSaldoEmitido.setText("" + Config.nf.format(saldoEmitido));
+        tvSaldoNoEmitido.setText("" + Config.nf.format(saldoNoEmitido));
         tvTotalResultados.setText("" + filas + " Resultados ");
 
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);

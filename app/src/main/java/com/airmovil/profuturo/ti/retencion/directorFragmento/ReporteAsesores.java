@@ -200,7 +200,6 @@ public class ReporteAsesores extends Fragment {
                 }else{
                     Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                 }
-
             }
         });
 

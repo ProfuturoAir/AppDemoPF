@@ -24,13 +24,6 @@
 
         <LinearLayout style="@style/linearLayoutHorizontal">
             <LinearLayout style="@style/contenedorSpinner">
-                <Spinner android:id="@+id/gfrc_spinner_gerencia"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:backgroundTint="@color/colorWhite"/>
-                <TextView style="@style/linea"/>
-            </LinearLayout>
-            <LinearLayout style="@style/contenedorSpinner">
                 <Spinner android:id="@+id/gfrc_spinner_sucursal"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"

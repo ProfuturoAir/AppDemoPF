@@ -103,7 +103,7 @@ public class ReporteSucursales extends Fragment {
     private Button btnBuscar;
     private TextView tvResultados;
     int filas;
-
+    final Fragment borrar = this;
 
     private OnFragmentInteractionListener mListener;
 
@@ -134,75 +134,20 @@ public class ReporteSucursales extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
-
-        tvFecha = (TextView) rootView.findViewById(R.id.gfrs_tv_fecha);
-        tvEmitidas = (TextView) rootView.findViewById(R.id.gfrs_tv_emitidas);
-        tvNoEmitidas = (TextView) rootView.findViewById(R.id.gfrs_tv_no_emitidas);
-        tvSaldoEmitido = (TextView) rootView.findViewById(R.id.gfrs_tv_saldo_emitido);
-        tvSaldoNoEmitido = (TextView) rootView.findViewById(R.id.gfrs_tv_saldo_no_emitido);
-        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.gfrs_tv_fecha_rango1);
-        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.gfrs_tv_fecha_rango2);
-        spinnerSucursales = (Spinner) rootView.findViewById(R.id.gfrs_spinner_sucursales);
-        btnBuscar = (Button) rootView.findViewById(R.id.gfrs_btn_buscar);
-        tvResultados = (TextView) rootView.findViewById(R.id.gfrs_tv_registros);
-
-        // TODO: fechas dialog
-        rangoInicial();
-        rangoFinal();
-
+        primeraPeticion();
+        variables();
+        fechas();
         // TODO: Spinner
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.SUCURSALES);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinnerSucursales.setAdapter(adapter);
-
-        // TODO: inclucion de fecha
-        Map<String, Integer> fechaDatos = Config.dias();
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
-
-        try{
-            if(getArguments() != null){
-                fechaIni = getArguments().getString(ARG_PARAM1).trim();
-                fechaFin = getArguments().getString(ARG_PARAM2).trim();
-                String dato = getArguments().getString(ARG_PARAM2).trim();
-
-                if(fechaFin.equals("") && fechaIni.equals("")){
-                    Map<String, String> fechas = Config.fechas(1);
-                    fechaFin = fechas.get("fechaFin");
-                    fechaIni = fechas.get("fechaIni");
-                    fechaMostrar = fechaIni;
-                    tvFecha.setText(fechaMostrar);
-                }else if(fechaFin.equals("")){
-                    tvFecha.setText(fechaIni);
-                }else if(fechaIni.matches("")){
-                    tvFecha.setText(fechaFin);
-                }else{
-                    tvFecha.setText(fechaIni + " - " + fechaFin);
-                }
-
-                Log.d("getArguments", "Fecha inicio: " + fechaIni + "\nfecha fin: " + fechaFin + "\nTipo Sucursal: " + dato);
-            }else {
-                Map<String, String> fechas = Config.fechas(1);
-                fechaFin = fechas.get("fechaFin");
-                fechaIni = fechas.get("fechaIni");
-                fechaMostrar = fechaIni;
-                tvFecha.setText(fechaMostrar);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
         // TODO: model
         getDatos1 = new ArrayList<>();
-
         // TODO: Recycler
         recyclerView = (RecyclerView) rootView.findViewById(R.id.gfrs_rv_lista);
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-        sendJson(true);
-        final Fragment borrar = this;
         // TODO: Boton filtro
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -211,50 +156,16 @@ public class ReporteSucursales extends Fragment {
 
                 final String fechaIncial = tvRangoFecha1.getText().toString();
                 final String fechaFinal = tvRangoFecha2.getText().toString();
-                final String tipoSucursal = "Sucursal 123";
-
-                Log.d("Datos a enviar: ", "1. " + fechaIncial + " 2. " + fechaFinal + " 3. " + tipoSucursal);
-
-                Connected connected = new Connected();
-                if(connected.estaConectado(getContext())){
-                    ReporteSucursales fragmento = ReporteSucursales.newInstance(
-                            fechaIncial,
-                            fechaFinal,
-                            rootView.getContext()
-                    );
+                if(fechaIncial.equals("") || fechaFinal.equals("")){
+                    Config.dialogoFechasVacias(getContext());
+                }else {
+                    ReporteSucursales fragmento = ReporteSucursales.newInstance(fechaIncial, fechaFinal, rootView.getContext());
                     borrar.onDestroy();
                     ft.remove(borrar);
                     ft.replace(R.id.content_gerente, fragmento);
                     ft.addToBackStack(null);
                     ft.commit();
-                    Log.d("btnBuscar", "Fecha inicio: " + fechaIni + "\nFecha fin" + fechaFin);
-                    try{
-                        Log.d("btnBuscar", "Fecha inicio: " + fechaIni + "\nFecha fin" + fechaFin);
-                    } catch (Exception e){
-                        e.printStackTrace();
-                        Log.d("Exception", e.toString());
-                    }
-                }else{
-                    android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                    dlgAlert.setTitle("Error en conexión");
-                    dlgAlert.setMessage("Por favor, revisa tu conexión a internet...");
-                    dlgAlert.setCancelable(true);
-                    dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-                    dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-                    dlgAlert.create().show();
                 }
-
-
             }
         });
 
@@ -272,8 +183,6 @@ public class ReporteSucursales extends Fragment {
                 ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item_azul, Config.EMAIL);
                 adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinner.setAdapter(adapterSucursal);
-
-
 
                 btn.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -344,15 +253,61 @@ public class ReporteSucursales extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    private void primeraPeticion(){
+        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIcon(R.drawable.icono_abrir);
+        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
+        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
+        progressDialog.show();
+        // TODO: Implement your own authentication logic here.
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        progressDialog.dismiss();
+                        sendJson(true);
+                    }
+                }, Config.TIME_HANDLER);
+    }
+
+    public void variables(){
+        tvFecha = (TextView) rootView.findViewById(R.id.gfrs_tv_fecha);
+        tvEmitidas = (TextView) rootView.findViewById(R.id.gfrs_tv_emitidas);
+        tvNoEmitidas = (TextView) rootView.findViewById(R.id.gfrs_tv_no_emitidas);
+        tvSaldoEmitido = (TextView) rootView.findViewById(R.id.gfrs_tv_saldo_emitido);
+        tvSaldoNoEmitido = (TextView) rootView.findViewById(R.id.gfrs_tv_saldo_no_emitido);
+        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.gfrs_tv_fecha_rango1);
+        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.gfrs_tv_fecha_rango2);
+        spinnerSucursales = (Spinner) rootView.findViewById(R.id.gfrs_spinner_sucursales);
+        btnBuscar = (Button) rootView.findViewById(R.id.gfrs_btn_buscar);
+        tvResultados = (TextView) rootView.findViewById(R.id.gfrs_tv_registros);
+    }
+
+    /**
+     *  Espera el regreso de fechas incial (hoy y el dia siguiente)
+     *  y cuando se realiza una nueva busqueda, retorna las fechas seleccionadas
+     */
+    private void fechas(){
+        rangoInicial();
+        rangoFinal();
+        Map<String, Integer> fechaDatos = Config.dias();
+        mYear  = fechaDatos.get("anio");
+        mMonth = fechaDatos.get("mes");
+        mDay   = fechaDatos.get("dia");
+        // TODO: fecha
+        Map<String, String> fechaActual = Config.fechas(1);
+        String smParam1 = fechaActual.get("fechaIni");
+        String smParam2 = fechaActual.get("fechaFin");
+        if(getArguments() != null){
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+            tvFecha.setText(mParam1 + " - " + mParam2);
+        }else{
+            tvFecha.setText(smParam1 + " - " + smParam2);
+        }
+    }
+
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
-
-        final ProgressDialog loading;
-        if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
-        else
-            loading = null;
-
         JSONObject obj = new JSONObject();
         try {
             // TODO: Formacion del JSON request
@@ -377,7 +332,6 @@ public class ReporteSucursales extends Fragment {
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
-                            loading.dismiss();
                             primerPaso(response);
                         } else {
                             segundoPaso(response);
@@ -388,7 +342,6 @@ public class ReporteSucursales extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         try{
-                            loading.dismiss();
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -434,14 +387,7 @@ public class ReporteSucursales extends Fragment {
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-                return headers;
+                return Config.credenciales(getContext());
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
@@ -490,8 +436,8 @@ public class ReporteSucursales extends Fragment {
 
         tvEmitidas.setText("" + emitidos);
         tvNoEmitidas.setText("" + noEmitido);
-        tvSaldoEmitido.setText("" + saldoEmitido);
-        tvSaldoNoEmitido.setText("" + saldoNoEmitido);
+        tvSaldoEmitido.setText("" + Config.nf.format(saldoEmitido));
+        tvSaldoNoEmitido.setText("" + Config.nf.format(saldoNoEmitido));
         tvResultados.setText(filas + " Resultados ");
 
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);

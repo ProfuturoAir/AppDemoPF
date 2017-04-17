@@ -19,6 +19,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,7 +66,9 @@ public class Gerente extends AppCompatActivity{
         setContentView(R.layout.gerente);
         // TODO: Mantener el estado de la pantalla Vertical
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        // TODO: nueva instancia para el sharePreference
         sessionManager = new SessionManager(getApplicationContext());
+        // TODO: Validacion de la sesion del usuario
         validateSession();
     }
 
