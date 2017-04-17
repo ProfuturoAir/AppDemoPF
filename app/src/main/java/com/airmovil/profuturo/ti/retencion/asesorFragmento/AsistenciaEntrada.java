@@ -1,19 +1,23 @@
 package com.airmovil.profuturo.ti.retencion.asesorFragmento;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
-import android.system.ErrnoException;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,11 +25,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.ToggleButton;
+import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
-import com.airmovil.profuturo.ti.retencion.helper.DrawingView;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -34,10 +37,14 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +57,7 @@ import java.util.Map;
  * Use the {@link AsistenciaEntrada#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks{
+public class AsistenciaEntrada extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -58,18 +65,15 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
-    private static final int REQUEST_LOCATION = 0;
-    private DrawingView dvFirma;
-    private View mView;
-    private TextView lblLatitud;
-    private TextView lblLongitud;
-    private ToggleButton btnActualizar;
-
-    private GoogleApiClient apiClient;
-    private View rootView;
-
-    private boolean firsStarted = true;
+    // TODO: DATOS
+    LocationManager locationManager;
+    double longitudeBest, latitudeBest;
+    double longitudeGPS, latitudeGPS;
+    double longitudeNetwork, latitudeNetwork;
+    TextView longitudeValueBest, latitudeValueBest;
+    TextView longitudeValueGPS, latitudeValueGPS;
+    TextView longitudeValueNetwork, latitudeValueNetwork;
+    View rootView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -106,81 +110,15 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        rootView = view;
+        locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
 
-        Button btnLimpiar = (Button) view.findViewById(R.id.afae_btn_limpiar);
-        Button btnGuardar = (Button) view.findViewById(R.id.afae_btn_guardar);
-        Button btnCancelar= (Button) view.findViewById(R.id.afae_btn_cancelar);
+    }
 
-        try{
-            apiClient = new GoogleApiClient.Builder(getActivity())
-                    .enableAutoManage(getActivity(),this)
-                    .addConnectionCallbacks(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        lblLatitud = (TextView) view.findViewById(R.id.afae_lbl_Latitud);
-        lblLongitud = (TextView) view.findViewById(R.id.afae_lbl_Longitud);
-        btnActualizar = (ToggleButton) view.findViewById(R.id.afae_btn_actualizar);
-
-        dvFirma = (DrawingView) view.findViewById(R.id.afae_dv_firma);
-        dvFirma.setBrushSize(5);
-        dvFirma.setColor("#000000");
-        dvFirma.setFocusable(true);
-
-        //final SignatureView signatureView = (SignatureView) view.findViewById(R.id.afae_signature_view);
-        btnLimpiar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dvFirma.startNew();
-                dvFirma.setDrawingCacheEnabled(true);
-                Config.msjTime(v.getContext(), "Mensaje", "Limpiando contenido", 2000);
-            }
-        });
-
-        btnCancelar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
-                dialogo1.setTitle("Confirmar");
-                dialogo1.setMessage("¿Estás seguro que deseas cancelar y se perderan los cambios?");
-                dialogo1.setCancelable(false);
-                dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Fragment fragmentoGenerico = new Inicio();
-                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        if (fragmentoGenerico != null) {
-                            fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
-                        }
-                    }
-                });
-
-                dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-                dialogo1.show();
-            }
-        });
-
-        btnGuardar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /*final String latitud = (String) lblLatitud.getText();
-                final String longitud = (String) lblLongitud.getText();
-                if(!dvFirma.isActive()) {
-                    Config.msj(v.getContext(),"Error", "Se requiere una firma");
-                }else if(latitud.equals("(desconocida)")||longitud.equals("(desconocida)")){
-
-                }*/
-
-                sendJson(true);
-            }
-        });
+    private boolean checkLocation() {
+        if (!isLocationEnabled())
+            showAlert();
+        return isLocationEnabled();
     }
 
     @Override
@@ -211,43 +149,8 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
     }
 
     @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == REQUEST_LOCATION) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                @SuppressWarnings("MissingPermission")
-                Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(apiClient);
-                updateUI(lastLocation);
-            } else {
-                //Permiso denegado:
-                //Deberíamos deshabilitar toda la funcionalidad relativa a la localización.
-                Log.e("LOGTAG", "Permiso denegado");
-            }
-        }
-    }
-
-    private void updateUI(Location loc){
-        if (loc != null){
-            lblLatitud.setText(String.valueOf(loc.getLatitude()));
-            lblLongitud.setText(String.valueOf(loc.getLongitude()));
-        }/*else{
-            lblLatitud.setText("(desconocida)");
-            lblLongitud.setText("(desconocida)");
-        }*/
+    public void onStart() {
+        super.onStart();
     }
 
     /**
@@ -265,63 +168,123 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
         void onFragmentInteraction(Uri uri);
     }
 
-    // TODO: REST
-    private void sendJson(final boolean primerPeticion) {
-        final ProgressDialog loading;
-        if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
-        else
-            loading = null;
-
-        JSONObject obj = new JSONObject();
-
-        // TODO: Formacion del JSON request
-        try{
-            JSONObject rqt = new JSONObject();
-            rqt.put("estatusTramite", 123);
-            rqt.put("firmaCliente", "CADENABASE64");
-            rqt.put("idTramite", 1);
-            JSONObject ubicacion = new JSONObject();
-            ubicacion.put("latitud", "90.2349");
-            ubicacion.put("longitud", "-23.9897");
-            rqt.put("ubicacion", ubicacion);
-            obj.put("rqt", rqt);
-            Log.d("datos", "REQUEST-->" + obj);
-        } catch (JSONException e){
-            Config.msj(getContext(), "Error", "Error al formar los datos");
-        }
-        //Creating a json array request
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_FIRMA, obj,
-                new Response.Listener<JSONObject>() {
+    private void showAlert() {
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+        dialog.setTitle("Enable Location")
+                .setMessage("Su ubicación esta desactivada.\npor favor active su ubicación " +
+                        "usa esta app")
+                .setPositiveButton("Configuración de ubicación", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        //Dismissing progress dialog
-                        if (primerPeticion) {
-                            loading.dismiss();
-                            //primerPaso(response);
-                        }
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(myIntent);
                     }
-                },
-                new Response.ErrorListener() {
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onErrorResponse(VolleyError error) {
-                        loading.dismiss();
-                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                     }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
-            }
-        };
-        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+                });
+        dialog.show();
     }
+
+    private boolean isLocationEnabled() {
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    public void toggleGPSUpdates(View view) {
+
+    }
+
+    public void toggleBestUpdates(View view) {
+        if (!checkLocation())
+            return;
+        Button button = (Button) view;
+        if (button.getText().equals("pause")) {
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            }
+            locationManager.removeUpdates((android.location.LocationListener) locationListenerBest);
+            button.setText("resume");
+        } else {
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+            criteria.setAltitudeRequired(false);
+            criteria.setBearingRequired(false);
+            criteria.setCostAllowed(true);
+            criteria.setPowerRequirement(Criteria.POWER_LOW);
+            String provider = locationManager.getBestProvider(criteria, true);
+            if (provider != null) {
+                locationManager.requestLocationUpdates(provider, 2 * 20 * 1000, 10, (android.location.LocationListener) locationListenerBest);
+                button.setText("pause");
+                Toast.makeText(getContext(), "Best Provider is " + provider, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public void toggleNetworkUpdates(View view) {
+        if (!checkLocation())
+            return;
+        Button button = (Button) view;
+        if (button.getText().equals("pause")){
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            }
+            locationManager.removeUpdates((android.location.LocationListener) locationListenerNetwork);
+            button.setText("resume");
+        }
+        else {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 20 * 1000, 10, (android.location.LocationListener) locationListenerNetwork);
+            Toast.makeText(getContext(), "Network provider started running", Toast.LENGTH_LONG).show();
+            button.setText("pause");
+        }
+    }
+
+    private final LocationListener locationListenerBest = new LocationListener() {
+        public void onLocationChanged(Location location) {
+            longitudeBest = location.getLongitude();
+            latitudeBest = location.getLatitude();
+
+            new android.os.Handler().postDelayed(
+                    new Runnable() {
+                        public void run() {
+                            longitudeValueBest.setText(longitudeBest + "");
+                            latitudeValueBest.setText(latitudeBest + "");
+                            Toast.makeText(getContext(), "Best Provider update", Toast.LENGTH_SHORT).show();
+                        }
+                    }, Config.TIME_HANDLER);
+        }
+    };
+
+    private final LocationListener locationListenerNetwork = new LocationListener() {
+        public void onLocationChanged(Location location) {
+            longitudeNetwork = location.getLongitude();
+            latitudeNetwork = location.getLatitude();
+
+            new android.os.Handler().postDelayed(
+                    new Runnable() {
+                        public void run() {
+                            longitudeValueNetwork.setText(longitudeNetwork + "");
+                            latitudeValueNetwork.setText(latitudeNetwork + "");
+                            Toast.makeText(getContext(), "Network Provider update", Toast.LENGTH_SHORT).show();
+                        }
+                    }, Config.TIME_HANDLER);
+        }
+    };
+
+    private final LocationListener locationListenerGPS = new LocationListener() {
+        public void onLocationChanged(Location location) {
+            longitudeGPS = location.getLongitude();
+            latitudeGPS = location.getLatitude();
+
+            new android.os.Handler().postDelayed(
+                    new Runnable() {
+                        public void run() {
+                            longitudeValueGPS.setText(longitudeGPS + "");
+                            latitudeValueGPS.setText(latitudeGPS + "");
+                            Toast.makeText(getContext(), "GPS Provider update", Toast.LENGTH_SHORT).show();
+                        }
+                    }, Config.TIME_HANDLER);
+        }
+    };
+
 }

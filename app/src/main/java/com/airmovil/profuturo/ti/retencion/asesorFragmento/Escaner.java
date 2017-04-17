@@ -167,7 +167,7 @@ public class Escaner extends Fragment {
             public void onClick(View v) {
                 AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
                 dialogo1.setTitle("Importante");
-                dialogo1.setMessage("¿Estàs seguro que deseas cancelar y guardar los cambios del proceso 1.1.3.8");
+                dialogo1.setMessage("¿Estás seguro que deseas cancelar y guardar los cambios del proceso 1.1.3.8");
                 dialogo1.setCancelable(false);
                 dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
                     @Override
@@ -201,7 +201,7 @@ public class Escaner extends Fragment {
             @Override
             public void onClick(View v) {
                 if(imageView.getDrawable() == null){
-                    Config.msj(getContext(), "Error", "Na existe un documento, favor de tomar captura");
+                    Config.dialogoNoExisteUnDocumento(getContext());
                 }else {
 
                     AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());

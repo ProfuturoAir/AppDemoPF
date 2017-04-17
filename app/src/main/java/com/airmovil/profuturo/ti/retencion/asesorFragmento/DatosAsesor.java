@@ -101,13 +101,10 @@ public class DatosAsesor extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
+        primeraPeticion();
+        variables();
+
         sessionManager = new SessionManager(getActivity().getApplicationContext());
-        // TODO: Casteo
-        tvNombre = (TextView) rootView.findViewById(R.id.afda_tv_nombre_usuario);
-        tvNumeroEmpleado = (TextView) rootView.findViewById(R.id.afda_tv_numero_empleado);
-        tvSucursal = (TextView) rootView.findViewById(R.id.afda_tv_sucursal);
-        btnContinuar = (Button) rootView.findViewById(R.id.afda_btn_continuar);
-        btnCancelar = (Button) rootView.findViewById(R.id.afda_btn_cancelar);
 
         idClienteCuenta =getArguments().getString("idClienteCuenta");
         nombre = getArguments().getString("nombre");
@@ -124,7 +121,6 @@ public class DatosAsesor extends Fragment {
         HashMap<String, String> hashMap = sessionManager.getUserDetails();
         String numeroUsuario = hashMap.get(SessionManager.ID);
 
-        sendJson(true);
 
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -277,13 +273,32 @@ public class DatosAsesor extends Fragment {
         });
     }
 
+    private void primeraPeticion(){
+        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIcon(R.drawable.icono_abrir);
+        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
+        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
+        progressDialog.show();
+        // TODO: Implement your own authentication logic here.
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        progressDialog.dismiss();
+                        sendJson(true);
+                    }
+                }, 1500);
+    }
+
+    private void variables(){
+        tvNombre = (TextView) rootView.findViewById(R.id.afda_tv_nombre_usuario);
+        tvNumeroEmpleado = (TextView) rootView.findViewById(R.id.afda_tv_numero_empleado);
+        tvSucursal = (TextView) rootView.findViewById(R.id.afda_tv_sucursal);
+        btnContinuar = (Button) rootView.findViewById(R.id.afda_btn_continuar);
+        btnCancelar = (Button) rootView.findViewById(R.id.afda_btn_cancelar);
+    }
+
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
-        final ProgressDialog loading;
-        if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
-        else
-            loading = null;
 
         HashMap<String, String> datos = sessionManager.getUserDetails();
         String numeroUsuario = datos.get(SessionManager.ID);
@@ -306,7 +321,6 @@ public class DatosAsesor extends Fragment {
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
-                            loading.dismiss();
                             primerPaso(response);
                         }
                     }
@@ -315,7 +329,6 @@ public class DatosAsesor extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         try{
-                            loading.dismiss();
                         }catch (Exception e){
                             e.printStackTrace();
                         }

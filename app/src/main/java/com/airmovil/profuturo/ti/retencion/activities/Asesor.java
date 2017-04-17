@@ -198,8 +198,6 @@ public class Asesor extends AppCompatActivity{
         FragmentManager fragmentManager = getSupportFragmentManager();
         final Fragment borrarFragmento;
 
-        //Fragment f = getSupportFragmentManager().findFragmentById(R.id.a_content);
-
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.content_asesor);
         if(f instanceof DatosAsesor){
             checkProccess = true;
@@ -274,7 +272,7 @@ public class Asesor extends AppCompatActivity{
                 }
                 break;
             case R.id.asesor_nav_asistencia:
-                if(checkProccess == false) {
+                /*if(checkProccess == false) {
                     if(checkMapsFragment == true){
                         Toast.makeText(this,"map is already loaded",Toast.LENGTH_LONG).show();
                     }
@@ -284,8 +282,9 @@ public class Asesor extends AppCompatActivity{
                     }
                 }else{
                     salirFragment(getApplicationContext());
-                }
-                //fragmentoGenerico = new Asistencia();
+                }*/
+                //startActivity(new Intent(this, Test.class));
+                fragmentoGenerico = new Asistencia();
                 break;
             case R.id.asesor_nav_reporte:
                 if(checkProccess == false) {
@@ -303,8 +302,7 @@ public class Asesor extends AppCompatActivity{
         //</editor-fold>
         if (fragmentoGenerico != null){
             fragmentManager
-                    .beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-                    //.add(fragmentoGenerico)
+                    .beginTransaction()
                     .replace(R.id.content_asesor, fragmentoGenerico)
                     .addToBackStack("F_MAIN")
                     .commit();

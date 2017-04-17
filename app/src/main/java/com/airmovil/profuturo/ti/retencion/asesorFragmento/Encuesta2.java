@@ -174,38 +174,36 @@ public class Encuesta2 extends Fragment {
                 Log.d("Variable email ", "" + iParam8Email);
                 Log.d(" Retorno de email: ", " " + val);
 
-                if(connected.estaConectado(getContext())){
-                    final EnviaJSON enviaPrevio = new EnviaJSON();
-
-                    enviaPrevio.sendPrevios("1",getContext());
-
-                    if(iParam1IdGerencia == 0 || iParam2IdMotivos == 0 || iParam3IdEstatus == 0 || iParam4IdTitulo == 0 ||
-                            iParam5IdRegimentPensionario == 0 || iParam6IdDocumentacion == 0 || iParam7Telefono.isEmpty() || iParam8Email.isEmpty() ){
-                        Config.msj(getContext(), getResources().getString(R.string.error_datos_vacios), getResources().getString(R.string.msj_error_datos_vacios));
-                    }else {
-                        if(val == true){
-                            sendJson(true, iParam1IdGerencia, iParam2IdMotivos, iParam3IdEstatus, iParam4IdTitulo, iParam5IdRegimentPensionario, iParam6IdDocumentacion, iParam7Telefono, iParam8Email);
+                if(iParam1IdGerencia == 0 || iParam2IdMotivos == 0 || iParam3IdEstatus == 0 || iParam4IdTitulo == 0 ||
+                        iParam5IdRegimentPensionario == 0 || iParam6IdDocumentacion == 0 || iParam7Telefono.isEmpty() || iParam8Email.isEmpty() ){
+                    Config.dialogoDatosVacios(getContext());
+                }else {
+                    if(val == true){
+                        if(connected.estaConectado(getContext())){
+                            final EnviaJSON enviaPrevio = new EnviaJSON();
+                            Config.teclado(getContext(), etTelefono);
+                            Config.teclado(getContext(), etEmail);
+                            //sendJson(true, iParam1IdGerencia, iParam2IdMotivos, iParam3IdEstatus, iParam4IdTitulo, iParam5IdRegimentPensionario, iParam6IdDocumentacion, iParam7Telefono, iParam8Email);
+                            enviaPrevio.sendPrevios("1",getContext());
+                        }else{
+                            db.addObservaciones(idTramite,iParam1IdGerencia,iParam2IdMotivos,iParam3IdEstatus,iParam4IdTitulo,iParam5IdRegimentPensionario,iParam6IdDocumentacion,iParam7Telefono,iParam8Email,123);
+                            //Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
+                            Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
                             //Fragment fragmentoGenerico = new Firma();
                             //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                             //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
-                        }else{
-                            Config.msj(getContext(), getResources().getString(R.string.error_email_incorrecto), getResources().getString(R.string.msj_error_email));
+                            Config.teclado(getContext(), etTelefono);
+                            Config.teclado(getContext(), etEmail);
                         }
+                        Fragment fragmentoGenerico = new Firma();
+                        /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
+                        Asesor asesor = (Asesor) getContext();
+                        asesor.switchFirma(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+                    }else{
+                        Config.msj(getContext(), getResources().getString(R.string.error_email_incorrecto), getResources().getString(R.string.msj_error_email));
                     }
-                }else{
-                    db.addObservaciones(idTramite,iParam1IdGerencia,iParam2IdMotivos,iParam3IdEstatus,iParam4IdTitulo,iParam5IdRegimentPensionario,iParam6IdDocumentacion,iParam7Telefono,iParam8Email,123);
-                    //Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
-                    Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
-                    //Fragment fragmentoGenerico = new Firma();
-                    //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                 }
-
-                Fragment fragmentoGenerico = new Firma();
-                    /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
-                Asesor asesor = (Asesor) getContext();
-                asesor.switchFirma(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
             }
         });
         //</editor-fold>

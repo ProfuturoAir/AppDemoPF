@@ -79,7 +79,9 @@
     <string name="error_datos">Error datos</string>
     <string name="error_datos_vacios">Datos vacios</string>
     <string name="error_fechas_vacias">Fechas vacias</string>
+    <string name="error_en_documento">Error en documento</string>
     <string name="error_email_incorrecto">Error en email</string>
+    <string name="msj_error_documento">No existe un documento(IFE o INE), favor de tomar captura</string>
     <string name="msj_error_conexion">Por favor, revisa tu conexión a internet</string>
     <string name="msj_error_json">Los datos no se han podido formar</string>
     <string name="msj_error_fechas">Por favor, rellena los campos de fecha</string>

@@ -146,6 +146,44 @@ public class Config extends Activity {
         progressDialog.show();
     }
 
+    /**
+     * Muestra mensaje de fechas vacias
+     * @param context
+     */
+    public static final void dialogoDatosVacios(Context context){
+        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_peligro));
+        progressDialog.setTitle(context.getResources().getString(R.string.error_datos_vacios));
+        progressDialog.setMessage(context.getResources().getString(R.string.msj_error_datos_vacios));
+        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog.dismiss();
+                    }
+                });
+        progressDialog.show();
+    }
+
+    /**
+     * Muestra mensaje de fechas vacias
+     * @param context
+     */
+    public static final void dialogoNoExisteUnDocumento(Context context){
+        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_peligro));
+        progressDialog.setTitle(context.getResources().getString(R.string.error_en_documento));
+        progressDialog.setMessage(context.getResources().getString(R.string.msj_error_documento));
+        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog.dismiss();
+                    }
+                });
+        progressDialog.show();
+    }
+
     public static ProgressDialog msjTime(Context context, CharSequence title, CharSequence message, int time) {
         MyTask task = new MyTask();
         // Run task after 10 seconds

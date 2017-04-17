@@ -65,6 +65,7 @@ public class DatosCliente extends Fragment {
     private String nombre;
     private String numeroDeCuenta;
     private String hora;
+    final Fragment borrar = this;
 
     // TODO: Config
     Map<String, String> usuario;
@@ -106,19 +107,11 @@ public class DatosCliente extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
 
-        tvClienteNombre = (TextView) rootView.findViewById(R.id.afda_tv_nombre_cliente);
-        tvClienteNumeroCuenta = (TextView) rootView.findViewById(R.id.afda_tv_numero_cuenta_cliente);
-        tvClienteNSS = (TextView) rootView.findViewById(R.id.afda_tv_nss_cliente);
-        tvClienteCURP = (TextView) rootView.findViewById(R.id.afda_tv_curp_cliente);
-        tvClienteFecha = (TextView) rootView.findViewById(R.id.afda_tv_fecha_cliente);
-        tvClienteSaldo = (TextView) rootView.findViewById(R.id.afda_tv_saldo_cliente);
-        btnContinuar = (Button) rootView.findViewById(R.id.afda_btn_continuar);
-        btnCancelar = (Button) rootView.findViewById(R.id.afda_btn_cancelar);
+        primeraPeticion();
+        variables();
 
         // TODO: Config
         usuario = Config.usuario(getContext());
-
-        final Fragment borrar = this;
 
         nombre = getArguments().getString("nombre");
         numeroDeCuenta = getArguments().getString("numeroDeCuenta");
@@ -157,7 +150,6 @@ public class DatosCliente extends Fragment {
         btnCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
                 dialogo1.setTitle("Confirmar");
                 dialogo1.setMessage("¿Estás seguro que deseas salir?");
@@ -181,8 +173,6 @@ public class DatosCliente extends Fragment {
                 dialogo1.show();
             }
         });
-
-        sendJson(true);
     }
 
     @Override
@@ -265,6 +255,35 @@ public class DatosCliente extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    private void primeraPeticion(){
+        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIcon(R.drawable.icono_abrir);
+        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
+        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
+        progressDialog.show();
+        // TODO: Implement your own authentication logic here.
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        progressDialog.dismiss();
+                        sendJson(true);
+                    }
+                }, 1500);
+    }
+
+    private void variables(){
+        tvClienteNombre = (TextView) rootView.findViewById(R.id.afda_tv_nombre_cliente);
+        tvClienteNumeroCuenta = (TextView) rootView.findViewById(R.id.afda_tv_numero_cuenta_cliente);
+        tvClienteNSS = (TextView) rootView.findViewById(R.id.afda_tv_nss_cliente);
+        tvClienteCURP = (TextView) rootView.findViewById(R.id.afda_tv_curp_cliente);
+        tvClienteFecha = (TextView) rootView.findViewById(R.id.afda_tv_fecha_cliente);
+        tvClienteSaldo = (TextView) rootView.findViewById(R.id.afda_tv_saldo_cliente);
+        btnContinuar = (Button) rootView.findViewById(R.id.afda_btn_continuar);
+        btnCancelar = (Button) rootView.findViewById(R.id.afda_btn_cancelar);
+    }
+
+
 
     private void sendJson(final boolean primerPeticion) {
 

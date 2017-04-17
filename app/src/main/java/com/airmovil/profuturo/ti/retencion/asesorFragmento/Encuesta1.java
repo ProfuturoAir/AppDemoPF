@@ -109,16 +109,7 @@ public class Encuesta1 extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
 
-        // TODO: Casteo
-        btnContinuar = (Button) rootView.findViewById(R.id.afe1_btn_continuar);
-        btnCancelar  = (Button) rootView.findViewById(R.id.afe1_btn_cancelar);
-        cb1si        = (CheckBox) rootView.findViewById(R.id.afe1_cb_pregunta1_si);
-        cb1no        = (CheckBox) rootView.findViewById(R.id.afe1_cb_pregunta1_no);
-        cb2si        = (CheckBox) rootView.findViewById(R.id.afe1_cb_pregunta2_si);
-        cb2no        = (CheckBox) rootView.findViewById(R.id.afe1_cb_pregunta2_no);
-        cb3si        = (CheckBox) rootView.findViewById(R.id.afe1_cb_pregunta3_si);
-        cb3no        = (CheckBox) rootView.findViewById(R.id.afe1_cb_pregunta3_no);
-        etObservaciones = (EditText) rootView.findViewById(R.id.afe1_et_observaciones);
+        variables();
 
         idTramite = getArguments().getString("idTramite");
         nombre = getArguments().getString("nombre");
@@ -191,11 +182,12 @@ public class Encuesta1 extends Fragment {
             @Override
             public void onClick(View v) {
                 if (r1 == null || r2 == null || r3 == null || etObservaciones.getText().toString().trim().isEmpty()) {
-                    Config.msj(getContext(),"Error", "Debes llenar todos los campos");
+                    Config.dialogoDatosVacios(getContext());
                 }else {
                     final Connected conectado = new Connected();
                     if(conectado.estaConectado(getContext())){
                         sendJson(true);
+                        Config.teclado(getContext(), etObservaciones);
                         //Fragment fragmentoGenerico = new Encuesta2();
                         //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                         //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
@@ -322,6 +314,18 @@ public class Encuesta1 extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private void variables(){
+        btnContinuar = (Button) rootView.findViewById(R.id.afe1_btn_continuar);
+        btnCancelar = (Button) rootView.findViewById(R.id.afe1_btn_cancelar);
+        cb1si = (CheckBox) rootView.findViewById(R.id.afe1_cb_pregunta1_si);
+        cb1no = (CheckBox) rootView.findViewById(R.id.afe1_cb_pregunta1_no);
+        cb2si = (CheckBox) rootView.findViewById(R.id.afe1_cb_pregunta2_si);
+        cb2no = (CheckBox) rootView.findViewById(R.id.afe1_cb_pregunta2_no);
+        cb3si = (CheckBox) rootView.findViewById(R.id.afe1_cb_pregunta3_si);
+        cb3no = (CheckBox) rootView.findViewById(R.id.afe1_cb_pregunta3_no);
+        etObservaciones = (EditText) rootView.findViewById(R.id.afe1_et_observaciones);
     }
 
     // TODO: REST
