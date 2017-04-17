@@ -133,17 +133,18 @@ public class DatosCliente extends Fragment {
             public void onClick(View v) {
                 final Connected conected = new Connected();
                 if(conected.estaConectado(v.getContext())) {
-                    Fragment fragmentoGenerico = new Encuesta1();
-                    /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
-                    Asesor asesor = (Asesor) getContext();
-                    asesor.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
                     //
                 }else{
                     Config.msj(v.getContext(),"Error en conexión", "Sin Conexion por el momento.Datos Cliente P-1.1.3.3");
                 }
 
-
+                if(idTramite!=null){
+                    Fragment fragmentoGenerico = new Encuesta1();
+                    /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
+                    Asesor asesor = (Asesor) getContext();
+                    asesor.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+                }
             }
         });
 
