@@ -32,6 +32,7 @@ import com.airmovil.profuturo.ti.retencion.asesorFragmento.Encuesta2;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.Escaner;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.Firma;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.Inicio;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.ProcesoImplicacionesPendientes;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.ReporteClientes;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.SinCita;
 import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
@@ -293,6 +294,9 @@ public class Asesor extends AppCompatActivity{
                 }else{
                     salirFragment(getApplicationContext());
                 }
+                break;
+            case R.id.asesor_nav_implicaciones_pendientes:
+                fragmentoGenerico = new ProcesoImplicacionesPendientes();
                 break;
             case R.id.asesor_nav_cerrar:
                 checkMapsFragment = false;

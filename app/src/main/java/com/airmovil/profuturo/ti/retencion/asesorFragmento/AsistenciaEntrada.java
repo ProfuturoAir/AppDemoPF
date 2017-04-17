@@ -39,6 +39,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -46,6 +47,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,11 +59,16 @@ import java.util.Map;
  * Use the {@link AsistenciaEntrada#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AsistenciaEntrada extends Fragment{
+public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnConnectionFailedListener,
+        GoogleApiClient.ConnectionCallbacks{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final int REQUEST_LOCATION = 0;
+    private GoogleApiClient apiClient;
+    private boolean firsStarted = true;
+    private TextView textView1, textView2;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -111,14 +118,21 @@ public class AsistenciaEntrada extends Fragment{
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
-        locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
 
-    }
+        textView1 = (TextView) view.findViewById(R.id.textv1);
+        textView2 = (TextView) view.findViewById(R.id.textv2);
 
-    private boolean checkLocation() {
-        if (!isLocationEnabled())
-            showAlert();
-        return isLocationEnabled();
+        try {
+            apiClient = new GoogleApiClient.Builder(getActivity())
+                    .enableAutoManage(getActivity(),this)
+                    .addConnectionCallbacks(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
     }
 
     @Override
@@ -153,6 +167,57 @@ public class AsistenciaEntrada extends Fragment{
         super.onStart();
     }
 
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_LOCATION);
+        } else {
+
+            Location lastLocation =
+                    LocationServices.FusedLocationApi.getLastLocation(apiClient);
+
+            updateUI(lastLocation);
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onStop() {
+        if(apiClient.isConnected())
+            apiClient.disconnect();
+        firsStarted = true;
+        super.onStop();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_LOCATION) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //Permiso concedido
+                @SuppressWarnings("MissingPermission")
+                Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(apiClient);
+                updateUI(lastLocation);
+            } else {
+                //Permiso denegado:
+                //Deberíamos deshabilitar toda la funcionalidad relativa a la localización.
+                Log.e("LOGTAG", "Permiso denegado");
+            }
+        }
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -168,123 +233,17 @@ public class AsistenciaEntrada extends Fragment{
         void onFragmentInteraction(Uri uri);
     }
 
-    private void showAlert() {
-        final AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
-        dialog.setTitle("Enable Location")
-                .setMessage("Su ubicación esta desactivada.\npor favor active su ubicación " +
-                        "usa esta app")
-                .setPositiveButton("Configuración de ubicación", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivity(myIntent);
-                    }
-                })
-                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    }
-                });
-        dialog.show();
+    private void updateUI(Location loc){
+        if (loc != null){
+            textView1.setText(String.valueOf("--> " + loc.getLatitude()));
+            textView2.setText(String.valueOf("--> " + loc.getLongitude()));
+            Log.d("------->", "\n" + loc.getLongitude());
+            Log.d("------->", "\n" + loc.getLatitude());
+        }/*else{
+            lblLatitud.setText("(desconocida)");
+            lblLongitud.setText("(desconocida)");
+        }*/
     }
 
-    private boolean isLocationEnabled() {
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-    }
-
-    public void toggleGPSUpdates(View view) {
-
-    }
-
-    public void toggleBestUpdates(View view) {
-        if (!checkLocation())
-            return;
-        Button button = (Button) view;
-        if (button.getText().equals("pause")) {
-            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            }
-            locationManager.removeUpdates((android.location.LocationListener) locationListenerBest);
-            button.setText("resume");
-        } else {
-            Criteria criteria = new Criteria();
-            criteria.setAccuracy(Criteria.ACCURACY_FINE);
-            criteria.setAltitudeRequired(false);
-            criteria.setBearingRequired(false);
-            criteria.setCostAllowed(true);
-            criteria.setPowerRequirement(Criteria.POWER_LOW);
-            String provider = locationManager.getBestProvider(criteria, true);
-            if (provider != null) {
-                locationManager.requestLocationUpdates(provider, 2 * 20 * 1000, 10, (android.location.LocationListener) locationListenerBest);
-                button.setText("pause");
-                Toast.makeText(getContext(), "Best Provider is " + provider, Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    public void toggleNetworkUpdates(View view) {
-        if (!checkLocation())
-            return;
-        Button button = (Button) view;
-        if (button.getText().equals("pause")){
-            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            }
-            locationManager.removeUpdates((android.location.LocationListener) locationListenerNetwork);
-            button.setText("resume");
-        }
-        else {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 20 * 1000, 10, (android.location.LocationListener) locationListenerNetwork);
-            Toast.makeText(getContext(), "Network provider started running", Toast.LENGTH_LONG).show();
-            button.setText("pause");
-        }
-    }
-
-    private final LocationListener locationListenerBest = new LocationListener() {
-        public void onLocationChanged(Location location) {
-            longitudeBest = location.getLongitude();
-            latitudeBest = location.getLatitude();
-
-            new android.os.Handler().postDelayed(
-                    new Runnable() {
-                        public void run() {
-                            longitudeValueBest.setText(longitudeBest + "");
-                            latitudeValueBest.setText(latitudeBest + "");
-                            Toast.makeText(getContext(), "Best Provider update", Toast.LENGTH_SHORT).show();
-                        }
-                    }, Config.TIME_HANDLER);
-        }
-    };
-
-    private final LocationListener locationListenerNetwork = new LocationListener() {
-        public void onLocationChanged(Location location) {
-            longitudeNetwork = location.getLongitude();
-            latitudeNetwork = location.getLatitude();
-
-            new android.os.Handler().postDelayed(
-                    new Runnable() {
-                        public void run() {
-                            longitudeValueNetwork.setText(longitudeNetwork + "");
-                            latitudeValueNetwork.setText(latitudeNetwork + "");
-                            Toast.makeText(getContext(), "Network Provider update", Toast.LENGTH_SHORT).show();
-                        }
-                    }, Config.TIME_HANDLER);
-        }
-    };
-
-    private final LocationListener locationListenerGPS = new LocationListener() {
-        public void onLocationChanged(Location location) {
-            longitudeGPS = location.getLongitude();
-            latitudeGPS = location.getLatitude();
-
-            new android.os.Handler().postDelayed(
-                    new Runnable() {
-                        public void run() {
-                            longitudeValueGPS.setText(longitudeGPS + "");
-                            latitudeValueGPS.setText(latitudeGPS + "");
-                            Toast.makeText(getContext(), "GPS Provider update", Toast.LENGTH_SHORT).show();
-                        }
-                    }, Config.TIME_HANDLER);
-        }
-    };
 
 }

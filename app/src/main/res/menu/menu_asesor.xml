@@ -32,6 +32,10 @@
                     android:id="@+id/asesor_nav_reporte"
                     android:icon="@drawable/icono_reporte"
                     android:title="@string/texto_nav_reportes" />
+                <item
+                    android:id="@+id/asesor_nav_implicaciones_pendientes"
+                    android:icon="@drawable/icono_pendientes"
+                    android:title="@string/texto_nav_reportes" />
             </group>
         </menu>
     </item>
