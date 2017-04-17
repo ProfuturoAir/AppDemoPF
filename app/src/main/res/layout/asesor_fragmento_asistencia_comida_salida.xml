@@ -5,11 +5,13 @@
     android:orientation="vertical">
 
     <TextView
+        android:textColor="@color/colorWhite"
         android:id="@+id/textViewLatitudC2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="123"/>
     <TextView
+        android:textColor="@color/colorWhite"
         android:text="1234"
         android:id="@+id/textViewLogitudC2"
         android:layout_width="match_parent"

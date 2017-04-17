@@ -43,8 +43,10 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
+
+import java.util.Date;
 import java.util.TimeZone;
 
 /**
@@ -324,14 +326,15 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
 
         String fechaFirma = "";
         try {
-            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-            //DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSX");
+            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZZ");
             f.setTimeZone(TimeZone.getTimeZone("America/Mexico_City"));
-            //f.setTimeZone(TimeZone.getTimeZone("GMT"));
-            fechaFirma = f.format(new Date());
+            String fechaFecha = f.format(new Date());
+            //System.out.println(fecha);
+            Log.d("TAG ->", "" + fechaFecha);
         } catch (Exception e){
             Log.d("TAG ->", "" +e.toString());
             fechaFirma = "123";
+
         }
 
         try{

@@ -342,7 +342,6 @@ public class SinCita extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    // TODO: REST
     private void sendJson(final boolean primerPeticion, String seleccion, String valores) {
         final ProgressDialog loading;
         if (primerPeticion)
@@ -380,7 +379,7 @@ public class SinCita extends Fragment {
             HashMap<String, String> usuario = sessionManager.getUserDetails();
             String usuarioCUSP = usuario.get(SessionManager.ID);
 
-            rqt.put("usuario", usuarioCUSP.toString());
+            rqt.put("usuario", "3333");
             obj.put("rqt", rqt);
             Log.d(TAG, "PETICION VACIA-->" + obj);
         } catch (JSONException e) {
@@ -454,8 +453,6 @@ public class SinCita extends Fragment {
         adapter = new GerenteSinCitaAdapter(rootView.getContext(), getDatos1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
-
-
     }
 
 

@@ -41,16 +41,16 @@ public class Config extends Activity {
     public static final String URL_AUTENTIFICACION = URL_GENERAL + "mb/cusp/rest/autenticacionUsuario.php";
     public static final String URL_CONSULTA_INFORMACION_USUARIO = URL_GENERAL + "mb/cusp/rest/consultaInformacionUsuario.php";
     public static final String URL_CONSULTAR_RESUMEN_RETENCIONES = URL_GENERAL + "mb/premium/rest/consultarResumenRetenciones.php";
-    public static final String URL_CONSULTAR_RESUMEN_CITAS = URL_GENERAL + "Profuturo/consultarResumenCitas.php";
-    public static final String URL_CONSULTAR_CLIENTE_SIN_CITA = URL_GENERAL + "Profuturo/consultarClienteSinCita.php";
-    public static final String URL_CONSULTAR_DATOS_ASESOR = URL_GENERAL + "Profuturo/consultarDatosAsesor.php";
+    public static final String URL_CONSULTAR_RESUMEN_CITAS = URL_GENERAL + "mb/premium/rest/consultarResumenCitas.php";
+    public static final String URL_CONSULTAR_CLIENTE_SIN_CITA = URL_GENERAL + "mb/premium/rest/consultarClienteSinCita.php";
+    public static final String URL_CONSULTAR_DATOS_ASESOR = URL_GENERAL + "mb/premium/rest/consultarDatosAsesor.php";
     public static final String URL_CUNSULTAR_DATOS_CLIENTE = URL_GENERAL + "mb/premium/rest/consultarDatosCliente.php";
     public static final String URL_GENERAR_REPORTE_CLIENTE = URL_GENERAL + "mb/premium/rest/generarReporteAsesor.php";
 
-    public static final String URL_ENVIAR_ENCUESTA = URL_GENERAL + "Profuturo/enviarEncuesta.php";
-    public static final String URL_ENVIAR_ENCUESTA_2 = URL_GENERAL + "Profuturo/enviarEncuestaObservacion.php";
-    public static final String URL_ENVIAR_FIRMA = URL_GENERAL + "Profuturo/guardarFirmaCliente.php";
-    public static final String URL_ENVIAR_DOCUMENTO_IFE_INE = URL_GENERAL + "Profuturo/guardarDocumentacionCliente.php";
+    public static final String URL_ENVIAR_ENCUESTA = URL_GENERAL + "mb/premium/rest/enviarEncuesta.php";
+    public static final String URL_ENVIAR_ENCUESTA_2 = URL_GENERAL + "mb/premium/rest/enviarEncuestaObservacion.php";
+    public static final String URL_ENVIAR_FIRMA = URL_GENERAL + "mb/premium/rest/guardarFirmaCliente.php";
+    public static final String URL_ENVIAR_DOCUMENTO_IFE_INE = URL_GENERAL + "mb/premium/rest/guardarDocumentacionCliente.php";
 
     public static final String URL_REGISTRAR_ASISTENCIA = URL_GENERAL + "mb/premium/rest/registrarAsistencia.php";
 
