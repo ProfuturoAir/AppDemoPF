@@ -3,6 +3,7 @@ package com.airmovil.profuturo.ti.retencion.asesorFragmento;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -184,9 +185,11 @@ public class Encuesta2 extends Fragment {
                             Config.teclado(getContext(), etTelefono);
                             Config.teclado(getContext(), etEmail);
                             //sendJson(true, iParam1IdGerencia, iParam2IdMotivos, iParam3IdEstatus, iParam4IdTitulo, iParam5IdRegimentPensionario, iParam6IdDocumentacion, iParam7Telefono, iParam8Email);
-                            enviaPrevio.sendPrevios("1",getContext());
+                            enviaPrevio.sendPrevios(idTramite,getContext());
                         }else{
                             db.addObservaciones(idTramite,iParam1IdGerencia,iParam2IdMotivos,iParam3IdEstatus,iParam4IdTitulo,iParam5IdRegimentPensionario,iParam6IdDocumentacion,iParam7Telefono,iParam8Email,123);
+                            db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+
                             //Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                             Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
                             //Fragment fragmentoGenerico = new Firma();

@@ -266,7 +266,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                                     ubicacion.put("latitud", "90.2349");
                                     ubicacion.put("longitud", "-23.9897");*/
                                     db.addFirma(idTramite,123,base64,90.2349,-23.9897);
-
+                                    db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
                                     //db.addIDTramite(idTramite);
                                     //Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                                     Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");

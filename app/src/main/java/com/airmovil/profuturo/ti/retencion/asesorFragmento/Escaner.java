@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -231,6 +232,9 @@ public class Escaner extends Fragment {
                                 hora
                                  */
                                 db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+                                //Cursor todos = db.getAllPending();
+                                //Log.d("HOLA","TODOS: "+todos);
+
                                 //db.addFirma("1", 123, base64, 90.2349, -23.9897);
                             }
 

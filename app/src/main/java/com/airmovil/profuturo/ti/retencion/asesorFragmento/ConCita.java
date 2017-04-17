@@ -420,6 +420,7 @@ public class ConCita extends Fragment {
                     JSONObject json = null;
                     try{
                         json = array.getJSONObject(i);
+                        Log.d("OBJETO","PTR: "+json);
                         getDatos2.setHora(json.getString(JSON_HORA));
                         getDatos2.setNombreCliente(json.getString(JSON_NOMBRE_CLIENTE));
                         getDatos2.setNumeroCuenta(json.getString(JSON_NUMERO_CUENTA));
@@ -476,6 +477,7 @@ public class ConCita extends Fragment {
                 JSONObject json = null;
                 try{
                     json = array.getJSONObject(i);
+                    Log.d("OBJETO","PTR: "+json);
                     getDatos2.setHora(json.getString(JSON_HORA));
                     getDatos2.setNombreCliente(json.getString(JSON_NOMBRE_CLIENTE));
                     getDatos2.setNumeroCuenta(json.getString(JSON_NUMERO_CUENTA));

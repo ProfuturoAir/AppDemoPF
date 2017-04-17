@@ -193,6 +193,7 @@ public class Encuesta1 extends Fragment {
                         //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                     }else{
                         db.addEncuesta(idTramite,estatusTramite,r1,r2,r3,etObservaciones.getText().toString().trim());
+                        db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
                         Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
                         //Fragment fragmentoGenerico = new Encuesta2();
                         //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();

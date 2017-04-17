@@ -1,13 +1,30 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    android:orientation="vertical"
     tools:context="com.airmovil.profuturo.ti.retencion.asesorFragmento.ProcesoImplicacionesPendientes">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+    <TextView style="@style/tituloProceso" android:text="Lista de envios pendientes" />
 
-</FrameLayout>
+
+    <LinearLayout style="@style/contenedorFiltros2">
+        <Button android:id="@+id/afcc_btn_enviar_pendientes" style="@style/btnEnviarPendientes"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerview_pendientes_envio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:text="hello_world" />
+    </LinearLayout>
+
+</LinearLayout>

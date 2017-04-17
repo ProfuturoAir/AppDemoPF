@@ -69,11 +69,14 @@ public class EnviaJSON {
     private int numeroCuenta;
     private String usuario;
 
-    private String statusRs;
+    private int statusRs;
     private String firmaString;
+
+    public Boolean eTramite;
 
     public void sendPrevios(String idTramite,Context context){
         db = new SQLiteHandler(context);
+        //eTramite = false;
 
         HashMap<String, String> encuesta = db.getEncuesta(idTramite);
         HashMap<String, String> observaciones = db.getObservaciones(idTramite);
@@ -135,6 +138,14 @@ public class EnviaJSON {
             sendJsonDocumento(true,idTramite,fechaHoraFin,estatusTramite,ineIfe,numeroCuenta,usuario,latitud,longitud,context);
         }
 
+        Log.d("Se Eliminia","Elimina "+eTramite);
+        /*if(eTramite){
+            Log.d("Se Eliminia","Elimina");
+            ///db.deleteTramite(idTramite);
+            return true;
+        }else {
+            return false;
+        }*/
     }
     private void sendJsonEncuesta(final boolean primerPeticion, final String idTramite, String observaciones, Boolean pregunta1, Boolean pregunta2, Boolean pregunta3, int estatusTramite, final Context context) {
         final ProgressDialog loading;
@@ -177,7 +188,7 @@ public class EnviaJSON {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         loading.dismiss();
-                        Config.msj(context,"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
+                        Config.msj(context,"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
                     }
                 }) {
             @Override
@@ -234,12 +245,15 @@ public class EnviaJSON {
                             loading.dismiss();
                             Log.d(TAG, "RESPONSE: ->" + response);
                             try {
-                                statusRs = response.getString("status");
+                                statusRs = response.getInt("status");
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            if(statusRs == "200") {
+                            if(statusRs == 200) {
+                                Log.d(TAG, "DELETE ->" );
                                 db.deleteObservaciones(idTramite);
+                                db.deleteTramite(idTramite);
+                                //eTramite = true;
                             }
                             //primerPaso(response);
                         }
@@ -270,14 +284,21 @@ public class EnviaJSON {
     }
 
     private void primerPaso(JSONObject obj,String idTramite){
-        Log.d(TAG, "RESPONSE: ->" + obj);
+        Log.d(TAG, "RESPONSE: -> **" + obj);
         try {
-            statusRs = obj.getString("status");
+            statusRs = obj.getInt("status");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        if(statusRs == "200") {
+
+        Log.d(TAG, "DELETE -> NONE " + statusRs);
+
+        if(statusRs == 200) {
+            Log.d(TAG, "DELETE ->" );
             db.deleteEncuesta(idTramite);
+            db.deleteTramite(idTramite);
+        }else{
+            Log.d(TAG, "DELETE -> NONE" );
         }
     }
 
@@ -315,12 +336,14 @@ public class EnviaJSON {
                             loading.dismiss();
                             Log.d(TAG, "RESPONSE: ->" + response);
                             try {
-                                statusRs = response.getString("status");
+                                statusRs = response.getInt("status");
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            if(statusRs == "200") {
+                            if(statusRs == 200) {
+                                Log.d(TAG, "DELETE ->" );
                                 db.deleteFirma(idTramite);
+                                db.deleteTramite(idTramite);
                             }
                             //primerPaso(response);
                         }
@@ -386,12 +409,15 @@ public class EnviaJSON {
                             loading.dismiss();
                             Log.d(TAG, "RESPONSE: ->" + response);
                             try {
-                                statusRs = response.getString("status");
+                                statusRs = response.getInt("status");
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            if(statusRs == "200") {
+                            if(statusRs == 200) {
+                                Log.d(TAG, "DELETE ->" );
                                 db.deleteDocumentacion(idTramite);
+                                //eTramite = true;
+                                db.deleteTramite(idTramite);
                             }
                             //primerPaso(response);
                         }
