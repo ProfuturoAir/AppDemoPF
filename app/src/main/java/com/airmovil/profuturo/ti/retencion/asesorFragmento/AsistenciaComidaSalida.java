@@ -55,8 +55,11 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -340,8 +343,21 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
         JSONObject ubicacion = new JSONObject();
+
+        String fechaN = "";
+        try {
+            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+            f.setTimeZone(TimeZone.getTimeZone("America/Mexico_City"));
+            String fechaS = f.format(new Date());
+            fechaN = fechaS.substring(0, fechaS.length() - 2) + ":00";
+            System.out.println(fechaN);
+            Log.d("TAG fecha ->", "" + fechaN);
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("TAG e: ", "" + e);
+        }
         try{
-            rqt.put("fechaHoraCheck", fecha);
+            rqt.put("fechaHoraCheck", fechaN);
             rqt.put("idTipoCheck", 1);
             ubicacion.put("latitud", z);
             ubicacion.put("longitud", w);

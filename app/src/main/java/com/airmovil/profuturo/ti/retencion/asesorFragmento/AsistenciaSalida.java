@@ -340,23 +340,20 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
         JSONObject ubicacion = new JSONObject();
-
-
-        String fechaFirma = "";
+        String fechaN = "";
         try {
-            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZZ");
+            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
             f.setTimeZone(TimeZone.getTimeZone("America/Mexico_City"));
-            String fechaFecha = f.format(new Date());
-            //System.out.println(fecha);
-            Log.d("TAG ->", "" + fechaFecha);
-        } catch (Exception e){
-            Log.d("TAG ->", "" +e.toString());
-            fechaFirma = "123";
-
+            String fechaS = f.format(new Date());
+            fechaN = fechaS.substring(0, fechaS.length() - 2) + ":00";
+            System.out.println(fechaN);
+            Log.d("TAG fecha ->", "" + fechaN);
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("TAG e: ", "" + e);
         }
-
         try{
-            rqt.put("fechaHoraCheck", fechaFirma);
+            rqt.put("fechaHoraCheck", fechaN);
             rqt.put("idTipoCheck", 4);
             ubicacion.put("latitud", z);
             ubicacion.put("longitud", w);

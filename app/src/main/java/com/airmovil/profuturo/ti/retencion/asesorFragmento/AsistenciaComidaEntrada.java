@@ -317,21 +317,20 @@ public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient
         JSONObject rqt = new JSONObject();
         JSONObject ubicacion = new JSONObject();
 
-
-        String fechaFirma = "";
+        String fechaN = "";
         try {
-            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-            //DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSX");
+            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
             f.setTimeZone(TimeZone.getTimeZone("America/Mexico_City"));
-            //f.setTimeZone(TimeZone.getTimeZone("GMT"));
-            fechaFirma = f.format(new Date());
-        } catch (Exception e){
-            Log.d("TAG ->", "" +e.toString());
-            fechaFirma = "123";
+            String fechaS = f.format(new Date());
+            fechaN = fechaS.substring(0, fechaS.length() - 2) + ":00";
+            System.out.println(fechaN);
+            Log.d("TAG fecha ->", "" + fechaN);
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("TAG e: ", "" + e);
         }
-
         try{
-            rqt.put("fechaHoraCheck", fechaFirma);
+            rqt.put("fechaHoraCheck", fechaN);
             rqt.put("idTipoCheck", 3);
             ubicacion.put("latitud", z);
             ubicacion.put("longitud", w);
