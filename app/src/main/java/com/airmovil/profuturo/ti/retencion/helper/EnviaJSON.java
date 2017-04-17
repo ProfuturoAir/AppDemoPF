@@ -294,11 +294,11 @@ public class EnviaJSON {
         Log.d(TAG, "DELETE -> NONE " + statusRs);
 
         if(statusRs == 200) {
-            Log.d(TAG, "DELETE ->" );
+            Log.d(TAG, "DELETE -> PP" );
             db.deleteEncuesta(idTramite);
             db.deleteTramite(idTramite);
         }else{
-            Log.d(TAG, "DELETE -> NONE" );
+            Log.d(TAG, "DELETE -> NONE pP" );
         }
     }
 

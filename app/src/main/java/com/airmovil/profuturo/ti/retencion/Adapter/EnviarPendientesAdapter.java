@@ -93,12 +93,12 @@ public class EnviarPendientesAdapter extends RecyclerView.Adapter {
 
             myholder.campoLetra.setText(pLetra);
 
-            myholder.cardView.setOnClickListener(new View.OnClickListener() {
+            /*myholder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     fragmentJumpDatosUsuario(pLetra, v,lista.getNombreCliente(),lista.getNumeroCuenta(),lista.getHora());
                 }
-            });
+            });*/
 
         } else {
             ((EnviarPendientesAdapter.LoadingViewHolder) holder).progressBar.setIndeterminate(true);
