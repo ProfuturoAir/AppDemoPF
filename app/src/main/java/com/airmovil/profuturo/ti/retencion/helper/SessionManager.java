@@ -15,8 +15,6 @@ public class SessionManager {
     public static final String ID = "id";
     public static final String NOMBRE="nombre";
     public static final String CAT="cat";
-
-    // LogCat tag
     private final static String TAG = SessionManager.class.getSimpleName();
     // Shared Preferences
     final SharedPreferences pref;
@@ -79,12 +77,9 @@ public class SessionManager {
     }
 
     public void setLogin(boolean isLoggedIn) {
-
         editor.putBoolean(KEY_IS_LOGGEDIN, isLoggedIn);
-
         // commit changes
         editor.commit();
-
         Log.d(TAG, "User login session modified!");
     }
 

@@ -141,44 +141,8 @@ public class ReporteClientes extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
-
-        // TODO: Casteo
-        tvFecha = (TextView) rootView.findViewById(R.id.afrc_tv_fecha);
-        tvEmitidos = (TextView) rootView.findViewById(R.id.afrc_tv_emitidos);
-        tvNoEmitidos = (TextView) rootView.findViewById(R.id.afrc_tv_no_emitidos);
-        tvSaldoEmitido = (TextView) rootView.findViewById(R.id.afrc_tv_saldo_emitido);
-        tvSaldoNoEmitido = (TextView) rootView.findViewById(R.id.afrc_tv_saldo_no_emitido);
-        tvRangoFecha1  = (TextView) view.findViewById(R.id.afrc_tv_fecha_rango1);
-        tvRangoFecha2  = (TextView) view.findViewById(R.id.afrc_tv_fecha_rango2);
-        spinnerIds = (Spinner) rootView.findViewById(R.id.afrc_spinner_ids);
-        spinnerEmitidos = (Spinner) rootView.findViewById(R.id.afrc_spinner_emitidos);
-        etIngresar = (EditText) rootView.findViewById(R.id.afrc_et_id);
-        btnBuscar = (Button) rootView.findViewById(R.id.afrc_btn_buscar);
-        tvRegistros = (TextView) rootView.findViewById(R.id.afrc_tv_registros);
-
-        imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-
-        // TODO: fecha
-        Map<String, Integer> fechaDatos = Config.dias();
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
-
-        if(getArguments() != null){
-            fechaIni = getArguments().getString(ARG_PARAM1);
-            fechaFin = getArguments().getString(ARG_PARAM2);
-            tvFecha.setText(fechaIni+" - "+fechaFin);
-        }else {
-            Map<String, String> fechas = Config.fechas(1);
-            fechaFin = fechas.get("fechaFin");
-            fechaIni = fechas.get("fechaIni");
-            fechaMostrar = fechaIni;
-            tvFecha.setText(fechaMostrar);
-        }
-
-        // TODO: fechas dialog
-        rangoInicial();
-        rangoFinal();
+        variables();
+        fechas();
 
         // TODO: Spinner
         ArrayAdapter<String> adapterIds = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.IDS);
@@ -283,6 +247,45 @@ public class ReporteClientes extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private void variables(){
+        tvFecha = (TextView) rootView.findViewById(R.id.afrc_tv_fecha);
+        tvEmitidos = (TextView) rootView.findViewById(R.id.afrc_tv_emitidos);
+        tvNoEmitidos = (TextView) rootView.findViewById(R.id.afrc_tv_no_emitidos);
+        tvSaldoEmitido = (TextView) rootView.findViewById(R.id.afrc_tv_saldo_emitido);
+        tvSaldoNoEmitido = (TextView) rootView.findViewById(R.id.afrc_tv_saldo_no_emitido);
+        tvRangoFecha1  = (TextView) rootView.findViewById(R.id.afrc_tv_fecha_rango1);
+        tvRangoFecha2  = (TextView) rootView.findViewById(R.id.afrc_tv_fecha_rango2);
+        spinnerIds = (Spinner) rootView.findViewById(R.id.afrc_spinner_ids);
+        spinnerEmitidos = (Spinner) rootView.findViewById(R.id.afrc_spinner_emitidos);
+        etIngresar = (EditText) rootView.findViewById(R.id.afrc_et_id);
+        btnBuscar = (Button) rootView.findViewById(R.id.afrc_btn_buscar);
+        tvRegistros = (TextView) rootView.findViewById(R.id.afrc_tv_registros);
+    }
+
+    private void fechas(){
+        // TODO: fecha
+        Map<String, Integer> fechaDatos = Config.dias();
+        mYear  = fechaDatos.get("anio");
+        mMonth = fechaDatos.get("mes");
+        mDay   = fechaDatos.get("dia");
+
+        if(getArguments() != null){
+            fechaIni = getArguments().getString(ARG_PARAM1);
+            fechaFin = getArguments().getString(ARG_PARAM2);
+            tvFecha.setText(fechaIni+" - "+fechaFin);
+        }else {
+            Map<String, String> fechas = Config.fechas(1);
+            fechaFin = fechas.get("fechaFin");
+            fechaIni = fechas.get("fechaIni");
+            fechaMostrar = fechaIni;
+            tvFecha.setText(fechaMostrar);
+        }
+
+        // TODO: fechas dialog
+        rangoInicial();
+        rangoFinal();
     }
 
     private void rangoInicial(){

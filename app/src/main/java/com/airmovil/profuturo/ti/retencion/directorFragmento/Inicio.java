@@ -221,7 +221,7 @@ public class Inicio extends Fragment {
                         progressDialog.dismiss();
                         sendJson(true);
                     }
-                }, 3000);
+                }, Config.TIME_HANDLER);
     }
 
     /**

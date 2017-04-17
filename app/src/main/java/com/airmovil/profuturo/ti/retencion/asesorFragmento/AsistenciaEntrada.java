@@ -55,6 +55,9 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
 
     private static final int REQUEST_LOCATION = 0;
     private DrawingView dvFirma;
@@ -62,9 +65,7 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
     private TextView lblLatitud;
     private TextView lblLongitud;
     private ToggleButton btnActualizar;
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+
     private GoogleApiClient apiClient;
     private View rootView;
 

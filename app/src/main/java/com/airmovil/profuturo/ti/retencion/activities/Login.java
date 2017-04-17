@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
@@ -43,30 +44,31 @@ public class Login extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         sessionManager = new SessionManager(getApplicationContext());
+        HashMap<String, String> datosUsuario = sessionManager.obtencionDatosUsuario();
+
+        String nombre = datosUsuario.get(SessionManager.USUARIO_PERFIL);
+
         _numeroEmpleadom = (EditText) findViewById(R.id.login_et_usuario);
         _contrasenia = (EditText) findViewById(R.id.login_et_contrasenia);
         btnIngresar = (Button) findViewById(R.id.login_btn_ingresar);
 
         if(sessionManager.isLoggedIn()){
-            Log.d(TAG, "true");
-            //sessionManager.logoutUser();
-        }else{
-            Log.d(TAG, "false");
-        }
-
-        if(sessionManager.isLoggedIn()){
+            Log.d("--------->","" + nombre);
             if(sessionManager.obtencionDatosUsuario().get("perfil").equals("1")){
-                Log.d(TAG, "Redireccion a la sesion Director");
-                startActivity(new Intent(Login.this, Director.class));
+                Intent intentGerenteRegional = new Intent(this, Director.class);
+                startActivity(intentGerenteRegional);
             }else if(sessionManager.obtencionDatosUsuario().get("perfil").equals("2")){
-                Log.d(TAG, "Redireccion a la sesion Gerente");
-                startActivity(new Intent(Login.this, Gerente.class));
-            }else if(sessionManager.obtencionDatosUsuario().get("perfil").equals("3")){
-                Log.d(TAG, "Redireccion a la sesion Asesor");
-                startActivity(new Intent(Login.this, Asesor.class));
+                Intent intentGerenteGerencias = new Intent(this, Gerente.class);
+                startActivity(intentGerenteGerencias);
+            }else {
+                Intent intentAsesor = new Intent(this, Asesor.class);
+                startActivity(intentAsesor);
             }
+
+
             finish();
         }
+
         btnIngresar.performClick();
         btnIngresar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -238,12 +240,7 @@ public class Login extends AppCompatActivity {
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-                return headers;
+                return Config.credenciales(getApplicationContext());
             }
         };
         MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonArrayRequest);
