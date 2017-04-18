@@ -156,6 +156,7 @@ public class ReporteClientes extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("CLIENTE","PASA AQUI");
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -271,7 +272,7 @@ public class ReporteClientes extends Fragment {
         // TODO: Spinner
         ArrayAdapter<String> adapterGerencias = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.GERENCIAS);
         adapterGerencias.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerGerencias                                                                                                                                                                                                                                                                                   .setAdapter(adapterGerencias);
+        spinnerGerencias.setAdapter(adapterGerencias);
         // TODO: Spinner
         ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.SUCURSALES);
         adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);

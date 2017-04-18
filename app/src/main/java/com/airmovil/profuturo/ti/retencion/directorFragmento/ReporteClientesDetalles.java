@@ -51,6 +51,7 @@ public class ReporteClientesDetalles extends Fragment {
     private String mParam2;
 
     private TextView tv1, tv2, tv3, tv4, tv5, tv6, tv7;
+    private TextView ddfrasd_tv_fecha;
     private SessionManager sessionManager;
 
     private OnFragmentInteractionListener mListener;
@@ -95,6 +96,7 @@ public class ReporteClientesDetalles extends Fragment {
         tv5 = (TextView) view.findViewById(R.id.tv_clientes_detalles5);
         tv6 = (TextView) view.findViewById(R.id.tv_clientes_detalles6);
         tv7 = (TextView) view.findViewById(R.id.tv_clientes_detalles7);
+        ddfrasd_tv_fecha = (TextView) view.findViewById(R.id.ddfrasd_tv_fecha);
 
         primeraPeticion();
     }
