@@ -38,30 +38,30 @@ public class Config extends Activity {
     public static final String URL_CALCULA_RETIRO_AFORE = "https://asesorprofuturo.mx/content/wps/portal/Calcula-tu-pension-de-retiro";
 
     public static final String URL_GENERAL = "http://52.38.211.22:90/";
-    public static final String URL_AUTENTIFICACION = URL_GENERAL + "mb/cusp/rest/autenticacionUsuario.php";
-    public static final String URL_CONSULTA_INFORMACION_USUARIO = URL_GENERAL + "mb/cusp/rest/consultaInformacionUsuario.php";
-    public static final String URL_CONSULTAR_RESUMEN_RETENCIONES = URL_GENERAL + "mb/premium/rest/consultarResumenRetenciones.php";
-    public static final String URL_CONSULTAR_RESUMEN_CITAS = URL_GENERAL + "mb/premium/rest/consultarResumenCitas.php";
-    public static final String URL_CONSULTAR_CLIENTE_SIN_CITA = URL_GENERAL + "mb/premium/rest/consultarClienteSinCita.php";
-    public static final String URL_CONSULTAR_DATOS_ASESOR = URL_GENERAL + "mb/premium/rest/consultarDatosAsesor.php";
-    public static final String URL_CUNSULTAR_DATOS_CLIENTE = URL_GENERAL + "mb/premium/rest/consultarDatosCliente.php";
-    public static final String URL_GENERAR_REPORTE_CLIENTE = URL_GENERAL + "mb/premium/rest/generarReporteAsesor.php";
+    public static final String URL_AUTENTIFICACION = URL_GENERAL + "mb/cusp/rest/autenticacionUsuario";
+    public static final String URL_CONSULTA_INFORMACION_USUARIO = URL_GENERAL + "mb/cusp/rest/consultaInformacionUsuario";
+    public static final String URL_CONSULTAR_RESUMEN_RETENCIONES = URL_GENERAL + "mb/premium/rest/consultarResumenRetenciones";
+    public static final String URL_CONSULTAR_RESUMEN_CITAS = URL_GENERAL + "mb/premium/rest/consultarResumenCitas";
+    public static final String URL_CONSULTAR_CLIENTE_SIN_CITA = URL_GENERAL + "mb/premium/rest/consultarClienteSinCita";
+    public static final String URL_CONSULTAR_DATOS_ASESOR = URL_GENERAL + "mb/premium/rest/consultarDatosAsesor";
+    public static final String URL_CUNSULTAR_DATOS_CLIENTE = URL_GENERAL + "mb/premium/rest/consultarDatosCliente";
+    public static final String URL_GENERAR_REPORTE_CLIENTE = URL_GENERAL + "mb/premium/rest/generarReporteAsesor";
 
-    public static final String URL_ENVIAR_ENCUESTA = URL_GENERAL + "mb/premium/rest/enviarEncuesta.php";
-    public static final String URL_ENVIAR_ENCUESTA_2 = URL_GENERAL + "mb/premium/rest/enviarEncuestaObservacion.php";
-    public static final String URL_ENVIAR_FIRMA = URL_GENERAL + "mb/premium/rest/guardarFirmaCliente.php";
-    public static final String URL_ENVIAR_DOCUMENTO_IFE_INE = URL_GENERAL + "mb/premium/rest/guardarDocumentacionCliente.php";
+    public static final String URL_ENVIAR_ENCUESTA = URL_GENERAL + "mb/premium/rest/enviarEncuesta";
+    public static final String URL_ENVIAR_ENCUESTA_2 = URL_GENERAL + "mb/premium/rest/enviarEncuestaObservacion";
+    public static final String URL_ENVIAR_FIRMA = URL_GENERAL + "mb/premium/rest/guardarFirmaCliente";
+    public static final String URL_ENVIAR_DOCUMENTO_IFE_INE = URL_GENERAL + "mb/premium/rest/guardarDocumentacionCliente";
 
-    public static final String URL_REGISTRAR_ASISTENCIA = URL_GENERAL + "mb/premium/rest/registrarAsistencia.php";
+    public static final String URL_REGISTRAR_ASISTENCIA = URL_GENERAL + "mb/premium/rest/registrarAsistencia";
 
     // TODO: LISTO DIRECTOR
-    public static final String URL_CONSULTAR_REPORTE_RETENCION_GERENCIAS = URL_GENERAL + "mb/premium/rest/consultarReporteRetencionesGerencia.php";
-    public static final String URL_CONSULTAR_REPORTE_RETENCION_SUCURSALES = URL_GENERAL + "mb/premium/rest/consultarReporteRetencionesSucursal.php";
-    public static final String URL_CONSULTAR_REPORTE_RETENCION_ASESORES = URL_GENERAL + "mb/premium/rest/consultarReporteRetencionesAsesor.php";
-    public static final String URL_CONSULTAR_REPORTE_RETENCION_CLIENTES = URL_GENERAL + "mb/premium/rest/consultarReporteRetencionesCliente.php";
-    public static final String URL_CONSULTAR_REPORTE_RETENCION_CLIENTE_DETALLE = URL_GENERAL + "mb/premium/rest/generarReporteCliente.php";
-    public static final String URL_CONSULTAR_REPORTE_ASISTENCIA = URL_GENERAL + "mb/premium/rest/consultarReporteAsistencia.php";
-    public static final String URL_CONSULTAR_REPORTE_ASISTENCIA_DETALLE = URL_GENERAL + "Profuturo/consultarReporteProductividadAsistencia.php";
+    public static final String URL_CONSULTAR_REPORTE_RETENCION_GERENCIAS = URL_GENERAL + "mb/premium/rest/consultarReporteRetencionesGerencia";
+    public static final String URL_CONSULTAR_REPORTE_RETENCION_SUCURSALES = URL_GENERAL + "mb/premium/rest/consultarReporteRetencionesSucursal";
+    public static final String URL_CONSULTAR_REPORTE_RETENCION_ASESORES = URL_GENERAL + "mb/premium/rest/consultarReporteRetencionesAsesor";
+    public static final String URL_CONSULTAR_REPORTE_RETENCION_CLIENTES = URL_GENERAL + "mb/premium/rest/consultarReporteRetencionesCliente";
+    public static final String URL_CONSULTAR_REPORTE_RETENCION_CLIENTE_DETALLE = URL_GENERAL + "mb/premium/rest/generarReporteCliente";
+    public static final String URL_CONSULTAR_REPORTE_ASISTENCIA = URL_GENERAL + "mb/premium/rest/consultarReporteAsistencia";
+    public static final String URL_CONSULTAR_REPORTE_ASISTENCIA_DETALLE = URL_GENERAL + "Profuturo/consultarReporteProductividadAsistencia";
 
     // TODO: String
     public static final String[] GERENCIAS = new String[]{"Selecciona una Gerencia","Gerencia 1", "Gerencia 2", "Gerencia 3", "Gerencia 4"};

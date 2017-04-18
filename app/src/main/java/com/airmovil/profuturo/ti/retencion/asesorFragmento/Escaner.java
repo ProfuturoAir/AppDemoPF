@@ -450,7 +450,7 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
                     AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
                     dialogo1.setTitle("Confirmar");
-                    dialogo1.setMessage("¿Estàs seguro que deseas cancelar y guardar los cambios del proceso 1.1.3.8?");
+                    dialogo1.setMessage("¿Estás seguro que deseas cancelar y guardar los cambios del proceso 1.1.3.8?");
                     dialogo1.setCancelable(false);
                     dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
@@ -586,7 +586,7 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
             Config.msj(getContext(), "Error", "Error al formar los datos");
         }
         //Creating a json array request
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_ENCUESTA_2, obj,
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_DOCUMENTO_IFE_INE, obj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

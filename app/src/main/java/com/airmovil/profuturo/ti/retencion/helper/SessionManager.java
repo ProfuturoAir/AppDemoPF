@@ -23,9 +23,11 @@ public class SessionManager {
     public static final String CURP = "curp";
     public static final String EMAIL = "email";
     public static final String FECHA_ALTA_CONSAR = "fechaAltaConsar";
+    public static final String ID_ROL_EMPLEADO = "idRolEmpleado";
     public static final String NOMBRE = "nombre";
     public static final String NUMERO_EMPLEADO = "numeroEmpleado";
     public static final String USER_ID = "userId";
+    public static final String ROL_EMPLEADO = "rolEmpleado";
     public static final String PERFIL = "perfil";
 
     // LogCat tag
@@ -49,7 +51,7 @@ public class SessionManager {
     }
 
     public void createLoginSession(String apellidoMaterno, String apellidoPaterno, String centroCosto, String claveConsar, String curp, String email,
-                String fechaAltaConsar, String nombre,String numeroEmpleado, String userId, String perfil){
+                String fechaAltaConsar, String idRolEmpelado, String nombre,String numeroEmpleado, String rolEmpleado ,String userId){
         // Storing name in pref
         editor.putBoolean(KEY_IS_LOGGEDIN, true);
         editor.putString(APELLIDO_MATERNO, apellidoMaterno);
@@ -59,10 +61,11 @@ public class SessionManager {
         editor.putString(CURP, curp);
         editor.putString(EMAIL, email);
         editor.putString(FECHA_ALTA_CONSAR, fechaAltaConsar);
+        editor.putString(ID_ROL_EMPLEADO, idRolEmpelado);
         editor.putString(NOMBRE, nombre);
         editor.putString(NUMERO_EMPLEADO, numeroEmpleado);
+        editor.putString(ROL_EMPLEADO, rolEmpleado);
         editor.putString(USER_ID, userId);
-        editor.putString(PERFIL, perfil);
         // commit changes
         editor.commit();
     }
@@ -91,6 +94,7 @@ public class SessionManager {
         user.put(CURP, pref.getString(CURP, null));
         user.put(EMAIL, pref.getString(EMAIL, null));
         user.put(FECHA_ALTA_CONSAR, pref.getString(FECHA_ALTA_CONSAR, null));
+        user.put(ID_ROL_EMPLEADO, pref.getString(ID_ROL_EMPLEADO, null));
         user.put(NOMBRE, pref.getString(NOMBRE,null));
         user.put(NUMERO_EMPLEADO, pref.getString(NUMERO_EMPLEADO, null));
         user.put(USER_ID, pref.getString(USER_ID, null));

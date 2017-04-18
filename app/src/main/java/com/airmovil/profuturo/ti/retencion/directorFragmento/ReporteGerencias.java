@@ -340,6 +340,9 @@ public class ReporteGerencias extends Fragment {
                 mParam2 = getArguments().getString(ARG_PARAM2);
                 mParam3 = getArguments().getInt(ARG_PARAM3);
 
+                final String mParam1 = getArguments().getString(ARG_PARAM1);
+                final String mParam2 = getArguments().getString(ARG_PARAM2);
+
                 Map<String, String> fecha = Config.fechas(1);
                 String param1 = fecha.get("fechaIni");
                 String param2 = fecha.get("fechaFin");
@@ -502,9 +505,25 @@ public class ReporteGerencias extends Fragment {
 
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         Log.d("numeroMaximoPaginas", ""+numeroMaximoPaginas);
-        adapter = new DirectorReporteGerenciasAdapter(rootView.getContext(), getDato1, recyclerView);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter);
+
+
+        Map<String, String> datos = new HashMap<String, String>();
+        datos.put("fechaInicio", fechaIni);
+
+        if(getArguments() != null){
+            final String mParam1 = getArguments().getString(ARG_PARAM1);
+            final String mParam2 = getArguments().getString(ARG_PARAM2);
+            adapter = new DirectorReporteGerenciasAdapter(rootView.getContext(), getDato1, recyclerView, mParam1, mParam2);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.setAdapter(adapter);
+        }else{
+            Map<String, String> fecha = Config.fechas(1);
+            String mParam1 = fecha.get("fechaIni");
+            String mParam2 = fecha.get("fechaFin");
+            adapter = new DirectorReporteGerenciasAdapter(rootView.getContext(), getDato1, recyclerView, mParam1, mParam2);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.setAdapter(adapter);
+        }
 
         adapter.notifyDataSetChanged();
         adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
