@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.EnviaJSON;
@@ -214,7 +215,7 @@ public class Escaner extends Fragment {
                         public void onClick(DialogInterface dialog, int which) {
 
                             imageView.setDrawingCacheEnabled(true);
-                            String base64 = encodeTobase64(imageView.getDrawingCache());
+                            final String base64 = encodeTobase64(imageView.getDrawingCache());
                             //Bitmap emBit = Bitmap.createBitmap(imageView.getWidth(), imageView.getHeight(), Bitmap.Config.ARGB_8888);
                             Log.d("BASE64-->", base64);
                             imageView.setDrawingCacheEnabled(false);
@@ -223,19 +224,62 @@ public class Escaner extends Fragment {
                                 sendJson(true);
                                 final EnviaJSON enviaPrevio = new EnviaJSON();
                                 enviaPrevio.sendPrevios(idTramite, getContext());
+                                Fragment fragmentoGenerico = new ConCita();
+                                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                                if (fragmentoGenerico != null) {
+                                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                                }
+
+                                Config.msj(getContext(), "Mensaje ", "Se ha finalizado el proceso con exito");
                             }else {
-                                db.addDocumento(idTramite,"2017-04-10",1,base64,"12344","Cesar",90.2349, -23.9897);
+
+                                final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                                progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                                progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                                progressDialog.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
+                                progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                progressDialog.dismiss();
+                                                db.addDocumento(idTramite,"2017-04-10",1,base64,"12344","Cesar",90.2349, -23.9897);
+                                                db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+                                                Fragment fragmentoGenerico = new ConCita();
+                                                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                                                if (fragmentoGenerico != null) {
+                                                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                                                }
+
+                                                Config.msj(getContext(), "Mensaje ", "Se ha finalizado el proceos, si deseas ve a la parte de reportes pendientes par verificar que tu procesos se haya guardado y, que cuando exista conexión a internet se enviara.");
+                                            }
+                                        });
+                                progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+
+                                            }
+                                        });
+                                progressDialog.show();
+
+                                // * db.addDocumento(idTramite,"2017-04-10",1,base64,"12344","Cesar",90.2349, -23.9897);
                                 /*
                                 idTramite = getArguments().getString("idTramite");
                                 nombre = getArguments().getString("nombre");
                                 numeroDeCuenta = getArguments().getString("numeroDeCuenta");
                                 hora
                                  */
-                                db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+                                // * db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
                                 //Cursor todos = db.getAllPending();
                                 //Log.d("HOLA","TODOS: "+todos);
 
                                 //db.addFirma("1", 123, base64, 90.2349, -23.9897);
+
+                                //* Fragment fragmentoGenerico = new ConCita();
+                                //* FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                                //* if (fragmentoGenerico != null) {
+                                    //* fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                                //*}
                             }
 
                             /*Fragment fragmentoGenerico = null;
@@ -249,11 +293,11 @@ public class Escaner extends Fragment {
                                         .addToBackStack("F_MAIN")
                                         .commit();
                             }*/
-                            Fragment fragmentoGenerico = new ConCita();
-                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                            if (fragmentoGenerico != null) {
-                                fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
-                            }
+                            // * Fragment fragmentoGenerico = new ConCita();
+                            // * FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            // * if (fragmentoGenerico != null) {
+                                // * fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                            // * }
                         }
                     });
                     dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
