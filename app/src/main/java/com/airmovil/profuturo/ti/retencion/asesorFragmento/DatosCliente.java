@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Asesor;
@@ -120,6 +121,9 @@ public class DatosCliente extends Fragment {
         Log.d("NOMBRES CLI ", "1 " + nombre + " numero " + numeroDeCuenta);
 
         /*
+
+        9883074665
+
         if(getArguments() != null){
             mParam1 = getArguments().getString(ARG_PARAM1).trim();
             mParam2 = getArguments().getString(ARG_PARAM2).trim();
@@ -134,7 +138,7 @@ public class DatosCliente extends Fragment {
                 final Connected conected = new Connected();
 
                 if(conected.estaConectado(getContext())){
-                    sendJson(true);
+                    //sendJson(true);
                     if(idTramite!=null){
                         Fragment fragmentoGenerico = new Encuesta1();
                         /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
@@ -146,17 +150,17 @@ public class DatosCliente extends Fragment {
                     final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
                     progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
                     progressDialog.setTitle(getResources().getString(R.string.error_conexion));
-                    progressDialog.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
+                    progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion) + "|");
                     progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     progressDialog.dismiss();
-                                    //sendJson(true);
+                                    sendJson(true);
                                     if(idTramite!=null){
                                         Fragment fragmentoGenerico = new Encuesta1();
-                                        /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                                        fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
+                    /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
                                         Asesor asesor = (Asesor) getContext();
                                         asesor.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
                                     }
@@ -330,14 +334,18 @@ public class DatosCliente extends Fragment {
     private void sendJson(final boolean primerPeticion) {
 
         JSONObject obj = new JSONObject();
-
+        SessionManager sessionManager = new SessionManager(getContext());
+        HashMap<String, String> usuario = sessionManager.getUserDetails();
+        String idUsuario = usuario.get(SessionManager.USER_ID);
+        nombre = getArguments().getString("nombre");
+        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+        hora = getArguments().getString("hora");
         try {
             // TODO: Formacion del JSON request
-
             JSONObject rqt = new JSONObject();
             rqt.put("estatusTramite", 1133);
-            rqt.put("numeroCuenta", "123123");
-            rqt.put("usuario", usuario.get(SessionManager.ID));
+            rqt.put("numeroCuenta", numeroDeCuenta);
+            rqt.put("usuario", idUsuario);
             obj.put("rqt", rqt);
             Log.d(TAG, "Primera peticion-->" + obj);
         } catch (JSONException e) {

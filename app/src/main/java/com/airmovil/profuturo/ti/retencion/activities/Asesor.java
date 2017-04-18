@@ -168,7 +168,7 @@ public class Asesor extends AppCompatActivity{
         //String inicial = Character.toString(letra);
 
         //navPrimeraLetra.setText(inicial);
-        navDatosGerente.setText(nombre + " " + apePaterno + " " + apeMaterno + "\nNúmero empleado: " + idEmpleado);
+        //navDatosGerente.setText(nombre + " " + apePaterno + " " + apeMaterno + "\nNúmero empleado: " + idEmpleado);
 
         // TODO: Se utiliza
         //char letra = sNombreEmpleado.charAt(0);

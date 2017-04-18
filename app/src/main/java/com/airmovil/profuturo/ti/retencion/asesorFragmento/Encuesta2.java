@@ -374,6 +374,8 @@ public class Encuesta2 extends Fragment {
         else
             loading = null;
 
+        idTramite = getArguments().getString("idTramite");
+
         JSONObject obj = new JSONObject();
         // TODO: Formacion del JSON request
         try{
@@ -387,7 +389,7 @@ public class Encuesta2 extends Fragment {
             rqt.put("telefono", telefono);
             rqt.put("email", email);
             rqt.put("estatusTramite", 123);
-            rqt.put("idTramite", "");
+            rqt.put("idTramite", idTramite);
             obj.put("rqt", rqt);
             Log.d(TAG, "REQUEST-->" + obj);
         } catch (JSONException e){

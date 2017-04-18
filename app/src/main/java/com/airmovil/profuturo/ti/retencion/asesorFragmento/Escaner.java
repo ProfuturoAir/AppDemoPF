@@ -1,16 +1,21 @@
 package com.airmovil.profuturo.ti.retencion.asesorFragmento;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
@@ -22,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Asesor;
@@ -30,19 +36,26 @@ import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.EnviaJSON;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SQLiteHandler;
+import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,7 +65,7 @@ import java.util.Map;
  * Use the {@link Escaner#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Escaner extends Fragment {
+public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -75,6 +88,12 @@ public class Escaner extends Fragment {
     private File mCurrentPhoto;
     private ImageView imageView;
     private Button btnFinalizar;
+
+    private GoogleApiClient apiClient;
+    private static final int REQUEST_LOCATION = 0;
+    private boolean firsStarted = true;
+    private TextView lblLatitud;
+    private TextView lblLongitud;
 
     private Connected connected;
     private SQLiteHandler db;
@@ -129,11 +148,26 @@ public class Escaner extends Fragment {
         btnBorrar= (Button) view.findViewById(R.id.af_btn_borrar);
         imageView = (ImageView) rootView.findViewById(R.id.scannedImage);
 
+
+        lblLatitud = (TextView) view.findViewById(R.id.aff_lbl_LatitudDoc);
+        lblLongitud = (TextView) view.findViewById(R.id.aff_lbl_LongitudDoc);
+
         connected = new Connected();
         idTramite = getArguments().getString("idTramite");
         nombre = getArguments().getString("nombre");
         numeroDeCuenta = getArguments().getString("numeroDeCuenta");
         hora = getArguments().getString("hora");
+
+        try{
+            apiClient = new GoogleApiClient.Builder(getActivity())
+                    .enableAutoManage(getActivity(),this)
+                    .addConnectionCallbacks(this)
+                    .addApi(LocationServices.API)
+                    .build();
+
+        } catch (Exception e){
+
+        }
 
         Log.d("AL FINAL ", "1 " + nombre + " numero " + numeroDeCuenta);
 
@@ -221,7 +255,7 @@ public class Escaner extends Fragment {
                             imageView.setDrawingCacheEnabled(false);
 
                             if(connected.estaConectado(getContext())) {
-                                sendJson(true);
+                                sendJson(true, base64);
                                 final EnviaJSON enviaPrevio = new EnviaJSON();
                                 enviaPrevio.sendPrevios(idTramite, getContext());
                                 Fragment fragmentoGenerico = new ConCita();
@@ -365,7 +399,7 @@ public class Escaner extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
+        if (context instanceof Firma.OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         }
     }
@@ -375,6 +409,34 @@ public class Escaner extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        apiClient.stopAutoManage(getActivity());
+        apiClient.disconnect();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        apiClient.stopAutoManage(getActivity());
+        apiClient.disconnect();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        if(apiClient.isConnected())
+            apiClient.disconnect();
+        firsStarted = true;
+        super.onStop();
+    }
+
 
     @Override
     public void onResume() {
@@ -416,6 +478,52 @@ public class Escaner extends Fragment {
         });
     }
 
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+        } else {
+            Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(apiClient);
+            updateUI(lastLocation);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_LOCATION) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //Permiso concedido
+                @SuppressWarnings("MissingPermission")
+                Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(apiClient);
+                updateUI(lastLocation);
+            } else {
+                //Permiso denegado:
+                //Deberíamos deshabilitar toda la funcionalidad relativa a la localización.
+                Log.e("LOGTAG", "Permiso denegado");
+            }
+        }
+    }
+
+    private void updateUI(Location loc){
+        if (loc != null){
+            lblLatitud.setText(String.valueOf(loc.getLatitude()));
+            lblLongitud.setText(String.valueOf(loc.getLongitude()));
+        }/*else{
+            lblLatitud.setText("(desconocida)");
+            lblLongitud.setText("(desconocida)");
+        }*/
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -432,7 +540,7 @@ public class Escaner extends Fragment {
     }
 
     // TODO: REST
-    private void sendJson(final boolean primerPeticion) {
+    private void sendJson(final boolean primerPeticion, String base64) {
         final ProgressDialog loading;
         if (primerPeticion)
             loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
@@ -440,19 +548,38 @@ public class Escaner extends Fragment {
             loading = null;
 
         JSONObject obj = new JSONObject();
+        String latitud = lblLatitud.getText().toString();
+        String longitud = lblLongitud.getText().toString();
+        idTramite = getArguments().getString("idTramite");
+        SessionManager sessionManager = new SessionManager(getContext());
+        HashMap<String, String> usuario = sessionManager.getUserDetails();
+        String idUsuario = usuario.get(SessionManager.USER_ID);
+        String fechaN = "";
+        try {
+            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+            f.setTimeZone(TimeZone.getTimeZone("America/Mexico_City"));
+            String fechaS = f.format(new Date());
+            fechaN = fechaS.substring(0, fechaS.length() - 2) + ":00";
+            System.out.println(fechaN);
+            Log.d("TAG fecha ->", "" + fechaN);
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("TAG e: ", "" + e);
+        }
+
 
         // TODO: Formacion del JSON request
         try{
             JSONObject rqt = new JSONObject();
-            rqt.put("estatusTramite", 123);
-            rqt.put("fechaHoraFina", "2017-04-10 ");
-            rqt.put("idTramite", 1);
-            rqt.put("ineIfe", "12312312312331233");
-            rqt.put("numeroCuenta", "123123");
+            rqt.put("estatusTramite", 1138);
+            rqt.put("fechaHoraFina", fechaN);
+            rqt.put("idTramite", idTramite);
+            rqt.put("numeroCuenta", idUsuario);
             JSONObject ubicacion = new JSONObject();
-            ubicacion.put("latitud", "90.2349");
-            ubicacion.put("longitud", "-23.9897");
+            ubicacion.put("latitud", latitud);
+            ubicacion.put("longitud", longitud);
             rqt.put("ubicacion", ubicacion);
+            rqt.put("ineIfe", base64);
             obj.put("rqt", rqt);
             Log.d("datos", "REQUEST-->" + obj);
         } catch (JSONException e){

@@ -79,6 +79,8 @@
             android:text="Cancelar"
             android:textColor="@color/colorPrimaryDark"
             android:textStyle="bold" />
+        <TextView android:id="@+id/aff_lbl_LatitudDoc" style="@style/tvlatitud" android:textColor="@color/colorAccent"/>
+        <TextView android:id="@+id/aff_lbl_LongitudDoc" style="@style/tvLogintud" android:textColor="@color/colorAccent"/>
     </LinearLayout>
 
 </ScrollView>
