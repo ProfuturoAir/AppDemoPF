@@ -27,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class Login extends AppCompatActivity {
@@ -54,18 +55,18 @@ public class Login extends AppCompatActivity {
 
         Log.d("*************", "PERFIL: ->" + perfil);
 
-            if (sessionManager.isLoggedIn()) {
-                if (sessionManager.getUserDetails().get("perfil").equals("1")) {
-                    startActivity(new Intent(this, Director.class));
-                } else if (sessionManager.getUserDetails().get("perfil").equals("2")) {
-                    Intent intentGerenteGerencias = new Intent(this, Gerente.class);
-                    startActivity(intentGerenteGerencias);
-                } else {
-                    Intent intentAsesor = new Intent(this, Asesor.class);
-                    startActivity(intentAsesor);
-                }
-                finish();
+        if (sessionManager.isLoggedIn()) {
+            if (sessionManager.getUserDetails().get("idRolEmpleado").equals("3")) {
+                startActivity(new Intent(this, Director.class));
+            } else if (sessionManager.getUserDetails().get("idRolEmpleado").equals("3")) {
+                Intent intentGerenteGerencias = new Intent(this, Gerente.class);
+                startActivity(intentGerenteGerencias);
+            } else {
+                Intent intentAsesor = new Intent(this, Asesor.class);
+                startActivity(intentAsesor);
             }
+            finish();
+        }
 
         btnIngresar.performClick();
         btnIngresar.setOnClickListener(new View.OnClickListener() {
@@ -82,7 +83,7 @@ public class Login extends AppCompatActivity {
                         sendJson(true, numeroEmpleado, password);
                     }else{
                         Log.d(TAG,"Error conexion");
-                        Config.msj(Login.this, "Error en conexió", "Sin Conexion por el momento.");
+                        Config.msj(Login.this, "Error en conexión", "Sin Conexion por el momento.");
                     }
                 }
             }
@@ -97,6 +98,7 @@ public class Login extends AppCompatActivity {
             rqt.put("contrasena", password);
             rqt.put("usuario", numeroEmpleado);
             obj.put("rqt", rqt);
+            Log.d("RQT","" + obj);
         } catch (JSONException e) {
             Config.msj(this,"Error", "1 Lo sentimos ocurrio un error al formar los datos");
         }
@@ -117,43 +119,34 @@ public class Login extends AppCompatActivity {
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+                return Config.credenciales(getApplicationContext());
             }
         };
         MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonArrayRequest);
     }
 
     private void primerPaso(JSONObject obj) {
-        String status = "";
         String exception = "";
         boolean confirmacion;
-        int perfil = 0;
         String numeroEmpleado = "";
+        Log.d("response", "" + obj);
+
+        boolean isValid = false;
         try {
-            status = obj.getString("status");
-
-            if(Integer.parseInt(status) == 200){
-                //Config.msj(this, "123","ok");
+            if(obj.has("confirmacion")){
                 numeroEmpleado = obj.getString("numeroEmpleado");
-                perfil = obj.getInt("perfil");
-                validacionCorrecta(numeroEmpleado, perfil);
+                peticionDatos(true, numeroEmpleado);
             }else{
+                Log.d("123123", "else");
                 exception = obj.getString("Exception");
-                validactionIncorrecta(status, exception);
-
+                Config.msj(this, "Error", exception);
             }
-        } catch (JSONException e) {
-            Config.msj(Login.this,"Error", "Lo sentimos ocurrio un error con los datos.");
+        }catch (JSONException ee){
+            isValid = false;
         }
     }
 
-    public void validacionCorrecta(final String vNumeroEmpleado, final int vPerfil){
+    public void validacionCorrecta(final String vNumeroEmpleado){
         final ProgressDialog progressDialog = new ProgressDialog(this, R.style.Theme_AppCompat_DayNight_Dialog_Alert);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
@@ -165,7 +158,8 @@ public class Login extends AppCompatActivity {
                     public void run() {
                         Config.teclado(getApplicationContext(), _numeroEmpleadom);
                         Config.teclado(getApplicationContext(), _contrasenia);
-                        redireccionSesiones(vNumeroEmpleado, vPerfil);
+                        //redireccionSesiones(vNumeroEmpleado, vPerfil);
+                        peticionDatos(true, vNumeroEmpleado);
                         progressDialog.dismiss();
                     }
                 }, 5000);
@@ -195,20 +189,17 @@ public class Login extends AppCompatActivity {
         Config.msj(Login.this,"Error: " + status, exception);
     }
 
-    public void redireccionSesiones(String rNumeroEmpleado, int rPerfil){
+   public void redireccionSesiones(int rPerfil){
         sessionManager.setLogin(true);
 
         switch (rPerfil){
-            case 1:
-                peticionDatos(true, rNumeroEmpleado, rPerfil);
+            case 3:
                 startActivity(new Intent(Login.this, Director.class));
                 break;
             case 2:
-                peticionDatos(true, rNumeroEmpleado, rPerfil);
                 startActivity(new Intent(Login.this, Gerente.class));
                 break;
-            case 3:
-                peticionDatos(true, rNumeroEmpleado, rPerfil);
+            case 1:
                 startActivity(new Intent(Login.this, Asesor.class));
                 break;
             default:
@@ -216,12 +207,13 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    private void peticionDatos(final boolean primeraPeticion, String pNumeroEmpleado, final int pPerfil) {
+    private void peticionDatos(final boolean primeraPeticion, String pNumeroEmpleado) {
         JSONObject obj = new JSONObject();
         JSONObject rqt = new JSONObject();
         try {
             rqt.put("usuario", pNumeroEmpleado);
             obj.put("rqt", rqt);
+            Log.d("TAG--> peticiondatos", "" + obj );
         } catch (JSONException e) {
             Config.msj(this,"Error", "1 Lo sentimos ocurrio un error al formar los datos");
         }
@@ -230,7 +222,7 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         if (primeraPeticion) {
-                            obtencionDatos(response, pPerfil);
+                            obtencionDatos(response);
                         }
                     }
                 },
@@ -249,37 +241,45 @@ public class Login extends AppCompatActivity {
     }
 
 
-    private void obtencionDatos(JSONObject obj, int oPerfil){
-        String perfilUsuario = String.valueOf(oPerfil);
+    private void obtencionDatos(JSONObject obj){
+
+        Log.d("TAG --> response", " * *  * * *" + obj);
         String apellidoMaterno = "";
         String apellidoPaterno = "";
         int centroCosto = 0;
-        String sCentroCosto;
         String claveConsar = "";
         String curp = "";
         String email = "";
         String fechaAltaConsar = "";
+        int idRolEmpleado = 0;
         String nombre = "";
         String numeroEmpleado = "";
+        String rolEmpleado = "";
         String userId = "";
 
         try{
             apellidoMaterno = obj.getString("apellidoMaterno");
             apellidoPaterno = obj.getString("apellidoPaterno");
             centroCosto = obj.getInt("centroCosto");
-            sCentroCosto = String.valueOf(centroCosto);
+            String sCentroCosto = String.valueOf(centroCosto);
             claveConsar = obj.getString("claveConsar");
             curp = obj.getString("curp");
             email = obj.getString("email");
             fechaAltaConsar = obj.getString("fechaAltaConsar");
+            idRolEmpleado = obj.getInt("idRolEmpleado");
+            String sIdRolEmpleado = String.valueOf(idRolEmpleado);
             nombre = obj.getString("nombre");
             numeroEmpleado = obj.getString("numeroEmpleado");
+            rolEmpleado = obj.getString("rolEmpleado");
             userId = obj.getString("userId");
-            Log.d("DATOS A RECOLECTAR ->", " " + apellidoMaterno + " " + apellidoPaterno + " " + sCentroCosto + " " + claveConsar + " " + curp + " " + email + " " + fechaAltaConsar +
-                    " " + nombre + " " + numeroEmpleado + " " + userId + " " + perfilUsuario);
-            sessionManager.createLoginSession(apellidoMaterno, apellidoPaterno, sCentroCosto, claveConsar,curp, email, fechaAltaConsar, nombre, numeroEmpleado, userId, perfilUsuario);
+            Log.d("DATOS A RECOLECTAR ->", " " + apellidoMaterno + " " + apellidoPaterno + " " + centroCosto + " " + claveConsar + " " + curp + " " + email + " " +
+                    fechaAltaConsar + " " + idRolEmpleado + " "+ " " + nombre + " " + numeroEmpleado + " " + rolEmpleado + " " + userId + " " );
+            sessionManager.createLoginSession(apellidoMaterno, apellidoPaterno, sCentroCosto, claveConsar,curp, email, fechaAltaConsar, sIdRolEmpleado,nombre, numeroEmpleado, rolEmpleado, userId);
         }catch (JSONException e){
             e.printStackTrace();
         }
+
+
+        redireccionSesiones(idRolEmpleado);
     }
 }

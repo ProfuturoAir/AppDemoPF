@@ -6,7 +6,25 @@
     android:background="@android:color/white"
     tools:context="com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteGerencias">
     <TextView style="@style/tituloProceso" android:text="GERENCIAS " />
-        <TextView android:id="@+id/dfrg_tv_fecha" style="@style/fecha"/>
+    <TextView android:id="@+id/dfrg_tv_fecha" style="@style/fecha"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/colorPrimaryDark">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" - "/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

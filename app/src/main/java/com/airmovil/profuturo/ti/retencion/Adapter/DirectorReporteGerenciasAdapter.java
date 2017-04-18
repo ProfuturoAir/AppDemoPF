@@ -36,7 +36,9 @@ import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteGerenciasModel;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.airmovil.profuturo.ti.retencion.R;
 
@@ -56,11 +58,23 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
     private int visibleThreshold = 10;
     private int lastVisibleItem, totalItemCount;
     private RecyclerView mRecyclerView;
+    private Map<String, String> datos;
 
-    public DirectorReporteGerenciasAdapter(Context mContext, List<DirectorReporteGerenciasModel> list, RecyclerView mRecyclerView) {
+    private String mFechaInicio;
+    private String mFechaFin;
+
+
+    //public DirectorReporteGerenciasAdapter(Context mContext, List<DirectorReporteGerenciasModel> list, RecyclerView mRecyclerView,  Map<String, String> datos ) {
+    public DirectorReporteGerenciasAdapter(Context mContext, List<DirectorReporteGerenciasModel> list, RecyclerView mRecyclerView,  String mFechaInicio, String mFechaFin) {
         this.mContext = mContext;
         this.list = list;
         this.mRecyclerView = mRecyclerView;
+
+        datos = new HashMap<String, String>();
+        this.datos = datos;
+        //this.datos.get("fechaINi");
+        this.mFechaInicio = mFechaInicio;
+        this.mFechaFin = mFechaFin;
 
         final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) this.mRecyclerView.getLayoutManager();
         this.mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -114,7 +128,10 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
             myViewHolder.tvClick.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    surgirMenu(v);
+
+                    Toast.makeText(mContext, "1. " + mFechaInicio + " 2. " + mFechaFin, Toast.LENGTH_SHORT).show();
+
+                    //surgirMenu(v);
                 }
             });
 
