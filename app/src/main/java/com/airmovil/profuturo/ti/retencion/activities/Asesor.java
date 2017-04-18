@@ -164,10 +164,10 @@ public class Asesor extends AppCompatActivity{
         String apeMaterno = datosUsuario.get(SessionManager.APELLIDO_MATERNO);
         String nombre = datosUsuario.get(SessionManager.NOMBRE);
         String idEmpleado = datosUsuario.get(SessionManager.USER_ID);
-        char letra = nombre.charAt(0);
-        String inicial = Character.toString(letra);
+        //char letra = nombre.charAt(0);
+        //String inicial = Character.toString(letra);
 
-        navPrimeraLetra.setText(inicial);
+        //navPrimeraLetra.setText(inicial);
         navDatosGerente.setText(nombre + " " + apePaterno + " " + apeMaterno + "\nNúmero empleado: " + idEmpleado);
 
         // TODO: Se utiliza

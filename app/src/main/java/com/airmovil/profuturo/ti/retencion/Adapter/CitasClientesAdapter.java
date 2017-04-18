@@ -138,11 +138,11 @@ public class CitasClientesAdapter extends RecyclerView.Adapter {
             Asesor asesor = (Asesor) view.getContext();
 
             final Connected conected = new Connected();
-            if(conected.estaConectado(view.getContext())) {
+            /*if(conected.estaConectado(view.getContext())) {
 
             }else{
                 Config.msj(view.getContext(),"Error conexión", "Sin Conexion por el momento.Cliente P-1.1.3");
-            }
+            }*/
             asesor.switchDatosAsesor(fragmento, idClienteCuenta,nombre,numeroDeCuenta,hora);
         }
     }

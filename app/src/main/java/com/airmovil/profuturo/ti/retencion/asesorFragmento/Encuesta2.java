@@ -184,25 +184,56 @@ public class Encuesta2 extends Fragment {
                             final EnviaJSON enviaPrevio = new EnviaJSON();
                             Config.teclado(getContext(), etTelefono);
                             Config.teclado(getContext(), etEmail);
-                            //sendJson(true, iParam1IdGerencia, iParam2IdMotivos, iParam3IdEstatus, iParam4IdTitulo, iParam5IdRegimentPensionario, iParam6IdDocumentacion, iParam7Telefono, iParam8Email);
+                            sendJson(true, iParam1IdGerencia, iParam2IdMotivos, iParam3IdEstatus, iParam4IdTitulo, iParam5IdRegimentPensionario, iParam6IdDocumentacion, iParam7Telefono, iParam8Email);
                             enviaPrevio.sendPrevios(idTramite,getContext());
+                            Fragment fragmentoGenerico = new Firma();
+                            Asesor asesor = (Asesor) getContext();
+                            asesor.switchFirma(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
                         }else{
-                            db.addObservaciones(idTramite,iParam1IdGerencia,iParam2IdMotivos,iParam3IdEstatus,iParam4IdTitulo,iParam5IdRegimentPensionario,iParam6IdDocumentacion,iParam7Telefono,iParam8Email,123);
-                            db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+
+                            final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                            progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                            progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                            progressDialog.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
+                            progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            progressDialog.dismiss();
+
+                                            db.addObservaciones(idTramite,iParam1IdGerencia,iParam2IdMotivos,iParam3IdEstatus,iParam4IdTitulo,iParam5IdRegimentPensionario,iParam6IdDocumentacion,iParam7Telefono,iParam8Email,123);
+                                            db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+                                            Config.teclado(getContext(), etEmail);
+                                            Config.teclado(getContext(), etTelefono);
+
+                                            Fragment fragmentoGenerico = new Firma();
+                                            Asesor asesor = (Asesor) getContext();
+                                            asesor.switchFirma(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+                                        }
+                                    });
+                            progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    });
+                            progressDialog.show();
+
+                            // *db.addObservaciones(idTramite,iParam1IdGerencia,iParam2IdMotivos,iParam3IdEstatus,iParam4IdTitulo,iParam5IdRegimentPensionario,iParam6IdDocumentacion,iParam7Telefono,iParam8Email,123);
+                            // *db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
 
                             //Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
-                            Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
+                            // * Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
                             //Fragment fragmentoGenerico = new Firma();
                             //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                             //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
-                            Config.teclado(getContext(), etTelefono);
-                            Config.teclado(getContext(), etEmail);
                         }
-                        Fragment fragmentoGenerico = new Firma();
-                        /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
-                        Asesor asesor = (Asesor) getContext();
-                        asesor.switchFirma(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+                        // * Fragment fragmentoGenerico = new Firma();
+                        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
+                        // * Asesor asesor = (Asesor) getContext();
+                        // * asesor.switchFirma(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
                     }else{
                         Config.msj(getContext(), getResources().getString(R.string.error_email_incorrecto), getResources().getString(R.string.msj_error_email));
                     }

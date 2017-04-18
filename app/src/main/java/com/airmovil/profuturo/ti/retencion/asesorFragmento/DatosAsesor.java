@@ -133,16 +133,36 @@ public class DatosAsesor extends Fragment {
                     asesor.switchDatosCliente(fragmentoGenerico,nombre,numeroDeCuenta,hora);
                 }else {
 
-                    android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                    final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                    progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                    progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                    progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion));
+                    progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    progressDialog.dismiss();
+                                }
+                            });
+                    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                    progressDialog.show();
+
+                    /*android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
                     dlgAlert.setTitle("Error de conexión");
                     dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
                     dlgAlert.setCancelable(true);
                     dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            /*Fragment fragmentoGenerico = new DatosCliente();
-                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                            fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();*/
+                            //Fragment fragmentoGenerico = new DatosCliente();
+                            //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                             Fragment fragmentoGenerico = new DatosCliente();
                             Asesor asesor = (Asesor) getContext();
                             asesor.switchDatosCliente(fragmentoGenerico,nombre,numeroDeCuenta,hora);
@@ -154,7 +174,7 @@ public class DatosAsesor extends Fragment {
 
                         }
                     });
-                    dlgAlert.create().show();
+                    dlgAlert.create().show();*/
 
 
 
@@ -286,7 +306,7 @@ public class DatosAsesor extends Fragment {
                         progressDialog.dismiss();
                         sendJson(true);
                     }
-                }, 1500);
+                }, 500);
     }
 
     private void variables(){
@@ -352,37 +372,32 @@ public class DatosAsesor extends Fragment {
                             });
                             dlgAlert.create().show();
                         }else{
-                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                            dlgAlert.setTitle("Error de conexión");
-                            dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
-                            dlgAlert.setCancelable(true);
-                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    sendJson(true);
-                                }
-                            });
-                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
+                            final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                            progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                            progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                            progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion));
+                            progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            progressDialog.dismiss();
+                                            sendJson(true);
+                                        }
+                                    });
+                            progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
 
-                                }
-                            });
-                            dlgAlert.create().show();
+                                        }
+                                    });
+                            progressDialog.show();
                         }
                     }
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+                return Config.credenciales(getContext());
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);

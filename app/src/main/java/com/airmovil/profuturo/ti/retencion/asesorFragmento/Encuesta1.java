@@ -188,22 +188,49 @@ public class Encuesta1 extends Fragment {
                     if(conectado.estaConectado(getContext())){
                         sendJson(true);
                         Config.teclado(getContext(), etObservaciones);
-                        //Fragment fragmentoGenerico = new Encuesta2();
-                        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                        Fragment fragmentoGenerico = new Encuesta2();
+                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                        Asesor asesor = (Asesor) getContext();
+                        asesor.switchEncuesta2(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
                     }else{
-                        db.addEncuesta(idTramite,estatusTramite,r1,r2,r3,etObservaciones.getText().toString().trim());
-                        db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
-                        Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
+                        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                        progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                        progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                        progressDialog.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
+                        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        progressDialog.dismiss();
+                                        Config.teclado(getContext(), etObservaciones);
+                                        db.addEncuesta(idTramite,estatusTramite,r1,r2,r3,etObservaciones.getText().toString().trim());
+                                        db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+                                        Fragment fragmentoGenerico = new Encuesta2();
+                                        Asesor asesor = (Asesor) getContext();
+                                        asesor.switchEncuesta2(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+                                    }
+                                });
+                        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                });
+                        progressDialog.show();
+
+
+                        //Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
                         //Fragment fragmentoGenerico = new Encuesta2();
                         //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                         //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                     }
-                    Fragment fragmentoGenerico = new Encuesta2();
-                    /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
-                    Asesor asesor = (Asesor) getContext();
-                    asesor.switchEncuesta2(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+                    //Fragment fragmentoGenerico = new Encuesta2();
+                    //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
+                    //Asesor asesor = (Asesor) getContext();
+                    //asesor.switchEncuesta2(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
 
                 }
             }
@@ -377,15 +404,7 @@ public class Encuesta1 extends Fragment {
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+                return Config.credenciales(getContext());
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);

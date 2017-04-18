@@ -145,6 +145,7 @@ public class ConCita extends Fragment {
         tvFecha = (TextView) rootView.findViewById(R.id.afcc_tv_fecha);
         tvRegistros = (TextView) rootView.findViewById(R.id.afcc_tv_registros);
 
+        primeraPeticion();
         fechas();
 
         //<editor-fold desc="SPINNER">
@@ -174,7 +175,7 @@ public class ConCita extends Fragment {
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
         //</editor-fold>
 
-        sendJson(true);
+
         btnAplicar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -312,6 +313,21 @@ public class ConCita extends Fragment {
     }
 
 
+    private void primeraPeticion(){
+        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIcon(R.drawable.icono_abrir);
+        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
+        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
+        progressDialog.show();
+        // TODO: Implement your own authentication logic here.
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        progressDialog.dismiss();
+                        sendJson(true);
+                    }
+                }, 800);
+    }
 
     private void fechas(){
         Map<String, Integer> fechaDatos = Config.dias();

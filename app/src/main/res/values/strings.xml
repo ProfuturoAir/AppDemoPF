@@ -104,6 +104,7 @@
     <string name="msj_contenido_limpio">El contenido se ha limpiado</string>
     <string name="msj_esperando">Espere un momento</string>
     <string name="msj_verificando">Se están verificando los datos</string>
+    <string name="msj_sin_internet_continuar_proceso">No tienes conexión a internet, pero puedes continuar con el proceso, cuando exista conexión a internet se enviaran los datos</string>
 
     <string name="titulo_espera">Espere un momento</string>
 

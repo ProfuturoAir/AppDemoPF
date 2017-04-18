@@ -241,7 +241,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                             public void onClick(DialogInterface dialog, int which) {
 
                                 dvFirma.setDrawingCacheEnabled(true);
-                                String base64 = encodeTobase64(dvFirma.getDrawingCache());
+                                final String base64 = encodeTobase64(dvFirma.getDrawingCache());
                                 Bitmap emBit = Bitmap.createBitmap(dvFirma.getWidth(), dvFirma.getHeight(), Bitmap.Config.ARGB_8888);
                                 Log.d("BASE64-->", base64);
                                 dvFirma.setDrawingCacheEnabled(false);
@@ -249,15 +249,39 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                                     sendJson(true);
                                     final EnviaJSON enviaPrevio = new EnviaJSON();
                                     enviaPrevio.sendPrevios(idTramite, getContext());
-
-                                    /*
+                                    // * Fragment fragmentoGenerico = new Escaner();
+                                    // *FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                                    // *fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                                     Fragment fragmentoGenerico = new Escaner();
-                                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                                    if (fragmentoGenerico != null) {
-                                        fragmentManager
-                                                .beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
-                                    }*/
+                                    Asesor asesor = (Asesor) getContext();
+                                    asesor.switchDocumento(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
                                 }else{
+
+                                    final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                                    progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                                    progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                                    progressDialog.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
+                                    progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    progressDialog.dismiss();
+                                                    db.addFirma(idTramite,123,base64,90.2349,-23.9897);
+                                                    db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+                                                    Fragment fragmentoGenerico = new Escaner();
+                                                    Asesor asesor = (Asesor) getContext();
+                                                    asesor.switchDocumento(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+                                                }
+                                            });
+                                    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+
+                                                }
+                                            });
+                                    progressDialog.show();
+
                                     /*
                                     rqt.put("estatusTramite", 123);
                                     rqt.put("firmaCliente", "CADENABASE64");
@@ -265,11 +289,11 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                                     JSONObject ubicacion = new JSONObject();
                                     ubicacion.put("latitud", "90.2349");
                                     ubicacion.put("longitud", "-23.9897");*/
-                                    db.addFirma(idTramite,123,base64,90.2349,-23.9897);
-                                    db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+                                    // * db.addFirma(idTramite,123,base64,90.2349,-23.9897);
+                                    // * db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
                                     //db.addIDTramite(idTramite);
                                     //Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
-                                    Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
+                                    // * Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
                                     /*Fragment fragmentoGenerico = new Escaner();
                                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                                     if (fragmentoGenerico != null) {
@@ -277,10 +301,6 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                                                 .beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                                     }*/
                                 }
-
-                                Fragment fragmentoGenerico = new Escaner();
-                                Asesor asesor = (Asesor) getContext();
-                                asesor.switchDocumento(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
 
                             }
                         });

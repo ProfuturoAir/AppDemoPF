@@ -132,19 +132,60 @@ public class DatosCliente extends Fragment {
             @Override
             public void onClick(View v) {
                 final Connected conected = new Connected();
-                if(conected.estaConectado(v.getContext())) {
-                    //
+
+                if(conected.estaConectado(getContext())){
+                    sendJson(true);
+                    if(idTramite!=null){
+                        Fragment fragmentoGenerico = new Encuesta1();
+                        /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
+                        Asesor asesor = (Asesor) getContext();
+                        asesor.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+                    }
                 }else{
-                    Config.msj(v.getContext(),"Error en conexión", "Sin Conexion por el momento.Datos Cliente P-1.1.3.3");
+                    final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                    progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                    progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                    progressDialog.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
+                    progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    progressDialog.dismiss();
+                                    //sendJson(true);
+                                    if(idTramite!=null){
+                                        Fragment fragmentoGenerico = new Encuesta1();
+                                        /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                                        fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
+                                        Asesor asesor = (Asesor) getContext();
+                                        asesor.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+                                    }
+                                }
+                            });
+                    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                    progressDialog.show();
+
                 }
 
-                if(idTramite!=null){
-                    Fragment fragmentoGenerico = new Encuesta1();
+                //if(conected.estaConectado(v.getContext())) {
+                    //
+                //}else{
+                //    Config.msj(v.getContext(),"Error en conexión", "Sin Conexion por el momento.Datos Cliente P-1.1.3.3");
+                //}
+
+                //if(idTramite!=null){
+                    //Fragment fragmentoGenerico = new Encuesta1();
                     /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
-                    Asesor asesor = (Asesor) getContext();
-                    asesor.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
-                }
+                    //Asesor asesor = (Asesor) getContext();
+                    //asesor.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+                //}
             }
         });
 
@@ -300,7 +341,7 @@ public class DatosCliente extends Fragment {
             obj.put("rqt", rqt);
             Log.d(TAG, "Primera peticion-->" + obj);
         } catch (JSONException e) {
-            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un right_in al formar los datos.");
+            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
         }
 
         //Creating a json array request
@@ -363,15 +404,7 @@ public class DatosCliente extends Fragment {
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+               return Config.credenciales(getContext());
             }
         };
 
