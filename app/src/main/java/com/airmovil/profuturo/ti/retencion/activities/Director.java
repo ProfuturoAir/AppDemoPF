@@ -308,9 +308,11 @@ public class Director extends AppCompatActivity{
         bundle.putInt("numeroEmpleado",numeroEmpleado);
         bundle.putString("fechaIni",fechaIni);
         bundle.putString("fechaFin",fechaFin);
+        //bundle.putString("idGerencia",idGerencia);
+        //bundle.putString("idSucursal",idSucursal);
         //bundle.putString("hora",hora);
 
-        Log.d("DIRECTOR", "ASITENCIA - #Empleado " + numeroEmpleado + " FIN: " + fechaFin);
+        Log.d("DIRECTOR", "ASITENCIA - #Empleado " + numeroEmpleado + " FIN: " + fechaFin + " ");
 
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

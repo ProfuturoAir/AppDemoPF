@@ -481,7 +481,10 @@ public class ReporteAsesores extends Fragment {
         //String smParam2 = fechaActual.get("fechaFin");
 
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
-        adapter = new DirectorReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView,smParam1,smParam2);
+        String PtvFecha = tvFecha.getText().toString();
+        String[] separated = PtvFecha.split(" - ");
+
+        adapter = new DirectorReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView,separated[0].trim(),separated[1].trim());
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 

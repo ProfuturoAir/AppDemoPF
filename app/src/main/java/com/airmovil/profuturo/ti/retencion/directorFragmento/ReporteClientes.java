@@ -188,10 +188,18 @@ public class ReporteClientes extends Fragment {
         imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
         connect = new Connected();
 
-        Log.d("HOLA","Todos : "+getArguments().toString());
-        numeroEmpleado = getArguments().getInt("numeroEmpleado");
-        fechaIni = getArguments().getString("fechaIni");
-        fechaFin = getArguments().getString("fechaFin");
+        if(getArguments() != null) {
+            Log.d("HOLA", "Todos : " + getArguments().toString());
+            numeroEmpleado = getArguments().getInt("numeroEmpleado");
+            fechaIni = getArguments().getString("fechaIni");
+            fechaFin = getArguments().getString("fechaFin");
+
+            if(fechaIni!=null){
+                tvRangoFecha1.setText(fechaIni);
+                tvRangoFecha2.setText(fechaFin);
+            }
+        }
+
 
         Log.d("DATOS","FREG: "+numeroEmpleado+" DI: "+fechaIni+" DF: "+fechaFin);
 
@@ -201,6 +209,19 @@ public class ReporteClientes extends Fragment {
         mDay   = fechaDatos.get("dia");
 
         fechas();
+
+        if(fechaIni!=null){
+            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+            ReporteClientes procesoDatosFiltroInicio = ReporteClientes.newInstance(
+                    fechaIni, fechaFin, String.valueOf(numeroEmpleado), mParam4, mParam5, mParam6, mParam7, mParam8, mParam9,
+                    rootView.getContext()
+            );
+            borrar.onDestroy();
+            ft.remove(borrar);
+            ft.replace(R.id.content_director, procesoDatosFiltroInicio);
+            ft.addToBackStack(null);
+            ft.commit();
+        }
 
         // TODO: Spinner
         final ArrayAdapter<String> adapterId = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.IDS);

@@ -109,6 +109,8 @@ public class ReporteAsistencia extends Fragment {
     private int numeroEmpleado;
     private String fechaIni = "";
     private String fechaFin = "";
+    private int idGerencia;
+    private int idSucursal;
     private String fechaMostrar = "";
 
     private OnFragmentInteractionListener mListener;
@@ -154,16 +156,34 @@ public class ReporteAsistencia extends Fragment {
 
         variables();
         primeraPeticion();
+        final Fragment borrar = this;
 
         // TODO: ocultar teclado
         imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
         connected = new Connected();
 
-        numeroEmpleado = getArguments().getInt("numeroEmpleado");
-        fechaIni = getArguments().getString("fechaIni");
-        fechaFin = getArguments().getString("fechaFin");
+        if(getArguments() != null) {
+            Log.d("HOLA", "Todos : " + getArguments().toString());
+            numeroEmpleado = getArguments().getInt("numeroEmpleado");
+            fechaIni = getArguments().getString("fechaIni");
+            fechaFin = getArguments().getString("fechaFin");
+            //idGerencia = getArguments().getInt("idGerencia");
+            //idSucursal = getArguments().getInt("idSucursal");
+        }
 
         Log.d("DATOS","FREG: "+numeroEmpleado+" DI: "+fechaIni+" DF: "+fechaFin);
+
+        if(fechaIni!=null){
+            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+            ReporteAsistencia fragmento = ReporteAsistencia.newInstance(fechaIni, fechaFin, 0, 0, String.valueOf(numeroEmpleado), rootView.getContext());
+            ReporteAsistenciaDetalles pass = ReporteAsistenciaDetalles.newInstance(fechaIni, fechaFin, rootView.getContext());
+            borrar.onDestroy();
+            ft.remove(borrar);
+            ft.replace(R.id.content_director, fragmento);
+            ft.replace(R.id.content_director, pass);
+            ft.addToBackStack(null);
+            ft.commit();
+        }
 
         // TODO: Spinner
         ArrayAdapter<String> adapterGerencia = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.GERENCIAS);
@@ -199,7 +219,7 @@ public class ReporteAsistencia extends Fragment {
 
         // TODO: btn filtro
 
-        final Fragment borrar = this;
+
         btnFiltro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
