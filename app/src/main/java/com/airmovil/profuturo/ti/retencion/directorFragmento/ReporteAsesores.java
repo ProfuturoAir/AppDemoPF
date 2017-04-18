@@ -322,8 +322,8 @@ public class ReporteAsesores extends Fragment {
         mYear  = fechaDatos.get("anio");
         mMonth = fechaDatos.get("mes");
         mDay   = fechaDatos.get("dia");
-        String smParam1 = fechaActual.get("fechaIni");
-        String smParam2 = fechaActual.get("fechaFin");
+        final String smParam1 = fechaActual.get("fechaIni");
+        final String smParam2 = fechaActual.get("fechaFin");
 
         try {
             if(getArguments() != null) {
@@ -368,7 +368,7 @@ public class ReporteAsesores extends Fragment {
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
-                            primerPaso(response);
+                            primerPaso(response,smParam1,smParam2);
                         } else {
                             segundoPaso(response);
                         }
@@ -429,7 +429,7 @@ public class ReporteAsesores extends Fragment {
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
     }
 
-    private void primerPaso(JSONObject obj) {
+    private void primerPaso(JSONObject obj,String smParam1,String smParam2) {
         int emitidos = 0;
         int noEmitido = 0;
         int saldoEmitido = 0;
@@ -476,8 +476,12 @@ public class ReporteAsesores extends Fragment {
         tvSaldoNoEmitido.setText("" + Config.nf.format(saldoNoEmitido));
         tvTotalResultados.setText("" + filas + " Resultados ");
 
+
+        //String smParam1 = fechaActual.get("fechaIni");
+        //String smParam2 = fechaActual.get("fechaFin");
+
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
-        adapter = new DirectorReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView);
+        adapter = new DirectorReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView,smParam1,smParam2);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 

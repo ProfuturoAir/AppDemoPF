@@ -8,6 +8,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsesores;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistencia;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientes;
@@ -49,12 +51,17 @@ public class DirectorReporteAsesoresAdapter extends RecyclerView.Adapter{
     private int visibleThreshold = 10;
     private int lastVisibleItem, totalItemCount;
     private RecyclerView mRecyclerView;
+    private String fechaIni;
+    private String fechaFin;
 
-    public DirectorReporteAsesoresAdapter(Context mContext, List<GerenteReporteAsesoresModel> list, RecyclerView mRecyclerView) {
+    public DirectorReporteAsesoresAdapter(Context mContext, List<GerenteReporteAsesoresModel> list, RecyclerView mRecyclerView,String fechaIni,String fechaFin) {
         this.mContext = mContext;
         this.list = list;
         this.mRecyclerView = mRecyclerView;
+        this.fechaIni = fechaIni;
+        this.fechaFin = fechaFin;
 
+        Log.d("FECHA","#3: "+fechaIni);
         final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) this.mRecyclerView.getLayoutManager();
         this.mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -93,6 +100,9 @@ public class DirectorReporteAsesoresAdapter extends RecyclerView.Adapter{
         if(holder instanceof MyViewHolder){
             final GerenteReporteAsesoresModel lista = list.get(position);
             final MyViewHolder myholder = (MyViewHolder) holder;
+            //final String fechaIni = (String) fechaIni;
+            //final String fechaFin = (String) fechaFin;
+
 
             myholder.campoIdAsesor.setText("Asesor: " + lista.getNumeroEmpleado());
             myholder.campoConCita.setText(" " + lista.getConCita());
@@ -112,7 +122,7 @@ public class DirectorReporteAsesoresAdapter extends RecyclerView.Adapter{
             myholder.btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    surgirMenu(v);
+                    surgirMenu(v,lista);
                 }
             });
         } else{
@@ -133,12 +143,12 @@ public class DirectorReporteAsesoresAdapter extends RecyclerView.Adapter{
     /**
      * Muesta el menu cuando se hace click en los 3 botonos de la lista
      */
-    private void surgirMenu(View view) {
+    private void surgirMenu(View view,GerenteReporteAsesoresModel lista) {
         // inflate menu
         PopupMenu popup = new PopupMenu(mContext, view);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.sub_menu_reporte_asesores, popup.getMenu());
-        popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
+        popup.setOnMenuItemClickListener(new MyMenuItemClickListener(lista));
         popup.show();
     }
 
@@ -155,25 +165,33 @@ public class DirectorReporteAsesoresAdapter extends RecyclerView.Adapter{
      * Click listener for popup menu items
      */
     class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
+        GerenteReporteAsesoresModel lista;
 
-        public MyMenuItemClickListener() {
-
+        public MyMenuItemClickListener(GerenteReporteAsesoresModel lista) {
+            this.lista = lista;
         }
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.sub_menu_reporte_asesores_nav_clientes:
-                    AppCompatActivity clientes = (AppCompatActivity) mRecyclerView.getContext();
+                    //AppCompatActivity clientes = (AppCompatActivity) mRecyclerView.getContext();
                     ReporteClientes fragmentoClientes = new ReporteClientes();
+                    //Log.d("DATOS","AQUI: "+lista.getNumeroEmpleado());
+                    //Log.d("DATOS","INI: "+fechaIni);
+                    //Log.d("DATOS","FIN: "+fechaFin);
+                    Director director = (Director) mRecyclerView.getContext();
+                    director.switchClientes(fragmentoClientes, lista.getNumeroEmpleado(),fechaIni,fechaFin);
                     //Create a bundle to pass data, add data, set the bundle to your fragment and:
-                    clientes.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoClientes).addToBackStack(null).commit();
+                    //clientes.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoClientes).addToBackStack(null).commit();
                     return true;
                 case R.id.sub_menu_reporte_asesores_nav_asistencia:
-                    AppCompatActivity Asistencia = (AppCompatActivity) mRecyclerView.getContext();
+                    //AppCompatActivity Asistencia = (AppCompatActivity) mRecyclerView.getContext();
                     ReporteAsistencia fragmentoAsistencia = new ReporteAsistencia();
+                    Director dt = (Director) mRecyclerView.getContext();
+                    dt.switchAsistencia(fragmentoAsistencia, lista.getNumeroEmpleado(),fechaIni,fechaFin);
                     //Create a bundle to pass data, add data, set the bundle to your fragment and:
-                    Asistencia.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoAsistencia).addToBackStack(null).commit();
+                    //Asistencia.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoAsistencia).addToBackStack(null).commit();
                     return true;
                 case R.id.sub_menu_reporte_asesores_email:
                     final Dialog dialog = new Dialog(mContext);

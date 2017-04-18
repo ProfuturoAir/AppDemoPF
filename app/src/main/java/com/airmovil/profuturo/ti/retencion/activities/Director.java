@@ -285,5 +285,37 @@ public class Director extends AppCompatActivity{
         ft.commit();
     }
 
+    //director.switchClientes(fragmentoClientes, lista.getNumeroEmpleado(),fechaIni,fechaFin);
+    public void switchClientes(Fragment frag, int numeroEmpleado,String fechaIni,String fechaFin) {
+        Bundle bundle=new Bundle();
+        bundle.putInt("numeroEmpleado",numeroEmpleado);
+        bundle.putString("fechaIni",fechaIni);
+        bundle.putString("fechaFin",fechaFin);
+        //bundle.putString("hora",hora);
 
+        Log.d("DIRECTOR", "CLIENTES - #Empleado " + numeroEmpleado + " FIN: " + fechaFin);
+
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_director, frag, frag.toString());
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
+
+    public void switchAsistencia(Fragment frag, int numeroEmpleado,String fechaIni,String fechaFin) {
+        Bundle bundle=new Bundle();
+        bundle.putInt("numeroEmpleado",numeroEmpleado);
+        bundle.putString("fechaIni",fechaIni);
+        bundle.putString("fechaFin",fechaFin);
+        //bundle.putString("hora",hora);
+
+        Log.d("DIRECTOR", "ASITENCIA - #Empleado " + numeroEmpleado + " FIN: " + fechaFin);
+
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_director, frag, frag.toString());
+        ft.addToBackStack(null);
+        ft.commit();
+    }
 }

@@ -104,8 +104,9 @@ public class ReporteClientes extends Fragment {
     private int mYear;
     private int mMonth;
     private int mDay;
-    private String fechaIni = "";
-    private String fechaFin = "";
+    private String fechaIni;
+    private String fechaFin;
+    private int numeroEmpleado;
     private String fechaMostrar = "";
     private String numeroUsuario, nombre;
     // TODO: LIST
@@ -186,6 +187,13 @@ public class ReporteClientes extends Fragment {
         // TODO: ocultar teclado
         imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
         connect = new Connected();
+
+        Log.d("HOLA","Todos : "+getArguments().toString());
+        numeroEmpleado = getArguments().getInt("numeroEmpleado");
+        fechaIni = getArguments().getString("fechaIni");
+        fechaFin = getArguments().getString("fechaFin");
+
+        Log.d("DATOS","FREG: "+numeroEmpleado+" DI: "+fechaIni+" DF: "+fechaFin);
 
         Map<String, Integer> fechaDatos = Config.dias();
         mYear  = fechaDatos.get("anio");

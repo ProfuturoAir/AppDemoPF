@@ -106,6 +106,7 @@ public class ReporteAsistencia extends Fragment {
     private int mYear;
     private int mMonth;
     private int mDay;
+    private int numeroEmpleado;
     private String fechaIni = "";
     private String fechaFin = "";
     private String fechaMostrar = "";
@@ -157,6 +158,12 @@ public class ReporteAsistencia extends Fragment {
         // TODO: ocultar teclado
         imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
         connected = new Connected();
+
+        numeroEmpleado = getArguments().getInt("numeroEmpleado");
+        fechaIni = getArguments().getString("fechaIni");
+        fechaFin = getArguments().getString("fechaFin");
+
+        Log.d("DATOS","FREG: "+numeroEmpleado+" DI: "+fechaIni+" DF: "+fechaFin);
 
         // TODO: Spinner
         ArrayAdapter<String> adapterGerencia = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.GERENCIAS);
