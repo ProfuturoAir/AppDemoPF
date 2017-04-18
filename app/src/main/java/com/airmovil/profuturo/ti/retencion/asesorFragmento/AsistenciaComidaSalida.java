@@ -322,7 +322,7 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
         Map<String, String> usuarioDatos = Config.datosUsuario(getContext());
         Map<String, String> fechaActual = Config.fechas(1);
         String fecha = fechaActual.get("fechaIni");
-        String idUsuario = usuarioDatos.get(SessionManager.USUARIO_USER_ID);
+        String idUsuario = usuarioDatos.get(SessionManager.USER_ID);
         String longitud = textView1.getText().toString();
         String latitud = textView2.getText().toString();
 

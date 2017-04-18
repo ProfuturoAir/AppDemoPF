@@ -80,13 +80,14 @@ public class Gerente extends AppCompatActivity{
      */
     public void validateSession(){
         if(sessionManager.isLoggedIn() == false){
-            Log.d(TAG, "Sesión: false");
+            startActivity(new Intent(Gerente.this, Login.class));
+            finish();
         }else{
             setToolbar();
             setDrawerLayout();
             setToggle();
             setNavigationView();
-            setInformacionDrawer();
+            //setInformacionDrawer();
         }
     }
 
@@ -156,8 +157,8 @@ public class Gerente extends AppCompatActivity{
         //TextView navPrimeraLetra = (TextView) hView.findViewById(R.id.gerente_nav_tv_letra);
         //TextView navDatosGerente = (TextView) hView.findViewById(R.id.gerente_nav_tv_datos);
 
-        char letra = sNombreEmpleado.charAt(0);
-        String primeraLetra = Character.toString(letra);
+        //char letra = sNombreEmpleado.charAt(0);
+        //String primeraLetra = Character.toString(letra);
 
 //        navPrimeraLetra.setText(primeraLetra);
 //        navDatosGerente.setText("Nombre: " + sNombreEmpleado + "\nNumero Empleado: " + sNumeroEmpleado);

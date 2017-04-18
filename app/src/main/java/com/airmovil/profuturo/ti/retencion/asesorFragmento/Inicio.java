@@ -9,9 +9,12 @@ import android.os.Bundle;
 import android.support.annotation.IntegerRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +61,7 @@ public class Inicio extends Fragment {
     private View rootView;
     private SessionManager sessionManager;
     private DatePickerDialog datePickerDialog;
+    private Connected connected;
 
     // TODO: XML
     private TextView tvInicial, tvNombre, tvFecha;
@@ -117,22 +121,40 @@ public class Inicio extends Fragment {
         detalleSuperior();
         fechas();
 
+        sessionManager = new SessionManager(getContext());
+        connected = new Connected();
+
         btnFiltro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                f1 = tvRangoFecha1.getText().toString();
-                f2 = tvRangoFecha2.getText().toString();
-                if (f1.isEmpty() || f2.isEmpty() ) {
-                    Config.dialogoFechasVacias(getContext());
-                } else {
-                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    Inicio procesoDatosFiltroInicio = Inicio.newInstance(f1, f2, rootView.getContext()
-                    );
-                    borrar.onDestroy();
-                    ft.remove(borrar);
-                    ft.replace(R.id.content_asesor, procesoDatosFiltroInicio);
-                    ft.addToBackStack(null);
-                    ft.commit();
+                if(connected.estaConectado(getContext())){
+                    f1 = tvRangoFecha1.getText().toString();
+                    f2 = tvRangoFecha2.getText().toString();
+                    if (f1.isEmpty() || f2.isEmpty() ) {
+                        Config.dialogoFechasVacias(getContext());
+                    } else {
+                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        Inicio fragmento = Inicio.newInstance(f1, f2, rootView.getContext());
+                        borrar.onDestroy();
+                        ft.remove(borrar);
+                        ft.replace(R.id.content_asesor, fragmento);
+                        ft.addToBackStack(null);
+                        ft.commit();
+                    }
+                }else{
+                    final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                    progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                    progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                    progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion));
+                    progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    progressDialog.dismiss();
+                                    sendJson(true);
+                                }
+                            });
+                    progressDialog.show();
                 }
             }
         });
@@ -163,6 +185,43 @@ public class Inicio extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                    AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
+                    dialogo1.setTitle("Mensaje");
+                    dialogo1.setMessage("¿Estás seguro que deseas salir de la aplicación?");
+                    dialogo1.setCancelable(false);
+                    dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            getActivity().finish();
+                        }
+                    });
+                    dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    dialogo1.show();
+
+                    return true;
+
+                }
+
+                return false;
+            }
+        });
     }
 
     /**
@@ -222,14 +281,15 @@ public class Inicio extends Fragment {
      * Obteniendo los valores del apartado superior, nombre
      */
     public void detalleSuperior(){
-        Map<String, String> usuarioDatos = Config.datosUsuario(getContext());
-        String nombre = usuarioDatos.get(SessionManager.USUARIO_NOMBRE);
-        String apePaterno = usuarioDatos.get(SessionManager.USUARIO_APELLIDO_PATERNO);
-        String apeMaterno = usuarioDatos.get(SessionManager.USUARIO_APELLIDO_MATERNO);
+        SessionManager sessionManager = new SessionManager(getContext());
+        HashMap<String,String> datosUsuario = sessionManager.getUserDetails();
+        String apePaterno = datosUsuario.get(SessionManager.APELLIDO_PATERNO);
+        String apeMaterno = datosUsuario.get(SessionManager.APELLIDO_MATERNO);
+        String nombre = datosUsuario.get(SessionManager.NOMBRE);
+        tvNombre.setText("" + nombre + " " + apePaterno + " " + apeMaterno);
         char letra = nombre.charAt(0);
-        String convertirATexto = Character.toString(letra);
-        tvNombre.setText(nombre + " " + apePaterno + " " + apeMaterno);
-        tvInicial.setText(convertirATexto);
+        String inicial = Character.toString(letra);
+        tvInicial.setText(inicial);
     }
 
     /**
@@ -291,20 +351,35 @@ public class Inicio extends Fragment {
     }
 
     private void sendJson(final boolean primeraPeticion){
-
+        SessionManager sessionManager = new SessionManager(getContext());
+        HashMap<String, String> datosUsuario = sessionManager.getUserDetails();
+        String idEmpleado = datosUsuario.get(SessionManager.USER_ID);
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
         try{
-            JSONObject periodo = new JSONObject();
-            rqt.put("periodo", periodo);
-            periodo.put("fechaInicio", f1);
-            periodo.put("fechaFin", f2);
-            rqt.put("usuario", numeroUsuario);
-            json.put("rqt", rqt);
+            if(getArguments() != null){
+                JSONObject periodo = new JSONObject();
+                mParam1 = getArguments().getString(ARG_PARAM1);
+                mParam2 = getArguments().getString(ARG_PARAM2);
+                rqt.put("periodo", periodo);
+                periodo.put("fechaInicio", mParam1);
+                periodo.put("fechaFin", mParam2);
+                rqt.put("usuario", idEmpleado);
+                json.put("rqt", rqt);
+            }else{
+                Map<String, String> fecha = Config.fechas(1);
+                String param1 = fecha.get("fechaIni");
+                String param2 = fecha.get("fechaFin");
+                JSONObject periodo = new JSONObject();
+                rqt.put("periodo", periodo);
+                periodo.put("fechaInicio", param1);
+                periodo.put("fechaFin", param2);
+                rqt.put("usuario", idEmpleado);
+                json.put("rqt", rqt);
+            }
             Log.d(TAG, "REQUEST -->" + json);
-
         } catch (JSONException e){
-            Config.msj(getContext(),"Error","Existe un right_in al formar la peticion");
+            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
         }
 
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_RESUMEN_RETENCIONES, json,
@@ -343,23 +418,19 @@ public class Inicio extends Fragment {
                             });
                             dlgAlert.create().show();
                         }else{
-                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                            dlgAlert.setTitle("Error de conexión");
-                            dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
-                            dlgAlert.setCancelable(true);
-                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    //sendJson(true, f1, f2);
-                                }
-                            });
-                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                            dlgAlert.create().show();
+                            final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                            progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                            progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                            progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion));
+                            progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            progressDialog.dismiss();
+                                            sendJson(true);
+                                        }
+                                    });
+                            progressDialog.show();
                         }
                     }
                 })

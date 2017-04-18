@@ -111,7 +111,7 @@ public class Inicio extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
         variables();
-        detalleSuperior();
+        //detalleSuperior();
         primeraPeticion();
         fechas();
 
@@ -215,9 +215,9 @@ public class Inicio extends Fragment {
         rangoInicial();
         rangoFinal();
         Map<String, String> usuarioDatos = Config.datosUsuario(getContext());
-        String nombre = usuarioDatos.get(SessionManager.USUARIO_NOMBRE);
-        String apePaterno = usuarioDatos.get(SessionManager.USUARIO_APELLIDO_PATERNO);
-        String apeMaterno = usuarioDatos.get(SessionManager.USUARIO_APELLIDO_MATERNO);
+        String nombre = usuarioDatos.get(SessionManager.NOMBRE);
+        String apePaterno = usuarioDatos.get(SessionManager.APELLIDO_PATERNO);
+        String apeMaterno = usuarioDatos.get(SessionManager.APELLIDO_MATERNO);
         char letra = nombre.charAt(0);
         String convertirATexto = Character.toString(letra);
         tvNombre.setText(nombre + " " + apePaterno + " " + apeMaterno);

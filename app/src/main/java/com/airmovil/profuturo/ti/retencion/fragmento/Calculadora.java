@@ -183,17 +183,17 @@ public class Calculadora extends Fragment {
                         SessionManager sessionManager = new SessionManager(getContext().getApplicationContext());
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 
-                        if(sessionManager.obtencionDatosUsuario().get("perfil").equals("1")){
+                        if(sessionManager.getUserDetails().get("perfil").equals("1")){
                             Fragment fragmentoGenerico = new com.airmovil.profuturo.ti.retencion.directorFragmento.Inicio();
                             fragmentManager.beginTransaction().replace(R.id.content_director, fragmentoGenerico).commit();
                         }
 
-                        if(sessionManager.obtencionDatosUsuario().get("perfil").equals("2")){
+                        if(sessionManager.getUserDetails().get("perfil").equals("2")){
                             Fragment fragmentoGenerico = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.Inicio();
                             fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
                         }
 
-                        if(sessionManager.obtencionDatosUsuario().get("perfil").equals("3")){
+                        if(sessionManager.getUserDetails().get("perfil").equals("3")){
                             Fragment fragmentoGenerico = new com.airmovil.profuturo.ti.retencion.asesorFragmento.Inicio();
                             fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                         }
@@ -208,15 +208,15 @@ public class Calculadora extends Fragment {
                         Fragment fragmentoGenerico = new Calculadora();
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 
-                        if(sessionManager.obtencionDatosUsuario().get("perfil").equals("1"))
+                        if(sessionManager.getUserDetails().get("perfil").equals("1"))
                             fragmentManager.beginTransaction().replace(R.id.content_director, fragmentoGenerico).commit();
 
 
-                        if(sessionManager.obtencionDatosUsuario().get("perfil").equals("2"))
+                        if(sessionManager.getUserDetails().get("perfil").equals("2"))
                             fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
 
 
-                        if(sessionManager.obtencionDatosUsuario().get("perfil").equals("3"))
+                        if(sessionManager.getUserDetails().get("perfil").equals("3"))
                             fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
 
                     }

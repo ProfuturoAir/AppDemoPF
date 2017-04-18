@@ -323,17 +323,17 @@ public class Config extends Activity {
 
     public static final Map<String, String> datosUsuario(Context context){
         SessionManager sessionManager = new SessionManager(context.getApplicationContext());
-        HashMap<String, String> informacion = sessionManager.obtencionDatosUsuario();
-        informacion.get(SessionManager.USUARIO_APELLIDO_MATERNO);
-        informacion.get(SessionManager.USUARIO_APELLIDO_PATERNO);
-        informacion.get(SessionManager.USUARIO_NOMBRE);
-        informacion.get(SessionManager.USUARIO_PERFIL);
-        informacion.get(SessionManager.USUARIO_CENTRO_COSTO);
-        informacion.get(SessionManager.USUARIO_CLAVE_CONSAR);
-        informacion.get(SessionManager.USUARIO_CURP);
-        informacion.get(SessionManager.USUARIO_EMAIL);
-        informacion.get(SessionManager.USUARIO_NUMERO_EMPLEADO);
-        informacion.get(SessionManager.USUARIO_USER_ID);
+        HashMap<String, String> informacion = sessionManager.getUserDetails();
+        informacion.get(SessionManager.APELLIDO_MATERNO);
+        informacion.get(SessionManager.APELLIDO_PATERNO);
+        informacion.get(SessionManager.NOMBRE);
+        informacion.get(SessionManager.PERFIL);
+        informacion.get(SessionManager.CENTRO_COSTO);
+        informacion.get(SessionManager.CLAVE_CONSAR);
+        informacion.get(SessionManager.CURP);
+        informacion.get(SessionManager.EMAIL);
+        informacion.get(SessionManager.NUMERO_EMPLEADO);
+        informacion.get(SessionManager.USER_ID);
         return informacion;
     }
 

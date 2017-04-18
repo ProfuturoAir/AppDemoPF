@@ -9,12 +9,26 @@ import com.airmovil.profuturo.ti.retencion.activities.Login;
 
 import java.util.HashMap;
 
-
+/**
+ * Created by tecnicoairmovil on 15/03/17.
+ */
 
 public class SessionManager {
     public static final String ID = "id";
-    public static final String NOMBRE="nombre";
     public static final String CAT="cat";
+    public static final String APELLIDO_MATERNO = "apellidoMaterno";
+    public static final String APELLIDO_PATERNO = "apellidoPaterno";
+    public static final String CENTRO_COSTO = "centroCosto";
+    public static final String CLAVE_CONSAR = "claveConsar";
+    public static final String CURP = "curp";
+    public static final String EMAIL = "email";
+    public static final String FECHA_ALTA_CONSAR = "fechaAltaConsar";
+    public static final String NOMBRE = "nombre";
+    public static final String NUMERO_EMPLEADO = "numeroEmpleado";
+    public static final String USER_ID = "userId";
+    public static final String PERFIL = "perfil";
+
+    // LogCat tag
     private final static String TAG = SessionManager.class.getSimpleName();
     // Shared Preferences
     final SharedPreferences pref;
@@ -23,20 +37,9 @@ public class SessionManager {
     // Shared pref mode
     final int PRIVATE_MODE = 0;
     // Shared preferences file name
-    public static final String KEY_CT="create_time";
-    public static final String PREF_NAME = "Login";
-    public static final String KEY_IS_LOGGEDIN = "isLoggedIn";
-    public static final String USUARIO_APELLIDO_MATERNO = "apellidoMaterno";
-    public static final String USUARIO_APELLIDO_PATERNO = "apellidoPaterno";
-    public static final String USUARIO_CENTRO_COSTO = "centroCosto";
-    public static final String USUARIO_CLAVE_CONSAR = "claveConsar";
-    public static final String USUARIO_CURP = "curp";
-    public static final String USUARIO_EMAIL = "email";
-    public static final String USUARIO_FECHA_ALTA_CONSAR = "fechaAltaConsar";
-    public static final String USUARIO_NOMBRE = "nombre";
-    public static final String USUARIO_NUMERO_EMPLEADO = "numeroEmpleado";
-    public static final String USUARIO_USER_ID = "userId";
-    public static final String USUARIO_PERFIL = "perfil";
+    private static final String KEY_CT="create_time";
+    private static final String PREF_NAME = "Login";
+    private static final String KEY_IS_LOGGEDIN = "isLoggedIn";
 
     public SessionManager(Context context) {
         this._context = context;
@@ -45,41 +48,32 @@ public class SessionManager {
         editor = pref.edit();
     }
 
-    public void createLoginSession(String id, String nombre, String cat){
+    public void createLoginSession(String apellidoMaterno, String apellidoPaterno, String centroCosto, String claveConsar, String curp, String email,
+                String fechaAltaConsar, String nombre,String numeroEmpleado, String userId, String perfil){
         // Storing name in pref
         editor.putBoolean(KEY_IS_LOGGEDIN, true);
-        editor.putString(ID, id);
-        editor.putString(NOMBRE,nombre);
-        editor.putString(CAT,cat);
+        editor.putString(APELLIDO_MATERNO, apellidoMaterno);
+        editor.putString(APELLIDO_PATERNO, apellidoPaterno);
+        editor.putString(CENTRO_COSTO, centroCosto);
+        editor.putString(CLAVE_CONSAR, claveConsar);
+        editor.putString(CURP, curp);
+        editor.putString(EMAIL, email);
+        editor.putString(FECHA_ALTA_CONSAR, fechaAltaConsar);
+        editor.putString(NOMBRE, nombre);
+        editor.putString(NUMERO_EMPLEADO, numeroEmpleado);
+        editor.putString(USER_ID, userId);
+        editor.putString(PERFIL, perfil);
         // commit changes
         editor.commit();
-    }
-
-    public void crearSesion(String apellidoMaterno, String apellidoPaterno, String centroCosto, String claveConsar,
-                            String curp, String email, String fechaAltaConsar, String nombre, String numeroEmpleado, String userId, String perfil){
-        editor.putBoolean(KEY_IS_LOGGEDIN, true);
-        editor.putString(USUARIO_APELLIDO_MATERNO, apellidoMaterno);
-        editor.putString(USUARIO_APELLIDO_PATERNO, apellidoPaterno);
-        editor.putString(USUARIO_CENTRO_COSTO, centroCosto);
-        editor.putString(USUARIO_CLAVE_CONSAR, claveConsar);
-        editor.putString(USUARIO_CURP, curp);
-        editor.putString(USUARIO_EMAIL, email);
-        editor.putString(USUARIO_FECHA_ALTA_CONSAR, fechaAltaConsar);
-        editor.putString(USUARIO_NOMBRE, nombre);
-        editor.putString(USUARIO_NUMERO_EMPLEADO, numeroEmpleado);
-        editor.putString(USUARIO_USER_ID, userId);
-        editor.putString(USUARIO_PERFIL, perfil);
-        editor.commit();
-    }
-
-    public void createProceso(String idProceso, String numero){
-
     }
 
     public void setLogin(boolean isLoggedIn) {
+
         editor.putBoolean(KEY_IS_LOGGEDIN, isLoggedIn);
+
         // commit changes
         editor.commit();
+
         Log.d(TAG, "User login session modified!");
     }
 
@@ -89,26 +83,19 @@ public class SessionManager {
 
     public HashMap<String, String> getUserDetails(){
         HashMap<String, String> user = new HashMap<>();
-        user.put(ID, pref.getString(ID, null));
-        user.put(NOMBRE, pref.getString(NOMBRE, null));
         user.put(CAT,pref.getString(CAT,null));
+        user.put(APELLIDO_MATERNO, pref.getString(APELLIDO_MATERNO, null));
+        user.put(APELLIDO_PATERNO, pref.getString(APELLIDO_PATERNO, null));
+        user.put(CENTRO_COSTO, pref.getString(CENTRO_COSTO, null));
+        user.put(CLAVE_CONSAR, pref.getString(CLAVE_CONSAR, null));
+        user.put(CURP, pref.getString(CURP, null));
+        user.put(EMAIL, pref.getString(EMAIL, null));
+        user.put(FECHA_ALTA_CONSAR, pref.getString(FECHA_ALTA_CONSAR, null));
+        user.put(NOMBRE, pref.getString(NOMBRE,null));
+        user.put(NUMERO_EMPLEADO, pref.getString(NUMERO_EMPLEADO, null));
+        user.put(USER_ID, pref.getString(USER_ID, null));
+        user.put(PERFIL,pref.getString(PERFIL, null));
         return user;
-    }
-
-    public HashMap<String, String> obtencionDatosUsuario(){
-        HashMap<String, String> usuario = new HashMap<>();
-        usuario.put(USUARIO_APELLIDO_MATERNO, pref.getString(USUARIO_APELLIDO_MATERNO, null));
-        usuario.put(USUARIO_APELLIDO_PATERNO, pref.getString(USUARIO_APELLIDO_PATERNO, null));
-        usuario.put(USUARIO_CENTRO_COSTO, pref.getString(USUARIO_CENTRO_COSTO, null));
-        usuario.put(USUARIO_CLAVE_CONSAR, pref.getString(USUARIO_CLAVE_CONSAR, null));
-        usuario.put(USUARIO_CURP, pref.getString(USUARIO_CURP, null));
-        usuario.put(USUARIO_EMAIL, pref.getString(USUARIO_EMAIL, null));
-        usuario.put(USUARIO_FECHA_ALTA_CONSAR, pref.getString(USUARIO_FECHA_ALTA_CONSAR, null));
-        usuario.put(USUARIO_NOMBRE, pref.getString(USUARIO_NOMBRE,null));
-        usuario.put(USUARIO_NUMERO_EMPLEADO, pref.getString(USUARIO_NUMERO_EMPLEADO, null));
-        usuario.put(USUARIO_USER_ID, pref.getString(USUARIO_USER_ID, null));
-        usuario.put(USUARIO_PERFIL, pref.getString(USUARIO_PERFIL, null));
-        return usuario;
     }
 
 

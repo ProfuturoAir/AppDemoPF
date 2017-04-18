@@ -44,21 +44,20 @@ public class Login extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         sessionManager = new SessionManager(getApplicationContext());
-        HashMap<String, String> datosUsuario = sessionManager.obtencionDatosUsuario();
-
-        String nombre = datosUsuario.get(SessionManager.USUARIO_PERFIL);
+        HashMap<String, String> datosUsuario = sessionManager.getUserDetails();
 
         _numeroEmpleadom = (EditText) findViewById(R.id.login_et_usuario);
         _contrasenia = (EditText) findViewById(R.id.login_et_contrasenia);
         btnIngresar = (Button) findViewById(R.id.login_btn_ingresar);
 
-        try {
+        String perfil = datosUsuario.get(SessionManager.PERFIL);
+
+        Log.d("*************", "PERFIL: ->" + perfil);
+
             if (sessionManager.isLoggedIn()) {
-                //Log.d("--------->", "" + nombre);
-                if (sessionManager.obtencionDatosUsuario().get("perfil").equals("1")) {
-                    Intent intentGerenteRegional = new Intent(this, Director.class);
-                    startActivity(intentGerenteRegional);
-                } else if (sessionManager.obtencionDatosUsuario().get("perfil").equals("2")) {
+                if (sessionManager.getUserDetails().get("perfil").equals("1")) {
+                    startActivity(new Intent(this, Director.class));
+                } else if (sessionManager.getUserDetails().get("perfil").equals("2")) {
                     Intent intentGerenteGerencias = new Intent(this, Gerente.class);
                     startActivity(intentGerenteGerencias);
                 } else {
@@ -67,9 +66,6 @@ public class Login extends AppCompatActivity {
                 }
                 finish();
             }
-        } catch (Exception e){
-            e.printStackTrace();
-        }
 
         btnIngresar.performClick();
         btnIngresar.setOnClickListener(new View.OnClickListener() {
@@ -200,16 +196,20 @@ public class Login extends AppCompatActivity {
     }
 
     public void redireccionSesiones(String rNumeroEmpleado, int rPerfil){
-        peticionDatos(true, rNumeroEmpleado, rPerfil);
+        sessionManager.setLogin(true);
+
         switch (rPerfil){
             case 1:
+                peticionDatos(true, rNumeroEmpleado, rPerfil);
                 startActivity(new Intent(Login.this, Director.class));
                 break;
             case 2:
-                 startActivity(new Intent(Login.this, Gerente.class));
+                peticionDatos(true, rNumeroEmpleado, rPerfil);
+                startActivity(new Intent(Login.this, Gerente.class));
                 break;
             case 3:
-                 startActivity(new Intent(Login.this, Asesor.class));
+                peticionDatos(true, rNumeroEmpleado, rPerfil);
+                startActivity(new Intent(Login.this, Asesor.class));
                 break;
             default:
                 break;
@@ -275,8 +275,9 @@ public class Login extends AppCompatActivity {
             nombre = obj.getString("nombre");
             numeroEmpleado = obj.getString("numeroEmpleado");
             userId = obj.getString("userId");
-            sessionManager.crearSesion(apellidoMaterno, apellidoPaterno, sCentroCosto, claveConsar,
-                    curp, email, fechaAltaConsar, nombre, numeroEmpleado, userId, perfilUsuario);
+            Log.d("DATOS A RECOLECTAR ->", " " + apellidoMaterno + " " + apellidoPaterno + " " + sCentroCosto + " " + claveConsar + " " + curp + " " + email + " " + fechaAltaConsar +
+                    " " + nombre + " " + numeroEmpleado + " " + userId + " " + perfilUsuario);
+            sessionManager.createLoginSession(apellidoMaterno, apellidoPaterno, sCentroCosto, claveConsar,curp, email, fechaAltaConsar, nombre, numeroEmpleado, userId, perfilUsuario);
         }catch (JSONException e){
             e.printStackTrace();
         }

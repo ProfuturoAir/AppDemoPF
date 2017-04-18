@@ -79,7 +79,8 @@ public class Asesor extends AppCompatActivity{
      */
     public void validateSession(){
         if(sessionManager.isLoggedIn() == false){
-            Log.d(TAG, "Sesión: false");
+            startActivity(new Intent(Asesor.this, Login.class));
+            finish();
         }else{
             // TODO: implementando el tootlbar
             setToolbar();
@@ -120,8 +121,7 @@ public class Asesor extends AppCompatActivity{
      * el uso del drawableView, recorrido de izquierda a derecha
      */
     public void setToggle(){
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
     }
@@ -157,17 +157,26 @@ public class Asesor extends AppCompatActivity{
         navigationView.getMenu().hasVisibleItems();
 
         // TODO: obteniendo datos del sharePreference
-        HashMap<String, String> informacion = sessionManager.getUserDetails();
-        String sNumeroEmpleado = informacion.get(SessionManager.ID);
-        String sNombreEmpleado = informacion.get(SessionManager.NOMBRE);
+        SessionManager sessionManager = new SessionManager(getApplicationContext());
+        HashMap<String,String> datosUsuario = sessionManager.getUserDetails();
+
+        String apePaterno = datosUsuario.get(SessionManager.APELLIDO_PATERNO);
+        String apeMaterno = datosUsuario.get(SessionManager.APELLIDO_MATERNO);
+        String nombre = datosUsuario.get(SessionManager.NOMBRE);
+        String idEmpleado = datosUsuario.get(SessionManager.USER_ID);
+        char letra = nombre.charAt(0);
+        String inicial = Character.toString(letra);
+
+        navPrimeraLetra.setText(inicial);
+        navDatosGerente.setText(nombre + " " + apePaterno + " " + apeMaterno + "\nNúmero empleado: " + idEmpleado);
 
         // TODO: Se utiliza
-        char letra = sNombreEmpleado.charAt(0);
-        String primeraLetra = Character.toString(letra);
+        //char letra = sNombreEmpleado.charAt(0);
+        //String primeraLetra = Character.toString(letra);
         // TODO: Se utiliza para colocar la primera de todo el nombre dentro de un contenedor
-        navPrimeraLetra.setText(primeraLetra);
+        //navPrimeraLetra.setText(primeraLetra);
         // TODO: Se utiliza para colocar el nombre y el numero de cuenta del usuario
-        navDatosGerente.setText("Nombre: " + sNombreEmpleado + "\nNumero Empleado: " + sNumeroEmpleado);
+        //navDatosGerente.setText("Nombre: " + sNombreEmpleado + "\nNumero Empleado: " + sNumeroEmpleado);
     }
 
     /**

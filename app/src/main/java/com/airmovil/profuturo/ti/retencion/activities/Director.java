@@ -73,7 +73,8 @@ public class Director extends AppCompatActivity{
      */
     public void validateSession(){
         if(sessionManager.isLoggedIn() == false){
-            Log.d(TAG, "Sesión: false");
+            startActivity(new Intent(Director.this, Login.class));
+            finish();
         }else{
             Log.d(TAG, "Sesion: true");
             setToolbar();
@@ -141,22 +142,27 @@ public class Director extends AppCompatActivity{
      */
     private void setInformacionDrawer() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.director_nav_view);
-
+        SessionManager sessionManager = new SessionManager(getApplicationContext());
         HashMap<String, String> informacion = sessionManager.getUserDetails();
-        String sNumeroEmpleado = informacion.get(SessionManager.ID);
+        String sNumeroEmpleado = informacion.get(SessionManager.USER_ID);
         String sNombreEmpleado = informacion.get(SessionManager.NOMBRE);
+
+        String nom = informacion.get(SessionManager.NOMBRE);
+
+
+        Log.d("TAG", "--> \n" + nom);
 
         View hView = navigationView.getHeaderView(0);
 
         TextView navPrimeraLetra = (TextView) hView.findViewById(R.id.director_nav_tv_letra);
         TextView navDatosGerente = (TextView) hView.findViewById(R.id.director_nav_tv_datos);
 
-        char letra = sNombreEmpleado.charAt(0);
-        String primeraLetra = Character.toString(letra);
+        //char letra = sNombreEmpleado.charAt(0);
+        //String primeraLetra = Character.toString(letra);
 
-        //navPrimeraLetra.setText("L");
+        navPrimeraLetra.setText("L");
 
-        //navDatosGerente.setText("Nombre: " + sNombreEmpleado + "\nNumero Empleado: " + sNumeroEmpleado);
+        navDatosGerente.setText("Nombre: " + sNombreEmpleado + "\nNumero Empleado: " + sNumeroEmpleado);
     }
 
     /**

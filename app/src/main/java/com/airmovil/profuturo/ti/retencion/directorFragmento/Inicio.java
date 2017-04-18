@@ -251,9 +251,9 @@ public class Inicio extends Fragment {
      */
     public void detalleSuperior(){
         Map<String, String> usuarioDatos = Config.datosUsuario(getContext());
-        String nombre = usuarioDatos.get(SessionManager.USUARIO_NOMBRE);
-        String apePaterno = usuarioDatos.get(SessionManager.USUARIO_APELLIDO_PATERNO);
-        String apeMaterno = usuarioDatos.get(SessionManager.USUARIO_APELLIDO_MATERNO);
+        String nombre = usuarioDatos.get(SessionManager.NOMBRE);
+        String apePaterno = usuarioDatos.get(SessionManager.APELLIDO_PATERNO);
+        String apeMaterno = usuarioDatos.get(SessionManager.APELLIDO_MATERNO);
         tvNombre.setText(nombre + " " + apePaterno + " " + apeMaterno);
     }
 

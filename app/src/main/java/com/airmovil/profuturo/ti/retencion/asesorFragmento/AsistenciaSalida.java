@@ -326,7 +326,7 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
         Map<String, String> usuarioDatos = Config.datosUsuario(getContext());
         Map<String, String> fechaActual = Config.fechas(1);
         String fecha = fechaActual.get("fechaIni");
-        String idUsuario = usuarioDatos.get(SessionManager.USUARIO_USER_ID);
+        String idUsuario = usuarioDatos.get(SessionManager.USER_ID);
 
         double w, z;
         try {
