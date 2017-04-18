@@ -9,8 +9,6 @@
         android:id="@+id/textViewLogintud3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/message_id"
-        android:layout_centerHorizontal="true"
         android:text="texto1" />
 
     <TextView
@@ -18,8 +16,6 @@
         android:id="@+id/textViewLatitud3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
         android:text="texto2" />
 
     <com.airmovil.profuturo.ti.retencion.helper.DrawingView

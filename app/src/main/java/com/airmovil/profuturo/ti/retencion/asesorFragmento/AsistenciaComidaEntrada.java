@@ -25,6 +25,7 @@ import android.widget.ToggleButton;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.DrawingView;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
@@ -41,6 +42,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -155,20 +157,45 @@ public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient
                             });
                     progressDialog.show();
                 }else {
-                    final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-                    progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_ok));
-                    progressDialog.setTitle(getResources().getString(R.string.msj_titulo_confirmacion));
-                    progressDialog.setMessage(getResources().getString(R.string.msj_contenido_envio));
-                    progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    progressDialog.dismiss();
-                                    sendJson(true);
-                                }
-                            });
-                    progressDialog.show();
+                    Connected connected = new Connected();
+                    if(connected.estaConectado(getContext())){
+                        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                        progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_ok));
+                        progressDialog.setTitle(getResources().getString(R.string.msj_titulo_confirmacion));
+                        progressDialog.setMessage(getResources().getString(R.string.msj_contenido_envio) + " registro de comida entrada");
+                        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        progressDialog.dismiss();
+                                        dvFirma.startNew();
+                                        dvFirma.setDrawingCacheEnabled(true);
+                                        sendJson(true);
 
+                                    }
+                                });
+                        progressDialog.show();
+                    }else{
+                        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                        progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                        progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                        progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion_firma));
+                        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        progressDialog.dismiss();
+                                    }
+                                });
+                        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                });
+                        progressDialog.show();
+                    }
 
                 }
             }
@@ -177,6 +204,28 @@ public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient
         btnCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_regreso));
+                progressDialog.setTitle(getResources().getString(R.string.msj_titulo_aviso));
+                progressDialog.setMessage(getResources().getString(R.string.msj_contenido_aviso));
+                progressDialog.setButton(DialogInterface.BUTTON1, getResources().getString(R.string.aceptar),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                progressDialog.dismiss();
+                                Fragment fragmentoGenerico = new Inicio();
+                                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                                fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                            }
+                        });
+                progressDialog.setButton(DialogInterface.BUTTON2, getResources().getString(R.string.cancelar),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                progressDialog.dismiss();
+                            }
+                        });
+                progressDialog.show();
 
             }
         });
@@ -368,13 +417,24 @@ public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient
 
     private void primerPaso(JSONObject obj){
         Log.d("TAG", "primerPaso: "  + obj );
+        Map<String, String> fechaActual = Config.fechas(1);
+        String fecha = fechaActual.get("fechaIni");
+        Calendar calendario = Calendar.getInstance();
+        int hora, minutos, segundos;
+
+
+        hora =calendario.get(Calendar.HOUR_OF_DAY);
+        minutos = calendario.get(Calendar.MINUTE);
+        segundos = calendario.get(Calendar.SECOND);
+
+
         String status = "";
         String statusText = "";
         try{
             status = obj.getString("status");
             statusText = obj.getString("statusText");
             if(Integer.parseInt(status) == 200){
-
+                Config.msj(getContext(), "Envio correcto", "Se ha registrado, la entrada de comida.\nFecha:" + fecha + " \nhora: " + hora+":"+minutos+":"+segundos);
             }else{
                 Config.msj(getContext(), "Error: " + status, statusText);
             }

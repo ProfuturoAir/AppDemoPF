@@ -88,7 +88,9 @@
     <string name="msj_error_fechas">Por favor, rellena los campos de fecha</string>
     <string name="msj_error_datos_vacios">Debes rellenar todos los campos</string>
     <string name="msj_error_email">El email no es valido, favor de verificar</string>
-    <string name="msj">mensaje</string>
+    <string name="msj">Mensaje</string>
+    <string name="msj_titulo_aviso">Aviso</string>
+    <string name="msj_contenido_aviso">¿Deseas salir de reportes de asitencia, serás dirigido al inicio ?</string>
     <string name="msj_titulo_seleccion_spinner">Sin selección de ID</string>
     <string name="msj_titulo_espera">Cargando datos...</string>
     <string name="msj_titulo_limpiar">Contenido limpio</string>
@@ -105,6 +107,7 @@
     <string name="msj_esperando">Espere un momento</string>
     <string name="msj_verificando">Se están verificando los datos</string>
     <string name="msj_sin_internet_continuar_proceso">No tienes conexión a internet, pero puedes continuar con el proceso, cuando exista conexión a internet se enviaran los datos</string>
+    <string name="msj_error_conexion_firma">No hay conexión a internet, verifica tu conexión y vuelve a intentar</string>
 
     <string name="titulo_espera">Espere un momento</string>
 

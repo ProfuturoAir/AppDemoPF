@@ -56,6 +56,7 @@ import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -80,7 +81,7 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
     private boolean firsStarted = true;
     private DrawingView dvFirma;
 
-    private TextView textView1, textView2;
+    private TextView tvLongitud, tvLatitud;
     private Button btnLimpiar, btnGuardar, btnCancelar;
 
     // TODO: Rename and change types of parameters
@@ -125,17 +126,14 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
+        tvLongitud = (TextView) rootView.findViewById(R.id.textViewLogintud2);
+        tvLatitud = (TextView) rootView.findViewById(R.id.textViewLatitud2);
+        btnLimpiar = (Button) rootView.findViewById(R.id.buttonLimpiar2);
+        btnGuardar = (Button) rootView.findViewById(R.id.buttonGuardar2);
+        btnCancelar = (Button) rootView.findViewById(R.id.buttonCancelar2);
 
-        textView1 = (TextView) rootView.findViewById(R.id.textViewLatitudC2);
-        textView2 = (TextView) rootView.findViewById(R.id.textViewLogitudC2);
-        btnLimpiar = (Button) rootView.findViewById(R.id.afacs_btn_limpiarC2);
-        btnGuardar = (Button) rootView.findViewById(R.id.afacs_btn_guardarC2);
-        btnCancelar = (Button) rootView.findViewById(R.id.afacs_btn_cancelarC2);
+        dvFirma = (DrawingView) view.findViewById(R.id.drawinView2);
 
-        final String getLongitud = textView1.getText().toString();
-        final String getLatitud = textView2.getText().toString();
-
-        dvFirma = (DrawingView) view.findViewById(R.id.afacs_dv_firmaC2);
         dvFirma.setBrushSize(5);
         dvFirma.setColor("#000000");
         dvFirma.setFocusable(true);
@@ -158,8 +156,8 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
         btnGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String getLongitud1 = textView1.getText().toString();
-                String getLatitud1 = textView2.getText().toString();
+                String getLongitud1 = tvLongitud.getText().toString();
+                String getLatitud1 = tvLatitud.getText().toString();
                 if(!dvFirma.isActive()) {
                     Config.dialogoRequiereFirma(getContext());
                 }else if(getLatitud1.isEmpty() && getLongitud1.isEmpty()){
@@ -176,20 +174,46 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
                             });
                     progressDialog.show();
                 }else {
-                    final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-                    progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_coordenadas));
-                    progressDialog.setTitle(getResources().getString(R.string.msj_titulo_sin_coordenadas));
-                    progressDialog.setMessage(getResources().getString(R.string.msj_cotentido_sin_coordenadas));
-                    progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    progressDialog.dismiss();
-                                }
-                            });
-                    progressDialog.show();
+                    Connected connected = new Connected();
+                    if(connected.estaConectado(getContext())){
+                        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                        progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_ok));
+                        progressDialog.setTitle(getResources().getString(R.string.msj_titulo_confirmacion));
+                        progressDialog.setMessage(getResources().getString(R.string.msj_contenido_envio) + " registro de comida salida");
+                        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        progressDialog.dismiss();
+                                        dvFirma.startNew();
+                                        dvFirma.setDrawingCacheEnabled(true);
+                                        sendJson(true);
 
-                    sendJson(true);
+                                    }
+                                });
+                        progressDialog.show();
+                    }else{
+                        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                        progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                        progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                        progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion_firma));
+                        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        progressDialog.dismiss();
+                                    }
+                                });
+                        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                });
+                        progressDialog.show();
+                    }
+
                 }
             }
         });
@@ -197,6 +221,28 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
         btnCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_regreso));
+                progressDialog.setTitle(getResources().getString(R.string.msj_titulo_aviso));
+                progressDialog.setMessage(getResources().getString(R.string.msj_contenido_aviso));
+                progressDialog.setButton(DialogInterface.BUTTON1, getResources().getString(R.string.aceptar),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                progressDialog.dismiss();
+                                Fragment fragmentoGenerico = new Inicio();
+                                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                                fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                            }
+                        });
+                progressDialog.setButton(DialogInterface.BUTTON2, getResources().getString(R.string.cancelar),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                progressDialog.dismiss();
+                            }
+                        });
+                progressDialog.show();
 
             }
         });
@@ -310,8 +356,8 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
 
     private void updateUI(Location loc){
         if (loc != null){
-            textView1.setText(String.valueOf(loc.getLatitude()));
-            textView2.setText(String.valueOf(loc.getLongitude()));
+            tvLongitud.setText(String.valueOf(loc.getLatitude()));
+            tvLongitud.setText(String.valueOf(loc.getLongitude()));
             Log.d("------->", "\n" + loc.getLongitude());
             Log.d("------->", "\n" + loc.getLatitude());
         }
@@ -323,19 +369,19 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
         Map<String, String> fechaActual = Config.fechas(1);
         String fecha = fechaActual.get("fechaIni");
         String idUsuario = usuarioDatos.get(SessionManager.USER_ID);
-        String longitud = textView1.getText().toString();
-        String latitud = textView2.getText().toString();
+        String longitud = tvLongitud.getText().toString();
+        String latitud = tvLatitud.getText().toString();
 
         double w, z;
 
         try {
-            z = new Double(textView2.getText().toString());
+            z = new Double(tvLatitud.getText().toString());
         } catch (NumberFormatException e) {
             z = 0;
         }
 
         try {
-            w = new Double(textView1.getText().toString());
+            w = new Double(tvLongitud.getText().toString());
         } catch (NumberFormatException e) {
             w = 0; // your default value
         }
@@ -358,7 +404,7 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
         }
         try{
             rqt.put("fechaHoraCheck", fechaN);
-            rqt.put("idTipoCheck", 1);
+            rqt.put("idTipoCheck", 2);
             ubicacion.put("latitud", z);
             ubicacion.put("longitud", w);
             rqt.put("ubicacion", ubicacion);
@@ -435,13 +481,24 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
 
     private void primerPaso(JSONObject obj){
         Log.d("TAG", "primerPaso: "  + obj );
+        Map<String, String> fechaActual = Config.fechas(1);
+        String fecha = fechaActual.get("fechaIni");
+        Calendar calendario = Calendar.getInstance();
+        int hora, minutos, segundos;
+
+
+        hora =calendario.get(Calendar.HOUR_OF_DAY);
+        minutos = calendario.get(Calendar.MINUTE);
+        segundos = calendario.get(Calendar.SECOND);
+
+
         String status = "";
         String statusText = "";
         try{
             status = obj.getString("status");
             statusText = obj.getString("statusText");
             if(Integer.parseInt(status) == 200){
-
+                Config.msj(getContext(), "Envio correcto", "Se ha registrado, la salida de comida.\nFecha:" + fecha + " \nhora: " + hora+":"+minutos+":"+segundos);
             }else{
                 Config.msj(getContext(), "Error: " + status, statusText);
             }

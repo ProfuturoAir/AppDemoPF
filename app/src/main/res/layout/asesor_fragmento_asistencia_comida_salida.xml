@@ -6,19 +6,20 @@
 
     <TextView
         android:textColor="@color/colorWhite"
-        android:id="@+id/textViewLatitudC2"
-        android:layout_width="match_parent"
+        android:id="@+id/textViewLogintud2"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="123"/>
+        android:text="texto1" />
+
     <TextView
         android:textColor="@color/colorWhite"
-        android:text="1234"
-        android:id="@+id/textViewLogitudC2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:id="@+id/textViewLatitud2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="texto2" />
 
     <com.airmovil.profuturo.ti.retencion.helper.DrawingView
-        android:id="@+id/afacs_dv_firmaC2"
+        android:id="@+id/drawinView2"
         android:layout_width="match_parent"
         android:layout_height="650dp"
         android:layout_weight="1"
@@ -28,11 +29,8 @@
 
     </com.airmovil.profuturo.ti.retencion.helper.DrawingView>
 
-    <TextView android:id="@+id/afacs_lbl_Latitud" style="@style/tvlatitud"/>
-    <TextView android:id="@+id/afacs_lbl_Longitud" style="@style/tvLogintud"/>
+    <Button android:id="@+id/buttonLimpiar2" style="@style/btnLimpiar"/>
+    <Button android:id="@+id/buttonGuardar2" style="@style/btnGuardar" />
+    <Button android:id="@+id/buttonCancelar2" style="@style/btnCancelar" />
 
-    <ToggleButton android:id="@+id/afacs_btn_actualizar" style="@style/btnActualizar"/>
-    <Button android:id="@+id/afacs_btn_limpiarC2" style="@style/btnLimpiar"/>
-    <Button android:id="@+id/afacs_btn_guardarC2" style="@style/btnGuardar" />
-    <Button android:id="@+id/afacs_btn_cancelarC2" style="@style/btnCancelar" />
 </LinearLayout>

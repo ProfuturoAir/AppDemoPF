@@ -54,18 +54,18 @@ public class Login extends AppCompatActivity {
 
         Log.d("*************", "PERFIL: ->" + perfil);
 
-        if (sessionManager.isLoggedIn()) {
-            /*if (sessionManager.getUserDetails().get("perfil").equals("1")) {
-                startActivity(new Intent(this, Director.class));
-            } else if (sessionManager.getUserDetails().get("perfil").equals("2")) {
-                Intent intentGerenteGerencias = new Intent(this, Gerente.class);
-                startActivity(intentGerenteGerencias);
-            }*/
-            if(sessionManager.getUserDetails().get("perfil").equals("3")){
-                startActivity(new Intent(Login.this, Asesor.class));
+            if (sessionManager.isLoggedIn()) {
+                if (sessionManager.getUserDetails().get("perfil").equals("1")) {
+                    startActivity(new Intent(this, Director.class));
+                } else if (sessionManager.getUserDetails().get("perfil").equals("2")) {
+                    Intent intentGerenteGerencias = new Intent(this, Gerente.class);
+                    startActivity(intentGerenteGerencias);
+                } else {
+                    Intent intentAsesor = new Intent(this, Asesor.class);
+                    startActivity(intentAsesor);
+                }
+                finish();
             }
-            finish();
-        }
 
         btnIngresar.performClick();
         btnIngresar.setOnClickListener(new View.OnClickListener() {

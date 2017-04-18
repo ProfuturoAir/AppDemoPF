@@ -24,7 +24,9 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.DrawingView;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
@@ -176,22 +178,45 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
                             });
                     progressDialog.show();
                 }else {
-                    final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-                    progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_ok));
-                    progressDialog.setTitle(getResources().getString(R.string.msj_titulo_confirmacion));
-                    progressDialog.setMessage(getResources().getString(R.string.msj_contenido_envio) + " registro de salida");
-                    progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    progressDialog.dismiss();
-                                    dvFirma.startNew();
-                                    dvFirma.setDrawingCacheEnabled(true);
-                                    sendJson(true);
+                    Connected connected = new Connected();
+                    if(connected.estaConectado(getContext())){
+                        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                        progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_ok));
+                        progressDialog.setTitle(getResources().getString(R.string.msj_titulo_confirmacion));
+                        progressDialog.setMessage(getResources().getString(R.string.msj_contenido_envio) + " registro de salida");
+                        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        progressDialog.dismiss();
+                                        dvFirma.startNew();
+                                        dvFirma.setDrawingCacheEnabled(true);
+                                        sendJson(true);
 
-                                }
-                            });
-                    progressDialog.show();
+                                    }
+                                });
+                        progressDialog.show();
+                    }else{
+                        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                        progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                        progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                        progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion_firma));
+                        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        progressDialog.dismiss();
+                                    }
+                                });
+                        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                });
+                        progressDialog.show();
+                    }
 
 
                 }
@@ -201,6 +226,28 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
         btnCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_regreso));
+                progressDialog.setTitle(getResources().getString(R.string.msj_titulo_aviso));
+                progressDialog.setMessage(getResources().getString(R.string.msj_contenido_aviso));
+                progressDialog.setButton(DialogInterface.BUTTON1, getResources().getString(R.string.aceptar),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                progressDialog.dismiss();
+                                Fragment fragmentoGenerico = new Inicio();
+                                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                                fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                            }
+                        });
+                progressDialog.setButton(DialogInterface.BUTTON2, getResources().getString(R.string.cancelar),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                progressDialog.dismiss();
+                            }
+                        });
+                progressDialog.show();
 
             }
         });
@@ -378,7 +425,25 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                        progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                        progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                        progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion_firma));
+                        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        progressDialog.dismiss();
+                                    }
+                                });
+                        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                });
+                        progressDialog.show();
                     }
                 }) {
             @Override
@@ -408,7 +473,7 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
             status = obj.getString("status");
             statusText = obj.getString("statusText");
             if(Integer.parseInt(status) == 200){
-                Config.msj(getContext(), "Envio correcto", "Se ha registrado, la salida de hoy \nFecha:" + fecha + " \nhora: " + hora+":"+minutos+":"+segundos);
+                Config.msj(getContext(), "Envio correcto", "Se ha registrado, la salida.\nFecha:" + fecha + " \nhora: " + hora+":"+minutos+":"+segundos);
             }else{
                 Config.msj(getContext(), "Error: " + status, statusText);
             }
