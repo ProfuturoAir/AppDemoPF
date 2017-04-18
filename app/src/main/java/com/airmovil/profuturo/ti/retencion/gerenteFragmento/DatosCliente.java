@@ -1,5 +1,6 @@
 package com.airmovil.profuturo.ti.retencion.gerenteFragmento;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
@@ -18,6 +19,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.ConCita;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.Encuesta1;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
@@ -60,6 +62,15 @@ public class DatosCliente extends Fragment {
     private Button btnContinuar, btnCancelar;
     private View rootView;
 
+    private String idTramite;
+    private String nombre;
+    private String numeroDeCuenta;
+    private String hora;
+    final Fragment borrar = this;
+
+    // TODO: Config
+    Map<String, String> usuario;
+
     private OnFragmentInteractionListener mListener;
 
     public DatosCliente() {
@@ -97,6 +108,8 @@ public class DatosCliente extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
 
+        //primeraPeticion();
+
         tvClienteNombre = (TextView) rootView.findViewById(R.id.gfda_tv_nombre_cliente);
         tvClienteNumeroCuenta = (TextView) rootView.findViewById(R.id.gfda_tv_numero_cuenta_cliente);
         tvClienteNSS = (TextView) rootView.findViewById(R.id.gfda_tv_nss_cliente);
@@ -106,6 +119,15 @@ public class DatosCliente extends Fragment {
         btnContinuar = (Button) rootView.findViewById(R.id.gfda_btn_continuar);
         btnCancelar = (Button) rootView.findViewById(R.id.gfda_btn_cancelar);
 
+        // TODO: Config
+        usuario = Config.usuario(getContext());
+
+        nombre = getArguments().getString("nombre");
+        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+        hora = getArguments().getString("hora");
+
+        Log.d("NOMBRES CLI ", "1 " + nombre + " numero " + numeroDeCuenta);
+
 
         final Fragment borrar = this;
 
@@ -114,17 +136,42 @@ public class DatosCliente extends Fragment {
             public void onClick(View v) {
                 final Connected conected = new Connected();
                 if(conected.estaConectado(v.getContext())) {
+                    sendJson(true);
+                    if(idTramite!=null) {
+                        Fragment fragmentoGenerico = new Encuesta1();
+                        Gerente gerente = (Gerente) getContext();
+                        gerente.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta);
+                    }
                     //
                 }else{
-                    Config.msj(v.getContext(),"Error en conexión", "Sin Conexion por el momento.Datos Cliente P-1.1.3.3");
+                    final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                    progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                    progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                    progressDialog.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
+                    progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    progressDialog.dismiss();
+                                    //sendJson(true);
+                                    if(idTramite!=null){
+                                        Fragment fragmentoGenerico = new Encuesta1();
+                                        Gerente gerente = (Gerente) getContext();
+                                        gerente.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta);
+                                    }
+                                }
+                            });
+                    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                    progressDialog.show();
                 }
-                Fragment fragmentoGenerico = new Encuesta1();
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                if (fragmentoGenerico != null) {
-                    fragmentManager
-                            .beginTransaction()//.setCustomAnimations(android.R.anim.slide_out_right,android.R.anim.slide_in_left)
-                            .replace(R.id.content_gerente, fragmentoGenerico).remove(borrar).commit();
-                }
+
+
             }
         });
 
@@ -298,6 +345,7 @@ public class DatosCliente extends Fragment {
     }
 
     private void primerPaso(JSONObject obj){
+        //Log.d(TAG, "--> JSON TODO " + obj);
         String status = "";
         String statusText = "";
         String nombre = "";
@@ -310,6 +358,7 @@ public class DatosCliente extends Fragment {
         try{
             status = obj.getString("status");
             statusText = obj.getString("statusText");
+            idTramite = obj.getString("idTramite");
 
             switch (status){
                 case "200":
@@ -319,7 +368,7 @@ public class DatosCliente extends Fragment {
                     cuenta = jsonCliente.getString("numeroCuenta");
                     nss    = jsonCliente.getString("nss");
                     curp   = jsonCliente.getString("curp");
-                    fechaConsulta = jsonCliente.getString("fecha_consulta");
+                    fechaConsulta = jsonCliente.getString("fechaConsulta");
                     saldo = jsonCliente.getDouble("saldo");
 
                     tvClienteNombre.setText("" + nombre);

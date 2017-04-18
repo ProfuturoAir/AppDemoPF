@@ -19,7 +19,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.activities.Asesor;
+import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.*;
 import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
@@ -112,7 +112,7 @@ public class DatosAsesor extends Fragment {
 
         nombre = getArguments().getString("nombre");
         numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-        hora = getArguments().getString("hora");
+        //hora = getArguments().getString("hora");
 
         // TODO: obteniendo el numero del usuario
         HashMap<String, String> hashMap = sessionManager.getUserDetails();
@@ -135,8 +135,8 @@ public class DatosAsesor extends Fragment {
                 if(connected.estaConectado(getContext())){
                     //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoDatosCliente).commit();
                     Fragment fragmentoGenerico = new DatosCliente();
-                    Asesor asesor = (Asesor) getContext();
-                    asesor.switchDatosCliente(fragmentoGenerico,nombre,numeroDeCuenta,hora);
+                    Gerente gerente = (Gerente) getContext();
+                    gerente.switchDatosCliente(fragmentoGenerico,nombre,numeroDeCuenta);
                 }else {
 
                     android.app.AlertDialog.Builder dlgAlert = new android.app.AlertDialog.Builder(getContext());
@@ -148,10 +148,10 @@ public class DatosAsesor extends Fragment {
                         public void onClick(DialogInterface dialog, int which) {
                             /*Fragment fragmentoGenerico = new DatosCliente();
                             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                            fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();*/
+                            fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();*/
                             Fragment fragmentoGenerico = new DatosCliente();
-                            Asesor asesor = (Asesor) getContext();
-                            asesor.switchDatosCliente(fragmentoGenerico, nombre, numeroDeCuenta, hora);
+                            Gerente gerente = (Gerente) getContext();
+                            gerente.switchDatosCliente(fragmentoGenerico, nombre, numeroDeCuenta);
                         }
                     });
                     dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {

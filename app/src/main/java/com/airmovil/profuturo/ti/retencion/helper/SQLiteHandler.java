@@ -173,7 +173,7 @@ public class SQLiteHandler extends SQLiteOpenHelper{
         db.close(); // Closing database connection
 
         // writeToSD();
-        Log.d(TAG, "DEtalles del usuario: " + idTramite);
+        Log.d(TAG, "Tramite: " + idTramite);
 
     }
 

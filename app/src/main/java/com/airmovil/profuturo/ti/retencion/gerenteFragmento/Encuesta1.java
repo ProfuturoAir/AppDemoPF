@@ -21,10 +21,12 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.*;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.airmovil.profuturo.ti.retencion.helper.SQLiteHandler;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -51,6 +53,11 @@ public class Encuesta1 extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     public static final String TAG = Encuesta1.class.getSimpleName();
+    private SQLiteHandler db;
+    private String idTramite;
+    String nombre;
+    String numeroDeCuenta;
+    String hora;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -63,6 +70,7 @@ public class Encuesta1 extends Fragment {
     private boolean respuesta1, respuesta2, respuesta3;
     private Boolean r1, r2, r3;
     private String observaciones;
+    private int estatusTramite = 1134;
 
     private OnFragmentInteractionListener mListener;
 
@@ -91,6 +99,7 @@ public class Encuesta1 extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        db = new SQLiteHandler(getContext());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -111,6 +120,12 @@ public class Encuesta1 extends Fragment {
         cb3si        = (CheckBox) rootView.findViewById(R.id.gfe1_cb_pregunta3_si);
         cb3no        = (CheckBox) rootView.findViewById(R.id.gfe1_cb_pregunta3_no);
         etObservaciones = (EditText) rootView.findViewById(R.id.gfe1_et_observaciones);
+
+        idTramite = getArguments().getString("idTramite");
+        nombre = getArguments().getString("nombre");
+        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+
+        Log.d("HOLA","TRAMITE "+idTramite+" id "+nombre+" - "+numeroDeCuenta);
 
         cb1si.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -172,6 +187,8 @@ public class Encuesta1 extends Fragment {
             }
         });
 
+        final Fragment borrar = this;
+
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -181,11 +198,40 @@ public class Encuesta1 extends Fragment {
                     final Connected conectado = new Connected();
                     if(conectado.estaConectado(getContext())){
                         sendJson(true);
+                        Config.teclado(getContext(), etObservaciones);
+
                         Fragment fragmentoGenerico = new Encuesta2();
-                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
+                        Gerente gerente = (Gerente) getContext();
+                        gerente.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta);
+
                     }else{
-                        Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
+                        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                        progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                        progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                        progressDialog.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
+                        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        progressDialog.dismiss();
+                                        Config.teclado(getContext(), etObservaciones);
+
+                                        Log.d("CheckBox 3 no", "" + idTramite +" - "+estatusTramite+" - "+r1+" - "+r2+" - "+r3+" - "+etObservaciones.getText().toString().trim());
+                                        db.addEncuesta(idTramite,estatusTramite,r1,r2,r3,etObservaciones.getText().toString().trim());
+                                        db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+                                        Fragment fragmentoGenerico = new Encuesta2();
+                                        Gerente gerente = (Gerente) getContext();
+                                        gerente.switchEncuesta2(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta);
+                                    }
+                                });
+                        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                });
+                        progressDialog.show();
                     }
                 }
             }

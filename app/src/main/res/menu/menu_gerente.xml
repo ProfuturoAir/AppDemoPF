@@ -40,6 +40,11 @@
                     android:id="@+id/gerente_nav_asistencia"
                     android:icon="@drawable/icono_asistencia"
                     android:title="@string/texto_nav_asistencia"/>
+
+                <item
+                    android:id="@+id/gerente_nav_implicaciones_pendientes"
+                    android:icon="@drawable/icono_pendientes"
+                    android:title="@string/texto_nav_reportes" />
                 <!--item
                     android:id="@+id/gerente_nav_pendientes"
                     android:icon="@drawable/icono_pendientes"

@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ProcesoImplicacionesPendientes;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.DatosAsesor;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.DatosCliente;
@@ -277,6 +278,9 @@ public class Gerente extends AppCompatActivity{
             case R.id.gerente_nav_asistencia:
                 fragmentoGenerico = new ReporteAsistencia();
                 break;
+            case R.id.gerente_nav_implicaciones_pendientes:
+                fragmentoGenerico = new ProcesoImplicacionesPendientes();
+                break;
 
             case R.id.gerente_nav_cerrar:
                 checkMapsFragment = false;
@@ -405,12 +409,12 @@ public class Gerente extends AppCompatActivity{
         ft.commit();
     }
 
-    public void switchDatosAsesor(Fragment frag, String idClienteCuenta,String nombre,String numeroDeCuenta,String hora) {
+    public void switchDatosAsesor(Fragment frag, String idClienteCuenta,String nombre,String numeroDeCuenta) {
         Bundle bundle=new Bundle();
         bundle.putString("idClienteCuenta",idClienteCuenta);
         bundle.putString("nombre",nombre);
         bundle.putString("numeroDeCuenta",numeroDeCuenta);
-        bundle.putString("hora",hora);
+        //bundle.putString("hora",hora);
 
         Log.d("NOMBRES ASE", "1" + nombre + " numero" + numeroDeCuenta);
 
@@ -421,11 +425,11 @@ public class Gerente extends AppCompatActivity{
         ft.commit();
     }
 
-    public void switchDatosCliente(Fragment frag,String nombre,String numeroDeCuenta,String hora) {
+    public void switchDatosCliente(Fragment frag,String nombre,String numeroDeCuenta) {
         Bundle bundle=new Bundle();
         bundle.putString("nombre",nombre);
         bundle.putString("numeroDeCuenta",numeroDeCuenta);
-        bundle.putString("hora",hora);
+        //bundle.putString("hora",hora);
 
         frag.setArguments(bundle);
         Log.d("NOMBRES PRE ", "1" + nombre + " numero" + numeroDeCuenta);
@@ -435,12 +439,12 @@ public class Gerente extends AppCompatActivity{
         ft.commit();
     }
 
-    public void switchEncuesta1(Fragment frag,String idTramite,Fragment borrar,String nombre,String numeroDeCuenta,String hora) {
+    public void switchEncuesta1(Fragment frag,String idTramite,Fragment borrar,String nombre,String numeroDeCuenta) {
         Bundle bundle=new Bundle();
         bundle.putString("idTramite",idTramite);
         bundle.putString("nombre",nombre);
         bundle.putString("numeroDeCuenta",numeroDeCuenta);
-        bundle.putString("hora",hora);
+        //bundle.putString("hora",hora);
 
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -452,12 +456,12 @@ public class Gerente extends AppCompatActivity{
         //fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).remove(borrar).commit();
     }
 
-    public void switchEncuesta2(Fragment frag,String idTramite,Fragment borrar,String nombre,String numeroDeCuenta,String hora) {
+    public void switchEncuesta2(Fragment frag,String idTramite,Fragment borrar,String nombre,String numeroDeCuenta) {
         Bundle bundle=new Bundle();
         bundle.putString("idTramite",idTramite);
         bundle.putString("nombre",nombre);
         bundle.putString("numeroDeCuenta",numeroDeCuenta);
-        bundle.putString("hora",hora);
+        //bundle.putString("hora",hora);
 
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -469,12 +473,12 @@ public class Gerente extends AppCompatActivity{
         //fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).remove(borrar).commit();
     }
 
-    public void switchFirma(Fragment frag,String idTramite,Fragment borrar,String nombre,String numeroDeCuenta,String hora) {
+    public void switchFirma(Fragment frag,String idTramite,Fragment borrar,String nombre,String numeroDeCuenta) {
         Bundle bundle=new Bundle();
         bundle.putString("idTramite",idTramite);
         bundle.putString("nombre",nombre);
         bundle.putString("numeroDeCuenta",numeroDeCuenta);
-        bundle.putString("hora",hora);
+        //bundle.putString("hora",hora);
 
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -487,12 +491,12 @@ public class Gerente extends AppCompatActivity{
     }
 
 
-    public void switchDocumento(Fragment frag,String idTramite,Fragment borrar,String nombre,String numeroDeCuenta,String hora) {
+    public void switchDocumento(Fragment frag,String idTramite,Fragment borrar,String nombre,String numeroDeCuenta) {
         Bundle bundle=new Bundle();
         bundle.putString("idTramite",idTramite);
         bundle.putString("nombre",nombre);
         bundle.putString("numeroDeCuenta",numeroDeCuenta);
-        bundle.putString("hora",hora);
+        //bundle.putString("hora",hora);
 
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

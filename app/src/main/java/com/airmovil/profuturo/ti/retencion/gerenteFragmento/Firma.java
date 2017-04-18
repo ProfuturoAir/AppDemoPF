@@ -26,9 +26,13 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.DrawingView;
+import com.airmovil.profuturo.ti.retencion.helper.EnviaJSON;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.airmovil.profuturo.ti.retencion.helper.SQLiteHandler;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -75,6 +79,14 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
 
     private OnFragmentInteractionListener mListener;
 
+    private Connected connected;
+    private SQLiteHandler db;
+
+    String idTramite;
+    String nombre;
+    String numeroDeCuenta;
+    String hora;
+
     public Firma() {
         // Required empty public constructor
     }
@@ -100,6 +112,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        db = new SQLiteHandler(getContext());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -134,6 +147,8 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                 Config.msjTime(v.getContext(), "Mensaje", "Limpiando contenido", 2000);
             }
         });
+
+        final Fragment borrar = this;
 
         btnGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,16 +200,55 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dvFirma.setDrawingCacheEnabled(true);
-                                String base64 = encodeTobase64(dvFirma.getDrawingCache());
+                                final String base64 = encodeTobase64(dvFirma.getDrawingCache());
                                 Bitmap emBit = Bitmap.createBitmap(dvFirma.getWidth(), dvFirma.getHeight(), Bitmap.Config.ARGB_8888);
                                 //Log.d("BASE64-->", base64);
                                 dvFirma.setDrawingCacheEnabled(false);
-                                Fragment fragmentoGenerico = new Escaner();
+                                if(connected.estaConectado(getContext())) {
+                                    sendJson(true);
+                                    final EnviaJSON enviaPrevio = new EnviaJSON();
+                                    enviaPrevio.sendPrevios(idTramite, getContext());
+                                    // * Fragment fragmentoGenerico = new Escaner();
+                                    // *FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                                    // *fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                                    Fragment fragmentoGenerico = new Escaner();
+                                    Gerente gerente = (Gerente) getContext();
+                                    gerente.switchDocumento(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta);
+                                }else{
+
+                                    final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                                    progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                                    progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                                    progressDialog.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
+                                    progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    progressDialog.dismiss();
+                                                    db.addFirma(idTramite,123,base64,90.2349,-23.9897);
+                                                    db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+                                                    Fragment fragmentoGenerico = new Escaner();
+                                                    Gerente gerente = (Gerente) getContext();
+                                                    gerente.switchDocumento(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta);
+                                                }
+                                            });
+                                    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+
+                                                }
+                                            });
+                                    progressDialog.show();
+
+
+                                }
+                                /*Fragment fragmentoGenerico = new Escaner();
                                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                                 if (fragmentoGenerico != null) {
                                     fragmentManager
                                             .beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
-                                }
+                                }*/
                             }
                         });
                         dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener(){
@@ -267,7 +321,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(getContext(),
+        /*if (ActivityCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(getActivity(),
@@ -279,7 +333,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                     LocationServices.FusedLocationApi.getLastLocation(apiClient);
 
             updateUI(lastLocation);
-        }
+        }*/
     }
 
     public String encodeTobase64(Bitmap image) {
@@ -364,14 +418,14 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
             }
         }
     }
-
+/*
     @Override
     public void onStop() {
         if(apiClient.isConnected())
             apiClient.disconnect();
         firsStarted = true;
         super.onStop();
-    }
+    }*/
 
     private void updateUI(Location loc){
         if (loc != null){

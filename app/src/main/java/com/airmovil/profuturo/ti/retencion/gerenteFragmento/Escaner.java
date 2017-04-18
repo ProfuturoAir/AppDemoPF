@@ -28,7 +28,10 @@ import android.widget.ImageView;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.ConCita;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.EnviaJSON;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.airmovil.profuturo.ti.retencion.helper.SQLiteHandler;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -38,6 +41,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -74,7 +78,16 @@ public class Escaner extends Fragment {
     private File mCurrentPhoto;
     private ImageView imageView;
 
+    private Connected connected;
+    private SQLiteHandler db;
+
+
     private OnFragmentInteractionListener mListener;
+
+    String idTramite;
+    String nombre;
+    String numeroDeCuenta;
+    String hora;
 
     public Escaner() {
         // Required empty public constructor
@@ -101,6 +114,7 @@ public class Escaner extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        db = new SQLiteHandler(getContext());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -115,6 +129,14 @@ public class Escaner extends Fragment {
         btnCancelar= (Button) view.findViewById(R.id.gfe_btn_cancelar);
         btnBorrar= (Button) view.findViewById(R.id.gfe_btn_borrar);
         imageView = (ImageView) rootView.findViewById(R.id.scannedImage1);
+
+        connected = new Connected();
+        idTramite = getArguments().getString("idTramite");
+        nombre = getArguments().getString("nombre");
+        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+        hora = getArguments().getString("hora");
+
+        Log.d("AL FINAL ", "1 " + nombre + " numero " + numeroDeCuenta);
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,17 +178,6 @@ public class Escaner extends Fragment {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
-                            Fragment fragmentoGenerico = null;
-                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                            final Fragment borrarFragmento;
-                            fragmentoGenerico = new ConCita();
-                            if (fragmentoGenerico != null) {
-                                fragmentManager
-                                        .beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-                                        .replace(R.id.content_gerente, fragmentoGenerico)
-                                        .addToBackStack("F_MAIN")
-                                        .commit();
-                            }
                         }
                     });
                     dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -191,16 +202,53 @@ public class Escaner extends Fragment {
                 dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        imageView.setDrawingCacheEnabled(true);
+                        final String base64 = encodeTobase64(imageView.getDrawingCache());
+                        //Bitmap emBit = Bitmap.createBitmap(imageView.getWidth(), imageView.getHeight(), Bitmap.Config.ARGB_8888);
+                        Log.d("BASE64-->", base64);
+                        imageView.setDrawingCacheEnabled(false);
 
-                        Fragment fragmentoGenerico = null;
-                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        fragmentoGenerico = new SinCita();
-                        if (fragmentoGenerico != null){
-                            fragmentManager
-                                    .beginTransaction()//.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-                                    .replace(R.id.content_gerente, fragmentoGenerico)
-                                    .addToBackStack("F_MAIN")
-                                    .commit();
+                        if(connected.estaConectado(getContext())) {
+                            sendJson(true);
+                            final EnviaJSON enviaPrevio = new EnviaJSON();
+                            enviaPrevio.sendPrevios(idTramite, getContext());
+                            Fragment fragmentoGenerico = new SinCita();
+                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            if (fragmentoGenerico != null) {
+                                fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
+                            }
+
+                            Config.msj(getContext(), "Mensaje ", "Se ha finalizado el proceso con exito");
+                        }else {
+
+                            final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                            progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                            progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                            progressDialog.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
+                            progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            progressDialog.dismiss();
+                                            db.addDocumento(idTramite,"2017-04-10",1,base64,"12344","Cesar",90.2349, -23.9897);
+                                            db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+                                            Fragment fragmentoGenerico = new SinCita();
+                                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                                            if (fragmentoGenerico != null) {
+                                                fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
+                                            }
+
+                                            Config.msj(getContext(), "Mensaje ", "Se ha finalizado el proceos, si deseas ve a la parte de reportes pendientes par verificar que tu procesos se haya guardado y, que cuando exista conexión a internet se enviara.");
+                                        }
+                                    });
+                            progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    });
+                            progressDialog.show();
                         }
                     }
                 });
@@ -396,5 +444,45 @@ public class Escaner extends Fragment {
 
     private void primerPaso(JSONObject obj){
         Log.d("RESPONSE", "RESPONSE: ->" + obj);
+    }
+
+    public String encodeTobase64(Bitmap image) {
+
+        float bmW=image.getWidth();
+        float bmH= image.getHeight();
+
+        Log.d("PIXELES", "ORIGINAL ANCHO"+bmW+"Original ALTO:"+bmH );
+
+        int widthPixels = getContext().getResources().getDisplayMetrics().widthPixels;
+
+        Bitmap resize;
+        Log.d("PIXELES", "TELEFONO"+widthPixels );
+        if(bmW>=widthPixels){
+            float newWidth=widthPixels;
+            float newHeight=(bmH/bmW)*widthPixels;
+
+            Log.d("PIXELES", "NUEVO ANCHO" + widthPixels + "NUEVO ALTO:" + newHeight + " W" + bmW + " H" + bmH);
+            //resize the bit map
+            resize = Bitmap.createBitmap(image,0,0,(int)newWidth,(int)newHeight);
+        }else{
+            Log.d("PIXELES", "PASA SIN CAMBIO" );
+            resize = image;
+        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        resize.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] b = baos.toByteArray();
+        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+
+        imageEncoded = imageEncoded.replace(" ","");
+        String foto="data:image/jpeg;base64,"+imageEncoded;
+
+        int maxLogSize = 1000;
+        for(int i = 0; i <= foto.length() / maxLogSize; i++) {
+            int start = i * maxLogSize;
+            int end = (i+1) * maxLogSize;
+            end = end > foto.length() ? foto.length() : end;
+            Log.d("n-"+i, foto.substring(start, end));
+        }
+        return foto;
     }
 }
