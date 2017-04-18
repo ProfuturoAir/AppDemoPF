@@ -186,7 +186,8 @@ public class Encuesta1 extends Fragment {
                 }else {
                     final Connected conectado = new Connected();
                     if(conectado.estaConectado(getContext())){
-                        sendJson(true);
+                        String o = etObservaciones.getText().toString();
+                        sendJson(true, r1, r2, r3, o);
                         Config.teclado(getContext(), etObservaciones);
                         Fragment fragmentoGenerico = new Encuesta2();
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
@@ -357,27 +358,25 @@ public class Encuesta1 extends Fragment {
     }
 
     // TODO: REST
-    private void sendJson(final boolean primerPeticion) {
+    private void sendJson(final boolean primerPeticion, boolean opc1, boolean opc2, boolean opc3, String observaciones) {
         final ProgressDialog loading;
         if (primerPeticion)
             loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
         else
             loading = null;
-
+        idTramite = getArguments().getString("idTramite");
         JSONObject obj = new JSONObject();
-
-        String observaciones = etObservaciones.getText().toString();
         // TODO: Formacion del JSON request
         try{
             JSONObject rqt = new JSONObject();
             JSONObject encuesta = new JSONObject();
             encuesta.put("observaciones", observaciones);
-            encuesta.put("pregunta3", true);
-            encuesta.put("pregunta2", true);
-            encuesta.put("pregunta1", true);
+            encuesta.put("pregunta3", opc3);
+            encuesta.put("pregunta2", opc2);
+            encuesta.put("pregunta1", opc1);
             rqt.put("encuesta", encuesta);
             rqt.put("estatusTramite", 1134);
-            rqt.put("idTramite", "1");
+            rqt.put("idTramite", idTramite);
             obj.put("rqt", rqt);
             Log.d(TAG, "REQUEST-->" + obj);
         } catch (JSONException e){

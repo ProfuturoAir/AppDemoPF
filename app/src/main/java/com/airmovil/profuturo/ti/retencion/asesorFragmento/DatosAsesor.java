@@ -321,7 +321,7 @@ public class DatosAsesor extends Fragment {
     private void sendJson(final boolean primerPeticion) {
 
         HashMap<String, String> datos = sessionManager.getUserDetails();
-        String numeroUsuario = datos.get(SessionManager.ID);
+        String numeroUsuario = datos.get(SessionManager.USER_ID);
 
         JSONObject obj = new JSONObject();
         // TODO: Formacion del JSON request

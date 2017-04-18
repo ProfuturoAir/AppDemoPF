@@ -1,5 +1,6 @@
 package com.airmovil.profuturo.ti.retencion.asesorFragmento;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.renderscript.Sampler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
@@ -74,7 +76,6 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
     private GoogleApiClient apiClient;
     private OnFragmentInteractionListener mListener;
     private View rootView;
-
     private boolean firsStarted = true;
 
     private Connected connected;
@@ -125,7 +126,6 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
         Button btnCancelar= (Button) view.findViewById(R.id.aff_btn_cancelar);
 
         connected = new Connected();
-        //idTramite = "1";
         idTramite = getArguments().getString("idTramite");
         nombre = getArguments().getString("nombre");
         numeroDeCuenta = getArguments().getString("numeroDeCuenta");
@@ -246,7 +246,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                                 Log.d("BASE64-->", base64);
                                 dvFirma.setDrawingCacheEnabled(false);
                                 if(connected.estaConectado(getContext())) {
-                                    sendJson(true);
+                                    sendJson(true, base64);
                                     final EnviaJSON enviaPrevio = new EnviaJSON();
                                     enviaPrevio.sendPrevios(idTramite, getContext());
                                     // * Fragment fragmentoGenerico = new Escaner();
@@ -346,6 +346,33 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        apiClient.stopAutoManage(getActivity());
+        apiClient.disconnect();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        apiClient.stopAutoManage(getActivity());
+        apiClient.disconnect();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        if(apiClient.isConnected())
+            apiClient.disconnect();
+        firsStarted = true;
+        super.onStop();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         getView().setFocusableInTouchMode(true);
@@ -386,7 +413,12 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+        } else {
+            Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(apiClient);
+            updateUI(lastLocation);
+        }
     }
 
     @Override
@@ -400,23 +432,16 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_LOCATION) {
-            if (grantResults.length == 1
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 //Permiso concedido
-
                 @SuppressWarnings("MissingPermission")
-                Location lastLocation =
-                        LocationServices.FusedLocationApi.getLastLocation(apiClient);
-
+                Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(apiClient);
                 updateUI(lastLocation);
-
             } else {
                 //Permiso denegado:
                 //Deberíamos deshabilitar toda la funcionalidad relativa a la localización.
-
                 Log.e("LOGTAG", "Permiso denegado");
             }
         }
@@ -500,7 +525,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
     }
 
     // TODO: REST
-    private void sendJson(final boolean primerPeticion) {
+    private void sendJson(final boolean primerPeticion, String firmaIMG) {
         final ProgressDialog loading;
         if (primerPeticion)
             loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
@@ -509,15 +534,19 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
 
         JSONObject obj = new JSONObject();
 
+        String latitud = lblLatitud.getText().toString();
+        String lonngitud = lblLongitud.getText().toString();
+        idTramite = getArguments().getString("idTramite");
+
         // TODO: Formacion del JSON request
         try{
             JSONObject rqt = new JSONObject();
-            rqt.put("estatusTramite", 123);
-            rqt.put("firmaCliente", "CADENABASE64");
+            rqt.put("estatusTramite", idTramite);
+            rqt.put("firmaCliente", firmaIMG);
             rqt.put("idTramite", 1);
             JSONObject ubicacion = new JSONObject();
-            ubicacion.put("latitud", "90.2349");
-            ubicacion.put("longitud", "-23.9897");
+            ubicacion.put("latitud", latitud);
+            ubicacion.put("longitud", lonngitud);
             rqt.put("ubicacion", ubicacion);
             obj.put("rqt", rqt);
             Log.d("datos", "REQUEST-->" + obj);
