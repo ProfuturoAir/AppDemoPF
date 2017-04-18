@@ -122,12 +122,15 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
         dvFirma.setColor("#000000");
         dvFirma.setFocusable(true);
 
-        apiClient = new GoogleApiClient.Builder(getActivity())
-                .enableAutoManage(getActivity(),this)
-                .addConnectionCallbacks(this)
-                .addApi(LocationServices.API)
-                .build();
-
+        try {
+            apiClient = new GoogleApiClient.Builder(getActivity())
+                    .enableAutoManage(getActivity(), this)
+                    .addConnectionCallbacks(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         btnLimpiar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

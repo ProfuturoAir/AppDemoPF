@@ -154,6 +154,13 @@ public class Inicio extends Fragment {
                                     sendJson(true);
                                 }
                             });
+                    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
                     progressDialog.show();
                 }
             }
@@ -428,6 +435,13 @@ public class Inicio extends Fragment {
                                         public void onClick(DialogInterface dialog, int which) {
                                             progressDialog.dismiss();
                                             sendJson(true);
+                                        }
+                                    });
+                            progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
                                         }
                                     });
                             progressDialog.show();

@@ -98,6 +98,8 @@ public class ConCita extends Fragment {
     private Button btnAplicar, btnClienteSinCita;
     private TextView tvFecha, tvRegistros;
     private View rootView;
+    private Connected connected;
+    final Fragment borrar = this;
 
     public ConCita() {
         // Required empty public constructor
@@ -135,6 +137,8 @@ public class ConCita extends Fragment {
         // TODO: Casteo
         rootView = view;
 
+        connected = new Connected();
+
         spinner = (Spinner) rootView.findViewById(R.id.afcc_spinner_estados);
         btnAplicar = (Button) rootView.findViewById(R.id.afcc_btn_aplicar);
         btnClienteSinCita = (Button) rootView.findViewById(R.id.afcc_btn_sin_cita);
@@ -171,16 +175,11 @@ public class ConCita extends Fragment {
         //</editor-fold>
 
         sendJson(true);
-        final Fragment borrar = this;
         btnAplicar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                //Config.msjTime(getContext(), getResources().getString(R.string.msj_titulo_espera), getResources().getString(R.string.msj_espera), 4000);
-
-                Connected connected = new Connected();
                 if(connected.estaConectado(getContext())){
-
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                     ConCita newInstance = ConCita.newInstance("item3", "pagina3", rootView.getContext());
                     borrar.onDestroy();
@@ -189,33 +188,59 @@ public class ConCita extends Fragment {
                     ft.addToBackStack(null);
                     ft.commit();
                 }else{
-                    android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                    dlgAlert.setTitle(getResources().getString(R.string.error_conexion));
-                    dlgAlert.setMessage(getResources().getString(R.string.msj_error_conexion));
-                    dlgAlert.setCancelable(true);
-                    dlgAlert.setCancelable(true);
-                    dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            sendJson(true);
-                        }
-                    });
-                    dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                    final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                    progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                    progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                    progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion));
+                    progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    progressDialog.dismiss();
+                                    sendJson(true);
+                                }
+                            });
+                    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
 
-                        }
-                    });
-                    dlgAlert.create().show();
+                                }
+                            });
+                    progressDialog.show();
                 }
 
             }
         });
 
-        //region Description: Buton cliente sin cita, llama a otro fragmento
         btnClienteSinCita.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(connected.estaConectado(getContext())){
+
+                }else{
+                    final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                    progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                    progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                    progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion));
+                    progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    progressDialog.dismiss();
+                                }
+                            });
+                    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                    progressDialog.show();
+                }
+
+
                 Fragment fragmentoGenerico = new SinCita();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 fragmentManager
@@ -223,7 +248,6 @@ public class ConCita extends Fragment {
                         .replace(R.id.content_asesor, fragmentoGenerico).commit();
             }
         });
-        //endregion
     }
 
     @Override
@@ -309,23 +333,13 @@ public class ConCita extends Fragment {
 
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
-
-        final ProgressDialog loading;
-        if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
-        else
-            loading = null;
-
         final JSONObject obj = new JSONObject();
-        SessionManager sessionManager = new SessionManager(getActivity().getApplicationContext());
+        SessionManager sessionManager = new SessionManager(getContext());
         HashMap<String, String> datos = sessionManager.getUserDetails();
         String nombre = datos.get(SessionManager.NOMBRE);
-        String numeroUsuario = datos.get(SessionManager.ID);
-
-
+        String numeroUsuario = datos.get(SessionManager.USER_ID);
         try {
             // TODO: Formacion del JSON request
-
             JSONObject rqt = new JSONObject();
             rqt.put("estatusCita", spinner.getSelectedItemId());
             rqt.put("pagina", pagina);
@@ -342,7 +356,6 @@ public class ConCita extends Fragment {
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
-                            loading.dismiss();
                             primerPaso(response);
                         } else {
                             segundoPaso(response);
@@ -353,7 +366,7 @@ public class ConCita extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         try{
-                            loading.dismiss();
+                            //loading.dismiss();
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -377,23 +390,19 @@ public class ConCita extends Fragment {
                             });
                             dlgAlert.create().show();
                         }else{
-                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                            dlgAlert.setTitle("Error de conexión");
-                            dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
-                            dlgAlert.setCancelable(true);
-                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    sendJson(true);
-                                }
-                            });
-                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                            dlgAlert.create().show();
+                            final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                            progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                            progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                            progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion));
+                            progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            progressDialog.dismiss();
+                                            sendJson(true);
+                                        }
+                                    });
+                            progressDialog.show();
                         }
                     }
                 }) {
@@ -441,32 +450,38 @@ public class ConCita extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
-        adapter.notifyDataSetChanged();
-            adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
-                @Override
-                public void onLoadMore() {
-                    if (pagina >= numeroMaximoPaginas) {
-                        return;
-                    }
-                    getDatos1.add(null);
-                    adapter.notifyItemInserted(getDatos1.size() - 1);
 
-                    //Load more data for reyclerview
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.e("haint", "Load More 2");
-                            //Remove loading item
-                            getDatos1.remove(getDatos1.size() - 1);
-                            adapter.notifyItemRemoved(getDatos1.size());
-                            //Load data
-                            Log.d("EnvioIndex", getDatos1.size() + "");
-                            pagina = Config.pidePagina(getDatos1);
-                            sendJson(false);
-                        }
-                    }, 5000);
+        try {
+            adapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            Log.d(TAG, e.toString());
+        }
+
+
+
+        adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                if (pagina >= numeroMaximoPaginas) {
+                    return;
                 }
-            });
+                getDatos1.add(null);
+                adapter.notifyItemInserted(getDatos1.size() - 1);
+                //Load more data for reyclerview
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {Log.e("haint", "Load More 2");
+                        //Remove loading itm
+                        getDatos1.remove(getDatos1.size() - 1);
+                        adapter.notifyItemRemoved(getDatos1.size());
+                        //Load data
+                        Log.d("EnvioIndex", getDatos1.size() + "");
+                        pagina = Config.pidePagina(getDatos1);
+                        sendJson(false);
+                    }
+                }, 5000);
+            }
+        });
     }
 
     private void segundoPaso(JSONObject obj) {

@@ -229,7 +229,7 @@ public class Config extends Activity {
     }
 
     /**
-     * Muestra mensaje de error, se requiere una firma
+     * Muestra mensaje de error, no existen coordenadas
      * @param context
      */
     public static final void dialogoSinCoordenadas(Context context){
@@ -237,6 +237,44 @@ public class Config extends Activity {
         progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_coordenadas));
         progressDialog.setTitle(context.getResources().getString(R.string.msj_titulo_sin_coordenadas));
         progressDialog.setMessage(context.getResources().getString(R.string.msj_cotentido_sin_coordenadas));
+        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog.dismiss();
+                    }
+                });
+        progressDialog.show();
+    }
+
+    /**
+     * Muestra mensaje de error, seleccion de un apartado de spinner
+     * @param context
+     */
+    public static final void dialogoSinSeleccionSpinner(Context context, String apartado){
+        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_lista));
+        progressDialog.setTitle(context.getResources().getString(R.string.msj_titulo_seleccion_spinner));
+        progressDialog.setMessage(context.getResources().getString(R.string.msj_contenido_spinner) + " " + apartado);
+        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog.dismiss();
+                    }
+                });
+        progressDialog.show();
+    }
+
+    /**
+     * Muestra mensaje de error, seleccion de un apartado de spinner
+     * @param context
+     */
+    public static final void dialogoSpinnerSinSeleccion(Context context){
+        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_lista));
+        progressDialog.setTitle(context.getResources().getString(R.string.msj_titulo_seleccion_spinner));
+        progressDialog.setMessage(context.getResources().getString(R.string.msj_contenido_sin_spinner));
         progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
                 new DialogInterface.OnClickListener() {
                     @Override
