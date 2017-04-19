@@ -1,18 +1,21 @@
 package com.airmovil.profuturo.ti.retencion.gerenteFragmento;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
@@ -24,27 +27,35 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.asesorFragmento.ConCita;
+import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.EnviaJSON;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SQLiteHandler;
+import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -54,7 +65,7 @@ import java.util.Map;
  * Use the {@link Escaner#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Escaner extends Fragment {
+public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -63,7 +74,6 @@ public class Escaner extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
     private Button btnCaptura;
     private View rootView;
     int PHOTO_FILE = 0;
@@ -77,10 +87,16 @@ public class Escaner extends Fragment {
     private String msjConexion;
     private File mCurrentPhoto;
     private ImageView imageView;
+    private Button btnFinalizar;
+
+    private GoogleApiClient apiClient;
+    private static final int REQUEST_LOCATION = 0;
+    private boolean firsStarted = true;
+    private TextView lblLatitud;
+    private TextView lblLongitud;
 
     private Connected connected;
     private SQLiteHandler db;
-
 
     private OnFragmentInteractionListener mListener;
 
@@ -124,17 +140,34 @@ public class Escaner extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
-        Button btn = (Button) rootView.findViewById(R.id.gfe_btn_documento);
-        btnGuardar = (Button) view.findViewById(R.id.gfe_btn_guardar);
-        btnCancelar= (Button) view.findViewById(R.id.gfe_btn_cancelar);
-        btnBorrar= (Button) view.findViewById(R.id.gfe_btn_borrar);
-        imageView = (ImageView) rootView.findViewById(R.id.scannedImage1);
+        Button btn = (Button) rootView.findViewById(R.id.gbtn_documento);
+        btnGuardar = (Button) view.findViewById(R.id.gf_btn_guardar);
+        btnCancelar= (Button) view.findViewById(R.id.gf_btn_cancelar);
+        btnFinalizar = (Button) view.findViewById(R.id.gf_btn_guardar);
+
+        btnBorrar= (Button) view.findViewById(R.id.gf_btn_borrar);
+        imageView = (ImageView) rootView.findViewById(R.id.gscannedImage);
+
+
+        lblLatitud = (TextView) view.findViewById(R.id.gff_lbl_LatitudDoc);
+        lblLongitud = (TextView) view.findViewById(R.id.gff_lbl_LongitudDoc);
 
         connected = new Connected();
         idTramite = getArguments().getString("idTramite");
         nombre = getArguments().getString("nombre");
         numeroDeCuenta = getArguments().getString("numeroDeCuenta");
         hora = getArguments().getString("hora");
+
+        try{
+            apiClient = new GoogleApiClient.Builder(getActivity())
+                    .enableAutoManage(getActivity(),this)
+                    .addConnectionCallbacks(this)
+                    .addApi(LocationServices.API)
+                    .build();
+
+        } catch (Exception e){
+
+        }
 
         Log.d("AL FINAL ", "1 " + nombre + " numero " + numeroDeCuenta);
 
@@ -159,15 +192,52 @@ public class Escaner extends Fragment {
                 launchIntent.putExtras(bundle);
                 startActivityForResult (launchIntent, PHOTO_FILE);
                 Log.d("PHOTO_FILE", "" + PHOTO_FILE);
+
+
+
             }
         });
 
-        btnGuardar.setOnClickListener(new View.OnClickListener() {
+        btnCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
+                dialogo1.setTitle("Importante");
+                dialogo1.setMessage("¿Estás seguro que deseas cancelar y guardar los cambios del proceso 1.1.3.8");
+                dialogo1.setCancelable(false);
+                dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
+                        Fragment fragmentoGenerico = null;
+                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        final Fragment borrarFragmento;
+                        fragmentoGenerico = new SinCita();
+                        if (fragmentoGenerico != null){
+                            fragmentManager
+                                    .beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                                    .replace(R.id.content_gerente, fragmentoGenerico)
+                                    .addToBackStack("F_MAIN")
+                                    .commit();
+                        }
+                    }
+                });
+                dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                dialogo1.show();
+            }
+        });
+
+        final Fragment borrar = this;
+
+        btnFinalizar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 if(imageView.getDrawable() == null){
-                    Config.msj(getContext(), "Error", "Na existe un documento, favor de tomar captura");
+                    Config.dialogoNoExisteUnDocumento(getContext());
                 }else {
 
                     AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
@@ -178,6 +248,114 @@ public class Escaner extends Fragment {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
+                            imageView.setDrawingCacheEnabled(true);
+                            final String base64 = encodeTobase64(imageView.getDrawingCache());
+                            //Bitmap emBit = Bitmap.createBitmap(imageView.getWidth(), imageView.getHeight(), Bitmap.Config.ARGB_8888);
+                            Log.d("BASE64-->", base64);
+                            imageView.setDrawingCacheEnabled(false);
+
+                            if(connected.estaConectado(getContext())) {
+                                sendJson(true, base64);
+                                final EnviaJSON enviaPrevio = new EnviaJSON();
+                                enviaPrevio.sendPrevios(idTramite, getContext());
+                                Fragment fragmentoGenerico = new SinCita();
+                                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                                if (fragmentoGenerico != null) {
+                                    fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
+                                }
+
+                                Config.msj(getContext(), "Mensaje ", "Se ha finalizado el proceso con exito");
+                            }else {
+
+                                final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                                progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                                progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                                progressDialog.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
+                                progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                progressDialog.dismiss();
+
+                                                String fechaN = "";
+                                                try {
+                                                    SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+                                                    f.setTimeZone(TimeZone.getTimeZone("America/Mexico_City"));
+                                                    String fechaS = f.format(new Date());
+                                                    fechaN = fechaS.substring(0, fechaS.length() - 2) + ":00";
+                                                    System.out.println(fechaN);
+                                                    Log.d("TAG fecha ->", "" + fechaN);
+                                                }catch (Exception e){
+                                                    e.printStackTrace();
+                                                    Log.d("TAG e: ", "" + e);
+                                                }
+
+                                                double w, z;
+                                                try {
+                                                    z = new Double(lblLatitud.getText().toString());
+                                                    w = new Double(lblLongitud.getText().toString());
+                                                } catch (NumberFormatException e) {
+                                                    z = 0;
+                                                    w = 0;
+                                                }
+
+
+                                                db.addDocumento(idTramite,fechaN,1138,base64,"12344","12312DASD",z, w);
+                                                db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+                                                Fragment fragmentoGenerico = new SinCita();
+                                                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                                                if (fragmentoGenerico != null) {
+                                                    fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
+                                                }
+
+                                                Config.msj(getContext(), "Mensaje ", "Se ha finalizado el proceos, si deseas ve a la parte de reportes pendientes par verificar que tu procesos se haya guardado y, que cuando exista conexión a internet se enviara.");
+                                            }
+                                        });
+                                progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+
+                                            }
+                                        });
+                                progressDialog.show();
+
+                                // * db.addDocumento(idTramite,"2017-04-10",1,base64,"12344","Cesar",90.2349, -23.9897);
+                                /*
+                                idTramite = getArguments().getString("idTramite");
+                                nombre = getArguments().getString("nombre");
+                                numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+                                hora
+                                 */
+                                // * db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+                                //Cursor todos = db.getAllPending();
+                                //Log.d("HOLA","TODOS: "+todos);
+
+                                //db.addFirma("1", 123, base64, 90.2349, -23.9897);
+
+                                //* Fragment fragmentoGenerico = new SinCita()();
+                                //* FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                                //* if (fragmentoGenerico != null) {
+                                //* fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
+                                //*}
+                            }
+
+                            /*Fragment fragmentoGenerico = null;
+                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            final Fragment borrarFragmento;
+                            fragmentoGenerico = new SinCita()();
+                            if (fragmentoGenerico != null) {
+                                fragmentManager
+                                        .beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                                        .replace(R.id.content_gerente, fragmentoGenerico)
+                                        .addToBackStack("F_MAIN")
+                                        .commit();
+                            }*/
+                            // * Fragment fragmentoGenerico = new SinCita()();
+                            // * FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            // * if (fragmentoGenerico != null) {
+                            // * fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
+                            // * }
                         }
                     });
                     dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -190,80 +368,6 @@ public class Escaner extends Fragment {
             }
         });
 
-
-        final Fragment borrar = this;
-        btnCancelar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
-                dialogo1.setTitle("Importante");
-                dialogo1.setMessage("¿Estàs seguro que deseas cancelar y guardar los cambios del proceso 1.1.3.8");
-                dialogo1.setCancelable(false);
-                dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        imageView.setDrawingCacheEnabled(true);
-                        final String base64 = encodeTobase64(imageView.getDrawingCache());
-                        //Bitmap emBit = Bitmap.createBitmap(imageView.getWidth(), imageView.getHeight(), Bitmap.Config.ARGB_8888);
-                        Log.d("BASE64-->", base64);
-                        imageView.setDrawingCacheEnabled(false);
-
-                        if(connected.estaConectado(getContext())) {
-                            sendJson(true);
-                            final EnviaJSON enviaPrevio = new EnviaJSON();
-                            enviaPrevio.sendPrevios(idTramite, getContext());
-                            Fragment fragmentoGenerico = new SinCita();
-                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                            if (fragmentoGenerico != null) {
-                                fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
-                            }
-
-                            Config.msj(getContext(), "Mensaje ", "Se ha finalizado el proceso con exito");
-                        }else {
-
-                            final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-                            progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
-                            progressDialog.setTitle(getResources().getString(R.string.error_conexion));
-                            progressDialog.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
-                            progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            progressDialog.dismiss();
-                                            db.addDocumento(idTramite,"2017-04-10",1,base64,"12344","Cesar",90.2349, -23.9897);
-                                            db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
-                                            Fragment fragmentoGenerico = new SinCita();
-                                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                                            if (fragmentoGenerico != null) {
-                                                fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
-                                            }
-
-                                            Config.msj(getContext(), "Mensaje ", "Se ha finalizado el proceos, si deseas ve a la parte de reportes pendientes par verificar que tu procesos se haya guardado y, que cuando exista conexión a internet se enviara.");
-                                        }
-                                    });
-                            progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-
-                                        }
-                                    });
-                            progressDialog.show();
-                        }
-                    }
-                });
-                dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-                dialogo1.show();
-
-
-
-            }
-        });
-
         btnBorrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -271,6 +375,7 @@ public class Escaner extends Fragment {
             }
         });
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -318,7 +423,7 @@ public class Escaner extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
+        if (context instanceof Firma.OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         }
     }
@@ -330,6 +435,34 @@ public class Escaner extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        apiClient.stopAutoManage(getActivity());
+        apiClient.disconnect();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        apiClient.stopAutoManage(getActivity());
+        apiClient.disconnect();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        if(apiClient.isConnected())
+            apiClient.disconnect();
+        firsStarted = true;
+        super.onStop();
+    }
+
+
+    @Override
     public void onResume() {
         super.onResume();
         getView().setFocusableInTouchMode(true);
@@ -337,10 +470,11 @@ public class Escaner extends Fragment {
         getView().setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
+
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
                     AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
                     dialogo1.setTitle("Confirmar");
-                    dialogo1.setMessage("¿Estàs seguro que deseas cancelar y guardar los cambios del proceso 1.1.3.8?");
+                    dialogo1.setMessage("¿Estás seguro que deseas cancelar y guardar los cambios del proceso 1.1.3.8?");
                     dialogo1.setCancelable(false);
                     dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
@@ -349,7 +483,8 @@ public class Escaner extends Fragment {
                             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                             if (fragmentoGenerico != null) {
                                 fragmentManager
-                                        .beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
+                                        .beginTransaction()//.setCustomAnimations(android.R.anim.slide_out_right,android.R.anim.slide_in_left)
+                                        .replace(R.id.content_gerente, fragmentoGenerico).commit();
                             }
                         }
                     });
@@ -365,6 +500,52 @@ public class Escaner extends Fragment {
                 return false;
             }
         });
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+        } else {
+            Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(apiClient);
+            updateUI(lastLocation);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_LOCATION) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //Permiso concedido
+                @SuppressWarnings("MissingPermission")
+                Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(apiClient);
+                updateUI(lastLocation);
+            } else {
+                //Permiso denegado:
+                //Deberíamos deshabilitar toda la funcionalidad relativa a la localización.
+                Log.e("LOGTAG", "Permiso denegado");
+            }
+        }
+    }
+
+    private void updateUI(Location loc){
+        if (loc != null){
+            lblLatitud.setText(String.valueOf(loc.getLatitude()));
+            lblLongitud.setText(String.valueOf(loc.getLongitude()));
+        }/*else{
+            lblLatitud.setText("(desconocida)");
+            lblLongitud.setText("(desconocida)");
+        }*/
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 
     /**
@@ -383,39 +564,71 @@ public class Escaner extends Fragment {
     }
 
     // TODO: REST
-    private void sendJson(final boolean primerPeticion) {
+    private void sendJson(final boolean primerPeticion, String base64) {
         final ProgressDialog loading;
         if (primerPeticion)
             loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
         else
             loading = null;
 
+        double w, z;
+        try {
+            z = new Double(lblLatitud.getText().toString());
+            w = new Double(lblLongitud.getText().toString());
+        } catch (NumberFormatException e) {
+            z = 0;
+            w = 0;
+        }
+
         JSONObject obj = new JSONObject();
+        String latitud = lblLatitud.getText().toString();
+        String longitud = lblLongitud.getText().toString();
+        idTramite = getArguments().getString("idTramite");
+        SessionManager sessionManager = new SessionManager(getContext());
+        HashMap<String, String> usuario = sessionManager.getUserDetails();
+        String idUsuario = usuario.get(SessionManager.USER_ID);
+        String fechaN = "";
+        try {
+            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+            f.setTimeZone(TimeZone.getTimeZone("America/Mexico_City"));
+            String fechaS = f.format(new Date());
+            fechaN = fechaS.substring(0, fechaS.length() - 2) + ":00";
+            System.out.println(fechaN);
+            Log.d("TAG fecha ->", "" + fechaN);
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("TAG e: ", "" + e);
+        }
+
+
+
         // TODO: Formacion del JSON request
         try{
             JSONObject rqt = new JSONObject();
-            JSONObject encuesta = new JSONObject();
-            encuesta.put("observaciones", "observaciones mensaje de prueba");
-            encuesta.put("pregunta3", true);
-            encuesta.put("pregunta2", true);
-            encuesta.put("pregunta1", true);
-            rqt.put("encuesta", encuesta);
-            rqt.put("estatusTramite", 123);
-            rqt.put("idTramite", "1");
+            rqt.put("estatusTramite", 1138);
+            rqt.put("fechaHoraFin", fechaN);
+            rqt.put("idTramite", idTramite);
+            rqt.put("numeroCuenta", idUsuario);
+            JSONObject ubicacion = new JSONObject();
+            ubicacion.put("latitud", z);
+            ubicacion.put("longitud", w);
+            rqt.put("ubicacion", ubicacion);
+            rqt.put("usuario", idUsuario);
+            rqt.put("ineIfe", base64);
             obj.put("rqt", rqt);
-            Log.d("RQT", "REQUEST-->" + obj);
+            Log.d("datos", "REQUEST-->" + obj);
         } catch (JSONException e){
             Config.msj(getContext(), "Error", "Error al formar los datos");
         }
         //Creating a json array request
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_ENCUESTA, obj,
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_DOCUMENTO_IFE_INE, obj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
                             loading.dismiss();
-                            primerPaso(response);
+                            //primerPaso(response);
                         }
                     }
                 },
@@ -442,11 +655,13 @@ public class Escaner extends Fragment {
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
     }
 
-    private void primerPaso(JSONObject obj){
-        Log.d("RESPONSE", "RESPONSE: ->" + obj);
-    }
 
     public String encodeTobase64(Bitmap image) {
+        //Bitmap immagex = image;
+        /*ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        immagex.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] b = baos.toByteArray();
+        String imageEncoded = android.util.Base64.encodeToString(b, android.util.Base64.DEFAULT);*/
 
         float bmW=image.getWidth();
         float bmH= image.getHeight();
@@ -464,15 +679,22 @@ public class Escaner extends Fragment {
             Log.d("PIXELES", "NUEVO ANCHO" + widthPixels + "NUEVO ALTO:" + newHeight + " W" + bmW + " H" + bmH);
             //resize the bit map
             resize = Bitmap.createBitmap(image,0,0,(int)newWidth,(int)newHeight);
+            //resize =Bitmap.createScaledBitmap(image, 200,200, true);
         }else{
             Log.d("PIXELES", "PASA SIN CAMBIO" );
             resize = image;
         }
+
+        //resize =Bitmap.createScaledBitmap(image, 500,500, true);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         resize.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] b = baos.toByteArray();
-        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+        //String imageEncoded = Base64.encode(b);
+        //String imageEncoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
+        //Log.e("LOOK", imageEncoded);
+        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+        //Log.d("ARRAY","BASE64:"+encImage);
         imageEncoded = imageEncoded.replace(" ","");
         String foto="data:image/jpeg;base64,"+imageEncoded;
 

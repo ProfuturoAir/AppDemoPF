@@ -1,8 +1,11 @@
 package com.airmovil.profuturo.ti.retencion.activities;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -13,6 +16,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.SinCita;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
@@ -74,7 +78,7 @@ public class Login extends AppCompatActivity {
             public void onClick(View v) {
                 numeroEmpleado = _numeroEmpleadom.getText().toString().trim();
                 password = _contrasenia.getText().toString().trim();
-                if (numeroEmpleado.isEmpty() && password.isEmpty()) {
+                if (numeroEmpleado.isEmpty() || password.isEmpty()) {
                     Config.msj(Login.this, "Error", "Debes Ingresar todos los datos");
                 } else {
                     final Connected conected = new Connected();
@@ -135,11 +139,11 @@ public class Login extends AppCompatActivity {
         try {
             if(obj.has("confirmacion")){
                 numeroEmpleado = obj.getString("numeroEmpleado");
-                peticionDatos(true, numeroEmpleado);
+                validacionCorrecta(numeroEmpleado);
             }else{
                 Log.d("123123", "else");
                 exception = obj.getString("Exception");
-                Config.msj(this, "Error", exception);
+                validactionIncorrecta("Error en login", exception);
             }
         }catch (JSONException ee){
             isValid = false;
@@ -159,12 +163,14 @@ public class Login extends AppCompatActivity {
                         Config.teclado(getApplicationContext(), _numeroEmpleadom);
                         Config.teclado(getApplicationContext(), _contrasenia);
                         //redireccionSesiones(vNumeroEmpleado, vPerfil);
+                        //peticionDatos(true, vNumeroEmpleado);
                         peticionDatos(true, vNumeroEmpleado);
                         progressDialog.dismiss();
                     }
-                }, 5000);
+                }, 2000);
     }
-    public void validactionIncorrecta(final String status, final String exception){
+
+    public void validactionIncorrecta(final String rStatus, final String rException){
         final ProgressDialog progressDialog = new ProgressDialog(this, R.style.Theme_AppCompat_DayNight_Dialog_Alert);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
@@ -174,19 +180,26 @@ public class Login extends AppCompatActivity {
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
-                        // On complete call either onLoginSuccess or onLoginFailed
-                        //onLoginSuccess();
-                        // onLoginFailed();
                         Config.teclado(getApplicationContext(), _numeroEmpleadom);
                         Config.teclado(getApplicationContext(), _contrasenia);
+                        mensajeError(rStatus, rException);
                         progressDialog.dismiss();
-                        mensajeError(status, exception);
                     }
-                }, 5000);
+                }, 2000);
     }
 
     public void mensajeError(String status, String exception){
-        Config.msj(Login.this,"Error: " + status, exception);
+        final ProgressDialog progressDialog = new ProgressDialog(this, R.style.Theme_AppCompat_DayNight_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_error));
+        progressDialog.setTitle(status);
+        progressDialog.setMessage(exception);
+        progressDialog.setButton("Aceptar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                progressDialog.dismiss();
+            }
+        });
+        progressDialog.show();
     }
 
    public void redireccionSesiones(int rPerfil){

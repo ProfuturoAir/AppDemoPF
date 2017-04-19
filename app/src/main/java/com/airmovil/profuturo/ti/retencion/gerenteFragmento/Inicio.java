@@ -281,19 +281,35 @@ public class Inicio extends Fragment {
     }
 
     private void sendJson(final boolean primeraPeticion){
+        SessionManager sessionManager = new SessionManager(getContext());
+        HashMap<String, String> datosUsuario = sessionManager.getUserDetails();
+        String idEmpleado = datosUsuario.get(SessionManager.USER_ID);
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
         try{
-            JSONObject periodo = new JSONObject();
-            rqt.put("periodo", periodo);
-            periodo.put("fechaInicio", fechaIni);
-            periodo.put("fechaFin", fechaFin);
-            rqt.put("usuario", numeroUsuario);
-            json.put("rqt", rqt);
+            if(getArguments() != null){
+                JSONObject periodo = new JSONObject();
+                mParam1 = getArguments().getString(ARG_PARAM1);
+                mParam2 = getArguments().getString(ARG_PARAM2);
+                rqt.put("periodo", periodo);
+                periodo.put("fechaInicio", mParam1);
+                periodo.put("fechaFin", mParam2);
+                rqt.put("usuario", idEmpleado);
+                json.put("rqt", rqt);
+            }else{
+                Map<String, String> fecha = Config.fechas(1);
+                String param1 = fecha.get("fechaIni");
+                String param2 = fecha.get("fechaFin");
+                JSONObject periodo = new JSONObject();
+                rqt.put("periodo", periodo);
+                periodo.put("fechaInicio", param1);
+                periodo.put("fechaFin", param2);
+                rqt.put("usuario", idEmpleado);
+                json.put("rqt", rqt);
+            }
             Log.d(TAG, "REQUEST -->" + json);
-
         } catch (JSONException e){
-            Config.msj(getContext(),"Error","Existe un right_in al formar la peticion");
+            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
         }
 
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_RESUMEN_RETENCIONES, json,

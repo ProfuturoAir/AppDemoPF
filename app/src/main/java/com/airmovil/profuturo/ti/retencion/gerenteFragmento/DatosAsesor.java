@@ -19,9 +19,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
-import com.airmovil.profuturo.ti.retencion.gerenteFragmento.*;
-import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
@@ -57,8 +56,6 @@ public class DatosAsesor extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
-
     private View rootView;
     private TextView tvNombre, tvNumeroEmpleado, tvSucursal;
     private Button btnContinuar, btnCancelar;
@@ -67,6 +64,9 @@ public class DatosAsesor extends Fragment {
     String nombre;
     String numeroDeCuenta;
     String hora;
+    String idClienteCuenta;
+
+    private OnFragmentInteractionListener mListener;
 
     public DatosAsesor() {
         // Required empty public constructor
@@ -102,56 +102,66 @@ public class DatosAsesor extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
-        sessionManager = new SessionManager(getActivity().getApplicationContext());
-        // TODO: Casteo
-        tvNombre = (TextView) rootView.findViewById(R.id.gfda_tv_nombre_usuario);
-        tvNumeroEmpleado = (TextView) rootView.findViewById(R.id.gfda_tv_numero_empleado);
-        tvSucursal = (TextView) rootView.findViewById(R.id.gfda_tv_sucursal);
-        btnContinuar = (Button) rootView.findViewById(R.id.gfda_btn_continuar);
-        btnCancelar = (Button) rootView.findViewById(R.id.gfda_btn_cancelar);
+        primeraPeticion();
+        variables();
 
+        sessionManager = new SessionManager(getActivity().getApplicationContext());
+
+        idClienteCuenta =getArguments().getString("idClienteCuenta");
         nombre = getArguments().getString("nombre");
         numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-        //hora = getArguments().getString("hora");
-
+        hora = getArguments().getString("hora");
+        Log.d("NOMBRES 1 ++", "1" + nombre + " numero" + numeroDeCuenta);
+        // TODO: Fragmentos
+        final Fragment fragmentoDatosCliente = new DatosCliente();
+        final FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         // TODO: obteniendo el numero del usuario
         HashMap<String, String> hashMap = sessionManager.getUserDetails();
-        String numeroUsuario = hashMap.get(SessionManager.ID);
-
-        Log.d("HOLA","DESDE GERENTE");
-        Log.d(TAG, "-->USUARIO " + numeroUsuario);
-
-        sendJson(true);
-
-
+        String numeroUsuario = hashMap.get(SessionManager.USER_ID);
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*
-                Fragment fragmentoGenerico = new DatosCliente();
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();*/
                 Connected connected = new Connected();
                 if(connected.estaConectado(getContext())){
-                    //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoDatosCliente).commit();
+                    //fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoDatosCliente).commit();
                     Fragment fragmentoGenerico = new DatosCliente();
                     Gerente gerente = (Gerente) getContext();
                     gerente.switchDatosCliente(fragmentoGenerico,nombre,numeroDeCuenta);
                 }else {
 
-                    android.app.AlertDialog.Builder dlgAlert = new android.app.AlertDialog.Builder(getContext());
+                    final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                    progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                    progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                    progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion));
+                    progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    progressDialog.dismiss();
+                                }
+                            });
+                    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                    progressDialog.show();
+
+                    /*android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
                     dlgAlert.setTitle("Error de conexión");
                     dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
                     dlgAlert.setCancelable(true);
                     dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            /*Fragment fragmentoGenerico = new DatosCliente();
-                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                            fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();*/
+                            //Fragment fragmentoGenerico = new DatosCliente();
+                            //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            //fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
                             Fragment fragmentoGenerico = new DatosCliente();
-                            Gerente gerente = (Gerente) getContext();
-                            gerente.switchDatosCliente(fragmentoGenerico, nombre, numeroDeCuenta);
+                            Asesor asesor = (Asesor) getContext();
+                            asesor.switchDatosCliente(fragmentoGenerico,nombre,numeroDeCuenta,hora);
                         }
                     });
                     dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -160,7 +170,10 @@ public class DatosAsesor extends Fragment {
 
                         }
                     });
-                    dlgAlert.create().show();
+                    dlgAlert.create().show();*/
+
+
+
                 }
             }
         });
@@ -178,7 +191,9 @@ public class DatosAsesor extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         Fragment fragmentoGenerico = new SinCita();
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
+                        fragmentManager
+                                .beginTransaction()//.setCustomAnimations(android.R.anim.slide_out_right,android.R.anim.slide_in_left)
+                                .replace(R.id.content_gerente, fragmentoGenerico).commit();
                     }
                 });
                 dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -196,7 +211,7 @@ public class DatosAsesor extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.gerente_fragmento_datos_asesor, container, false);
+        return inflater.inflate(R.layout.asesor_fragmento_datos_asesor, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -218,6 +233,21 @@ public class DatosAsesor extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
     }
 
     @Override
@@ -259,33 +289,46 @@ public class DatosAsesor extends Fragment {
         });
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    private void primeraPeticion(){
+        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIcon(R.drawable.icono_abrir);
+        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
+        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
+        progressDialog.show();
+        // TODO: Implement your own authentication logic here.
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        progressDialog.dismiss();
+                        sendJson(true);
+                    }
+                }, 500);
+    }
+
+    private void variables(){
+        tvNombre = (TextView) rootView.findViewById(R.id.afda_tv_nombre_usuario);
+        tvNumeroEmpleado = (TextView) rootView.findViewById(R.id.afda_tv_numero_empleado);
+        tvSucursal = (TextView) rootView.findViewById(R.id.afda_tv_sucursal);
+        btnContinuar = (Button) rootView.findViewById(R.id.afda_btn_continuar);
+        btnCancelar = (Button) rootView.findViewById(R.id.afda_btn_cancelar);
     }
 
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
-        final ProgressDialog loading;
-        if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
-        else
-            loading = null;
+
+        HashMap<String, String> datos = sessionManager.getUserDetails();
+        String numeroUsuario = datos.get(SessionManager.USER_ID);
 
         JSONObject obj = new JSONObject();
         // TODO: Formacion del JSON request
         JSONObject rqt = new JSONObject();
-        JSONObject filtros = new JSONObject();
+        try{
+            rqt.put("usuario", numeroUsuario);
+            obj.put("rqt", rqt);
+            Log.d("DatosAsesor", ":rqt -->" + obj);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
 
         //Creating a json array request
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_DATOS_ASESOR, obj,
@@ -294,7 +337,6 @@ public class DatosAsesor extends Fragment {
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
-                            loading.dismiss();
                             primerPaso(response);
                         }
                     }
@@ -302,21 +344,56 @@ public class DatosAsesor extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        loading.dismiss();
-                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
+                        try{
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        Connected connected = new Connected();
+                        if(connected.estaConectado(getContext())){
+                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                            dlgAlert.setTitle("Error123");
+                            dlgAlert.setMessage("Se ha encontrado un problema, deseas volver intentarlo");
+                            dlgAlert.setCancelable(true);
+                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    sendJson(true);
+                                }
+                            });
+                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            dlgAlert.create().show();
+                        }else{
+                            final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                            progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                            progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                            progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion));
+                            progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            progressDialog.dismiss();
+                                            sendJson(true);
+                                        }
+                                    });
+                            progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    });
+                            progressDialog.show();
+                        }
                     }
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+                return Config.credenciales(getContext());
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
@@ -330,15 +407,42 @@ public class DatosAsesor extends Fragment {
         String status = "";
         String statusText ="";
         String sucursal ="";
+
         try{
             status = obj.getString("status");
-            Log.d(TAG, status.toString());
-            JSONObject jsonAsesor = obj.getJSONObject("asesor");
-            nombreCliente = jsonAsesor.getString("nombre");
-            numeroCuenta = jsonAsesor.getString("numeroEmpleado");
-            sucursal = jsonAsesor.getString("nombreSucursal");
+            statusText = obj.getString("statusText");
+            if(Integer.parseInt(status) == 200){
+                Log.d(TAG, status.toString());
+                JSONObject jsonAsesor = obj.getJSONObject("asesor");
+                nombreCliente = jsonAsesor.getString("nombre");
+                numeroCuenta = jsonAsesor.getString("numeroEmpleado");
+                sucursal = jsonAsesor.getString("nombreSucursal");
+            }else{
+                android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
+                dlgAlert.setTitle(status);
+                dlgAlert.setMessage(statusText);
+                dlgAlert.setCancelable(true);
+                dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        sendJson(true);
+                    }
+                });
+                dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                dlgAlert.create().show();
+            }
         }catch (JSONException e){
             e.printStackTrace();
         }
+
+        tvNombre.setText(nombreCliente);
+        tvNumeroEmpleado.setText(numeroCuenta);
+        tvSucursal.setText(sucursal);
     }
+
 }

@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
@@ -25,6 +26,7 @@ import com.airmovil.profuturo.ti.retencion.gerenteFragmento.Encuesta1;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -109,7 +111,6 @@ public class DatosCliente extends Fragment {
         rootView = view;
 
         //primeraPeticion();
-
         tvClienteNombre = (TextView) rootView.findViewById(R.id.gfda_tv_nombre_cliente);
         tvClienteNumeroCuenta = (TextView) rootView.findViewById(R.id.gfda_tv_numero_cuenta_cliente);
         tvClienteNSS = (TextView) rootView.findViewById(R.id.gfda_tv_nss_cliente);
@@ -124,11 +125,9 @@ public class DatosCliente extends Fragment {
 
         nombre = getArguments().getString("nombre");
         numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-        hora = getArguments().getString("hora");
+        //hora = getArguments().getString("hora");
 
         Log.d("NOMBRES CLI ", "1 " + nombre + " numero " + numeroDeCuenta);
-
-
         final Fragment borrar = this;
 
         btnContinuar.setOnClickListener(new View.OnClickListener() {
@@ -178,7 +177,8 @@ public class DatosCliente extends Fragment {
         btnCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                Toast.makeText(getContext(), "id tramite" + idTramite, Toast.LENGTH_SHORT).show();
+                /*AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
                 dialog.setTitle("Confirmar");
                 dialog.setMessage("¿Estás seguro que deseas salir?");
                 dialog.setCancelable(false);
@@ -198,8 +198,9 @@ public class DatosCliente extends Fragment {
 
                     }
                 });
-                dialog.show();
+                dialog.show();*/
             }
+
         });
         sendJson(true);
     }
@@ -297,10 +298,15 @@ public class DatosCliente extends Fragment {
         try {
             // TODO: Formacion del JSON request
 
+            nombre = getArguments().getString("nombre");
+            numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+            SessionManager sessionManager = new SessionManager(getContext());
+            HashMap<String, String> usuario = sessionManager.getUserDetails();
+            String idUsuario = usuario.get(SessionManager.USER_ID);
             JSONObject rqt = new JSONObject();
             rqt.put("estatusTramite", 1133);
-            rqt.put("numeroCuenta", "302123698");
-            rqt.put("usuario", "3333");
+            rqt.put("numeroCuenta", numeroDeCuenta);
+            rqt.put("usuario", idUsuario);
             obj.put("rqt", rqt);
             Log.d(TAG, "Primera peticion-->" + obj);
         } catch (JSONException e) {
@@ -345,7 +351,7 @@ public class DatosCliente extends Fragment {
     }
 
     private void primerPaso(JSONObject obj){
-        //Log.d(TAG, "--> JSON TODO " + obj);
+        Log.d(TAG, "response -> " + obj);
         String status = "";
         String statusText = "";
         String nombre = "";
@@ -363,7 +369,7 @@ public class DatosCliente extends Fragment {
             switch (status){
                 case "200":
                     JSONObject jsonCliente = obj.getJSONObject("cliente");
-                    Log.d(TAG, "--> JSON CLIENTE " + jsonCliente);
+                    //Log.d(TAG, "--> JSON CLIENTE " + jsonCliente);
                     nombre = jsonCliente.getString("nombre");
                     cuenta = jsonCliente.getString("numeroCuenta");
                     nss    = jsonCliente.getString("nss");

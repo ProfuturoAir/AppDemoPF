@@ -2,6 +2,7 @@ package com.airmovil.profuturo.ti.retencion.gerenteFragmento;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,11 +30,14 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteSinCitaAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.SinCitaAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.*;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
@@ -163,6 +168,9 @@ public class SinCita extends Fragment {
             tvFecha.setText(fechaMostrar);
         }
 
+        etDatos.setFocusable(false);
+        etDatos.setFocusableInTouchMode(false);
+
         // TODO: Spinner
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, ESTADOS_CITAS);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
@@ -178,6 +186,8 @@ public class SinCita extends Fragment {
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                         etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryDark1), PorterDuff.Mode.OVERLAY);
                         etDatos.setFocusable(true);
+                        etDatos.setFocusable(false);
+                        etDatos.setFocusableInTouchMode(false);
                         break;
                     case 1:
                         etDatos.setFocusableInTouchMode(true);
@@ -185,6 +195,8 @@ public class SinCita extends Fragment {
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                         etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
                         etDatos.setInputType(InputType.TYPE_CLASS_PHONE);
+                        etDatos.setFocusable(true);
+                        etDatos.setFocusableInTouchMode(true);
                         break;
                     case 2:
                         etDatos.setFocusableInTouchMode(true);
@@ -192,6 +204,8 @@ public class SinCita extends Fragment {
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                         etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
                         etDatos.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+                        etDatos.setFocusable(true);
+                        etDatos.setFocusableInTouchMode(true);
                         break;
                     case 3:
                         etDatos.setFocusableInTouchMode(true);
@@ -199,6 +213,8 @@ public class SinCita extends Fragment {
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                         etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
                         etDatos.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+                        etDatos.setFocusable(true);
+                        etDatos.setFocusableInTouchMode(true);
                 }
                 etDatos.setHint("Ingresa, " + adapter.getItem(position));
 
@@ -220,18 +236,19 @@ public class SinCita extends Fragment {
                     Log.d(TAG, "Seleccion: --->" + seleccion);
 
                     if(seleccion.equals("Selecciona...")) {
-                        Config.msj(getContext(), "Error", "Debes seleccionar el tipo de campo a solicitar");
+
+                        Config.dialogoDatosVacios(getContext());
                     }else{
                         if(valores.isEmpty()) {
                             switch (seleccion){
                                 case "Número de cuenta":
-                                    Config.msj(getContext(), "Error", "Debes ingresar un Número de cuenta ");
+                                    Config.dialogoSinSeleccionSpinner(getContext(), " número de cuenta");
                                     break;
                                 case "NSS":
-                                    Config.msj(getContext(), "Error", "Debes ingresar un NSS");
+                                    Config.dialogoSinSeleccionSpinner(getContext(), " NSS");
                                     break;
                                 case "CURP":
-                                    Config.msj(getContext(), "Error", "Debes ingresar un CURP");
+                                    Config.dialogoSinSeleccionSpinner(getContext(), " CURP");
                                     break;
                             }
                         }else{
@@ -239,20 +256,39 @@ public class SinCita extends Fragment {
                             SinCita clase = SinCita.newInstance(
                                     valores, rootView.getContext()
                             );
-
+                            Config.teclado(getContext(), etDatos);
                             borrar.onDestroy();
                             ft.remove(borrar);
                             ft.replace(R.id.content_gerente, clase);
                             ft.addToBackStack(null);
-                            etDatos.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-
-                            Config.teclado(getContext(), etDatos);
                             sendJson(true, seleccion, valores);
 
                         }
                     }
                 }else{
-                    Config.msj(getContext(), "Error en conexión", "Por favor, revisa tu conexión a internet");
+                    try {
+                        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                        progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                        progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                        progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion_firma));
+                        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        progressDialog.dismiss();
+                                    }
+                                });
+                        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                });
+                        progressDialog.show();
+                    }catch (Exception e){
+                        Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
 
@@ -279,13 +315,29 @@ public class SinCita extends Fragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
 
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                    Fragment fragmentoGenerico = new com.airmovil.profuturo.ti.retencion.asesorFragmento.SinCita();
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    if (fragmentoGenerico != null) {
-                        fragmentManager
-                                .beginTransaction()//.setCustomAnimations(android.R.anim.slide_out_right,android.R.anim.slide_in_left)
-                                .replace(R.id.content_gerente, fragmentoGenerico).commit();
-                    }
+                    AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
+                    dialogo1.setTitle("Confirmar");
+                    dialogo1.setMessage("Serás direccionado al Inicio");
+                    dialogo1.setCancelable(false);
+                    dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Fragment fragmentoGenerico = new Inicio();
+                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            if (fragmentoGenerico != null) {
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.content_gerente, fragmentoGenerico).commit();
+                            }
+                        }
+                    });
+                    dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    dialogo1.show();
                     return true;
                 }
                 return false;
@@ -310,7 +362,10 @@ public class SinCita extends Fragment {
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
+            Toast.makeText(getContext(), "if", Toast.LENGTH_SHORT).show();
             mListener.onFragmentInteraction(uri);
+        }else{
+            Toast.makeText(getContext(), "else", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -378,9 +433,9 @@ public class SinCita extends Fragment {
             rqt.put("pagina", "1");
             SessionManager sessionManager = new SessionManager(getActivity().getApplicationContext());
             HashMap<String, String> usuario = sessionManager.getUserDetails();
-            String usuarioCUSP = usuario.get(SessionManager.ID);
+            String idUsuario = usuario.get(SessionManager.USER_ID);
 
-            rqt.put("usuario", "3333");
+            rqt.put("usuario", idUsuario);
             obj.put("rqt", rqt);
             Log.d(TAG, "PETICION VACIA-->" + obj);
         } catch (JSONException e) {
@@ -407,15 +462,7 @@ public class SinCita extends Fragment {
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+                return Config.credenciales(getContext());
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);

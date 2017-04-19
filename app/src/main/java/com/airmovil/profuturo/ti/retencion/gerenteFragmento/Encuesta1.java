@@ -22,7 +22,7 @@ import android.widget.EditText;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
-import com.airmovil.profuturo.ti.retencion.asesorFragmento.*;
+import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
@@ -50,18 +50,20 @@ import java.util.Map;
 public class Encuesta1 extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    public static final String TAG = Encuesta1.class.getSimpleName();
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    public static final String TAG = Encuesta1.class.getSimpleName();
     private SQLiteHandler db;
     private String idTramite;
     String nombre;
     String numeroDeCuenta;
     String hora;
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
+    private OnFragmentInteractionListener mListener;
     // TODO: XML
     private View rootView;
     private CheckBox cb1si, cb1no, cb2si, cb2no, cb3si, cb3no;
@@ -71,8 +73,6 @@ public class Encuesta1 extends Fragment {
     private Boolean r1, r2, r3;
     private String observaciones;
     private int estatusTramite = 1134;
-
-    private OnFragmentInteractionListener mListener;
 
     public Encuesta1() {
         // Required empty public constructor
@@ -110,22 +110,12 @@ public class Encuesta1 extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
 
-        // TODO: Casteo
-        btnContinuar = (Button) rootView.findViewById(R.id.gfe1_btn_continuar);
-        btnCancelar  = (Button) rootView.findViewById(R.id.gfe1_btn_cancelar);
-        cb1si        = (CheckBox) rootView.findViewById(R.id.gfe1_cb_pregunta1_si);
-        cb1no        = (CheckBox) rootView.findViewById(R.id.gfe1_cb_pregunta1_no);
-        cb2si        = (CheckBox) rootView.findViewById(R.id.gfe1_cb_pregunta2_si);
-        cb2no        = (CheckBox) rootView.findViewById(R.id.gfe1_cb_pregunta2_no);
-        cb3si        = (CheckBox) rootView.findViewById(R.id.gfe1_cb_pregunta3_si);
-        cb3no        = (CheckBox) rootView.findViewById(R.id.gfe1_cb_pregunta3_no);
-        etObservaciones = (EditText) rootView.findViewById(R.id.gfe1_et_observaciones);
+        variables();
 
         idTramite = getArguments().getString("idTramite");
         nombre = getArguments().getString("nombre");
         numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-
-        Log.d("HOLA","TRAMITE "+idTramite+" id "+nombre+" - "+numeroDeCuenta);
+        hora = getArguments().getString("hora");
 
         cb1si.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -193,17 +183,18 @@ public class Encuesta1 extends Fragment {
             @Override
             public void onClick(View v) {
                 if (r1 == null || r2 == null || r3 == null || etObservaciones.getText().toString().trim().isEmpty()) {
-                    Config.msj(getContext(),"Error", "Debes llenar todos los campos");
+                    Config.dialogoDatosVacios(getContext());
                 }else {
                     final Connected conectado = new Connected();
                     if(conectado.estaConectado(getContext())){
-                        sendJson(true);
+                        String o = etObservaciones.getText().toString();
+                        sendJson(true, r1, r2, r3, o);
                         Config.teclado(getContext(), etObservaciones);
-
                         Fragment fragmentoGenerico = new Encuesta2();
+                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
                         Gerente gerente = (Gerente) getContext();
-                        gerente.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta);
-
+                        gerente.switchEncuesta2(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta);
                     }else{
                         final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
                         progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
@@ -215,8 +206,6 @@ public class Encuesta1 extends Fragment {
                                     public void onClick(DialogInterface dialog, int which) {
                                         progressDialog.dismiss();
                                         Config.teclado(getContext(), etObservaciones);
-
-                                        Log.d("CheckBox 3 no", "" + idTramite +" - "+estatusTramite+" - "+r1+" - "+r2+" - "+r3+" - "+etObservaciones.getText().toString().trim());
                                         db.addEncuesta(idTramite,estatusTramite,r1,r2,r3,etObservaciones.getText().toString().trim());
                                         db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
                                         Fragment fragmentoGenerico = new Encuesta2();
@@ -232,7 +221,19 @@ public class Encuesta1 extends Fragment {
                                     }
                                 });
                         progressDialog.show();
+
+
+                        //Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
+                        //Fragment fragmentoGenerico = new Encuesta2();
+                        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        //fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
                     }
+                    //Fragment fragmentoGenerico = new Encuesta2();
+                    //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    //fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).remove(borrar).commit();*/
+                    //Gerente gerente = (Gerente) getContext();
+                    //gerente.switchEncuesta2(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+
                 }
             }
         });
@@ -247,7 +248,7 @@ public class Encuesta1 extends Fragment {
                 dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Fragment fragmentoGenerico = new SinCita() ;
+                        Fragment fragmentoGenerico = new SinCita();
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                         fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
                     }
@@ -345,26 +346,38 @@ public class Encuesta1 extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    private void variables(){
+        btnContinuar = (Button) rootView.findViewById(R.id.gfe1_btn_continuar);
+        btnCancelar = (Button) rootView.findViewById(R.id.gfe1_btn_cancelar);
+        cb1si = (CheckBox) rootView.findViewById(R.id.gfe1_cb_pregunta1_si);
+        cb1no = (CheckBox) rootView.findViewById(R.id.gfe1_cb_pregunta1_no);
+        cb2si = (CheckBox) rootView.findViewById(R.id.gfe1_cb_pregunta2_si);
+        cb2no = (CheckBox) rootView.findViewById(R.id.gfe1_cb_pregunta2_no);
+        cb3si = (CheckBox) rootView.findViewById(R.id.gfe1_cb_pregunta3_si);
+        cb3no = (CheckBox) rootView.findViewById(R.id.gfe1_cb_pregunta3_no);
+        etObservaciones = (EditText) rootView.findViewById(R.id.gfe1_et_observaciones);
+    }
+
     // TODO: REST
-    private void sendJson(final boolean primerPeticion) {
+    private void sendJson(final boolean primerPeticion, boolean opc1, boolean opc2, boolean opc3, String observaciones) {
         final ProgressDialog loading;
         if (primerPeticion)
             loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
         else
             loading = null;
-
+        idTramite = getArguments().getString("idTramite");
         JSONObject obj = new JSONObject();
         // TODO: Formacion del JSON request
         try{
             JSONObject rqt = new JSONObject();
             JSONObject encuesta = new JSONObject();
-            encuesta.put("observaciones", "observaciones mensaje de prueba");
-            encuesta.put("pregunta3", true);
-            encuesta.put("pregunta2", true);
-            encuesta.put("pregunta1", true);
+            encuesta.put("observaciones", observaciones);
+            encuesta.put("pregunta3", opc3);
+            encuesta.put("pregunta2", opc2);
+            encuesta.put("pregunta1", opc1);
             rqt.put("encuesta", encuesta);
-            rqt.put("estatusTramite", 123);
-            rqt.put("idTramite", "1");
+            rqt.put("estatusTramite", 1134);
+            rqt.put("idTramite", idTramite);
             obj.put("rqt", rqt);
             Log.d(TAG, "REQUEST-->" + obj);
         } catch (JSONException e){
@@ -391,15 +404,7 @@ public class Encuesta1 extends Fragment {
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+                return Config.credenciales(getContext());
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
