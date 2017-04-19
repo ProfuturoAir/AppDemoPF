@@ -12,6 +12,8 @@ public class GerenteReporteClientesModel {
     public String numeroCuenta;
     public String numeroEmpleado;
     public String retenido;
+    public String curp;
+    public String nss;
 
     public String getCita() {
         return cita;
@@ -67,5 +69,21 @@ public class GerenteReporteClientesModel {
 
     public void setRetenido(String retenido) {
         this.retenido = retenido;
+    }
+
+    public String getCurp() {
+        return curp;
+    }
+
+    public void setCurp(String curp) {
+        this.curp = curp;
+    }
+
+    public String getNss() {
+        return nss;
+    }
+
+    public void setNss(String nss) {
+        this.nss = nss;
     }
 }

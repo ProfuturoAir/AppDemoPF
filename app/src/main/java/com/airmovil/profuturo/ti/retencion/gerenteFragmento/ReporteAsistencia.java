@@ -487,7 +487,13 @@ public class ReporteAsistencia extends Fragment {
         tvRetardados.setText("" + retardo);
         tvSinAsistencia.setText("" + inasistencia);
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
-        adapter = new GerenteReporteAsistenciaAdapter(rootView.getContext(), getDatos1, recyclerView);
+        String PtvFecha = tvFecha.getText().toString();
+        String[] separated = PtvFecha.split(" - ");
+        HashMap<String, String> usuario = sessionManager.getUserDetails();
+        String numeroUsuario = usuario.get(SessionManager.USER_ID);
+
+
+        adapter = new GerenteReporteAsistenciaAdapter(rootView.getContext(), getDatos1, recyclerView,separated[0].trim(),separated[1].trim(),numeroUsuario);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 

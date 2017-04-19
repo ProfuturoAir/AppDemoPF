@@ -106,6 +106,7 @@ public class ReporteSucursales extends Fragment {
     final Fragment borrar = this;
 
     private OnFragmentInteractionListener mListener;
+    private Connected connected;
 
     public ReporteSucursales() {
         // Required empty public constructor
@@ -141,6 +142,9 @@ public class ReporteSucursales extends Fragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.SUCURSALES);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinnerSucursales.setAdapter(adapter);
+
+        sessionManager = new SessionManager(getContext());
+        connected = new Connected();
         // TODO: model
         getDatos1 = new ArrayList<>();
         // TODO: Recycler
@@ -441,7 +445,13 @@ public class ReporteSucursales extends Fragment {
         tvResultados.setText(filas + " Resultados ");
 
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
-        adapter = new GerenteReporteSucursalesAdapter(rootView.getContext(), getDatos1, recyclerView);
+        String PtvFecha = tvFecha.getText().toString();
+        String[] separated = PtvFecha.split(" - ");
+        HashMap<String, String> usuario = sessionManager.getUserDetails();
+        String numeroUsuario = usuario.get(SessionManager.USER_ID);
+
+
+        adapter = new GerenteReporteSucursalesAdapter(rootView.getContext(), getDatos1, recyclerView,separated[0].trim(),separated[1].trim(),numeroUsuario);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 

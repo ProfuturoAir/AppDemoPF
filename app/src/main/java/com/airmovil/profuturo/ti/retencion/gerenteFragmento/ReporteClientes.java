@@ -171,7 +171,7 @@ public class ReporteClientes extends Fragment {
         connected = new Connected();
         // TODO: ocultar teclado
         imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-
+        sessionManager = new SessionManager(getContext());
 
         // TODO: Spinner
         final ArrayAdapter<String> adapterId = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.IDS);
@@ -582,7 +582,7 @@ public class ReporteClientes extends Fragment {
             JSONArray array = obj.getJSONArray("Cliente");
             filas = obj.getInt("filasTotal");
             totalFilas = obj.getInt("filasTotal");
-            // Log.d("primerPaso", "response -->" + filas + totalFilas);
+             Log.d("primerPaso", "response -->" + array);
             for(int i = 0; i < array.length(); i++){
                 GerenteReporteClientesModel getDatos2 = new GerenteReporteClientesModel();
                 JSONObject json = null;
@@ -594,6 +594,8 @@ public class ReporteClientes extends Fragment {
                     getDatos2.setCita(json.getString("cita"));
                     getDatos2.setRetenido(json.getString("retenido"));
                     getDatos2.setIdSucursal(json.getInt("idSucursal"));
+                    //getDatos2.setCurp(json.getString("curp"));
+                    //getDatos2.setNss(json.getString("nss"));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -605,7 +607,13 @@ public class ReporteClientes extends Fragment {
 
         tvResultados.setText(filas + " Registros");
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
-        adapter = new GerenteReporteClientesAdapter(rootView.getContext(), getDatos1, recyclerView);
+        String PtvFecha = tvFecha.getText().toString();
+        String[] separated = PtvFecha.split(" - ");
+        HashMap<String, String> usuario = sessionManager.getUserDetails();
+        String numeroUsuario = usuario.get(SessionManager.USER_ID);
+
+
+        adapter = new GerenteReporteClientesAdapter(rootView.getContext(), getDatos1, recyclerView,separated[0].trim(),separated[1].trim(),numeroUsuario);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
@@ -656,6 +664,8 @@ public class ReporteClientes extends Fragment {
                     getDatos2.setCita(json.getString("cita"));
                     getDatos2.setRetenido(json.getString("retenido"));
                     getDatos2.setIdSucursal(json.getInt("idSucursal"));
+                    //getDatos2.setCurp(json.getString("curp"));
+                    //getDatos2.setNss(json.getString("nss"));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
