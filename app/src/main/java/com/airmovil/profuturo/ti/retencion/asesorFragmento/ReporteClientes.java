@@ -107,6 +107,21 @@ public class ReporteClientes extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    // TODO: Params
+    private int sParam1; // ids
+    private String sParam2; // Id dato
+    private String sParam3; // fecha Inicio
+    private String sParam4; // fecha fin
+    private int sParam5; // Emitidos
+    // TODO: parametros en argumentos
+    private static final String ARG_PARAM_1 = "param1";
+    private static final String ARG_PARAM_2 = "param2";
+    private static final String ARG_PARAM_3 = "param3";
+    private static final String ARG_PARAM_4 = "param4";
+    private static final String ARG_PARAM_5 = "param5";
+
+
+
     public ReporteClientes() {
         // Required empty public constructor
     }
@@ -120,11 +135,14 @@ public class ReporteClientes extends Fragment {
      * @return A new instance of fragment ReporteClientes.
      */
     // TODO: Rename and change types and number of parameters
-    public static ReporteClientes newInstance(String param1, String param2, Context context) {
+    public static ReporteClientes newInstance(int param1, String param2, String param3, String param4, int param5, Context context) {
         ReporteClientes fragment = new ReporteClientes();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putInt(ARG_PARAM_1, param1);
+        args.putString(ARG_PARAM_2, param2);
+        args.putString(ARG_PARAM_3, param3);
+        args.putString(ARG_PARAM_4, param4);
+        args.putInt(ARG_PARAM_5, param5);
         fragment.setArguments(args);
         return fragment;
     }
@@ -170,18 +188,16 @@ public class ReporteClientes extends Fragment {
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                String valores = etIngresar.getText().toString().trim();
-                String seleccion = spinnerIds.getSelectedItem().toString();
-
-                mParam1 = tvRangoFecha1.getText().toString();
-                mParam2 = tvRangoFecha2.getText().toString();
-                if (mParam1.isEmpty() || mParam2.isEmpty() ) {
+                sParam1 = spinnerIds.getSelectedItemPosition();
+                sParam2 = etIngresar.getText().toString();
+                sParam3 = tvRangoFecha1.getText().toString();
+                sParam4 = tvRangoFecha2.getText().toString();
+                sParam5 = spinnerEmitidos.getSelectedItemPosition();
+                if (sParam1 == 0 || sParam2.isEmpty() || sParam3.isEmpty() || sParam4.isEmpty() ) {
                     Config.dialogoFechasVacias(getContext());
                 } else {
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    ReporteClientes procesoDatosFiltroInicio = ReporteClientes.newInstance(mParam1, mParam2, rootView.getContext()
-                    );
+                    ReporteClientes procesoDatosFiltroInicio = ReporteClientes.newInstance(sParam1, sParam2, sParam3, sParam4, sParam5,rootView.getContext());
                     borrar.onDestroy();
                     ft.remove(borrar);
                     ft.replace(R.id.content_asesor, procesoDatosFiltroInicio);
@@ -275,9 +291,9 @@ public class ReporteClientes extends Fragment {
         mDay   = fechaDatos.get("dia");
 
         if(getArguments() != null){
-            fechaIni = getArguments().getString(ARG_PARAM1);
-            fechaFin = getArguments().getString(ARG_PARAM2);
-            tvFecha.setText(fechaIni+" - "+fechaFin);
+            sParam3 = getArguments().getString(ARG_PARAM_3);
+            sParam4 = getArguments().getString(ARG_PARAM_4);
+            tvFecha.setText(sParam3+" - "+sParam4);
         }else {
             Map<String, String> fechas = Config.fechas(1);
             fechaFin = fechas.get("fechaFin");
@@ -328,11 +344,15 @@ public class ReporteClientes extends Fragment {
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
 
-        final ProgressDialog loading;
-        if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
-        else
-            loading = null;
+        //final ProgressDialog loading;
+        //if (primerPeticion)
+           // loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
+        //else
+           // loading = null;
+
+        SessionManager sessionManager = new SessionManager(getContext());
+        HashMap<String, String> usuario = sessionManager.getUserDetails();
+        String idUsuario = usuario.get(SessionManager.USER_ID);
 
         JSONObject obj = new JSONObject();
 
@@ -340,75 +360,57 @@ public class ReporteClientes extends Fragment {
             JSONObject rqt = new JSONObject();
             JSONObject filtros = new JSONObject();
             JSONObject periodo = new JSONObject();
-            filtros.put("curp", "");
-            filtros.put("nss", "");
-            filtros.put("numeroCuenta", "");
-            rqt.put("filtro", filtros);
-            rqt.put("idTramite", 1);
-            periodo.put("fechaInicio", fechaIni);
-            periodo.put("fechaFin", fechaFin);
-            rqt.put("periodo", periodo);
-            rqt.put("usuario", "");
-            obj.put("rqt", rqt);
+
+            if(getArguments() != null){
+                sParam1 = getArguments().getInt(ARG_PARAM_1);
+                sParam2 = getArguments().getString(ARG_PARAM_2);
+                sParam3 = getArguments().getString(ARG_PARAM_3);
+                sParam4 = getArguments().getString(ARG_PARAM_4);
+                sParam5 = getArguments().getInt(ARG_PARAM_5);
+
+                switch (sParam1){
+                    case 1:
+                        filtros.put("curp", "");
+                        filtros.put("nss", "");
+                        filtros.put("numeroCuenta", sParam2);
+                        break;
+                    case 2:
+                        filtros.put("curp", "");
+                        filtros.put("nss", sParam2);
+                        filtros.put("numeroCuenta", "");
+                        break;
+                    case 3:
+                        filtros.put("curp", sParam2);
+                        filtros.put("nss", "");
+                        filtros.put("numeroCuenta", "");
+                        break;
+                }
+                rqt.put("filtro", filtros);
+                rqt.put("filtroRetenido", sParam5);
+                rqt.put("pagina", pagina);
+                periodo.put("fechaInicio", fechaIni);
+                periodo.put("fechaFin", fechaFin);
+                rqt.put("periodo", periodo);
+                rqt.put("usuario", idUsuario);
+                obj.put("rqt", rqt);
+            }else{
+                filtros.put("curp", "");
+                filtros.put("nss", "");
+                filtros.put("numeroCuenta", "");
+                rqt.put("filtro", filtros);
+                rqt.put("filtroRetenido", "");
+                rqt.put("pagina", pagina);
+                periodo.put("fechaInicio", fechaIni);
+                periodo.put("fechaFin", fechaFin);
+                rqt.put("periodo", periodo);
+                rqt.put("usuario", idUsuario);
+                obj.put("rqt", rqt);
+            }
             Log.d(TAG, "PETICION VACIA-->" + obj);
         }catch (JSONException e){
             e.printStackTrace();
         }
-        /*SessionManager sessionManager = new SessionManager(getActivity().getApplicationContext());
-        HashMap<String, String> usuario = sessionManager.getUserDetails();
-        String usuarioCUSP = usuario.get(SessionManager.ID);
-        try {
-            // TODO: Formacion del JSON request
-            JSONObject rqt = new JSONObject();
-            JSONObject filtros = new JSONObject();
-            JSONObject periodo = new JSONObject();
 
-            switch (seleccion){
-                case "Número de cuenta":
-                    if(valores.isEmpty()){
-                        filtros.put("curp", "");
-                        filtros.put("nss", "");
-                        filtros.put("numeroCuenta", "");
-                    }else{
-                        filtros.put("curp", "");
-                        filtros.put("nss", "");
-                        filtros.put("numeroCuenta", valores.toString());
-                    }
-                    break;
-                case "NSS":
-                    if(valores.isEmpty()){
-                        filtros.put("curp", "");
-                        filtros.put("nss",  "");
-                        filtros.put("numeroCuenta","");
-                    }else{
-                        filtros.put("curp", "");
-                        filtros.put("nss",  valores.toString());
-                        filtros.put("numeroCuenta","");
-                    }
-                    break;
-                case "CURP":
-                    if(valores.isEmpty()){
-                        filtros.put("curp", "");
-                        filtros.put("nss",  "");
-                        filtros.put("numeroCuenta","");
-                    }else{
-                        filtros.put("curp", valores.toString());
-                        filtros.put("nss",  "");
-                        filtros.put("numeroCuenta","");
-                    }
-                    break;
-            }
-            rqt.put("idTramite", 1);
-            rqt.put("filtro", filtros);
-            periodo.put("fechaInicio", fechaIni);
-            periodo.put("fechaFin", fechaFin);
-            rqt.put("periodo", periodo);
-            rqt.put("usuario", usuarioCUSP.toString());
-            obj.put("rqt", rqt);
-            Log.d(TAG, "PETICION VACIA-->" + obj);
-        } catch (JSONException e) {
-            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un right_in al formar los datos.");
-        }*/
         //Creating a json array request
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_GENERAR_REPORTE_CLIENTE, obj,
                 new Response.Listener<JSONObject>() {
@@ -416,7 +418,7 @@ public class ReporteClientes extends Fragment {
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
-                            loading.dismiss();
+                            // loading.dismiss();
                             primerPaso(response);
                         } else {
                             segundoPaso(response);
@@ -427,7 +429,7 @@ public class ReporteClientes extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         try{
-                            loading.dismiss();
+                            // loading.dismiss();
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -508,6 +510,9 @@ public class ReporteClientes extends Fragment {
                     getDatos2.setNombreCliente(json.getString("nombre"));
                     getDatos2.setNumeroCuenta(json.getString("numeroCuenta"));
                     getDatos2.setConCita(json.getString("cita"));
+                    getDatos2.setIdTramite(json.getInt("idTramite"));
+                    getDatos2.setCurp(json.getString("curp"));
+                    getDatos2.setHora(json.getString("hora"));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -525,7 +530,16 @@ public class ReporteClientes extends Fragment {
 
         tvRegistros.setText("" + totalFilas + " Registros");
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
-        adapter = new AsesorReporteClientesAdapter(rootView.getContext(), getDatos1, recyclerView);
+
+        if(getArguments() != null){
+            sParam3 = getArguments().getString(ARG_PARAM_3);
+            sParam4 = getArguments().getString(ARG_PARAM_4);
+            adapter = new AsesorReporteClientesAdapter(rootView.getContext(), getDatos1, recyclerView, sParam3, sParam4);
+        }else{
+            adapter = new AsesorReporteClientesAdapter(rootView.getContext(), getDatos1, recyclerView, fechaIni, fechaFin);
+        }
+
+
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 

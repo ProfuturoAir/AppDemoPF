@@ -415,7 +415,6 @@ public class DatosCliente extends Fragment {
                return Config.credenciales(getContext());
             }
         };
-
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
     }
 
@@ -429,12 +428,10 @@ public class DatosCliente extends Fragment {
         String curp = "";
         String fechaConsulta = "";
         Double saldo;
-
         try{
             status = obj.getString("status");
             statusText = obj.getString("statusText");
             idTramite = obj.getString("idTramite");
-
             if(Integer.parseInt(status) == 200){
                 JSONObject jsonCliente = obj.getJSONObject("cliente");
                 Log.d(TAG, "--> JSON CLIENTE " + jsonCliente);
@@ -444,16 +441,12 @@ public class DatosCliente extends Fragment {
                 curp   = jsonCliente.getString("curp");
                 fechaConsulta = jsonCliente.getString("fechaConsulta");
                 saldo = jsonCliente.getDouble("saldo");
-
-
                 tvClienteNombre.setText("" + nombre);
                 tvClienteNumeroCuenta.setText("" + cuenta);
                 tvClienteNSS.setText("" + nss);
                 tvClienteCURP.setText("" + curp);
                 tvClienteFecha.setText("" + fechaConsulta);
-                tvClienteSaldo.setText("" + saldo);
-
-
+                tvClienteSaldo.setText("" + Config.nf.format(saldo));
             }else{
                 Config.msj(getContext(), "Error: " + status, statusText);
             }

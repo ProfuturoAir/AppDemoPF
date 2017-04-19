@@ -547,6 +547,15 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
         else
             loading = null;
 
+        double w, z;
+        try {
+            z = new Double(lblLatitud.getText().toString());
+            w = new Double(lblLongitud.getText().toString());
+        } catch (NumberFormatException e) {
+            z = 0;
+            w = 0;
+        }
+
         JSONObject obj = new JSONObject();
         String latitud = lblLatitud.getText().toString();
         String longitud = lblLongitud.getText().toString();
@@ -568,17 +577,19 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
         }
 
 
+
         // TODO: Formacion del JSON request
         try{
             JSONObject rqt = new JSONObject();
             rqt.put("estatusTramite", 1138);
-            rqt.put("fechaHoraFina", fechaN);
+            rqt.put("fechaHoraFin", fechaN);
             rqt.put("idTramite", idTramite);
             rqt.put("numeroCuenta", idUsuario);
             JSONObject ubicacion = new JSONObject();
-            ubicacion.put("latitud", latitud);
-            ubicacion.put("longitud", longitud);
+            ubicacion.put("latitud", z);
+            ubicacion.put("longitud", w);
             rqt.put("ubicacion", ubicacion);
+            rqt.put("usuario", idUsuario);
             rqt.put("ineIfe", base64);
             obj.put("rqt", rqt);
             Log.d("datos", "REQUEST-->" + obj);

@@ -88,10 +88,10 @@ public class EnviarPendientesAdapter extends RecyclerView.Adapter {
             myholder.campoCuenta.setText(lista.getNumeroCuenta());
             myholder.campoHora.setText(lista.getHora());
 
-            char nombre = lista.getNombreCliente().charAt(0);
-            final String pLetra = Character.toString(nombre);
+            //char nombre = lista.getNombreCliente().charAt(0);
+            //final String pLetra = Character.toString(nombre);
 
-            myholder.campoLetra.setText(pLetra);
+            //myholder.campoLetra.setText(pLetra);
 
             /*myholder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override

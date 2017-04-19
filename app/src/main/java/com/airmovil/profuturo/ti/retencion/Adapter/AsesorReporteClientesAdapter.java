@@ -10,11 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.Asistencia;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.DatosAsesor;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.ReporteClientes;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.ReporteClientesDetalle;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
@@ -39,11 +41,15 @@ public class AsesorReporteClientesAdapter extends RecyclerView.Adapter{
     private int visibleThreshold = 10;
     private int lastVisibleItem, totalItemCount;
     private RecyclerView mRecyclerView;
+    private String mfechaInicio;
+    private String mfechaFin;
 
-    public AsesorReporteClientesAdapter(Context mContext, List<AsesorReporteClientesModel> list, RecyclerView mRecyclerView){
+    public AsesorReporteClientesAdapter(Context mContext, List<AsesorReporteClientesModel> list, RecyclerView mRecyclerView, String mfechaInicio, String mfechaFin){
         this.mContext = mContext;
         this.list = list;
         this.mRecyclerView = mRecyclerView;
+        this.mfechaInicio = mfechaInicio;
+        this.mfechaFin = mfechaFin;
 
         final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) this.mRecyclerView.getLayoutManager();
         this.mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -93,11 +99,24 @@ public class AsesorReporteClientesAdapter extends RecyclerView.Adapter{
             myholder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    fragmentJumpDatosUsuario(pLetra, v);
+                    //fragmentJumpDatosUsuario(pLetra, v);
+                    View borrar = v;
+                    fragmentoDatosCliente(v, lista.curp, lista.idTramite, lista.hora, mfechaInicio, mfechaFin);
+                    Toast.makeText(mContext, "hora: " + lista.getHora() + " \n fecha Incio" + mfechaInicio + "\n fecha Fin " + mfechaFin, Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
             ((LoadingViewHolder) holder).progressBar.setIndeterminate(true);
+        }
+    }
+    public void fragmentoDatosCliente(View view, String curp, int idTramite, String hora, String fechaInicio, String fechaFin){
+        Fragment fragmento = new ReporteClientesDetalle();
+        if(view.getContext() == null)
+            return;
+        if(view.getContext() instanceof Asesor){
+            Asesor asesor = (Asesor) view.getContext();
+
+            asesor.switchDetalleCliente(fragmento, curp, idTramite, hora, fechaInicio, fechaFin);
         }
     }
 

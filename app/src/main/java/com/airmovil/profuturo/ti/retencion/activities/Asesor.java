@@ -164,11 +164,12 @@ public class Asesor extends AppCompatActivity{
         String apeMaterno = datosUsuario.get(SessionManager.APELLIDO_MATERNO);
         String nombre = datosUsuario.get(SessionManager.NOMBRE);
         String idEmpleado = datosUsuario.get(SessionManager.USER_ID);
-        //char letra = nombre.charAt(0);
-        //String inicial = Character.toString(letra);
 
-        //navPrimeraLetra.setText(inicial);
-        //navDatosGerente.setText(nombre + " " + apePaterno + " " + apeMaterno + "\nNúmero empleado: " + idEmpleado);
+        char letra = nombre.charAt(0);
+        String inicial = Character.toString(letra);
+
+        navPrimeraLetra.setText(inicial);
+        navDatosGerente.setText(nombre + " " + apePaterno + " " + apeMaterno + "\nNúmero empleado: " + idEmpleado);
 
         // TODO: Se utiliza
         //char letra = sNombreEmpleado.charAt(0);
@@ -535,5 +536,20 @@ public class Asesor extends AppCompatActivity{
         ft.commit();
         //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();
+    }
+
+    public void switchDetalleCliente(Fragment fragment, String curp, int idTramite, String hora, String fechaInicio, String fechaFin) {
+        Bundle bundle = new Bundle();
+        bundle.putString("curp", curp);
+        bundle.putInt("idTramite", idTramite);
+        bundle.putString("hora", hora);
+        bundle.putString("fechaInicio", fechaInicio);
+        bundle.putString("fechaFin", fechaFin);
+        fragment.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_asesor, fragment);
+        ft.addToBackStack(null);
+        ft.commit();
+
     }
 }

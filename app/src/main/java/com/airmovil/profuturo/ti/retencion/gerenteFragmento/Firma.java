@@ -133,6 +133,8 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
         dvFirma.setColor("#000000");
         dvFirma.setFocusable(true);
 
+        connected = new Connected();
+
         apiClient = new GoogleApiClient.Builder(getActivity())
                 .enableAutoManage(getActivity(),this)
                 .addConnectionCallbacks(this)

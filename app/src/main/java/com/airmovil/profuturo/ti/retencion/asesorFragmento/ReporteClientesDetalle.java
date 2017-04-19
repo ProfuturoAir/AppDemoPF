@@ -5,17 +5,20 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -24,6 +27,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +49,27 @@ public class ReporteClientesDetalle extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private String sParam1;
+    private int sParam2;
+    private String sParam3;
+    private String sParam4;
+    private String sParam5;
+
+    // TODO: XML
+    private TextView tvInicial;
+    private TextView tvNombreAsesor;
+    private TextView tvNumeroEmpleado;
+    private TextView tvFecha;
+    private TextView tvNombreCliente;
+    private TextView tvNumeroCuentaCliente;
+    private TextView tvNSSoCURP;
+    private TextView tvEstatus;
+    private TextView tvSaldo;
+    private TextView tvSucursales;
+    private TextView tvHoraAtencion;
+
+    private View rootView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -80,8 +105,28 @@ public class ReporteClientesDetalle extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        rootView = view;
+
+        tvInicial = (TextView) rootView.findViewById(R.id.afrcd_tv_letra);
+        tvNombreAsesor = (TextView) rootView.findViewById(R.id.afrcd_tv_nombre_asesor);
+        tvNumeroEmpleado = (TextView) rootView.findViewById(R.id.afrcd_tv_numero_empleado_asesor);
+        tvFecha = (TextView) rootView.findViewById(R.id.afrcd_tv_fecha);
+
+        tvNombreCliente = (TextView) rootView.findViewById(R.id.afrcd_tv_nombre_cliente);
+        tvNumeroCuentaCliente = (TextView) rootView.findViewById(R.id.afrcd_tv_numero_cuenta_cliente);
+        tvNSSoCURP = (TextView) rootView.findViewById(R.id.afrcd_tv_nss_cliente);
+        tvEstatus = (TextView) rootView.findViewById(R.id.afrcd_tv_curp_cliente);
+        tvSaldo = (TextView) rootView.findViewById(R.id.afrcd_tv_fecha_cliente);
+        tvSucursales = (TextView) rootView.findViewById(R.id.afrcd_tv_saldo_cliente);
+        tvHoraAtencion = (TextView) rootView.findViewById(R.id.afrcd_tv_hora_atencion);
+
+
+        sendJson(true);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.asesor_fragmento_reporte_clientes_detalle, container, false);
     }
@@ -124,33 +169,73 @@ public class ReporteClientesDetalle extends Fragment {
 
     private void sendJson(final boolean primeraPeticion){
 
-        final ProgressDialog loading;
-        if (primeraPeticion)
-            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Porfavor espere...", false, false);
-        else
-            loading = null;
+        //final ProgressDialog loading;
+        //if (primeraPeticion)
+          //  loading = ProgressDialog.show(getActivity(), "Cargando datos", "Porfavor espere...", false, false);
+        //else
+          //  loading = null; sParam1 = getArguments().getString("curp");
+        sParam2 = getArguments().getInt("idTramite");
+        sParam3 = getArguments().getString("hora");
+        sParam4 = getArguments().getString("fechaInicio");
+        sParam5 = getArguments().getString("fechaFin");
+
+        SessionManager sessionManager = new SessionManager(getContext());
+        HashMap<String, String> datosUsuario = sessionManager.getUserDetails();
+        String usuario = datosUsuario.get(SessionManager.USER_ID);
+        String nombreAsesor = datosUsuario.get(SessionManager.NOMBRE);
+        String apePaternoAsesor = datosUsuario.get(SessionManager.APELLIDO_PATERNO);
+        String apeMaternoAsesor = datosUsuario.get(SessionManager.APELLIDO_MATERNO);
+        String numeroEmpleado = datosUsuario.get(SessionManager.NUMERO_EMPLEADO);
+
+        tvNombreAsesor.setText("Nombre del Asesor: " +nombreAsesor + " " + apePaternoAsesor + " " + apeMaternoAsesor);
+        tvNumeroEmpleado.setText("Número de empleado: " + numeroEmpleado);
+        tvFecha.setText(sParam4 + " - " + sParam5);
+        tvHoraAtencion.setText("Cita: " + sParam3);
 
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
+        JSONObject filtro = new JSONObject();
+        JSONObject periodo = new JSONObject();
         try{
-            JSONObject periodo = new JSONObject();
-            rqt.put("periodo", periodo);
-            periodo.put("fechaInicio", "");
-            periodo.put("fechaFin", "");
-            rqt.put("usuario", "");
-            json.put("rqt", rqt);
-            Log.d("TAG", "REQUEST -->" + json);
-
+            // Log.d(" * * * * * * * ", "curp" + sParam1);
+            // Log.d(" * * * * * * * ", "idTramite" + sParam2);
+            // Log.d(" * * * * * * * ", "hora" + sParam3);
+            // Log.d(" * * * * * * * ", "fechaInicio" + sParam4);
+            // Log.d(" * * * * * * * ", "fechaFin" + sParam5);
+            if(getArguments() != null){
+                filtro.put("curp", sParam1);
+                filtro.put("nss", "");
+                filtro.put("numeroCuenta", "");
+                rqt.put("filtro", filtro);
+                rqt.put("idTramite", sParam2);
+                periodo.put("fechaFin", sParam5);
+                periodo.put("fechaInicio", sParam4);
+                rqt.put("periodo",periodo);
+                rqt.put("usuario", usuario);
+                json.put("rqt", rqt);
+            }else{
+                filtro.put("curp", "");
+                filtro.put("nss", "");
+                filtro.put("numeroCuenta", "");
+                rqt.put("filtro", filtro);
+                rqt.put("idTramite", "");
+                periodo.put("fechaFin", "");
+                periodo.put("fechaInicio", "");
+                rqt.put("periodo",periodo);
+                rqt.put("usuario", usuario);
+                json.put("rqt", rqt);
+            }
+            Log.d("RQT ->", "" + json);
         } catch (JSONException e){
             Config.msj(getContext(),"Error","Existe un right_in al formar la peticion");
         }
 
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_RESUMEN_RETENCIONES, json,
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_GENERAL_REPORTE_CLIENTE, json,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         if(primeraPeticion){
-                            loading.dismiss();
+                            //loading.dismiss();
                             primerPaso(response);
                         }
                     }
@@ -159,7 +244,7 @@ public class ReporteClientesDetalle extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         try{
-                            loading.dismiss();
+                            //loading.dismiss();
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -206,15 +291,7 @@ public class ReporteClientesDetalle extends Fragment {
         {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+                return Config.credenciales(getContext());
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
@@ -223,6 +300,36 @@ public class ReporteClientesDetalle extends Fragment {
     private void primerPaso(JSONObject obj){
 
         Log.d("TAG", "primerPaso: "  + obj );
+        String nombre = "";
+        String numeroCuenta = "";
+        String curp = "";
+        String nss = "";
+        boolean estatus = false;
+        int saldo = 0;
+        String nombreSucursal = "";
+        try{
+            JSONObject cliente = obj.getJSONObject("cliente");
+            nombre = cliente.getString("nombre");
+            numeroCuenta = cliente.getString("numeroCuenta");
+            curp = cliente.getString("curp");
+            nss = cliente.getString("nss");
+            estatus = cliente.getBoolean("retenido");
+            saldo = cliente.getInt("saldo");
+            nombreSucursal = cliente.getString("nombreSucursal");
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        tvNombreCliente.setText(nombre);
+        tvNumeroCuentaCliente.setText(numeroCuenta);
+        tvNSSoCURP.setText("CURP: " + curp + " y NSS: " + nss);
+        if(estatus == true)
+            tvEstatus.setText("Retenido");
+        if(estatus == false)
+            tvEstatus.setText("No retenido");
+        tvSaldo.setText(Config.nf.format(saldo));
+        tvSucursales.setText(nombreSucursal);
+
 
     }
 }

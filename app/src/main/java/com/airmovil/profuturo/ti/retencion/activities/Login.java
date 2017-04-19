@@ -56,9 +56,9 @@ public class Login extends AppCompatActivity {
         Log.d("*************", "PERFIL: ->" + perfil);
 
         if (sessionManager.isLoggedIn()) {
-            if (sessionManager.getUserDetails().get("idRolEmpleado").equals("3")) {
+            if (sessionManager.getUserDetails().get("idRolEmpleado").equals("1")) {
                 startActivity(new Intent(this, Director.class));
-            } else if (sessionManager.getUserDetails().get("idRolEmpleado").equals("3")) {
+            } else if (sessionManager.getUserDetails().get("idRolEmpleado").equals("2")) {
                 Intent intentGerenteGerencias = new Intent(this, Gerente.class);
                 startActivity(intentGerenteGerencias);
             } else {

@@ -111,7 +111,7 @@ public class Inicio extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
         variables();
-        //detalleSuperior();
+        detalleSuperior();
         primeraPeticion();
         fechas();
 

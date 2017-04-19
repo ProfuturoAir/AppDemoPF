@@ -463,6 +463,7 @@ public class ConCita extends Fragment {
         tvRegistros.setText(filas + " Registros");
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         adapter = new CitasClientesAdapter(rootView.getContext(), getDatos1, recyclerView);
+
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
@@ -478,6 +479,7 @@ public class ConCita extends Fragment {
         adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
+                Log.d(TAG, "pagina->" + pagina + "numeroMaximo" + numeroMaximoPaginas);
                 if (pagina >= numeroMaximoPaginas) {
                     return;
                 }

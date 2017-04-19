@@ -245,9 +245,10 @@ public class SinCita extends Fragment {
                             ft.replace(R.id.content_gerente, clase);
                             ft.addToBackStack(null);
                             etDatos.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-                            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 
+                            Config.teclado(getContext(), etDatos);
                             sendJson(true, seleccion, valores);
+
                         }
                     }
                 }else{

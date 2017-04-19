@@ -88,7 +88,7 @@ public class Gerente extends AppCompatActivity{
             setDrawerLayout();
             setToggle();
             setNavigationView();
-            //setInformacionDrawer();
+            setInformacionDrawer();
         }
     }
 
@@ -150,19 +150,21 @@ public class Gerente extends AppCompatActivity{
         NavigationView navigationView = (NavigationView) findViewById(R.id.gerente_nav_view);
 
         HashMap<String, String> informacion = sessionManager.getUserDetails();
-        String sNumeroEmpleado = informacion.get(SessionManager.ID);
+        String sNumeroEmpleado = informacion.get(SessionManager.USER_ID);
         String sNombreEmpleado = informacion.get(SessionManager.NOMBRE);
+        String sApePaterno = informacion.get(SessionManager.APELLIDO_PATERNO);
+        String sApeMaterno = informacion.get(SessionManager.APELLIDO_MATERNO);
 
         View hView = navigationView.getHeaderView(0);
 
-        //TextView navPrimeraLetra = (TextView) hView.findViewById(R.id.gerente_nav_tv_letra);
-        //TextView navDatosGerente = (TextView) hView.findViewById(R.id.gerente_nav_tv_datos);
+        TextView navPrimeraLetra = (TextView) hView.findViewById(R.id.gerente_nav_tv_letra);
+        TextView navDatosGerente = (TextView) hView.findViewById(R.id.gerente_nav_tv_datos);
 
-        //char letra = sNombreEmpleado.charAt(0);
-        //String primeraLetra = Character.toString(letra);
+        char letra = sNombreEmpleado.charAt(0);
+        String primeraLetra = Character.toString(letra);
 
-//        navPrimeraLetra.setText(primeraLetra);
-//        navDatosGerente.setText("Nombre: " + sNombreEmpleado + "\nNumero Empleado: " + sNumeroEmpleado);
+        navPrimeraLetra.setText(primeraLetra);
+        navDatosGerente.setText("Nombre: " + sNombreEmpleado + " " + sApePaterno + " " + sApeMaterno + "\nNumero Empleado: " + sNumeroEmpleado);
     }
 
     /**

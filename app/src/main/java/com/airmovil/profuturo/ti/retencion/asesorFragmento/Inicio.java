@@ -294,9 +294,9 @@ public class Inicio extends Fragment {
         String apeMaterno = datosUsuario.get(SessionManager.APELLIDO_MATERNO);
         String nombre = datosUsuario.get(SessionManager.NOMBRE);
         tvNombre.setText("" + nombre + " " + apePaterno + " " + apeMaterno);
-//        char letra = nombre.charAt(0);
-  //      String inicial = Character.toString(letra);
-    //    tvInicial.setText(inicial);
+        char letra = nombre.charAt(0);
+        String inicial = Character.toString(letra);
+        tvInicial.setText(inicial);
     }
 
     /**

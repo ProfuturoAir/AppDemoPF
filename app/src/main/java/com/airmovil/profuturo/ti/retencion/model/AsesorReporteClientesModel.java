@@ -9,6 +9,33 @@ public class AsesorReporteClientesModel {
     public String numeroCuenta;
     public String conCita;
     public String noEmitido;
+    public int idTramite;
+    public String curp;
+    public String hora;
+
+    public String getHora() {
+        return hora;
+    }
+
+    public void setHora(String hora) {
+        this.hora = hora;
+    }
+
+    public String getCurp() {
+        return curp;
+    }
+
+    public void setCurp(String curp) {
+        this.curp = curp;
+    }
+
+    public int getIdTramite() {
+        return idTramite;
+    }
+
+    public void setIdTramite(int idTramite) {
+        this.idTramite = idTramite;
+    }
 
     public String getNombreCliente() {
         return nombreCliente;
