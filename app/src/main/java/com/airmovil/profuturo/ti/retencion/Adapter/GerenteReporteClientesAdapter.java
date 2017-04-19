@@ -54,15 +54,13 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
     private RecyclerView mRecyclerView;
     private String fechaIni;
     private String fechaFin;
-    private String numeroUsuario;
 
-    public GerenteReporteClientesAdapter(Context mContext, List<GerenteReporteClientesModel> list, RecyclerView mRecyclerView,String fechaIni,String fechaFin,String numeroUsuario) {
+    public GerenteReporteClientesAdapter(Context mContext, List<GerenteReporteClientesModel> list, RecyclerView mRecyclerView,String fechaIni,String fechaFin) {
         this.mContext = mContext;
         this.list = list;
         this.mRecyclerView = mRecyclerView;
         this.fechaIni = fechaIni;
         this.fechaFin = fechaFin;
-        this.numeroUsuario = numeroUsuario;
 
         final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) this.mRecyclerView.getLayoutManager();
         this.mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {

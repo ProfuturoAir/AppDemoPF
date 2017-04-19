@@ -447,11 +447,9 @@ public class ReporteSucursales extends Fragment {
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         String PtvFecha = tvFecha.getText().toString();
         String[] separated = PtvFecha.split(" - ");
-        HashMap<String, String> usuario = sessionManager.getUserDetails();
-        String numeroUsuario = usuario.get(SessionManager.USER_ID);
 
 
-        adapter = new GerenteReporteSucursalesAdapter(rootView.getContext(), getDatos1, recyclerView,separated[0].trim(),separated[1].trim(),numeroUsuario);
+        adapter = new GerenteReporteSucursalesAdapter(rootView.getContext(), getDatos1, recyclerView,separated[0].trim(),separated[1].trim());
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
