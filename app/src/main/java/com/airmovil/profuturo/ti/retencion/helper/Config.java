@@ -413,4 +413,11 @@ public class Config extends Activity {
         imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
     }
 
+    public static final String usuarioCusp(Context context){
+        SessionManager sessionManager = new SessionManager(context);
+        HashMap<String, String> usuario = sessionManager.getUserDetails();
+        String cusp = usuario.get(SessionManager.USER_ID);
+        return cusp;
+    }
+
 }
