@@ -125,6 +125,15 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
             myViewHolder.sinCita.setText(" " + lista.getSinCita() + " ");
             myViewHolder.saldoRetenido.setText(" " + lista.getdSaldoRetenido() + " ");
             myViewHolder.saldoNoRetenido.setText(" " +lista.getdSaldoNoRetenido() + " ");
+
+            int x = Integer.parseInt(String.valueOf(lista.getConCita()));
+            int y = Integer.parseInt(String.valueOf(lista.getSinCita()));
+
+            Float num = (float) (100 / y * x);
+
+
+            myViewHolder.porcentaje.setText(" % " + num);
+
             myViewHolder.tvClick.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -283,7 +292,7 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        public TextView letra, idGerencia, conCita, sinCita, saldoRetenido, saldoNoRetenido;
+        public TextView letra, idGerencia, conCita, sinCita, saldoRetenido, saldoNoRetenido, porcentaje;
         public CardView cardView;
         public TextView tvClick;
         public MyViewHolder(View view){
@@ -294,6 +303,7 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
             sinCita = (TextView) view.findViewById(R.id.dfrgl_tv_sin_cita);
             saldoRetenido = (TextView) view.findViewById(R.id.dfrgl_tv_con_saldo);
             saldoNoRetenido = (TextView) view.findViewById(R.id.dfrgl_tv_sin_saldo);
+            porcentaje = (TextView) view.findViewById(R.id.dfrgl_tv_porcentaje);
             tvClick = (TextView) view.findViewById(R.id.dfrcll_btn_detalles);
             cardView = (CardView) view.findViewById(R.id.ddfrgl_cardview);
         }

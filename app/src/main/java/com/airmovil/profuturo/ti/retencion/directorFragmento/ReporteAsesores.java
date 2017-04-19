@@ -64,13 +64,17 @@ import java.util.Map;
 public class ReporteAsesores extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "parametro1";
-    private static final String ARG_PARAM2 = "parametro2";
-    private static final String ARG_PARAM3 = "parametro3";
+    private static final String ARG_PARAM1 = "parametro1"; // fecha Inicio
+    private static final String ARG_PARAM2 = "parametro2"; // fecha final
+    private static final String ARG_PARAM3 = "parametro3"; // numero asesor
+    private static final String ARG_PARAM4 = "parametro4"; // id gerencia
+    private static final String ARG_PARAM5 = "parametro5"; // id sucursal
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-    private String mParam3;
+    private String mParam1; // fecha inicio
+    private String mParam2; // fecha fin
+    private String mParam3; // id asesor
+    private int mParam4; // id gerencia
+    private int mParam5; // id sucursal
 
     // TODO: recycler
     private DirectorReporteAsesoresAdapter adapter;
@@ -121,12 +125,14 @@ public class ReporteAsesores extends Fragment {
      * @return A new instance of fragment ReporteAsesores.
      */
     // TODO: Rename and change types and number of parameters
-    public static ReporteAsesores newInstance(String param1, String param2, String param3, Context context) {
+    public static ReporteAsesores newInstance(String param1, String param2, String param3, int param4, int param5, Context context) {
         ReporteAsesores fragment = new ReporteAsesores();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         args.putString(ARG_PARAM3, param3);
+        args.putInt(ARG_PARAM4, param4);
+        args.putInt(ARG_PARAM5, param5);
         fragment.setArguments(args);
         return fragment;
     }
@@ -163,7 +169,6 @@ public class ReporteAsesores extends Fragment {
         connected = new Connected();
 
         fechas();
-
         rangoInicial();
         rangoFinal();
 
@@ -184,11 +189,11 @@ public class ReporteAsesores extends Fragment {
                     final String fechaFinal = tvRangoFecha2.getText().toString();
                     final String idAsesor = etAsesor.getText().toString();
 
-                    if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
-                        Config.dialogoFechasVacias(getContext());
+                    if(fechaIncial.isEmpty() || fechaFinal.isEmpty() || idAsesor.isEmpty()){
+                        Config.dialogoDatosVacios(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ReporteAsesores fragmento = ReporteAsesores.newInstance(fechaIncial, fechaFinal, idAsesor, rootView.getContext());
+                        ReporteAsesores fragmento = ReporteAsesores.newInstance(fechaIncial, fechaFinal, idAsesor, 0, 0, rootView.getContext());
                         borrar.onDestroy();
                         ft.remove(borrar);
                         ft.replace(R.id.content_director, fragmento);
@@ -315,16 +320,72 @@ public class ReporteAsesores extends Fragment {
     private void sendJson(final boolean primerPeticion) {
 
         JSONObject obj = new JSONObject();
+        JSONObject rqt = new JSONObject();
+        JSONObject periodo = new JSONObject();
+
         Map<String, Integer> fechaDatos = Config.dias();
         Map<String, String> fechaActual = Config.fechas(1);
+
         HashMap<String, String> usuario = sessionManager.getUserDetails();
-        String numeroUsuario = usuario.get(SessionManager.ID);
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
+        String numeroUsuario = usuario.get(SessionManager.USER_ID);
+
         final String smParam1 = fechaActual.get("fechaIni");
         final String smParam2 = fechaActual.get("fechaFin");
+/*
 
+{"rqt": {
+   "idGerencia": 1,
+   "idSucursal": 1,
+   "numeroEmpleadoAsesor": "04261",
+   "pagina": 1,
+   "periodo": {
+     "fechaFin": "20‐02‐2017",
+     "fechaInicio": "01‐02‐2017"
+   },
+   "usuario": "072694"
+ }}
+
+ */
+
+        try{
+            if(getArguments() != null){
+
+                mParam1 = getArguments().getString(ARG_PARAM1); // fecha inicio
+                mParam2 = getArguments().getString(ARG_PARAM2); // fecha Fin
+                mParam3 = getArguments().getString(ARG_PARAM3); // id asesor
+                mParam4 = getArguments().getInt(ARG_PARAM4); // id gerencia
+                mParam5 = getArguments().getInt(ARG_PARAM5); // id sucursal
+
+                Log.d("OBTENIENDO PARAMETROS", "id gerencia: " + mParam4 + " id sucursal: " + mParam5);
+
+                rqt.put("idGerencia", "");
+                rqt.put("idSucursal", "");
+                rqt.put("numeroEmpleadoAsesor", mParam3);
+                rqt.put("pagina", pagina);
+                periodo.put("fechaFin", fechaFin);
+                periodo.put("fechaInicio", fechaIni);
+                rqt.put("periodo", periodo);
+                rqt.put("usuario", numeroUsuario);
+                obj.put("rqt", rqt);
+            }else{
+                rqt.put("idGerencia", 0);
+                rqt.put("idSucursal", 0);
+                rqt.put("numeroEmpleadoAsesor", "");
+                rqt.put("pagina", pagina);
+                periodo.put("fechaFin", smParam2);
+                periodo.put("fechaInicio", smParam1);
+                rqt.put("periodo", periodo);
+                rqt.put("usuario", numeroUsuario);
+                obj.put("rqt", rqt);
+            }
+
+            Log.d("RQT", " ReporteAsesores ->" + obj);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+
+
+        /*
         try {
             if(getArguments() != null) {
                 mParam1 = getArguments().getString(ARG_PARAM1);
@@ -356,11 +417,10 @@ public class ReporteAsesores extends Fragment {
                 rqt.put("usuario", usuario.get(SessionManager.ID));
                 obj.put("rqt", rqt);
             }
-
             Log.d("ReporteSucursales", " RQT -->" + obj);
         } catch (JSONException e) {
             Config.msj(getContext(),"Error json","Lo sentimos ocurrio un right_in al formar los datos.");
-        }
+        }*/
         //Creating a json array request
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_ASESORES, obj,
                 new Response.Listener<JSONObject>() {

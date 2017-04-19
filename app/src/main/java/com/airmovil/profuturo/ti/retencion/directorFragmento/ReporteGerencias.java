@@ -183,8 +183,8 @@ public class ReporteGerencias extends Fragment {
                     final String fechaIncial = tvRangoFecha1.getText().toString();
                     final String fechaFinal = tvRangoFecha2.getText().toString();
                     idGerencia = spinnerGerencias.getSelectedItemPosition();
-                    if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
-                        Config.dialogoFechasVacias(getContext());
+                    if(fechaIncial.isEmpty() || fechaFinal.isEmpty() || idGerencia == 0){
+                        Config.dialogoDatosVacios(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         ReporteGerencias fragmento = ReporteGerencias.newInstance(fechaIncial,fechaFinal, idGerencia, rootView.getContext());
@@ -322,63 +322,43 @@ public class ReporteGerencias extends Fragment {
 
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
-        JSONObject obj = new JSONObject();
         Map<String, Integer> fechaDatos = Config.dias();
         Map<String, String> fechaActual = Config.fechas(1);
-        HashMap<String, String> usuario = sessionManager.getUserDetails();
-        String numeroUsuario = usuario.get(SessionManager.ID);
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
         String smParam1 = fechaActual.get("fechaIni");
         String smParam2 = fechaActual.get("fechaFin");
-        mParam3 = 0;
+
+        Map<String, String> fecha = Config.fechas(1);
+        String param1 = fecha.get("fechaIni");
+        String param2 = fecha.get("fechaFin");
+
+        SessionManager sessionManager = new SessionManager(getContext());
+        HashMap<String,String> datosUsuario = sessionManager.getUserDetails();
+        String idUsuario = datosUsuario.get(SessionManager.USER_ID);
+
+        JSONObject obj = new JSONObject();
+        JSONObject rqt = new JSONObject();
+        JSONObject periodo = new JSONObject();
 
         try {
             if(getArguments() != null) {
                 mParam1 = getArguments().getString(ARG_PARAM1);
                 mParam2 = getArguments().getString(ARG_PARAM2);
                 mParam3 = getArguments().getInt(ARG_PARAM3);
-
-                final String mParam1 = getArguments().getString(ARG_PARAM1);
-                final String mParam2 = getArguments().getString(ARG_PARAM2);
-
-                Map<String, String> fecha = Config.fechas(1);
-                String param1 = fecha.get("fechaIni");
-                String param2 = fecha.get("fechaFin");
-
-                JSONObject rqt = new JSONObject();
-                JSONObject periodo = new JSONObject();
-
                 rqt.put("idGerencia", mParam3);
                 rqt.put("pagina", pagina);
-
-                if (mParam1.isEmpty() && mParam2.isEmpty()) {
-                    periodo.put("fechaFin", mParam1);
-                    periodo.put("fechaIni", mParam2);
-                } else if (mParam1.isEmpty()){
-                    periodo.put("fechaFin", mParam2);
-                    periodo.put("fechaIni", "");
-                }else if(mParam2.isEmpty()) {
-                    periodo.put("fechaFin", "");
-                    periodo.put("fechaIni", mParam1);
-                }else {
-                    periodo.put("fechaFin", mParam2);
-                    periodo.put("fechaIni", mParam1);
-                    rqt.put("idGerencia", mParam3);
-                }
+                periodo.put("fechaFin", mParam1);
+                periodo.put("fechaIni", mParam2);
+                rqt.put("idGerencia", mParam3);
                 rqt.put("perido", periodo);
-                rqt.put("usuario", numeroUsuario);
+                rqt.put("usuario", idUsuario);
                 obj.put("rqt", rqt);
             }else{
-                JSONObject rqt = new JSONObject();
-                rqt.put("idGerencia", mParam3);
+                rqt.put("idGerencia", 0);
                 rqt.put("pagina", pagina);
-                JSONObject periodo = new JSONObject();
                 periodo.put("fechaFin", smParam2);
                 periodo.put("fechaIni", smParam1);
                 rqt.put("perido", periodo);
-                rqt.put("usuario", numeroUsuario);
+                rqt.put("usuario", idUsuario);
                 obj.put("rqt", rqt);
                 tvFecha.setText(smParam1 + " - " + smParam2);
             }

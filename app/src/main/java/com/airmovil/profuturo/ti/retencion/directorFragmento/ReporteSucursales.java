@@ -155,8 +155,9 @@ public class ReporteSucursales extends Fragment {
                 if(connected.estaConectado(getContext())){
                     final String fechaIncial = tvRangoFecha1.getText().toString();
                     final String fechaFinal = tvRangoFecha2.getText().toString();
-                    if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
-                        Config.dialogoFechasVacias(getContext());
+                    mParam3 = spinnerSucursales.getSelectedItemPosition();
+                    if(fechaIncial.isEmpty() || fechaFinal.isEmpty() || mParam3 == 0){
+                        Config.dialogoDatosVacios(getContext());
                     }else{
                         idSucursal = spinnerSucursales.getSelectedItemPosition();
                         ReporteSucursales fragmento = ReporteSucursales.newInstance(fechaIncial, fechaFinal, idSucursal, rootView.getContext());
@@ -303,7 +304,7 @@ public class ReporteSucursales extends Fragment {
         Map<String, Integer> fechaDatos = Config.dias();
         Map<String, String> fechaActual = Config.fechas(1);
         HashMap<String, String> usuario = sessionManager.getUserDetails();
-        String numeroUsuario = usuario.get(SessionManager.ID);
+        String numeroUsuario = usuario.get(SessionManager.USER_ID);
         mYear  = fechaDatos.get("anio");
         mMonth = fechaDatos.get("mes");
         mDay   = fechaDatos.get("dia");

@@ -67,25 +67,26 @@ import java.util.Map;
 public class ReporteClientes extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "parametro1FechaIni";
-    private static final String ARG_PARAM2 = "parametro2FechaFin";
-    private static final String ARG_PARAM3 = "parametroIdABuscar";
-    private static final String ARG_PARAM4 = "parametroIdGerencia";
-    private static final String ARG_PARAM5 = "parametroIdSucursal";
-    private static final String ARG_PARAM6 = "parametroIngresaIdAsesor";
-    private static final String ARG_PARAM7 = "parametroEstatus";
-    private static final String ARG_PARAM8 = "parametroCita";
-    private static final String ARG_PARAM9 = "parametrosSelecionId";
+    private static final String ARG_PARAM1 = "idFiltroBusquedaCliente";
+    private static final String ARG_PARAM2 = "idBusquedaCliente";
+    private static final String ARG_PARAM3 = "idGerencia";
+    private static final String ARG_PARAM4 = "idSucursal";
+    private static final String ARG_PARAM5 = "idAsesor";
+    private static final String ARG_PARAM6 = "fechaInicio";
+    private static final String ARG_PARAM7 = "fechaFin";
+    private static final String ARG_PARAM8 = "estatusRetenido";
+    private static final String ARG_PARAM9 = "estatusCita";
     // TODO: Rename and change types of parameters
-    private String mParam1; // fecha ini
-    private String mParam2; // fecha fin
-    private String mParam3; // idUsuario
-    private int mParam4; // Id gerencia
-    private int mParam5; // id sucursal
-    private String mParam6; // idAsesor
-    private int mParam7; // idRetenidos
-    private int mParam8; // idCitas
-    private int mParam9; // Seleccion
+
+    private int mParam1; // idFiltroBusquedaCliente
+    private String mParam2; // idBusquedaCliente
+    private int mParam3; // idGerencia
+    private int mParam4; // idSucursal
+    private String mParam5; // idAsesor
+    private String mParam6; // fechaInicio
+    private String mParam7; // fechaFin
+    private int mParam8; // estatusRetenido
+    private int mParam9; // estatusCita
 
     private Spinner spinnerId, spinnerSucursal, spinnerRetenido, spinnerCita, spinnerGerencias;
     private EditText etIngresarDato, etIngresarAsesor;
@@ -136,19 +137,25 @@ public class ReporteClientes extends Fragment {
      * @return A new instance of fragment ReporteClientes.
      */
     // TODO: Rename and change types and number of parameters
-    public static ReporteClientes newInstance(String param1, String param2, String param3, int param4,
-                                              int param5, String param6, int param7, int param8, int param9, Context context) {
+    public static ReporteClientes newInstance(int param1, String param2,
+                                              int param3, int param4, String param5,
+                                              String param6, String param7,
+                                              int param8, int param9, Context context) {
         ReporteClientes fragment = new ReporteClientes();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putInt(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
-        args.putString(ARG_PARAM3, param3);
+
+        args.putInt(ARG_PARAM3, param3);
         args.putInt(ARG_PARAM4, param4);
-        args.putInt(ARG_PARAM5, param5);
+        args.putString(ARG_PARAM5, param5);
+
         args.putString(ARG_PARAM6, param6);
-        args.putInt(ARG_PARAM7, param7);
+        args.putString(ARG_PARAM7, param7);
+
         args.putInt(ARG_PARAM8, param8);
         args.putInt(ARG_PARAM9, param9);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -158,7 +165,7 @@ public class ReporteClientes extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d("CLIENTE","PASA AQUI");
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam1 = getArguments().getInt(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
@@ -211,7 +218,7 @@ public class ReporteClientes extends Fragment {
 
         fechas();
 
-        if(fechaIni!=null){
+        /*if(fechaIni!=null){
             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
             ReporteClientes procesoDatosFiltroInicio = ReporteClientes.newInstance(
                     fechaIni, fechaFin, String.valueOf(numeroEmpleado), mParam4, mParam5, mParam6, mParam7, mParam8, mParam9,
@@ -222,7 +229,7 @@ public class ReporteClientes extends Fragment {
             ft.replace(R.id.content_director, procesoDatosFiltroInicio);
             ft.addToBackStack(null);
             ft.commit();
-        }
+        }*/
 
         // TODO: Spinner
         final ArrayAdapter<String> adapterId = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.IDS);
@@ -304,26 +311,26 @@ public class ReporteClientes extends Fragment {
             public void onClick(View v) {
 
                 if(connect.estaConectado(getContext())){
-                    mParam1 = tvRangoFecha1.getText().toString();
-                    mParam2 = tvRangoFecha2.getText().toString();
-                    mParam3 = etIngresarDato.getText().toString();
-                    mParam4 = spinnerGerencias.getSelectedItemPosition();
-                    mParam5 = spinnerSucursal.getSelectedItemPosition();
-                    mParam6 = etIngresarAsesor.getText().toString();
-                    mParam7 = spinnerRetenido.getSelectedItemPosition();
-                    mParam8 = spinnerCita.getSelectedItemPosition();
-                    mParam9 = spinnerId.getSelectedItemPosition();
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    if(mParam1.isEmpty() || mParam2.isEmpty()){
-                        Config.dialogoFechasVacias(getContext());
+                    mParam1 = spinnerId.getSelectedItemPosition(); // idFiltroBusquedaCliente -> int
+                    mParam2 = etIngresarDato.getText().toString(); // idBusquedaCliente -> String
+                    mParam3 = spinnerGerencias.getSelectedItemPosition(); // idGerencia -> int
+                    mParam4 = spinnerSucursal.getSelectedItemPosition(); // idSucursal -> int
+                    mParam5 = etIngresarAsesor.getText().toString(); // idAsesor -> String
+                    mParam6 = tvRangoFecha1.getText().toString(); // fechaInicio -> String
+                    mParam7 = tvRangoFecha2.getText().toString(); // fechaFin -> String
+                    mParam8 = spinnerRetenido.getSelectedItemPosition(); // estatusRetenido -> int
+                    mParam9 = spinnerCita.getSelectedItemPosition(); // estatusCita -> int
+
+
+                    if(mParam1 == 0 || mParam2.isEmpty() || mParam3 == 0 || mParam4 == 0 ||
+                            mParam5.isEmpty() || mParam6.isEmpty() || mParam7.isEmpty() || mParam8 == 0 || mParam9 == 0){
+                       // Config.dialogoDatosFaltantes(getContext(), "Debes rellenar todos los campos para realizar una busqueda.");
                     }else{
-                        ReporteClientes procesoDatosFiltroInicio = ReporteClientes.newInstance(
-                                mParam1, mParam2, mParam3, mParam4, mParam5, mParam6, mParam7, mParam8, mParam9,
-                                rootView.getContext()
-                        );
+                        ReporteClientes fragmento = ReporteClientes.newInstance(mParam1, mParam2, mParam3, mParam4, mParam5, mParam6, mParam7, mParam8, mParam9, rootView.getContext());
                         borrar.onDestroy();
                         ft.remove(borrar);
-                        ft.replace(R.id.content_director, procesoDatosFiltroInicio);
+                        ft.replace(R.id.content_director, fragmento);
                         ft.addToBackStack(null);
                         ft.commit();
                     }
@@ -468,17 +475,31 @@ public class ReporteClientes extends Fragment {
         JSONObject rqt = new JSONObject();
         JSONObject filtroCliente = new JSONObject();
         JSONObject periodo = new JSONObject();
+
+
+        /*
+         {"rqt": {
+   "cita": 1,
+   "filtroCliente": {
+     "curp": "TOHR900207HDFRRC07",
+     "nss": "123456789",
+     "numeroCuenta": "3200012345"
+   },
+   "idGerencia": 1,
+   "idSucursal": 1,
+   "pagina": 1,
+   "periodo": {
+     "fechaFin": "20‐02‐2017",
+     "fechaInicio": "01‐02‐2017"
+   },
+   "retenido": 1,
+   "usuario": "072694"
+ }}
+         */
         try{
             if(getArguments() != null){
-                mParam1 = getArguments().getString(ARG_PARAM1);
-                mParam2 = getArguments().getString(ARG_PARAM2);
-                mParam3 = getArguments().getString(ARG_PARAM3);
-                mParam4 = getArguments().getInt(ARG_PARAM4);
-                mParam5 = getArguments().getInt(ARG_PARAM5);
-                mParam6 = getArguments().getString(ARG_PARAM6);
-                mParam7 = getArguments().getInt(ARG_PARAM7);
-                mParam8 = getArguments().getInt(ARG_PARAM8);
-                mParam9 = getArguments().getInt(ARG_PARAM9);
+
+
 
                 rqt.put("cita", mParam8);
                 if(mParam9 == 1){
@@ -498,6 +519,7 @@ public class ReporteClientes extends Fragment {
                     filtroCliente.put("nss", "");
                     filtroCliente.put("numeroCuenta", "");
                 }
+
 
                 rqt.put("filtroCliente", filtroCliente);
                 rqt.put("idGerencia", mParam4);
@@ -744,7 +766,7 @@ public class ReporteClientes extends Fragment {
         String smParam2 = fechaActual.get("fechaFin");
 
         if(getArguments() != null){
-            mParam1 = getArguments().getString(ARG_PARAM1);
+            //mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
             tvFecha.setText(mParam1 + " - " + mParam2);
         }else{
