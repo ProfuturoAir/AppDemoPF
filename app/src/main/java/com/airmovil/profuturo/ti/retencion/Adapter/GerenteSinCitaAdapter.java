@@ -1,6 +1,8 @@
 package com.airmovil.profuturo.ti.retencion.Adapter;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -121,6 +123,10 @@ public class GerenteSinCitaAdapter extends RecyclerView.Adapter{
         this.mOnLoadMoreListener = mOnLoadMoreListener;
     }
 
+    public void fragmentoCambioDatosCliente(View view){
+
+    }
+
 
 
     public void fragmentJumpDatosUsuario(String idClienteCuenta, View view,String nombre,String numeroDeCuenta) {
@@ -132,12 +138,30 @@ public class GerenteSinCitaAdapter extends RecyclerView.Adapter{
 
             final Connected conected = new Connected();
             if(conected.estaConectado(view.getContext())) {
-
+                gerente.switchDatosAsesor(fragmento, idClienteCuenta,nombre,numeroDeCuenta);
             }else{
-                Config.msj(view.getContext(),"Error conexión", "Sin Conexion por el momento.Cliente P-1.1.3");
+                final ProgressDialog progressDialog = new ProgressDialog(mContext, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                progressDialog.setIndeterminateDrawable(mContext.getResources().getDrawable(R.drawable.icono_sin_wifi));
+                progressDialog.setTitle(mContext.getResources().getString(R.string.error_conexion));
+                progressDialog.setMessage(mContext.getResources().getString(R.string.msj_error_conexion_firma));
+                progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, mContext.getResources().getString(R.string.aceptar),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                progressDialog.dismiss();
+                            }
+                        });
+                progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, mContext.getResources().getString(R.string.cancelar),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                progressDialog.show();
             }
             //gerente.switchContent(fragmento, idClienteCuenta);
-            gerente.switchDatosAsesor(fragmento, idClienteCuenta,nombre,numeroDeCuenta);
+
         }
     }
 

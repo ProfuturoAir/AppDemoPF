@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/gmessage_id2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="texto1" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/gmessage_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="texto2" />
+
     <com.airmovil.profuturo.ti.retencion.helper.DrawingView
-        android:id="@+id/gff_dv_Firma"
+        android:id="@+id/gff_dv_firma"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="650dp"
         android:layout_weight="1"
         android:background="@android:color/white"
         android:gravity="center_vertical|center_horizontal"
@@ -16,38 +31,22 @@
 
     </com.airmovil.profuturo.ti.retencion.helper.DrawingView>
 
-    <TextView android:id="@+id/gff_lbl_Latitud"
-        style="@style/tvlatitud"/>
+    <TextView android:id="@+id/gff_lbl_Latitud" style="@style/tvlatitud"/>
+    <TextView android:id="@+id/gff_lbl_Longitud" style="@style/tvLogintud"/>
+    <ToggleButton android:id="@+id/gff_btn_actualizar" style="@style/btnActualizar"/>
 
-    <TextView android:id="@+id/gff_lbl_Longitud"
-        style="@style/tvLogintud"/>
+    <Button android:id="@+id/gff_btn_limpiar" style="@style/btnLimpiar"/>
+    <Button android:id="@+id/gff_btn_guardar" style="@style/btnGuardar" />
+    <Button android:id="@+id/gff_btn_cancelar" style="@style/btnCancelar" />
 
-    <ToggleButton android:id="@+id/gff_btn_actualizar"
-        style="@style/btnActualizar"/>
-
-    <Button
-        android:id="@+id/gff_btn_limpiar"
-        style="@style/btnLimpiar"/>
-
-    <Button
-        android:id="@+id/gff_btn_guardar"
-        style="@style/btnGuardar" />
-    <Button
-        android:id="@+id/gff_btn_cancelar"
-        style="@style/btnCancelar" />
-
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingRight="20dp"
-        android:paddingBottom="10dp"
-        android:paddingLeft="20dp">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="10dp"
-            android:text="@string/texto_terminos_y_condiciones"/>
-    </LinearLayout>
-</LinearLayout>
+        android:text="@string/texto_terminos_y_condiciones"
+        android:textSize="10dp"
+        android:paddingTop="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="20dp"/>
 
+</LinearLayout>

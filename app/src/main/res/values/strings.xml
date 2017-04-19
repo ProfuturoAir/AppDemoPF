@@ -103,6 +103,7 @@
     <string name="msj_contenido_spinner">Debes ingresar un </string>
     <string name="msj_contenido_sin_spinner">Debes seleccionar el tipo de campo a solicitar</string>
     <string name="msj_espera">Cargando contenido, espere por favor...</string>
+    <string name="msj_salida">Deseas regresar al inicio</string>
     <string name="msj_contenido_limpio">El contenido se ha limpiado</string>
     <string name="msj_esperando">Espere un momento</string>
     <string name="msj_verificando">Se están verificando los datos</string>

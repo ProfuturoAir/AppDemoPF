@@ -3,6 +3,7 @@ package com.airmovil.profuturo.ti.retencion.gerenteFragmento;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,7 +24,6 @@ import android.widget.Spinner;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
-import com.airmovil.profuturo.ti.retencion.asesorFragmento.*;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.EnviaJSON;
@@ -55,19 +55,12 @@ public class Encuesta2 extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    private static final String TAG = Encuesta2.class.getSimpleName();
     private SQLiteHandler db;
 
-    private static final String TAG = Encuesta2.class.getSimpleName();
- /*   private static final String[] AFORES = new String[]{"Azteca", "Banamex", "Coppel", "Inbursa", "Invercap", "Metlife", "PensionISSSTE", "Principal", "Profuturo", "SURA", "XXI-Banorte"};
-    private static final String[] MOTIVOS = new String[]{"Motivo 1", "Motivo 2", "Motivo 3", "Motivo 4", "Motivo 5", "Motivo 5", "Motivo 6", "Motivo 7", "Motivo 8", "Motivo 9"};
-    private static final String[] ESTATUS = new String[]{"Activo", "Inactivo"};
-    private static final String[] INSTITUCIONES = new String[]{"IMSS", "ISSSTE", "MIXTO"};
-    private static final String[] REGIMEN = new String[]{"IMSS Ley 73", "IMSS Ley 97", "ISSSTE"};
-    private static final String[] DOCUMENTOS = new String[]{"Estatus de cuenta con folio", "Constancia de implicaciones", "Estatus de cuenta con folio y Constancia de implicaciones", "Ningun documento"};
-*/
-
-
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
     int iParam1IdGerencia;
     int iParam2IdMotivos;
     int iParam3IdEstatus;
@@ -82,17 +75,15 @@ public class Encuesta2 extends Fragment {
     String numeroDeCuenta;
     String hora;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    // TODO: XML
     private ArrayAdapter arrayAdapterAfores, arrayAdapterMotivo, arrayAdapterEstatus, arrayAdapterInstituto, arrayAdapterRegimen, arrayAdapterDocumentos;
     private Spinner spinnerAfores, spinnerMotivos, spinnerEstatus, spinnerInstituto, spinnerRegimen, spinnerDocumentos;
     private Button btnContinuar, btnCancelar;
     private EditText etTelefono, etEmail;
-    private OnFragmentInteractionListener mListener;
 
     private Connected connected;
+
+    private OnFragmentInteractionListener mListener;
 
     public Encuesta2() {
         // Required empty public constructor
@@ -144,8 +135,7 @@ public class Encuesta2 extends Fragment {
         idTramite = getArguments().getString("idTramite");
         nombre = getArguments().getString("nombre");
         numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-        //hora = getArguments().getString("hora");
-
+        hora = getArguments().getString("hora");
 
         arrayAdapterAfores = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.AFORES);
         arrayAdapterMotivo = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.MOTIVOS);
@@ -162,22 +152,10 @@ public class Encuesta2 extends Fragment {
         spinnerDocumentos.setAdapter(arrayAdapterDocumentos);
 
         final Fragment borrar = this;
-/*
-        final String afores = spinnerAfores.getText().toString();
-        final String motivos = spinnerMotivos.getText().toString();
-        final String estatus = spinnerEstatus.getText().toString();
-        final String instituto = spinnerInstituto.getText().toString();
-        final String regimen = spinnerRegimen.getText().toString();
-        final String documento = spinnerDocumentos.getText().toString();
-        final String telefono = etTelefono.getText().toString();
-        final String email = etEmail.getText().toString();*/
-
+        //<editor-fold desc="btn continuar">
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-/*
-                String telefono = etEmail.getText().toString().trim();
-                String email    = etEmail.getText().toString().trim();*/
                 iParam1IdGerencia = spinnerAfores.getSelectedItemPosition();
                 iParam2IdMotivos = spinnerMotivos.getSelectedItemPosition();
                 iParam3IdEstatus = spinnerEstatus.getSelectedItemPosition();
@@ -188,17 +166,19 @@ public class Encuesta2 extends Fragment {
                 iParam8Email = etEmail.getText().toString();
                 boolean val;
 
-                boolean validandoEmail;
-                if( verificarEmail(iParam8Email)){
+                if(verificarEmail(iParam8Email) == true){
                     val = true;
                 }else{
                     val = false;
                 }
 
+                Log.d("Variable email ", "" + iParam8Email);
+                Log.d(" Retorno de email: ", " " + val);
+
                 if(iParam1IdGerencia == 0 || iParam2IdMotivos == 0 || iParam3IdEstatus == 0 || iParam4IdTitulo == 0 ||
-                        iParam5IdRegimentPensionario == 0 || iParam6IdDocumentacion == 0 || iParam7Telefono.isEmpty() || iParam8Email.isEmpty()  ){
-                    Config.msj(getContext(),"Error", "Faltan Respuestas Favor de Checar");
-                }else{
+                        iParam5IdRegimentPensionario == 0 || iParam6IdDocumentacion == 0 || iParam7Telefono.isEmpty() || iParam8Email.isEmpty() ){
+                    Config.dialogoDatosVacios(getContext());
+                }else {
                     if(val == true){
                         if(connected.estaConectado(getContext())){
                             final EnviaJSON enviaPrevio = new EnviaJSON();
@@ -239,15 +219,55 @@ public class Encuesta2 extends Fragment {
                                         }
                                     });
                             progressDialog.show();
+
+                            // *db.addObservaciones(idTramite,iParam1IdGerencia,iParam2IdMotivos,iParam3IdEstatus,iParam4IdTitulo,iParam5IdRegimentPensionario,iParam6IdDocumentacion,iParam7Telefono,iParam8Email,123);
+                            // *db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+
+                            //Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
+                            // * Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
+                            //Fragment fragmentoGenerico = new Firma();
+                            //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            //fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
                         }
+                        // * Fragment fragmentoGenerico = new Firma();
+                        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        //fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).remove(borrar).commit();*/
+                        // * Gerente gerente = (Gerente) getContext();
+                        // * gerente.switchFirma(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
                     }else{
                         Config.msj(getContext(), getResources().getString(R.string.error_email_incorrecto), getResources().getString(R.string.msj_error_email));
                     }
-
                 }
-
             }
         });
+        //</editor-fold>
+
+        //<editor-fold desc="Boton cancelar">
+        btnCancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
+                dialogo1.setTitle("Confirmar");
+                dialogo1.setMessage("¿Estás seguro que deseas cancelar y guardar los cambios del proceso 1.1.3.5?");
+                dialogo1.setCancelable(false);
+                dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Fragment fragmentoGenerico = new SinCita();
+                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
+                    }
+                });
+                dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                dialogo1.show();
+            }
+        });
+        //</editor-fold>
 
     }
 
@@ -263,8 +283,6 @@ public class Encuesta2 extends Fragment {
             return valor;
         }
     }
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -310,7 +328,7 @@ public class Encuesta2 extends Fragment {
                     dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Fragment fragmentoGenerico = new ConCita();
+                            Fragment fragmentoGenerico = new SinCita();
                             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                             fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
                         }
@@ -356,6 +374,8 @@ public class Encuesta2 extends Fragment {
         else
             loading = null;
 
+        idTramite = getArguments().getString("idTramite");
+
         JSONObject obj = new JSONObject();
         // TODO: Formacion del JSON request
         try{
@@ -369,21 +389,21 @@ public class Encuesta2 extends Fragment {
             rqt.put("telefono", telefono);
             rqt.put("email", email);
             rqt.put("estatusTramite", 123);
-            rqt.put("idTramite", "");
+            rqt.put("idTramite", idTramite);
             obj.put("rqt", rqt);
             Log.d(TAG, "REQUEST-->" + obj);
         } catch (JSONException e){
             Config.msj(getContext(), "Error", "Error al formar los datos");
         }
-        //Creating a json array request
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_ENCUESTA, obj,
+        //<editor-fold desc="Creating a json array request">
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_ENCUESTA_2, obj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
                             loading.dismiss();
-                            primerPaso(response);
+                            //primerPaso(response);
                         }
                     }
                 },
@@ -396,21 +416,10 @@ public class Encuesta2 extends Fragment {
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+                return Config.credenciales(getContext());
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
-    }
-
-    private void primerPaso(JSONObject obj){
-        Log.d(TAG, "RESPONSE: ->" + obj);
+        //</editor-fold>
     }
 }

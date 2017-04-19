@@ -6,39 +6,38 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.view.ContextThemeWrapper;
-import android.util.Log;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
-import android.view.inputmethod.InputMethodManager;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ProcesoImplicacionesPendientes;
-import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.DatosAsesor;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.DatosCliente;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.Encuesta1;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.Encuesta2;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.Escaner;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.Firma;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.Inicio;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ProcesoImplicacionesPendientes;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.SinCita;
 import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
 import com.airmovil.profuturo.ti.retencion.fragmento.Calculadora;
-import com.airmovil.profuturo.ti.retencion.gerenteFragmento.Inicio;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsesores;
-import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteSucursales;
-import com.airmovil.profuturo.ti.retencion.gerenteFragmento.SinCita;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
@@ -46,7 +45,7 @@ import com.google.android.gms.drive.OpenFileActivityBuilder;
 import java.util.HashMap;
 
 public class Gerente extends AppCompatActivity{
-    private static final String TAG = Asesor.class.getSimpleName();
+    private static final String TAG = Gerente.class.getSimpleName();
     private SessionManager sessionManager;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
@@ -56,7 +55,6 @@ public class Gerente extends AppCompatActivity{
     private DriveId mFileId;
     private static final  int REQUEST_CODE_OPENER = 2;
     String url;
-
     /**
      * Se utiliza para iniciar la actividad
      * @param savedInstanceState
@@ -65,6 +63,7 @@ public class Gerente extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gerente);
+
         // TODO: Mantener el estado de la pantalla Vertical
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         // TODO: nueva instancia para el sharePreference
@@ -84,10 +83,15 @@ public class Gerente extends AppCompatActivity{
             startActivity(new Intent(Gerente.this, Login.class));
             finish();
         }else{
+            // TODO: implementando el tootlbar
             setToolbar();
+            // TODO: implementando el drawerLayout
             setDrawerLayout();
+            // TODO: implementando el toggle para el drawerLayout
             setToggle();
+            // TODO: implementando la navegacion del nav_view
             setNavigationView();
+            // TODO: mostrar informacion del usuairo en la navegacion
             setInformacionDrawer();
         }
     }
@@ -96,7 +100,7 @@ public class Gerente extends AppCompatActivity{
      * Este metodo coloca el menu superior
      * y se coloca la imagen de profuturo
      */
-    public void setToolbar()   {
+    public void setToolbar(){
         toolbar = (Toolbar) findViewById(R.id.gerente_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setIcon(R.drawable.img_icono_logo);
@@ -118,8 +122,7 @@ public class Gerente extends AppCompatActivity{
      * el uso del drawableView, recorrido de izquierda a derecha
      */
     public void setToggle(){
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
     }
@@ -134,7 +137,6 @@ public class Gerente extends AppCompatActivity{
         navigationView.setItemIconTintList(null);
 
         if (navigationView != null) {
-            Log.d(TAG, "DRAWER OPEN");
             //añadir caracteristicas
             setupDrawerContent(navigationView);
             //Cambiar el numero para poner el fragmento que inicia en el arranque de la aplicacion
@@ -147,24 +149,36 @@ public class Gerente extends AppCompatActivity{
      * el nombre del usuario es colocado y su numero de cuenta
      */
     private void setInformacionDrawer() {
+        // TODO: Casteo de datos XML
         NavigationView navigationView = (NavigationView) findViewById(R.id.gerente_nav_view);
-
-        HashMap<String, String> informacion = sessionManager.getUserDetails();
-        String sNumeroEmpleado = informacion.get(SessionManager.USER_ID);
-        String sNombreEmpleado = informacion.get(SessionManager.NOMBRE);
-        String sApePaterno = informacion.get(SessionManager.APELLIDO_PATERNO);
-        String sApeMaterno = informacion.get(SessionManager.APELLIDO_MATERNO);
-
         View hView = navigationView.getHeaderView(0);
-
         TextView navPrimeraLetra = (TextView) hView.findViewById(R.id.gerente_nav_tv_letra);
         TextView navDatosGerente = (TextView) hView.findViewById(R.id.gerente_nav_tv_datos);
 
-        char letra = sNombreEmpleado.charAt(0);
-        String primeraLetra = Character.toString(letra);
+        navigationView.getMenu().hasVisibleItems();
 
-        navPrimeraLetra.setText(primeraLetra);
-        navDatosGerente.setText("Nombre: " + sNombreEmpleado + " " + sApePaterno + " " + sApeMaterno + "\nNumero Empleado: " + sNumeroEmpleado);
+        // TODO: obteniendo datos del sharePreference
+        SessionManager sessionManager = new SessionManager(getApplicationContext());
+        HashMap<String,String> datosUsuario = sessionManager.getUserDetails();
+
+        String apePaterno = datosUsuario.get(SessionManager.APELLIDO_PATERNO);
+        String apeMaterno = datosUsuario.get(SessionManager.APELLIDO_MATERNO);
+        String nombre = datosUsuario.get(SessionManager.NOMBRE);
+        String idEmpleado = datosUsuario.get(SessionManager.USER_ID);
+
+        char letra = nombre.charAt(0);
+        String inicial = Character.toString(letra);
+
+        navPrimeraLetra.setText(inicial);
+        navDatosGerente.setText(nombre + " " + apePaterno + " " + apeMaterno + "\nNúmero empleado: " + idEmpleado);
+
+        // TODO: Se utiliza
+        //char letra = sNombreEmpleado.charAt(0);
+        //String primeraLetra = Character.toString(letra);
+        // TODO: Se utiliza para colocar la primera de todo el nombre dentro de un contenedor
+        //navPrimeraLetra.setText(primeraLetra);
+        // TODO: Se utiliza para colocar el nombre y el numero de cuenta del usuario
+        //navDatosGerente.setText("Nombre: " + sNombreEmpleado + "\nNumero Empleado: " + sNumeroEmpleado);
     }
 
     /**
@@ -194,10 +208,12 @@ public class Gerente extends AppCompatActivity{
     private void seleccionarItem(MenuItem itemDrawer){
         Fragment fragmentoGenerico = null;
         FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment f = getSupportFragmentManager().findFragmentById(R.id.content_gerente);
+        final Fragment borrarFragmento;
 
-        //<editor-fold desc="Condiciones de de fragmentos">
-        if(f instanceof DatosCliente){
+        Fragment f = getSupportFragmentManager().findFragmentById(R.id.content_gerente);
+        if(f instanceof DatosAsesor){
+            checkProccess = true;
+        }else if(f instanceof DatosCliente){
             Log.d("Envia","a patir datos Cliente");
             global = "1.1.3.3";
             checkProccess = true;
@@ -224,8 +240,6 @@ public class Gerente extends AppCompatActivity{
         }else{
             checkProccess = false;
         }
-        //</editor-fold>
-
         if (fragmentoGenerico != null){
             fragmentManager
                     .beginTransaction()
@@ -269,31 +283,54 @@ public class Gerente extends AppCompatActivity{
                 }
                 break;
             case R.id.gerente_nav_sucursales:
-                fragmentoGenerico = new ReporteSucursales();
+                if(checkProccess == false) {
+                    checkMapsFragment = false;
+                    fragmentoGenerico = new ReporteSucursales();
+                }else{
+                    salirFragment(getApplicationContext());
+                }
                 break;
             case R.id.gerente_nav_asesores:
-                fragmentoGenerico = new ReporteAsesores();
+                if(checkProccess == false) {
+                    checkMapsFragment = false;
+                    fragmentoGenerico = new ReporteAsesores();
+                }else{
+                    salirFragment(getApplicationContext());
+                }
                 break;
             case R.id.gerente_nav_clientes:
-                fragmentoGenerico = new ReporteClientes();
+                if(checkProccess == false) {
+                    checkMapsFragment = false;
+                    fragmentoGenerico = new ReporteClientes();
+                }else{
+                    salirFragment(getApplicationContext());
+                }
                 break;
             case R.id.gerente_nav_asistencia:
-                fragmentoGenerico = new ReporteAsistencia();
+                if(checkProccess == false) {
+                    checkMapsFragment = false;
+                    fragmentoGenerico = new ReporteAsistencia();
+                }else{
+                    salirFragment(getApplicationContext());
+                }
                 break;
             case R.id.gerente_nav_implicaciones_pendientes:
-                fragmentoGenerico = new ProcesoImplicacionesPendientes();
+                if(checkProccess == false) {
+                    checkMapsFragment = false;
+                    fragmentoGenerico = new ProcesoImplicacionesPendientes();
+                }else{
+                    salirFragment(getApplicationContext());
+                }
                 break;
-
             case R.id.gerente_nav_cerrar:
                 checkMapsFragment = false;
                 cerrarSesion();
                 break;
         }
         //</editor-fold>
-
         if (fragmentoGenerico != null){
             fragmentManager
-                    .beginTransaction()//.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                    .beginTransaction()
                     .replace(R.id.content_gerente, fragmentoGenerico)
                     .addToBackStack("F_MAIN")
                     .commit();
@@ -301,16 +338,16 @@ public class Gerente extends AppCompatActivity{
     }
 
     public void salirFragment(Context context){
-        //AlertDialog.Builder dialogo1 = new AlertDialog.Builder(context);
         AlertDialog.Builder dialogo1 = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppTheme));
 
+        /*AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getApplicationContext());*/
         dialogo1.setTitle("Confirmar");
         dialogo1.setMessage("\"¿Estàs seguro que deseas cancelar y guardar los cambios del proceso " + global + " ?");
         dialogo1.setCancelable(false);
         dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Fragment f = getSupportFragmentManager().findFragmentById(R.id.content_asesor);
+                Fragment f = getSupportFragmentManager().findFragmentById(R.id.content_gerente);
 
                 if (f instanceof SinCita) {
                     Log.d("Envia", "a patir de Retencion");
@@ -356,7 +393,6 @@ public class Gerente extends AppCompatActivity{
         });
         dialogo1.show();
     }
-
 
     /**
      * Se utiliza para cerrar la sesion del usuario
@@ -509,5 +545,4 @@ public class Gerente extends AppCompatActivity{
         //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         //fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).remove(borrar).commit();
     }
-
 }

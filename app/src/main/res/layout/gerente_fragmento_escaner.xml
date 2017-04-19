@@ -21,7 +21,7 @@
             android:id="@+id/textView2" />
 
         <Button
-            android:id="@+id/gfe_btn_documento"
+            android:id="@+id/gbtn_documento"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="3dp"
@@ -37,13 +37,13 @@
             android:textStyle="bold" />
 
         <ImageView
-            android:id="@+id/scannedImage1"
+            android:id="@+id/gscannedImage"
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:layout_centerInParent="true" />
 
         <Button
-            android:id="@+id/gfe_btn_borrar"
+            android:id="@+id/gf_btn_borrar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
@@ -56,7 +56,7 @@
             android:textStyle="bold" />
 
         <Button
-            android:id="@+id/gfe_btn_guardar"
+            android:id="@+id/gf_btn_guardar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="3dp"
@@ -68,7 +68,7 @@
             android:textColor="@color/colorPrimaryDark"
             android:textStyle="bold" />
         <Button
-            android:id="@+id/gfe_btn_cancelar"
+            android:id="@+id/gf_btn_cancelar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
@@ -79,6 +79,8 @@
             android:text="Cancelar"
             android:textColor="@color/colorPrimaryDark"
             android:textStyle="bold" />
+        <TextView android:id="@+id/gff_lbl_LatitudDoc" style="@style/tvlatitud" android:textColor="@color/colorWhite"/>
+        <TextView android:id="@+id/gff_lbl_LongitudDoc" style="@style/tvLogintud" android:textColor="@color/colorWhite"/>
     </LinearLayout>
 
 </ScrollView>
