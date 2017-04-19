@@ -149,6 +149,7 @@ public class ReporteAsesores extends Fragment {
 
         // TODO: ocultar teclado
         imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+        sessionManager = new SessionManager(getContext());
         connected = new Connected();
 
         // TODO: model
@@ -341,6 +342,9 @@ public class ReporteAsesores extends Fragment {
 
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
+        HashMap<String, String> usuario = sessionManager.getUserDetails();
+        String numeroUsuario = usuario.get(SessionManager.ID);
+
         JSONObject obj = new JSONObject();
         try {
             // TODO: Formacion del JSON request
@@ -352,7 +356,7 @@ public class ReporteAsesores extends Fragment {
             rqt.put("periodo", periodo);
             periodo.put("fechaInicio", "");
             periodo.put("fechaFin", "");
-            rqt.put("usuario", "2222");
+            rqt.put("usuario", usuario.get(SessionManager.USER_ID));
             obj.put("rqt", rqt);
             Log.d("ReporteSucursales ", "RQT --> " + obj);
         } catch (JSONException e) {
@@ -482,7 +486,14 @@ public class ReporteAsesores extends Fragment {
         tvTotalResultados.setText("" + filas + " Resultados ");
 
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
-        adapter = new GerenteReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView);
+        String PtvFecha = tvFecha.getText().toString();
+        String[] separated = PtvFecha.split(" - ");
+        HashMap<String, String> usuario = sessionManager.getUserDetails();
+        String numeroUsuario = usuario.get(SessionManager.USER_ID);
+
+        Log.d("USUARIO","EN Asesores: "+numeroUsuario);
+
+        adapter = new GerenteReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView,separated[0].trim(),separated[1].trim(),numeroUsuario);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 

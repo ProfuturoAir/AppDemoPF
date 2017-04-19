@@ -56,6 +56,10 @@ public class Config extends Activity {
 
     public static final String URL_REGISTRAR_ASISTENCIA = URL_GENERAL + "mb/premium/rest/registrarAsistencia";
 
+    public static final String URL_SEND_MAIL_REPORTE_GERENCIA = URL_GENERAL + "/mb/premium/rest/enviarEmailReporteGerencia";
+
+    public static final String URL_SEND_MAIL_REPORTE_ASESOR = URL_GENERAL + "/mb/premium/rest/enviarEmailReporteAsesor";
+
     // TODO: LISTO DIRECTOR
     public static final String URL_CONSULTAR_REPORTE_RETENCION_GERENCIAS = URL_GENERAL + "mb/premium/rest/consultarReporteRetencionesGerencia";
     public static final String URL_CONSULTAR_REPORTE_RETENCION_SUCURSALES = URL_GENERAL + "mb/premium/rest/consultarReporteRetencionesSucursal";

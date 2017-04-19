@@ -343,7 +343,7 @@ public class ReporteAsesores extends Fragment {
                 periodo.put("fechaFin", mParam1);
                 periodo.put("fechaIni", mParam2);
                 rqt.put("perido", periodo);
-                rqt.put("usuario", usuario.get(SessionManager.ID));
+                rqt.put("usuario", usuario.get(SessionManager.USER_ID));
                 obj.put("rqt", rqt);
             }else{
                 JSONObject rqt = new JSONObject();
