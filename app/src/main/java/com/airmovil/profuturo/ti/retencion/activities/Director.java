@@ -24,6 +24,7 @@ import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.Inicio;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsesores;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistencia;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistenciaDetalles;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientes;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteGerencias;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteSucursales;
@@ -148,19 +149,12 @@ public class Director extends AppCompatActivity{
         String sNombreEmpleado = informacion.get(SessionManager.NOMBRE);
 
         String nom = informacion.get(SessionManager.NOMBRE);
-
-
-        Log.d("TAG", "--> \n" + nom);
-
         View hView = navigationView.getHeaderView(0);
-
         TextView navPrimeraLetra = (TextView) hView.findViewById(R.id.director_nav_tv_letra);
         TextView navDatosGerente = (TextView) hView.findViewById(R.id.director_nav_tv_datos);
-
-        //char letra = sNombreEmpleado.charAt(0);
-        //String primeraLetra = Character.toString(letra);
-
-        navPrimeraLetra.setText("L");
+        char letra = sNombreEmpleado.charAt(0);
+        String primeraLetra = Character.toString(letra);
+        navPrimeraLetra.setText(primeraLetra);
 
         navDatosGerente.setText("Nombre: " + sNombreEmpleado + "\nNumero Empleado: " + sNumeroEmpleado);
     }
@@ -213,7 +207,7 @@ public class Director extends AppCompatActivity{
                 fragmentoGenerico = new ReporteAsesores();
                 break;
             case R.id.director_nav_clientes:
-                fragmentoGenerico = new ReporteClientes();
+                fragmentoGenerico = new ReporteAsistencia();
                 break;
             case R.id.director_nav_asistencia:
                 fragmentoGenerico = new ReporteAsistencia();

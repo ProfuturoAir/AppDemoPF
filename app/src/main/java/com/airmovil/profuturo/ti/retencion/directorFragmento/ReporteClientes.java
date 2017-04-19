@@ -325,9 +325,11 @@ public class ReporteClientes extends Fragment {
 
                     if(mParam1 == 0 || mParam2.isEmpty() || mParam3 == 0 || mParam4 == 0 ||
                             mParam5.isEmpty() || mParam6.isEmpty() || mParam7.isEmpty() || mParam8 == 0 || mParam9 == 0){
-                       // Config.dialogoDatosFaltantes(getContext(), "Debes rellenar todos los campos para realizar una busqueda.");
+                        Config.dialogoDatosVacios(getContext());
                     }else{
                         ReporteClientes fragmento = ReporteClientes.newInstance(mParam1, mParam2, mParam3, mParam4, mParam5, mParam6, mParam7, mParam8, mParam9, rootView.getContext());
+                        Config.teclado(getContext(), etIngresarAsesor);
+                        Config.teclado(getContext(), etIngresarDato);
                         borrar.onDestroy();
                         ft.remove(borrar);
                         ft.replace(R.id.content_director, fragmento);
@@ -471,6 +473,7 @@ public class ReporteClientes extends Fragment {
 
     private void sendJson(final boolean primeraPeticion){
 
+
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
         JSONObject filtroCliente = new JSONObject();
@@ -499,19 +502,27 @@ public class ReporteClientes extends Fragment {
         try{
             if(getArguments() != null){
 
+                mParam1 = getArguments().getInt(ARG_PARAM1); // idFiltroBusquedaCliente
+                mParam2 = getArguments().getString(ARG_PARAM2); // idBusquedaCliente
+                mParam3 = getArguments().getInt(ARG_PARAM3); // idGerencia
+                mParam4 = getArguments().getInt(ARG_PARAM4); // idSucursal
+                mParam5 = getArguments().getString(ARG_PARAM5); // idAsesor
+                mParam6 = getArguments().getString(ARG_PARAM6); // fechaInicio
+                mParam7 = getArguments().getString(ARG_PARAM7); // fechaFin
+                mParam8 = getArguments().getInt(ARG_PARAM8); // estatusRetenido
+                mParam9 = getArguments().getInt(ARG_PARAM9); // estatusCita
 
-
-                rqt.put("cita", mParam8);
-                if(mParam9 == 1){
+                rqt.put("cita", mParam9);
+                if(mParam1 == 1){
                     filtroCliente.put("curp", "");
                     filtroCliente.put("nss", "");
-                    filtroCliente.put("numeroCuenta", mParam3);
-                } else if(mParam9 == 2){
+                    filtroCliente.put("numeroCuenta", mParam2);
+                } else if(mParam1 == 2){
                     filtroCliente.put("curp", "");
-                    filtroCliente.put("nss", mParam3);
+                    filtroCliente.put("nss", mParam2);
                     filtroCliente.put("numeroCuenta", "");
-                }else if(mParam9 == 3){
-                    filtroCliente.put("curp", mParam3);
+                }else if(mParam1 == 3){
+                    filtroCliente.put("curp", mParam2);
                     filtroCliente.put("nss", "");
                     filtroCliente.put("numeroCuenta", "");
                 } else{
@@ -519,17 +530,16 @@ public class ReporteClientes extends Fragment {
                     filtroCliente.put("nss", "");
                     filtroCliente.put("numeroCuenta", "");
                 }
-
-
                 rqt.put("filtroCliente", filtroCliente);
-                rqt.put("idGerencia", mParam4);
-                rqt.put("idSucursal", mParam5);
+
+                rqt.put("idGerencia", mParam3);
+                rqt.put("idSucursal", mParam4);
                 rqt.put("pagina", pagina);
-                periodo.put("fechaFin", mParam1);
-                periodo.put("fechaInicio", mParam2);
+                periodo.put("fechaFin", mParam6);
+                periodo.put("fechaInicio", mParam7);
                 rqt.put("periodo", periodo);
-                rqt.put("retenido", mParam7);
-                rqt.put("usuario", mParam6);
+                rqt.put("retenido", mParam8);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
                 json.put("rqt", rqt);
             }else {
                 Map<String, String> fechaActual = Config.fechas(1);
@@ -547,7 +557,7 @@ public class ReporteClientes extends Fragment {
                 periodo.put("fechaInicio", smParam1);
                 rqt.put("periodo", periodo);
                 rqt.put("retenido", 0);
-                rqt.put("usuario", numeroUsuario);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
                 json.put("rqt", rqt);
             }
             Log.d("sendJson", " REQUEST -->" + json);
