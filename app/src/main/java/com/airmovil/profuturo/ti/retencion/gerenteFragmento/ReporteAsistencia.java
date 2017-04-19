@@ -166,6 +166,8 @@ public class ReporteAsistencia extends Fragment {
 
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(etAsesor.getWindowToken(), 0);
+        sessionManager = new SessionManager(getContext());
+        connected = new Connected();
 
         // TODO: Recycler y modelo
         getDatos1 = new ArrayList<>();
@@ -458,7 +460,7 @@ public class ReporteAsistencia extends Fragment {
         int totalFilas = 1;
         int filas = 0;
         try{
-            JSONObject asistencia = obj.getJSONObject("Asistencia");
+            JSONObject asistencia = obj.getJSONObject("asistencia");
             onTime = asistencia.getInt("onTime");
             retardo = asistencia.getInt("retardo");
             inasistencia = asistencia.getInt("inasistencia");
@@ -489,11 +491,9 @@ public class ReporteAsistencia extends Fragment {
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         String PtvFecha = tvFecha.getText().toString();
         String[] separated = PtvFecha.split(" - ");
-        HashMap<String, String> usuario = sessionManager.getUserDetails();
-        String numeroUsuario = usuario.get(SessionManager.USER_ID);
 
 
-        adapter = new GerenteReporteAsistenciaAdapter(rootView.getContext(), getDatos1, recyclerView,separated[0].trim(),separated[1].trim(),numeroUsuario);
+        adapter = new GerenteReporteAsistenciaAdapter(rootView.getContext(), getDatos1, recyclerView,separated[0].trim(),separated[1].trim());
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 

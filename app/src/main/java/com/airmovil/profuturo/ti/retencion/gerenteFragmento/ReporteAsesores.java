@@ -149,7 +149,6 @@ public class ReporteAsesores extends Fragment {
 
         // TODO: ocultar teclado
         imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-        sessionManager = new SessionManager(getContext());
         connected = new Connected();
 
         // TODO: model
@@ -488,12 +487,8 @@ public class ReporteAsesores extends Fragment {
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         String PtvFecha = tvFecha.getText().toString();
         String[] separated = PtvFecha.split(" - ");
-        HashMap<String, String> usuario = sessionManager.getUserDetails();
-        String numeroUsuario = usuario.get(SessionManager.USER_ID);
 
-        Log.d("USUARIO","EN Asesores: "+numeroUsuario);
-
-        adapter = new GerenteReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView,separated[0].trim(),separated[1].trim(),numeroUsuario);
+        adapter = new GerenteReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView,separated[0].trim(),separated[1].trim());
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 

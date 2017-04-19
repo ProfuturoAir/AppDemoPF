@@ -24,8 +24,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistencia;
-import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientes;
+import com.airmovil.profuturo.ti.retencion.activities.Gerente;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.EnviaMail;
@@ -54,15 +55,13 @@ public class GerenteReporteAsesoresAdapter extends RecyclerView.Adapter{
     private RecyclerView mRecyclerView;
     private String fechaIni;
     private String fechaFin;
-    private String numeroUsuario;
 
-    public GerenteReporteAsesoresAdapter(Context mContext, List<GerenteReporteAsesoresModel> list, RecyclerView mRecyclerView,String fechaIni,String fechaFin,String numeroUsuario) {
+    public GerenteReporteAsesoresAdapter(Context mContext, List<GerenteReporteAsesoresModel> list, RecyclerView mRecyclerView,String fechaIni,String fechaFin) {
         this.mContext = mContext;
         this.list = list;
         this.mRecyclerView = mRecyclerView;
         this.fechaIni = fechaIni;
         this.fechaFin = fechaFin;
-        this.numeroUsuario = numeroUsuario;
 
         final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) this.mRecyclerView.getLayoutManager();
         this.mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -175,16 +174,22 @@ public class GerenteReporteAsesoresAdapter extends RecyclerView.Adapter{
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.sub_menu_reporte_asesores_nav_clientes:
-                    AppCompatActivity a1 = (AppCompatActivity) mRecyclerView.getContext();
-                    com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes f1 = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes();
+                    ReporteClientes fragmentoClientes = new ReporteClientes();
+                    Gerente gerente = (Gerente) mRecyclerView.getContext();
+                    gerente.switchClientes(fragmentoClientes, lista.getNumeroEmpleado(),fechaIni,fechaFin);
+                    //AppCompatActivity a1 = (AppCompatActivity) mRecyclerView.getContext();
+                    //com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes f1 = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes();
                     //Create a bundle to pass data, add data, set the bundle to your fragment and:
-                    a1.getSupportFragmentManager().beginTransaction().replace(R.id.content_gerente, f1).addToBackStack(null).commit();
+                    //a1.getSupportFragmentManager().beginTransaction().replace(R.id.content_gerente, f1).addToBackStack(null).commit();
                     return true;
                 case R.id.sub_menu_reporte_asesores_nav_asistencia:
-                    AppCompatActivity a2 = (AppCompatActivity) mRecyclerView.getContext();
-                    com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia f2 = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia();
+                    ReporteAsistencia fragmentoAsistencia = new ReporteAsistencia();
+                    Gerente dt = (Gerente) mRecyclerView.getContext();
+                    dt.switchAsistencia(fragmentoAsistencia, lista.getNumeroEmpleado(),fechaIni,fechaFin);
+                    //AppCompatActivity a2 = (AppCompatActivity) mRecyclerView.getContext();
+                    //com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia f2 = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia();
                     //Create a bundle to pass data, add data, set the bundle to your fragment and:
-                    a2.getSupportFragmentManager().beginTransaction().replace(R.id.content_gerente, f2).addToBackStack(null).commit();
+                    //a2.getSupportFragmentManager().beginTransaction().replace(R.id.content_gerente, f2).addToBackStack(null).commit();
                     return true;
                 case R.id.sub_menu_reporte_asesores_email:
                     final Dialog dialog = new Dialog(mContext);
@@ -229,7 +234,7 @@ public class GerenteReporteAsesoresAdapter extends RecyclerView.Adapter{
                                         periodo.put("fechaFin", fechaFin);
                                         periodo.put("fechaInicio", fechaIni);
                                         rqt.put("periodo", periodo);
-                                        rqt.put("usuario", numeroUsuario);
+                                        rqt.put("usuario", Config.usuarioCusp(mRecyclerView.getContext()));
                                         obj.put("rqt", rqt);
                                         Log.d("datos", "REQUEST-->" + obj);
                                     } catch (JSONException e) {
