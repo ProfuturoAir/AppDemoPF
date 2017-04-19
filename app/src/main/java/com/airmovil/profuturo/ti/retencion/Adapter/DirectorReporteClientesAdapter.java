@@ -9,6 +9,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -55,6 +56,7 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
         this.mContext = mContext;
         this.list = list;
         this.mRecyclerView = mRecyclerView;
+        Log.d("SIGUE","AQUI ->");
 
         final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) this.mRecyclerView.getLayoutManager();
         this.mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
