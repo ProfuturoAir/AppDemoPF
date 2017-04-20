@@ -255,18 +255,13 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
                             imageView.setDrawingCacheEnabled(false);
 
                             if(connected.estaConectado(getContext())) {
+                                Config.msj(getContext(), "Mensaje ", "Se ha finalizado el proceso con exito");
                                 sendJson(true, base64);
                                 final EnviaJSON enviaPrevio = new EnviaJSON();
                                 enviaPrevio.sendPrevios(idTramite, getContext());
-                                Fragment fragmentoGenerico = new ConCita();
-                                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                                if (fragmentoGenerico != null) {
-                                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
-                                }
 
-                                Config.msj(getContext(), "Mensaje ", "Se ha finalizado el proceso con exito");
+
                             }else {
-
                                 final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
                                 progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
                                 progressDialog.setTitle(getResources().getString(R.string.error_conexion));
@@ -283,7 +278,6 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
                                                 if (fragmentoGenerico != null) {
                                                     fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                                                 }
-
                                                 Config.msj(getContext(), "Mensaje ", "Se ha finalizado el proceos, si deseas ve a la parte de reportes pendientes par verificar que tu procesos se haya guardado y, que cuando exista conexión a internet se enviara.");
                                             }
                                         });
@@ -457,11 +451,8 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
                         public void onClick(DialogInterface dialog, int which) {
                             Fragment fragmentoGenerico = new ConCita();
                             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                            if (fragmentoGenerico != null) {
-                                fragmentManager
-                                        .beginTransaction()//.setCustomAnimations(android.R.anim.slide_out_right,android.R.anim.slide_in_left)
-                                        .replace(R.id.content_asesor, fragmentoGenerico).commit();
-                            }
+                            fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+
                         }
                     });
                     dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -557,8 +548,6 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
         }
 
         JSONObject obj = new JSONObject();
-        String latitud = lblLatitud.getText().toString();
-        String longitud = lblLongitud.getText().toString();
         idTramite = getArguments().getString("idTramite");
         SessionManager sessionManager = new SessionManager(getContext());
         HashMap<String, String> usuario = sessionManager.getUserDetails();
@@ -575,8 +564,6 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
             e.printStackTrace();
             Log.d("TAG e: ", "" + e);
         }
-
-
 
         // TODO: Formacion del JSON request
         try{
@@ -604,7 +591,7 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
                         //Dismissing progress dialog
                         if (primerPeticion) {
                             loading.dismiss();
-                            //primerPaso(response);
+                            primerPaso(response);
                         }
                     }
                 },
@@ -631,6 +618,35 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
     }
 
+    private void primerPaso(JSONObject obj){
+        String status = "";
+        String statusText = "";
+        try{
+            status = obj.getString("status");
+            statusText = obj.getString("statusText");
+            if(Integer.parseInt(status) == 200){
+
+                android.app.AlertDialog.Builder dialog  = new android.app.AlertDialog.Builder(getContext());
+                dialog.setTitle("Datos correctos");
+                dialog.setMessage("Los datos han sido recibido, ha finalizado el proceso, da click en ACEPTAR para finalizar el proceso");
+                dialog.setCancelable(true);
+                dialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Fragment fragmentoGenerico = new ConCita();
+                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                    }
+                });
+                dialog.create().show();
+
+            }else{
+                Config.msj(getContext(), "Error","ha existido algun problema");
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+    }
 
     public String encodeTobase64(Bitmap image) {
         //Bitmap immagex = image;
