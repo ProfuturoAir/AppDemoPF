@@ -91,18 +91,25 @@ public class AsesorReporteClientesAdapter extends RecyclerView.Adapter{
             final MyViewHolder myholder = (MyViewHolder) holder;
             myholder.campoNombre.setText(lista.getNombreCliente());
             myholder.campoCuenta.setText(lista.getNumeroCuenta());
-            myholder.campoConCita.setText(lista.getConCita());
-            myholder.campoNoEmitido.setText(lista.getNoEmitido());
+
+            if(lista.getConCita() == "true")
+                myholder.campoConCita.setText("Si");
+            else
+                myholder.campoConCita.setText("No");
+
+            if(lista.getNoEmitido() == "true")
+                myholder.campoNoEmitido.setText(" Si");
+            else
+                myholder.campoNoEmitido.setText(" No");
+
             char nombre = lista.getNombreCliente().charAt(0);
             final String pLetra = Character.toString(nombre);
             myholder.campoLetra.setText(pLetra);
             myholder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //fragmentJumpDatosUsuario(pLetra, v);
                     View borrar = v;
                     fragmentoDatosCliente(v, lista.curp, lista.idTramite, lista.hora, mfechaInicio, mfechaFin);
-                    Toast.makeText(mContext, "hora: " + lista.getHora() + " \n fecha Incio" + mfechaInicio + "\n fecha Fin " + mfechaFin, Toast.LENGTH_SHORT).show();
                 }
             });
         } else {

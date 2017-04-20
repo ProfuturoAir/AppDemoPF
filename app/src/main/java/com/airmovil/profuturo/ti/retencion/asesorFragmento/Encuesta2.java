@@ -388,8 +388,8 @@ public class Encuesta2 extends Fragment {
             rqt.put("idDocumento", idDocumentacion);
             rqt.put("telefono", telefono);
             rqt.put("email", email);
-            rqt.put("estatusTramite", 123);
-            rqt.put("idTramite", idTramite);
+            rqt.put("estatusTramite", 1131);
+            rqt.put("idTramite", Integer.parseInt(idTramite));
             obj.put("rqt", rqt);
             Log.d(TAG, "REQUEST-->" + obj);
         } catch (JSONException e){

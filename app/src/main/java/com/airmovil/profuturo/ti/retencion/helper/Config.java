@@ -47,7 +47,7 @@ public class Config extends Activity {
     public static final String URL_CUNSULTAR_DATOS_CLIENTE = URL_GENERAL + "mb/premium/rest/consultarDatosCliente";
     public static final String URL_GENERAR_REPORTE_CLIENTE = URL_GENERAL + "mb/premium/rest/generarReporteAsesor";
 
-    public static final String URL_GENERAL_REPORTE_CLIENTE = URL_GENERAL + "/mb/premium/rest/generarReporteCliente";
+    public static final String URL_GENERAL_REPORTE_CLIENTE = URL_GENERAL + "mb/premium/rest/generarReporteCliente";
 
     public static final String URL_ENVIAR_ENCUESTA = URL_GENERAL + "mb/premium/rest/enviarEncuesta";
     public static final String URL_ENVIAR_ENCUESTA_2 = URL_GENERAL + "mb/premium/rest/enviarEncuestaObservacion";
@@ -416,7 +416,7 @@ public class Config extends Activity {
     public static final String usuarioCusp(Context context){
         SessionManager sessionManager = new SessionManager(context);
         HashMap<String, String> usuario = sessionManager.getUserDetails();
-        String cusp = usuario.get(SessionManager.USER_ID);
+        String cusp = usuario.get(SessionManager.CUSP);
         return cusp;
     }
 

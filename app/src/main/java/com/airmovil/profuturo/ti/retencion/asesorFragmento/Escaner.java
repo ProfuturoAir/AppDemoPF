@@ -583,7 +583,7 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
             JSONObject rqt = new JSONObject();
             rqt.put("estatusTramite", 1138);
             rqt.put("fechaHoraFin", fechaN);
-            rqt.put("idTramite", idTramite);
+            rqt.put("idTramite", Integer.parseInt(idTramite));
             rqt.put("numeroCuenta", idUsuario);
             JSONObject ubicacion = new JSONObject();
             ubicacion.put("latitud", z);

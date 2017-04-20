@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,13 +30,19 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.airmovil.profuturo.ti.retencion.Adapter.GerenteSinCitaAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.SinCitaAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Asesor;
+import com.airmovil.profuturo.ti.retencion.activities.Gerente;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.*;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
+import com.airmovil.profuturo.ti.retencion.model.GerenteSinCitaModel;
 import com.airmovil.profuturo.ti.retencion.model.SinCitaModel;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -64,14 +71,14 @@ public class SinCita extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String TAG = SinCita.class.getSimpleName();
-    private static final String ARG_PARAM1 = "param1";// tipo dato
-    private static final String ARG_PARAM2 = "param2";// dato a ingresar
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
+    private static final String[] ESTADOS_CITAS = new String[]{"Selecciona...","Número de cuenta", "NSS", "CURP"};
 
     // TODO: Rename and change types of parameters
-    private int mParam1; // tipo dato
-    private String mParam2; // dato a ingresar
-
-    private OnFragmentInteractionListener mListener;
+    private String mParam1;
+    private String mParam2;
+    private InputMethodManager imm;
 
     // TODO: XML
     private Spinner spinner;
@@ -90,15 +97,13 @@ public class SinCita extends Fragment {
     private String fechaFin = "";
     private int posicion;
 
-    // TODO: Recycler
-    private SinCitaAdapter adapter;
-    private List<SinCitaModel> getDatos1;
+    private GerenteSinCitaAdapter adapter;
+    private List<GerenteSinCitaModel> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private RecyclerView.Adapter recyclerViewAdapter;
-    private Connected connected;
-    final Fragment borrar = this;
-    private int pagina = 1;
+
+    private OnFragmentInteractionListener mListener;
 
     public SinCita() {
         // Required empty public constructor
@@ -110,7 +115,7 @@ public class SinCita extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment SinCita.
+     * @return A new instance of fragment SinCitaModel.
      */
     // TODO: Rename and change types and number of parameters
     public static SinCita newInstance(String param1, String param2) {
@@ -126,7 +131,7 @@ public class SinCita extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getInt(ARG_PARAM1);
+            mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
@@ -135,13 +140,39 @@ public class SinCita extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // TODO: Casteo
         rootView = view;
-        variables();
-        fechas();
-        connected = new Connected();
 
+        tvFecha = (TextView) rootView.findViewById(R.id.afsc_tv_fecha);
+        spinner = (Spinner) rootView.findViewById(R.id.afsc_spinner_tipo_dato);
+        etDatos = (EditText) rootView.findViewById(R.id.afsc_et_datos);
+        tvRegistros = (TextView) rootView.findViewById(R.id.afsc_tv_registros);
+        btnBuscar = (Button) rootView.findViewById(R.id.afsc_btn_buscar);
+
+        imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+
+        Map<String, Integer> fechaDatos = Config.dias();
+        mYear  = fechaDatos.get("anio");
+        mMonth = fechaDatos.get("mes");
+        mDay   = fechaDatos.get("dia");
+
+
+
+        if(getArguments() != null){
+            fechaIni = getArguments().getString(ARG_PARAM1);
+            fechaFin = getArguments().getString(ARG_PARAM2);
+            tvFecha.setText(fechaIni+" - "+fechaFin);
+        }else {
+            Map<String, String> fechas = Config.fechas(1);
+            fechaFin = fechas.get("fechaFin");
+            fechaIni = fechas.get("fechaIni");
+            fechaMostrar = fechaIni;
+            tvFecha.setText(fechaMostrar);
+        }
+
+        etDatos.setFocusable(false);
+        etDatos.setFocusableInTouchMode(false);
 
         // TODO: Spinner
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.IDS);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, ESTADOS_CITAS);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -155,27 +186,35 @@ public class SinCita extends Fragment {
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                         etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryDark1), PorterDuff.Mode.OVERLAY);
                         etDatos.setFocusable(true);
+                        etDatos.setFocusable(false);
+                        etDatos.setFocusableInTouchMode(false);
                         break;
                     case 1:
                         etDatos.setFocusableInTouchMode(true);
-                        Config.teclado(getContext(), etDatos);
+                        //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                         etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
                         etDatos.setInputType(InputType.TYPE_CLASS_PHONE);
+                        etDatos.setFocusable(true);
+                        etDatos.setFocusableInTouchMode(true);
                         break;
                     case 2:
                         etDatos.setFocusableInTouchMode(true);
-                        Config.teclado(getContext(), etDatos);
+                        //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                         etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
                         etDatos.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+                        etDatos.setFocusable(true);
+                        etDatos.setFocusableInTouchMode(true);
                         break;
                     case 3:
                         etDatos.setFocusableInTouchMode(true);
-                        Config.teclado(getContext(), etDatos);
+                        //imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                         etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
                         etDatos.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+                        etDatos.setFocusable(true);
+                        etDatos.setFocusableInTouchMode(true);
                 }
                 etDatos.setHint("Ingresa, " + adapter.getItem(position));
 
@@ -186,66 +225,75 @@ public class SinCita extends Fragment {
         });
         spinner.setAdapter(adapter);
 
+        final Fragment borrar = this;
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String valores = etDatos.getText().toString().trim();
-                int seleccion = spinner.getSelectedItemPosition();
+                Connected connected = new Connected();
+                if(connected.estaConectado(getContext())){
+                    String valores = etDatos.getText().toString().trim();
+                    String seleccion = spinner.getSelectedItem().toString();
+                    Log.d(TAG, "Seleccion: --->" + seleccion);
 
-                if(connected.estaConectado(getContext())) {
-                    if (seleccion == 0) {
-                        Config.dialogoSpinnerSinSeleccion(getContext());
-                    } else {
-                        if (valores.isEmpty()) {
-                            switch (seleccion) {
-                                case 1:
-                                    Config.dialogoSinSeleccionSpinner(getContext(), "Número de cuenta");
+                    if(seleccion.equals("Selecciona...")) {
+
+                        Config.dialogoDatosVacios(getContext());
+                    }else{
+                        if(valores.isEmpty()) {
+                            switch (seleccion){
+                                case "Número de cuenta":
+                                    Config.dialogoSinSeleccionSpinner(getContext(), " número de cuenta");
                                     break;
-                                case 2:
-                                    Config.dialogoSinSeleccionSpinner(getContext(), "NSS");
+                                case "NSS":
+                                    Config.dialogoSinSeleccionSpinner(getContext(), " NSS");
                                     break;
-                                case 3:
-                                    Config.dialogoSinSeleccionSpinner(getContext(), "CURP");
+                                case "CURP":
+                                    Config.dialogoSinSeleccionSpinner(getContext(), " CURP");
                                     break;
                             }
-                        } else {
-                            sendJson(true);
+                        }else{
                             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                            SinCita fragmento = SinCita.newInstance(seleccion, valores , rootView.getContext());
+                            SinCita clase = SinCita.newInstance(
+                                    valores, rootView.getContext()
+                            );
+                            Config.teclado(getContext(), etDatos);
                             borrar.onDestroy();
                             ft.remove(borrar);
-                            ft.replace(R.id.content_asesor, fragmento);
+                            ft.replace(R.id.content_asesor, clase);
                             ft.addToBackStack(null);
-                            ft.commit();
-                            Config.teclado(getContext(), etDatos);
+                            sendJson(true, seleccion, valores);
+
                         }
                     }
                 }else{
-                    final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-                    progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
-                    progressDialog.setTitle(getResources().getString(R.string.error_conexion));
-                    progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion));
-                    progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    progressDialog.dismiss();
-                                    //sendJson(true);
-                                }
-                            });
-                    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
+                    try {
+                        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                        progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
+                        progressDialog.setTitle(getResources().getString(R.string.error_conexion));
+                        progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion_firma));
+                        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        progressDialog.dismiss();
+                                    }
+                                });
+                        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
 
-                                }
-                            });
-                    progressDialog.show();
+                                    }
+                                });
+                        progressDialog.show();
+                    }catch (Exception e){
+                        Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+                    }
                 }
+
 
             }
         });
-
         // TODO: model
         getDatos1 = new ArrayList<>();
         // TODO: Recycler
@@ -255,11 +303,52 @@ public class SinCita extends Fragment {
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
     }
 
-    public static SinCita newInstance(int tipoCampo, String campo, Context ctx){
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                    AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
+                    dialogo1.setTitle("Confirmar");
+                    dialogo1.setMessage("Serás direccionado al Inicio");
+                    dialogo1.setCancelable(false);
+                    dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Fragment fragmentoGenerico = new Inicio();
+                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            if (fragmentoGenerico != null) {
+                                fragmentManager
+                                        .beginTransaction()
+                                        .replace(R.id.content_asesor, fragmentoGenerico).commit();
+                            }
+                        }
+                    });
+                    dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    dialogo1.show();
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    public static SinCita newInstance(String campo, Context ctx){
         SinCita clase = new SinCita();
         Bundle args = new Bundle();
-        args.putInt(ARG_PARAM1, tipoCampo);
-        args.putString(ARG_PARAM2, campo);
+        args.putString(ARG_PARAM1, campo);
         clase.setArguments(args);
         return clase;
     }
@@ -273,7 +362,10 @@ public class SinCita extends Fragment {
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
+            Toast.makeText(getContext(), "if", Toast.LENGTH_SHORT).show();
             mListener.onFragmentInteraction(uri);
+        }else{
+            Toast.makeText(getContext(), "else", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -306,114 +398,48 @@ public class SinCita extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        getView().setFocusableInTouchMode(true);
-        getView().requestFocus();
-        getView().setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+    private void sendJson(final boolean primerPeticion, String seleccion, String valores) {
+        final ProgressDialog loading;
+        if (primerPeticion)
+            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
+        else
+            loading = null;
 
-                    final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-                    progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
-                    progressDialog.setTitle(getResources().getString(R.string.error_conexion));
-                    progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion));
-                    progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    progressDialog.dismiss();
-                                    Fragment fragmentoGenerico = new SinCita();
-                                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
-                                }
-                            });
-                    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                    progressDialog.show();
-                    return true;
-                }
-                return false;
-            }
-        });
-    }
-
-    private void variables(){
-        tvFecha = (TextView) rootView.findViewById(R.id.afsc_tv_fecha);
-        spinner = (Spinner) rootView.findViewById(R.id.afsc_spinner_tipo_dato);
-        etDatos = (EditText) rootView.findViewById(R.id.afsc_et_datos);
-        tvRegistros = (TextView) rootView.findViewById(R.id.afsc_tv_registros);
-        btnBuscar = (Button) rootView.findViewById(R.id.afsc_btn_buscar);
-    }
-
-    private void fechas(){
-        Map<String, Integer> fechaDatos = Config.dias();
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
-
-
-        Map<String, String> fechas = Config.fechas(1);
-        fechaFin = fechas.get("fechaFin");
-        fechaIni = fechas.get("fechaIni");
-        fechaMostrar = fechaIni;
-        tvFecha.setText(fechaIni);
-
-    }
-
-    // TODO: REST
-    private void sendJson(final boolean primerPeticion) {
-
-        SessionManager sessionManager = new SessionManager(getContext());
-        HashMap<String, String> datosUsuario = sessionManager.getUserDetails();
-        String usuario = datosUsuario.get(SessionManager.USER_ID);
-
+        Log.d(TAG + "DATOS--> JSON", "\nSpinner: " + seleccion + "\nCampo a enviar: " + valores);
         JSONObject obj = new JSONObject();
-        JSONObject rqt = new JSONObject();
-        JSONObject filtro = new JSONObject();
-        try{
-            if(getArguments() != null){
-                mParam1 = getArguments().getInt(ARG_PARAM1);
-                mParam2 = getArguments().getString(ARG_PARAM2);
+        try {
+            // TODO: Formacion del JSON request
+            JSONObject rqt = new JSONObject();
+            JSONObject filtros = new JSONObject();
 
-                switch (mParam1){
-                    case 1:
-                        filtro.put("curp", "");
-                        filtro.put("nss", "");
-                        filtro.put("numeroCuenta", mParam2);
-                        break;
-                    case 2:
-                        filtro.put("curp", "");
-                        filtro.put("nss", mParam2);
-                        filtro.put("numeroCuenta", "");
-                        break;
-                    case 3:
-                        filtro.put("curp", mParam2);
-                        filtro.put("nss", "");
-                        filtro.put("numeroCuenta", "");
-                        break;
-                    default:
-                        filtro.put("curp", "");
-                        filtro.put("nss", "");
-                        filtro.put("numeroCuenta", "");
-                        break;
-                }
-                rqt.put("filtro", filtro);
-                rqt.put("pagina", pagina);
-                rqt.put("usuario", usuario);
-                obj.put("rqt",rqt);
-                Log.d("RQT SINCITA: ", "" + obj);
+            switch (seleccion){
+                case "Número de cuenta":
+                    filtros.put("curp", "");
+                    filtros.put("nss", "");
+                    filtros.put("numeroCuenta", valores.toString());
+                    break;
+                case "NSS":
+                    filtros.put("curp", "");
+                    filtros.put("nss",  valores.toString());
+                    filtros.put("numeroCuenta","");
+                    break;
+                case "CURP":
+                    filtros.put("curp", valores.toString());
+                    filtros.put("nss",  "");
+                    filtros.put("numeroCuenta","");
+                    break;
             }
+            rqt.put("filtro", filtros);
+            rqt.put("pagina", "1");
+            SessionManager sessionManager = new SessionManager(getActivity().getApplicationContext());
+            HashMap<String, String> usuario = sessionManager.getUserDetails();
+            String idUsuario = usuario.get(SessionManager.USER_ID);
 
-        }catch (JSONException e){
-            e.printStackTrace();
+            rqt.put("usuario", idUsuario);
+            obj.put("rqt", rqt);
+            Log.d(TAG, "PETICION VACIA-->" + obj);
+        } catch (JSONException e) {
+            Config.msj(getContext(),"Error json","1 Lo sentimos ocurrio un right_in al formar los datos.");
         }
         //Creating a json array request
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_CLIENTE_SIN_CITA, obj,
@@ -422,7 +448,7 @@ public class SinCita extends Fragment {
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
-                            //loading.dismiss();
+                            loading.dismiss();
                             primerPaso(response);
                         }
                     }
@@ -430,7 +456,7 @@ public class SinCita extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        //loading.dismiss();
+                        loading.dismiss();
                         //Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
                     }
                 }) {
@@ -453,7 +479,7 @@ public class SinCita extends Fragment {
             if(Integer.parseInt(status) == 200){
                 JSONArray array = obj.getJSONArray("clientes");
                 for (int x = 0; x < array.length(); x++){
-                    SinCitaModel getDatos2 = new SinCitaModel();
+                    GerenteSinCitaModel getDatos2 = new GerenteSinCitaModel();
                     JSONObject json = null;
                     try{
                         json = array.getJSONObject(x);
@@ -464,6 +490,7 @@ public class SinCita extends Fragment {
                     }
                     getDatos1.add(getDatos2);
                 }
+                Log.d(TAG, "JSON response : ->" + array);
             }else{
                 statusText = obj.getString("statusText");
                 Config.msj(getContext(), "Error", statusText);
@@ -471,8 +498,10 @@ public class SinCita extends Fragment {
         }catch (JSONException e){
             e.printStackTrace();
         }
-        adapter = new SinCitaAdapter(rootView.getContext(), getDatos1, recyclerView);
+        adapter = new GerenteSinCitaAdapter(rootView.getContext(), getDatos1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
     }
+
+
 }

@@ -541,13 +541,13 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
         // TODO: Formacion del JSON request
         try{
             JSONObject rqt = new JSONObject();
-            rqt.put("estatusTramite", idTramite);
-            rqt.put("firmaCliente", firmaIMG);
-            rqt.put("idTramite", 1);
+            rqt.put("estatusTramite", 1137);
+            rqt.put("idTramite", Integer.parseInt(idTramite));
             JSONObject ubicacion = new JSONObject();
             ubicacion.put("latitud", latitud);
             ubicacion.put("longitud", lonngitud);
             rqt.put("ubicacion", ubicacion);
+            rqt.put("firmaCliente", firmaIMG);
             obj.put("rqt", rqt);
             Log.d("datos", "REQUEST-->" + obj);
         } catch (JSONException e){

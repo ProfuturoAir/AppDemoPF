@@ -344,16 +344,6 @@ public class ReporteClientes extends Fragment {
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
 
-        //final ProgressDialog loading;
-        //if (primerPeticion)
-           // loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
-        //else
-           // loading = null;
-
-        SessionManager sessionManager = new SessionManager(getContext());
-        HashMap<String, String> usuario = sessionManager.getUserDetails();
-        String idUsuario = usuario.get(SessionManager.USER_ID);
-
         JSONObject obj = new JSONObject();
 
         try{
@@ -367,6 +357,9 @@ public class ReporteClientes extends Fragment {
                 sParam3 = getArguments().getString(ARG_PARAM_3);
                 sParam4 = getArguments().getString(ARG_PARAM_4);
                 sParam5 = getArguments().getInt(ARG_PARAM_5);
+
+                Log.d("Argumentos", "fecha 1" + sParam1);
+                Log.d("Argumentos", "fecha 2" + sParam2);
 
                 switch (sParam1){
                     case 1:
@@ -388,22 +381,22 @@ public class ReporteClientes extends Fragment {
                 rqt.put("filtro", filtros);
                 rqt.put("filtroRetenido", sParam5);
                 rqt.put("pagina", pagina);
-                periodo.put("fechaInicio", fechaIni);
-                periodo.put("fechaFin", fechaFin);
+                periodo.put("fechaInicio", sParam3);
+                periodo.put("fechaFin", sParam4);
                 rqt.put("periodo", periodo);
-                rqt.put("usuario", idUsuario);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }else{
                 filtros.put("curp", "");
                 filtros.put("nss", "");
                 filtros.put("numeroCuenta", "");
                 rqt.put("filtro", filtros);
-                rqt.put("filtroRetenido", "");
+                rqt.put("filtroRetenido", 0);
                 rqt.put("pagina", pagina);
                 periodo.put("fechaInicio", fechaIni);
                 periodo.put("fechaFin", fechaFin);
                 rqt.put("periodo", periodo);
-                rqt.put("usuario", idUsuario);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }
             Log.d(TAG, "PETICION VACIA-->" + obj);
@@ -513,6 +506,7 @@ public class ReporteClientes extends Fragment {
                     getDatos2.setIdTramite(json.getInt("idTramite"));
                     getDatos2.setCurp(json.getString("curp"));
                     getDatos2.setHora(json.getString("hora"));
+                    getDatos2.setNoEmitido(json.getString("retenido"));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -543,7 +537,13 @@ public class ReporteClientes extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
-        adapter.notifyDataSetChanged();
+
+        try {
+            adapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            Log.d(TAG, e.toString());
+        }
+
 
         adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override

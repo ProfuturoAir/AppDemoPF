@@ -29,6 +29,7 @@ public class SessionManager {
     public static final String USER_ID = "userId";
     public static final String ROL_EMPLEADO = "rolEmpleado";
     public static final String PERFIL = "perfil";
+    public static final String CUSP = "cusp";
 
     // LogCat tag
     private final static String TAG = SessionManager.class.getSimpleName();
@@ -51,7 +52,7 @@ public class SessionManager {
     }
 
     public void createLoginSession(String apellidoMaterno, String apellidoPaterno, String centroCosto, String claveConsar, String curp, String email,
-                String fechaAltaConsar, String idRolEmpelado, String nombre,String numeroEmpleado, String rolEmpleado ,String userId){
+                String fechaAltaConsar, String idRolEmpelado, String nombre,String numeroEmpleado, String rolEmpleado ,String userId, String cusp){
         // Storing name in pref
         editor.putBoolean(KEY_IS_LOGGEDIN, true);
         editor.putString(APELLIDO_MATERNO, apellidoMaterno);
@@ -66,6 +67,7 @@ public class SessionManager {
         editor.putString(NUMERO_EMPLEADO, numeroEmpleado);
         editor.putString(ROL_EMPLEADO, rolEmpleado);
         editor.putString(USER_ID, userId);
+        editor.putString(CUSP, cusp);
         // commit changes
         editor.commit();
     }
@@ -99,6 +101,7 @@ public class SessionManager {
         user.put(NUMERO_EMPLEADO, pref.getString(NUMERO_EMPLEADO, null));
         user.put(USER_ID, pref.getString(USER_ID, null));
         user.put(PERFIL,pref.getString(PERFIL, null));
+        user.put(CUSP, pref.getString(CUSP, null));
         return user;
     }
 

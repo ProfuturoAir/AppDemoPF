@@ -440,7 +440,7 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
             status = obj.getString("status");
             statusText = obj.getString("statusText");
             if(Integer.parseInt(status) == 200){
-                Config.msj(getContext(), "Envio correcto", "Se ha registrado, la salida de hoy \nFecha:" + fecha + " \nhora: " + hora+":"+minutos+":"+segundos);
+                Config.msj(getContext(), "Envio correcto", "Se ha registrado, la entrada de hoy \nFecha:" + fecha + " \nhora: " + hora+":"+minutos+":"+segundos);
             }else{
                 Config.msj(getContext(), "Error: " + status, statusText);
             }

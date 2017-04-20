@@ -319,21 +319,16 @@ public class DatosAsesor extends Fragment {
 
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
-
-        HashMap<String, String> datos = sessionManager.getUserDetails();
-        String numeroUsuario = datos.get(SessionManager.USER_ID);
-
         JSONObject obj = new JSONObject();
         // TODO: Formacion del JSON request
         JSONObject rqt = new JSONObject();
         try{
-            rqt.put("usuario", numeroUsuario);
+            rqt.put("usuario", Config.usuarioCusp(getContext()));
             obj.put("rqt", rqt);
-            Log.d("DatosAsesor", ":rqt -->" + obj);
         }catch (JSONException e){
             e.printStackTrace();
         }
-
+        Log.d("DatosAsesor", ":rqt -->" + obj);
         //Creating a json array request
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_DATOS_ASESOR, obj,
                 new Response.Listener<JSONObject>() {

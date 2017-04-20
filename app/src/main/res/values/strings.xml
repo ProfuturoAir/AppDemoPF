@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PremiumProfuturoApp</string>
+    <string name="app_name">Profuturo</string>
 
     <string name="texto_img_descripcion">Descripcion de texto</string>
     <string name="texto_usuario">Usuario</string>
@@ -111,5 +111,6 @@
     <string name="msj_error_conexion_firma">No hay conexión a internet, verifica tu conexión y vuelve a intentar</string>
 
     <string name="titulo_espera">Espere un momento</string>
+    <string name="texto_pendientes">Pendientes</string>
 
 </resources>

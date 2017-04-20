@@ -345,7 +345,7 @@ public class DatosCliente extends Fragment {
             JSONObject rqt = new JSONObject();
             rqt.put("estatusTramite", 1133);
             rqt.put("numeroCuenta", numeroDeCuenta);
-            rqt.put("usuario", idUsuario);
+            rqt.put("usuario", Config.usuarioCusp(getContext()));
             obj.put("rqt", rqt);
             Log.d(TAG, "Primera peticion-->" + obj);
         } catch (JSONException e) {

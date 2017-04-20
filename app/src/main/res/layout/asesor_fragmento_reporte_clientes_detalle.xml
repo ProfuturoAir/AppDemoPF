@@ -41,25 +41,28 @@
         <LinearLayout style="@style/contenedorDatos">
             <!-- TODO: Nombre del asesor y dato a mostrar-->
             <TextView style="@style/tituloDato"  android:text="@string/texto_nombre" />
-            <TextView style="@style/datoMuestra" android:id="@+id/afrcd_tv_nombre_cliente" android:text="Nombre de prueba cliente"/>
+            <TextView style="@style/datoMuestra" android:id="@+id/afrcd_tv_nombre_cliente" android:text=""/>
             <!-- TODO: Numero de cuenta y dato a mostrar-->
             <TextView style="@style/tituloDato" android:text="@string/texto_numero_cuenta" />
-            <TextView style="@style/datoMuestra" android:id="@+id/afrcd_tv_numero_cuenta_cliente" android:text="312312323"/>
+            <TextView style="@style/datoMuestra" android:id="@+id/afrcd_tv_numero_cuenta_cliente" android:text=""/>
             <!-- TODO: NSS y dato a mostrar-->
-            <TextView style="@style/tituloDato" android:text="NSS o CURP" />
-            <TextView style="@style/datoMuestra" android:id="@+id/afrcd_tv_nss_cliente" android:text="NSS: NRDAS12342 CURP: CURP1234562"/>
+            <TextView style="@style/tituloDato" android:text="NSS" />
+            <TextView style="@style/datoMuestra" android:id="@+id/afrcd_tv_nss_cliente" android:text=""/>
+            <!-- TODO: NSS y dato a mostrar-->
+            <TextView style="@style/tituloDato" android:text="CURP" />
+            <TextView style="@style/datoMuestra" android:id="@+id/afrcd_tv_curp_cliente" android:text=""/>
             <!-- TODO: CURP y dato a mostrar-->
             <TextView style="@style/tituloDato" android:text="Estatus" />
-            <TextView style="@style/datoMuestra" android:id="@+id/afrcd_tv_curp_cliente" android:text="Retenido"/>
+            <TextView style="@style/datoMuestra" android:id="@+id/afrcd_tv_status_cliente" android:text=""/>
             <!-- TODO: Fecha y dato a mostrar-->
             <TextView style="@style/tituloDato" android:text="@string/texto_saldo" />
-            <TextView style="@style/datoMuestra" android:id="@+id/afrcd_tv_fecha_cliente" android:text="$ 123,653.12" />
+            <TextView style="@style/datoMuestra" android:id="@+id/afrcd_tv_fecha_cliente" android:text="" />
             <!-- TODO: Saldo y dato a mostrar-->
             <TextView style="@style/tituloDato" android:text="@string/texto_sucursal" />
-            <TextView style="@style/datoMuestra" android:id="@+id/afrcd_tv_saldo_cliente" android:text="Sucursal Sur"/>
+            <TextView style="@style/datoMuestra" android:id="@+id/afrcd_tv_saldo_cliente" android:text=""/>
             <!-- TODO: Saldo y dato a mostrar-->
             <TextView style="@style/tituloDato" android:text="@string/texto_horario" />
-            <TextView style="@style/datoMuestra"  android:id="@+id/afrcd_tv_hora_atencion" android:text="Cita: 12:00"/>
+            <TextView style="@style/datoMuestra"  android:id="@+id/afrcd_tv_hora_atencion" android:text=""/>
         </LinearLayout>
     </LinearLayout>
 

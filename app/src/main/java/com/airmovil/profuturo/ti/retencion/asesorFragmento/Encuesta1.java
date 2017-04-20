@@ -376,7 +376,7 @@ public class Encuesta1 extends Fragment {
             encuesta.put("pregunta1", opc1);
             rqt.put("encuesta", encuesta);
             rqt.put("estatusTramite", 1134);
-            rqt.put("idTramite", idTramite);
+            rqt.put("idTramite", Integer.parseInt(idTramite));
             obj.put("rqt", rqt);
             Log.d(TAG, "REQUEST-->" + obj);
         } catch (JSONException e){

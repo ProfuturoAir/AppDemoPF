@@ -55,10 +55,6 @@ public class Login extends AppCompatActivity {
         _contrasenia = (EditText) findViewById(R.id.login_et_contrasenia);
         btnIngresar = (Button) findViewById(R.id.login_btn_ingresar);
 
-        String perfil = datosUsuario.get(SessionManager.PERFIL);
-
-        Log.d("*************", "PERFIL: ->" + perfil);
-
         if (sessionManager.isLoggedIn()) {
             if (sessionManager.getUserDetails().get("idRolEmpleado").equals("3")) {
                 startActivity(new Intent(this, Director.class));
@@ -94,7 +90,7 @@ public class Login extends AppCompatActivity {
         });
     }
 
-    private void sendJson(final boolean primeraPeticion, String numeroEmpleado, String password) {
+    private void sendJson(final boolean primeraPeticion, final String numeroEmpleado, String password) {
         JSONObject obj = new JSONObject();
         JSONObject rqt = new JSONObject();
         try {
@@ -111,7 +107,7 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         if (primeraPeticion) {
-                            primerPaso(response);
+                            primerPaso(response, numeroEmpleado);
                         }
                     }
                 },
@@ -129,7 +125,7 @@ public class Login extends AppCompatActivity {
         MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonArrayRequest);
     }
 
-    private void primerPaso(JSONObject obj) {
+    private void primerPaso(JSONObject obj, String sNumeroEmpleado) {
         String exception = "";
         boolean confirmacion;
         String numeroEmpleado = "";
@@ -139,7 +135,7 @@ public class Login extends AppCompatActivity {
         try {
             if(obj.has("confirmacion")){
                 numeroEmpleado = obj.getString("numeroEmpleado");
-                validacionCorrecta(numeroEmpleado);
+                validacionCorrecta(numeroEmpleado, sNumeroEmpleado);
             }else{
                 Log.d("123123", "else");
                 exception = obj.getString("Exception");
@@ -150,7 +146,7 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    public void validacionCorrecta(final String vNumeroEmpleado){
+    public void validacionCorrecta(final String vNumeroEmpleado, final String CUSP){
         final ProgressDialog progressDialog = new ProgressDialog(this, R.style.Theme_AppCompat_DayNight_Dialog_Alert);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
@@ -164,7 +160,7 @@ public class Login extends AppCompatActivity {
                         Config.teclado(getApplicationContext(), _contrasenia);
                         //redireccionSesiones(vNumeroEmpleado, vPerfil);
                         //peticionDatos(true, vNumeroEmpleado);
-                        peticionDatos(true, vNumeroEmpleado);
+                        peticionDatos(true, vNumeroEmpleado, CUSP);
                         progressDialog.dismiss();
                     }
                 }, 2000);
@@ -202,7 +198,7 @@ public class Login extends AppCompatActivity {
         progressDialog.show();
     }
 
-   public void redireccionSesiones(int rPerfil){
+    public void redireccionSesiones(int rPerfil){
         sessionManager.setLogin(true);
 
         switch (rPerfil){
@@ -220,7 +216,7 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    private void peticionDatos(final boolean primeraPeticion, String pNumeroEmpleado) {
+    private void peticionDatos(final boolean primeraPeticion, String pNumeroEmpleado, final String CUSP) {
         JSONObject obj = new JSONObject();
         JSONObject rqt = new JSONObject();
         try {
@@ -235,7 +231,7 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         if (primeraPeticion) {
-                            obtencionDatos(response);
+                            obtencionDatos(response, CUSP);
                         }
                     }
                 },
@@ -253,8 +249,7 @@ public class Login extends AppCompatActivity {
         MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonArrayRequest);
     }
 
-
-    private void obtencionDatos(JSONObject obj){
+    private void obtencionDatos(JSONObject obj, String CUSP){
 
         Log.d("TAG --> response", " * *  * * *" + obj);
         String apellidoMaterno = "";
@@ -287,7 +282,7 @@ public class Login extends AppCompatActivity {
             userId = obj.getString("userId");
             Log.d("DATOS A RECOLECTAR ->", " " + apellidoMaterno + " " + apellidoPaterno + " " + centroCosto + " " + claveConsar + " " + curp + " " + email + " " +
                     fechaAltaConsar + " " + idRolEmpleado + " "+ " " + nombre + " " + numeroEmpleado + " " + rolEmpleado + " " + userId + " " );
-            sessionManager.createLoginSession(apellidoMaterno, apellidoPaterno, sCentroCosto, claveConsar,curp, email, fechaAltaConsar, sIdRolEmpleado,nombre, numeroEmpleado, rolEmpleado, userId);
+            sessionManager.createLoginSession(apellidoMaterno, apellidoPaterno, sCentroCosto, claveConsar,curp, email, fechaAltaConsar, sIdRolEmpleado,nombre, numeroEmpleado, rolEmpleado, userId, CUSP);
         }catch (JSONException e){
             e.printStackTrace();
         }

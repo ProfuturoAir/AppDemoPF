@@ -12,6 +12,15 @@ public class AsesorReporteClientesModel {
     public int idTramite;
     public String curp;
     public String hora;
+    public boolean pRetenido;
+
+    public boolean getpRetenido() {
+        return pRetenido;
+    }
+
+    public void setpRetenido(boolean pRetenido) {
+        this.pRetenido = pRetenido;
+    }
 
     public String getHora() {
         return hora;

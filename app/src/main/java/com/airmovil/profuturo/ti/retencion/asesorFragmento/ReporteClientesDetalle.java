@@ -63,11 +63,12 @@ public class ReporteClientesDetalle extends Fragment {
     private TextView tvFecha;
     private TextView tvNombreCliente;
     private TextView tvNumeroCuentaCliente;
-    private TextView tvNSSoCURP;
+    private TextView tvNSS;
     private TextView tvEstatus;
     private TextView tvSaldo;
     private TextView tvSucursales;
     private TextView tvHoraAtencion;
+    private TextView tvCurp;
 
     private View rootView;
 
@@ -115,8 +116,9 @@ public class ReporteClientesDetalle extends Fragment {
 
         tvNombreCliente = (TextView) rootView.findViewById(R.id.afrcd_tv_nombre_cliente);
         tvNumeroCuentaCliente = (TextView) rootView.findViewById(R.id.afrcd_tv_numero_cuenta_cliente);
-        tvNSSoCURP = (TextView) rootView.findViewById(R.id.afrcd_tv_nss_cliente);
-        tvEstatus = (TextView) rootView.findViewById(R.id.afrcd_tv_curp_cliente);
+        tvNSS = (TextView) rootView.findViewById(R.id.afrcd_tv_nss_cliente);
+        tvCurp = (TextView) rootView.findViewById(R.id.afrcd_tv_curp_cliente);
+        tvEstatus = (TextView) rootView.findViewById(R.id.afrcd_tv_status_cliente);
         tvSaldo = (TextView) rootView.findViewById(R.id.afrcd_tv_fecha_cliente);
         tvSucursales = (TextView) rootView.findViewById(R.id.afrcd_tv_saldo_cliente);
         tvHoraAtencion = (TextView) rootView.findViewById(R.id.afrcd_tv_hora_atencion);
@@ -174,6 +176,7 @@ public class ReporteClientesDetalle extends Fragment {
           //  loading = ProgressDialog.show(getActivity(), "Cargando datos", "Porfavor espere...", false, false);
         //else
           //  loading = null; sParam1 = getArguments().getString("curp");
+        sParam1 = getArguments().getString("curp");
         sParam2 = getArguments().getInt("idTramite");
         sParam3 = getArguments().getString("hora");
         sParam4 = getArguments().getString("fechaInicio");
@@ -211,7 +214,7 @@ public class ReporteClientesDetalle extends Fragment {
                 periodo.put("fechaFin", sParam5);
                 periodo.put("fechaInicio", sParam4);
                 rqt.put("periodo",periodo);
-                rqt.put("usuario", usuario);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
                 json.put("rqt", rqt);
             }else{
                 filtro.put("curp", "");
@@ -322,7 +325,8 @@ public class ReporteClientesDetalle extends Fragment {
 
         tvNombreCliente.setText(nombre);
         tvNumeroCuentaCliente.setText(numeroCuenta);
-        tvNSSoCURP.setText("CURP: " + curp + " y NSS: " + nss);
+        tvCurp.setText("" + curp);
+        tvNSS.setText("" + nss);
         if(estatus == true)
             tvEstatus.setText("Retenido");
         if(estatus == false)
