@@ -73,20 +73,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="13dp"
-                    android:text="Con cita:"/>
+                    android:text="Cita:"/>
                 <TextView
                     android:id="@+id/dfrgl_tv_con_cita"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/holo_green_dark"
-                    android:text="1234 "
+                    android:text="1234"
                     android:textSize="13dp"/>
                 <!-- TODO: TextView, sin cita -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="13dp"
-                    android:text="| Sin cita: "/>
+                    android:text="|"/>
                 <TextView
                     android:id="@+id/dfrgl_tv_sin_cita"
                     android:layout_width="wrap_content"
@@ -94,14 +94,37 @@
                     android:textColor="@android:color/holo_red_dark"
                     android:text=" 321 "
                     android:textSize="13dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13dp"
+                    android:text=" Emitidos:"/>
+                <TextView
+                    android:id="@+id/dgrgl_tv_emitido"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/holo_green_dark"
+                    android:textSize="13dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13dp"
+                    android:text="|"/>
+                <TextView
+                    android:id="@+id/dgrgl_tv_no_emitido"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="13dp"/>
+
                 <!-- TODO: textView, Saldo retenido -->
                 <TextView
                     android:id="@+id/dfrgl_tv_saldos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimaryDark"
                     android:textSize="13dp"
-                    android:text="saldos" />
+                    android:text=" Saldos" />
 
                 <TextView
                     android:id="@+id/dfrgl_tv_con_saldo"

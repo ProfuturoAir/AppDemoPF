@@ -147,33 +147,32 @@ public class DatosCliente extends Fragment {
                         asesor.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
                     }
                 }else{
-                    final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-                    progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
-                    progressDialog.setTitle(getResources().getString(R.string.error_conexion));
-                    progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion) + "|");
-                    progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    progressDialog.dismiss();
-                                    sendJson(true);
-                                    if(idTramite!=null){
-                                        Fragment fragmentoGenerico = new Encuesta1();
-                    /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
-                                        Asesor asesor = (Asesor) getContext();
-                                        asesor.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
-                                    }
-                                }
-                            });
-                    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
+                    AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
+                    dialogo.setTitle(getResources().getString(R.string.error_conexion));
+                    dialogo.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
+                    dialogo.setCancelable(false);
+                    dialogo.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //sendJson(true);
+                            if(idTramite!=null){
+                                Fragment fragmentoGenerico = new Encuesta1();
+                                        /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                                        fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
+                                Asesor asesor = (Asesor) getContext();
 
-                                }
-                            });
-                    progressDialog.show();
+
+                                asesor.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+                            }
+                        }
+                    });
+                    dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    dialogo.show();
 
                 }
 
@@ -379,25 +378,7 @@ public class DatosCliente extends Fragment {
                             dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    sendJson(true);
-                                }
-                            });
-                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                            dlgAlert.create().show();
-                        }else{
-                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                            dlgAlert.setTitle("Error de conexión");
-                            dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
-                            dlgAlert.setCancelable(true);
-                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    sendJson(true);
+                                    //sendJson(true);
                                 }
                             });
                             dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {

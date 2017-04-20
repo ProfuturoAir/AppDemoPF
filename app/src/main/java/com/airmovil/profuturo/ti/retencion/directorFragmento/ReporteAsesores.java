@@ -365,7 +365,7 @@ public class ReporteAsesores extends Fragment {
                 periodo.put("fechaFin", fechaFin);
                 periodo.put("fechaInicio", fechaIni);
                 rqt.put("periodo", periodo);
-                rqt.put("usuario", numeroUsuario);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }else{
                 rqt.put("idGerencia", 0);
@@ -375,7 +375,7 @@ public class ReporteAsesores extends Fragment {
                 periodo.put("fechaFin", smParam2);
                 periodo.put("fechaInicio", smParam1);
                 rqt.put("periodo", periodo);
-                rqt.put("usuario", numeroUsuario);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }
 

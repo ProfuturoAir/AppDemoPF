@@ -160,11 +160,11 @@ public class EnviaJSON {
         try{
             JSONObject rqt = new JSONObject();
             JSONObject encuesta = new JSONObject();
-            encuesta.put("observaciones", observaciones);
             encuesta.put("pregunta3",pregunta3);
             encuesta.put("pregunta2",pregunta2);
             encuesta.put("pregunta1", pregunta1);
             rqt.put("encuesta", encuesta);
+            rqt.put("observaciones", observaciones);
             rqt.put("estatusTramite", estatusTramite);
             rqt.put("idTramite", idTramite);
             obj.put("rqt", rqt);
@@ -327,7 +327,7 @@ public class EnviaJSON {
             Config.msj(context, "Error", "Error al formar los datos");
         }
         //Creating a json array request
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_DOCUMENTO_IFE_INE, obj,
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_FIRMA, obj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -388,19 +388,19 @@ public class EnviaJSON {
             rqt.put("estatusTramite", estatusTramite);
             rqt.put("fechaHoraFina", fechaHoraFin);
             rqt.put("idTramite", idTramite);
-            rqt.put("ineIfe", ineIfe);
             rqt.put("numeroCuenta", numeroCuenta);
             JSONObject ubicacion = new JSONObject();
             ubicacion.put("latitud", latitud);
             ubicacion.put("longitud", longitud);
             rqt.put("ubicacion", ubicacion);
+            rqt.put("ineIfe", ineIfe);
             obj.put("rqt", rqt);
             Log.d("datos", "REQUEST-->" + obj);
         } catch (JSONException e){
             Config.msj(context, "Error", "Error al formar los datos");
         }
         //Creating a json array request
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_ENCUESTA_2, obj,
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_DOCUMENTO_IFE_INE, obj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

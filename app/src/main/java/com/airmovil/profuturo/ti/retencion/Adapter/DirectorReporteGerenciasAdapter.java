@@ -10,6 +10,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -123,27 +124,20 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
             myViewHolder.idGerencia.setText("Gerencia " + lista.getIdGerencia());
             myViewHolder.conCita.setText(" " + lista.getConCita() + " ");
             myViewHolder.sinCita.setText(" " + lista.getSinCita() + " ");
+            myViewHolder.retenido.setText(" " + lista.getEmitidas());
+            myViewHolder.noRetenido.setText(" " + lista.getNoEmitidas());
             myViewHolder.saldoRetenido.setText(" " + lista.getdSaldoRetenido() + " ");
             myViewHolder.saldoNoRetenido.setText(" " +lista.getdSaldoNoRetenido() + " ");
-
             int x = Integer.parseInt(String.valueOf(lista.getConCita()));
             int y = Integer.parseInt(String.valueOf(lista.getSinCita()));
-
             Float num = (float) (100 / y * x);
-
-
             myViewHolder.porcentaje.setText(" % " + num);
-
             myViewHolder.tvClick.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    Toast.makeText(mContext, "1. " + mFechaInicio + " 2. " + mFechaFin, Toast.LENGTH_SHORT).show();
-
-                    //surgirMenu(v);
+                    surgirMenu(v, lista);
                 }
             });
-
             myViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -172,12 +166,12 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
     /**
      * Muesta el menu cuando se hace click en los 3 botonos de la lista
      */
-    private void surgirMenu(View view) {
+    private void surgirMenu(View view, DirectorReporteGerenciasModel list) {
         // inflate menu
         PopupMenu popup = new PopupMenu(mContext, view);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.sub_menu_reporte_gerencia, popup.getMenu());
-        popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
+        popup.setOnMenuItemClickListener(new MyMenuItemClickListener(list));
         popup.show();
     }
 
@@ -198,6 +192,10 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
         }
     }
 
+    public void fragmetoCambioSucursales(){
+
+    }
+
     public void setOnLoadMoreListener(OnLoadMoreListener mOnLoadMoreListener) {
         this.mOnLoadMoreListener = mOnLoadMoreListener;
     }
@@ -206,17 +204,19 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
      * escucha el popup al dar click
      */
     class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
-
-        public MyMenuItemClickListener() {
+        DirectorReporteGerenciasModel list;
+        public MyMenuItemClickListener(DirectorReporteGerenciasModel list) {
+            this.list = list;
         }
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.nav_sucursales:
-                    AppCompatActivity sucursales = (AppCompatActivity) mRecyclerView.getContext();
-                    ReporteSucursales fragmentoSucursales = new ReporteSucursales();
-                    //Create a bundle to pass data, add data, set the bundle to your fragment and:
-                    sucursales.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoSucursales).addToBackStack(null).commit();
+                    ReporteSucursales reporteSucursales = new ReporteSucursales();
+                    Director director = (Director) mRecyclerView.getContext();
+                    Toast.makeText(mContext, "Gerencia: " + list.getIdGerencia() + " fecha1: "
+                            + mFechaInicio + " fechaFin " + mFechaFin, Toast.LENGTH_SHORT).show();
+                    director.switchSucursales(reporteSucursales, list.idGerencia, mFechaInicio, mFechaFin);
                     return true;
                 case R.id.nav_clientes:
                     AppCompatActivity Clientes = (AppCompatActivity) mRecyclerView.getContext();
@@ -274,7 +274,6 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
 
             final Connected conected = new Connected();
             if(conected.estaConectado(view.getContext())) {
-
             }else{
                 Config.msj(view.getContext(),"Error conexión", "Sin Conexion por el momento.Cliente P-1.1.3");
             }
@@ -292,7 +291,7 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        public TextView letra, idGerencia, conCita, sinCita, saldoRetenido, saldoNoRetenido, porcentaje;
+        public TextView letra, idGerencia, conCita, sinCita, retenido, noRetenido, saldoRetenido, saldoNoRetenido, porcentaje;
         public CardView cardView;
         public TextView tvClick;
         public MyViewHolder(View view){
@@ -301,6 +300,8 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
             idGerencia = (TextView) view.findViewById(R.id.dfrgl_tv_id_gerencia);
             conCita = (TextView) view.findViewById(R.id.dfrgl_tv_con_cita);
             sinCita = (TextView) view.findViewById(R.id.dfrgl_tv_sin_cita);
+            retenido = (TextView) view.findViewById(R.id.dgrgl_tv_emitido);
+            noRetenido = (TextView) view.findViewById(R.id.dgrgl_tv_no_emitido);
             saldoRetenido = (TextView) view.findViewById(R.id.dfrgl_tv_con_saldo);
             saldoNoRetenido = (TextView) view.findViewById(R.id.dfrgl_tv_sin_saldo);
             porcentaje = (TextView) view.findViewById(R.id.dfrgl_tv_porcentaje);

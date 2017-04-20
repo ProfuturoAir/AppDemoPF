@@ -314,4 +314,16 @@ public class Director extends AppCompatActivity{
         ft.addToBackStack(null);
         ft.commit();
     }
+
+    public void switchSucursales(Fragment frag, int idGerencia, String fechaInicio, String fechaFin){
+        Bundle bundle=new Bundle();
+        bundle.putInt("idGerencia",idGerencia);
+        bundle.putString("fechaInicio",fechaInicio);
+        bundle.putString("fechaFin",fechaFin);
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_director, frag, frag.toString());
+        ft.addToBackStack(null);
+        ft.commit();
+    }
 }

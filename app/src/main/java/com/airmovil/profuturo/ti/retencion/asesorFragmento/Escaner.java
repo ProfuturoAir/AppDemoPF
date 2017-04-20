@@ -255,40 +255,59 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
                             imageView.setDrawingCacheEnabled(false);
 
                             if(connected.estaConectado(getContext())) {
-                                Config.msj(getContext(), "Mensaje ", "Se ha finalizado el proceso con exito");
+                                //Config.msj(getContext(), "Mensaje ", "Se ha finalizado el proceso con exito");
                                 sendJson(true, base64);
                                 final EnviaJSON enviaPrevio = new EnviaJSON();
                                 enviaPrevio.sendPrevios(idTramite, getContext());
-
-
                             }else {
-                                final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-                                progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
-                                progressDialog.setTitle(getResources().getString(R.string.error_conexion));
-                                progressDialog.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
-                                progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                progressDialog.dismiss();
-                                                db.addDocumento(idTramite,"2017-04-10",1,base64,"12344","Cesar",90.2349, -23.9897);
-                                                db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
-                                                Fragment fragmentoGenerico = new ConCita();
-                                                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                                                if (fragmentoGenerico != null) {
-                                                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
-                                                }
-                                                Config.msj(getContext(), "Mensaje ", "Se ha finalizado el proceos, si deseas ve a la parte de reportes pendientes par verificar que tu procesos se haya guardado y, que cuando exista conexión a internet se enviara.");
-                                            }
-                                        });
-                                progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
+                                AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
+                                dialogo.setTitle(getResources().getString(R.string.error_conexion));
+                                dialogo.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
+                                dialogo.setCancelable(false);
+                                dialogo.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        double w, z;
+                                        try {
+                                            z = new Double(lblLatitud.getText().toString());
+                                            w = new Double(lblLongitud.getText().toString());
+                                        } catch (NumberFormatException e) {
+                                            z = 0;
+                                            w = 0;
+                                        }
 
-                                            }
-                                        });
-                                progressDialog.show();
+                                        String fechaN = "";
+                                        try {
+                                            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+                                            f.setTimeZone(TimeZone.getTimeZone("America/Mexico_City"));
+                                            String fechaS = f.format(new Date());
+                                            fechaN = fechaS.substring(0, fechaS.length() - 2) + ":00";
+                                            System.out.println(fechaN);
+                                            Log.d("TAG fecha ->", "" + fechaN);
+                                        }catch (Exception e){
+                                            e.printStackTrace();
+                                            Log.d("TAG e: ", "" + e);
+                                        }
+
+                                        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+                                        // String idTramite,String fechaHoraFin,int estatusTramite,String ineIfe,String numeroCuenta,String usuario,double latitud,double longitud
+                                        db.addDocumento(idTramite,fechaN,1138,base64,numeroDeCuenta,Config.usuarioCusp(getContext()),z, w);
+                                        db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+                                        Fragment fragmentoGenerico = new ConCita();
+                                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                                        if (fragmentoGenerico != null) {
+                                            fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                                        }
+                                    }
+                                });
+                                dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+
+                                    }
+                                });
+                                dialogo.show();
 
                                 // * db.addDocumento(idTramite,"2017-04-10",1,base64,"12344","Cesar",90.2349, -23.9897);
                                 /*
@@ -591,6 +610,7 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
                         //Dismissing progress dialog
                         if (primerPeticion) {
                             loading.dismiss();
+                            Log.d("URL", "URL a consumir" + Config.URL_ENVIAR_DOCUMENTO_IFE_INE);
                             primerPaso(response);
                         }
                     }
@@ -599,20 +619,12 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         loading.dismiss();
-                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
+                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
                     }
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+                return Config.credenciales(getContext());
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
@@ -624,11 +636,30 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
         try{
             status = obj.getString("status");
             statusText = obj.getString("statusText");
-            if(Integer.parseInt(status) == 200){
 
+            Connected connected = new Connected();
+            if(connected.estaConectado(getContext())){
+                if(Integer.parseInt(status) == 200){
+
+                    android.app.AlertDialog.Builder dialog  = new android.app.AlertDialog.Builder(getContext());
+                    dialog.setTitle("Datos correctos");
+                    dialog.setMessage("Los datos han sido recibidos, ha finalizado el proceso de implicaciones, da click en ACEPTAR para finalizar el proceso");
+                    dialog.setCancelable(true);
+                    dialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Fragment fragmentoGenerico = new ConCita();
+                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                        }
+                    });
+                    dialog.create().show();
+
+                }
+            }else{
                 android.app.AlertDialog.Builder dialog  = new android.app.AlertDialog.Builder(getContext());
-                dialog.setTitle("Datos correctos");
-                dialog.setMessage("Los datos han sido recibido, ha finalizado el proceso, da click en ACEPTAR para finalizar el proceso");
+                dialog.setTitle("Error en conexión");
+                dialog.setMessage("No se ha podido enviar los datos, ya que existe un problema con la conexión a internet.\nCuando exista conexión se enviaran los datos");
                 dialog.setCancelable(true);
                 dialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                     @Override
@@ -639,9 +670,6 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
                     }
                 });
                 dialog.create().show();
-
-            }else{
-                Config.msj(getContext(), "Error","ha existido algun problema");
             }
         }catch (JSONException e){
             e.printStackTrace();

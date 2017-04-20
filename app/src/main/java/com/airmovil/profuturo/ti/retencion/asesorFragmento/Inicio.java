@@ -151,7 +151,7 @@ public class Inicio extends Fragment {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     progressDialog.dismiss();
-                                    sendJson(true);
+                                    //sendJson(true);
                                 }
                             });
                     progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
@@ -434,7 +434,7 @@ public class Inicio extends Fragment {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             progressDialog.dismiss();
-                                            sendJson(true);
+                                            //sendJson(true);
                                         }
                                     });
                             progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),

@@ -167,7 +167,6 @@ public class ReporteClientesDetalles extends Fragment {
         else
             loading = null;
 
-
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
         try{
@@ -175,12 +174,12 @@ public class ReporteClientesDetalles extends Fragment {
             rqt.put("periodo", periodo);
             periodo.put("fechaInicio", "");
             periodo.put("fechaFin", "");
-            rqt.put("usuario", "");
+            rqt.put("usuario", Config.usuarioCusp(getContext()));
             json.put("rqt", rqt);
             Log.d("sendJson", " REQUEST -->" + json);
 
         } catch (JSONException e){
-            Config.msj(getContext(),"Error","Existe un right_in al formar la peticion");
+            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
         }
 
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_CLIENTE_DETALLE, json,

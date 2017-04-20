@@ -344,13 +344,17 @@ public class ReporteGerencias extends Fragment {
                 mParam1 = getArguments().getString(ARG_PARAM1);
                 mParam2 = getArguments().getString(ARG_PARAM2);
                 mParam3 = getArguments().getInt(ARG_PARAM3);
+
+
+                Log.d("*****", "parametro 1: " + mParam1 + " parametro 2: " + mParam2 + " paramatro3: " + mParam3);
+
                 rqt.put("idGerencia", mParam3);
                 rqt.put("pagina", pagina);
                 periodo.put("fechaFin", mParam1);
                 periodo.put("fechaIni", mParam2);
                 rqt.put("idGerencia", mParam3);
                 rqt.put("perido", periodo);
-                rqt.put("usuario", idUsuario);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }else{
                 rqt.put("idGerencia", 0);
@@ -358,7 +362,7 @@ public class ReporteGerencias extends Fragment {
                 periodo.put("fechaFin", smParam2);
                 periodo.put("fechaIni", smParam1);
                 rqt.put("perido", periodo);
-                rqt.put("usuario", idUsuario);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
                 tvFecha.setText(smParam1 + " - " + smParam2);
             }
@@ -433,6 +437,9 @@ public class ReporteGerencias extends Fragment {
         // TODO: Datos de cantidades generales de saldos
         int totalSaldosEmitodos= 0;
         int totalSaldoNoEmitidos = 0;
+        // TODO: Datos de cantidades emitidos
+        int totalEmitidas = 0;
+        int totalNoEmitidas = 0;
         // TODO: Mensaje de estatus
         String status = "";
         // TODO: datos de lista
@@ -469,6 +476,8 @@ public class ReporteGerencias extends Fragment {
                     getDatos2.setdSaldoRetenido(saldo.getInt("saldoRetenido"));
                     getDatos2.setdSaldoNoRetenido(saldo.getInt("saldoNoRetenido"));
                     JSONObject retenidoss = json.getJSONObject("retenido");
+                    getDatos2.setEmitidas(retenidoss.getInt("retenido"));
+                    getDatos2.setNoEmitidas(retenidoss.getInt("noRetenido"));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }

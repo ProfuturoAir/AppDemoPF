@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Asesor;
@@ -187,6 +188,7 @@ public class Encuesta1 extends Fragment {
                     final Connected conectado = new Connected();
                     if(conectado.estaConectado(getContext())){
                         String o = etObservaciones.getText().toString();
+
                         sendJson(true, r1, r2, r3, o);
                         Config.teclado(getContext(), etObservaciones);
                         Fragment fragmentoGenerico = new Encuesta2();
@@ -195,31 +197,30 @@ public class Encuesta1 extends Fragment {
                         Asesor asesor = (Asesor) getContext();
                         asesor.switchEncuesta2(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
                     }else{
-                        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-                        progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
-                        progressDialog.setTitle(getResources().getString(R.string.error_conexion));
-                        progressDialog.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
-                        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        progressDialog.dismiss();
-                                        Config.teclado(getContext(), etObservaciones);
-                                        db.addEncuesta(idTramite,estatusTramite,r1,r2,r3,etObservaciones.getText().toString().trim());
-                                        db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
-                                        Fragment fragmentoGenerico = new Encuesta2();
-                                        Asesor asesor = (Asesor) getContext();
-                                        asesor.switchEncuesta2(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
-                                    }
-                                });
-                        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
+                        AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
+                        dialogo.setTitle(getResources().getString(R.string.error_conexion));
+                        dialogo.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
+                        dialogo.setCancelable(false);
+                        dialogo.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Config.teclado(getContext(), etObservaciones);
+                                Log.d("Respuesta sin conexion:" , "Respuesta 1" + r1 + "Respuesta 2" + r2 + "Respuesta 3" + r3 );
+                                db.addEncuesta(idTramite,estatusTramite,r1,r2,r3,etObservaciones.getText().toString().trim());
+                                db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+                                Fragment fragmentoGenerico = new Encuesta2();
+                                Asesor asesor = (Asesor) getContext();
+                                asesor.switchEncuesta2(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+                            }
+                        });
+                        dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
-                                    }
-                                });
-                        progressDialog.show();
+
+                            }
+                        });
+                        dialogo.show();
 
 
                         //Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
@@ -373,7 +374,7 @@ public class Encuesta1 extends Fragment {
             encuesta.put("observaciones", observaciones);
             encuesta.put("pregunta3", opc3);
             encuesta.put("pregunta2", opc2);
-            encuesta.put("pregunta1", opc1);
+            rqt.put("pregunta1", opc1);
             rqt.put("encuesta", encuesta);
             rqt.put("estatusTramite", 1134);
             rqt.put("idTramite", Integer.parseInt(idTramite));
@@ -398,7 +399,7 @@ public class Encuesta1 extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         loading.dismiss();
-                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
+                        //Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
                     }
                 }) {
             @Override
