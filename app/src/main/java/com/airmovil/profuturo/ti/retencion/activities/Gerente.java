@@ -557,11 +557,26 @@ public class Gerente extends AppCompatActivity{
 
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_director, frag, frag.toString());
+        ft.replace(R.id.content_gerente, frag, frag.toString());
         ft.addToBackStack(null);
         ft.commit();
     }
 
+    public void switchClientesFS(Fragment frag, int idSucursal,String fechaIni,String fechaFin) {
+        Bundle bundle=new Bundle();
+        bundle.putInt("idSucursal",idSucursal);
+        bundle.putString("fechaIni",fechaIni);
+        bundle.putString("fechaFin",fechaFin);
+        //bundle.putString("hora",hora);
+
+        Log.d("GERENTE", "CLIENTES - #idSucursal " + idSucursal + " FIN: " + fechaFin);
+
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_gerente, frag, frag.toString());
+        ft.addToBackStack(null);
+        ft.commit();
+    }
 
     public void switchAsistencia(Fragment frag, int numeroEmpleado,String fechaIni,String fechaFin) {
         Bundle bundle=new Bundle();
@@ -572,11 +587,29 @@ public class Gerente extends AppCompatActivity{
         //bundle.putString("idSucursal",idSucursal);
         //bundle.putString("hora",hora);
 
-        Log.d("DIRECTOR", "ASITENCIA - #Empleado " + numeroEmpleado + " FIN: " + fechaFin + " ");
+        Log.d("GERENTE", "ASITENCIA - #Empleado " + numeroEmpleado + " FIN: " + fechaFin + " ");
 
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_director, frag, frag.toString());
+        ft.replace(R.id.content_gerente, frag, frag.toString());
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
+    public void switchAsistenciaFS(Fragment frag, int idSucursal,String fechaIni,String fechaFin) {
+        Bundle bundle=new Bundle();
+        bundle.putInt("idSucursal",idSucursal);
+        bundle.putString("fechaIni",fechaIni);
+        bundle.putString("fechaFin",fechaFin);
+        //bundle.putString("idGerencia",idGerencia);
+        //bundle.putString("idSucursal",idSucursal);
+        //bundle.putString("hora",hora);
+
+        Log.d("GERENTE", "ASITENCIA - #idSucursal " + idSucursal + " FIN: " + fechaFin + " ");
+
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_gerente, frag, frag.toString());
         ft.addToBackStack(null);
         ft.commit();
     }

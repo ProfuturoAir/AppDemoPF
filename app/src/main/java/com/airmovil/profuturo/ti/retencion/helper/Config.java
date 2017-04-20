@@ -71,6 +71,10 @@ public class Config extends Activity {
     public static final String URL_CONSULTAR_REPORTE_ASISTENCIA = URL_GENERAL + "mb/premium/rest/consultarReporteAsistencia";
     public static final String URL_CONSULTAR_REPORTE_ASISTENCIA_DETALLE = URL_GENERAL + "Profuturo/consultarReporteProductividadAsistencia";
 
+    //SUCURSALES LISTA
+    public static final String URL_SUCURSALES = URL_GENERAL + "mb/premium/rest/seleccionSucursales";
+    public static final String URL_GERENCIAS = URL_GENERAL + "mb/premium/rest/seleccionGerencias";
+
     // TODO: String
     public static final String[] GERENCIAS = new String[]{"Selecciona una Gerencia","Gerencia 1", "Gerencia 2", "Gerencia 3", "Gerencia 4"};
     public static final String[] SUCURSALES = new String[]{"Selecciona una sucursal","Sucursal 1", "Sucursal 2", "Sucursal 3", "Sucursal 4", "Sucursal 5"};
