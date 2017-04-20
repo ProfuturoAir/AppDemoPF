@@ -207,7 +207,7 @@ public class Director extends AppCompatActivity{
                 fragmentoGenerico = new ReporteAsesores();
                 break;
             case R.id.director_nav_clientes:
-                fragmentoGenerico = new ReporteAsistencia();
+                fragmentoGenerico = new ReporteClientes();
                 break;
             case R.id.director_nav_asistencia:
                 fragmentoGenerico = new ReporteAsistencia();
@@ -308,6 +308,18 @@ public class Director extends AppCompatActivity{
 
         Log.d("DIRECTOR", "ASITENCIA - #Empleado " + numeroEmpleado + " FIN: " + fechaFin + " ");
 
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_director, frag, frag.toString());
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
+    public void switchSucursales(Fragment frag, int idGerencia, String fechaInicio, String fechaFin){
+        Bundle bundle=new Bundle();
+        bundle.putInt("idGerencia",idGerencia);
+        bundle.putString("fechaInicio",fechaInicio);
+        bundle.putString("fechaFin",fechaFin);
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_director, frag, frag.toString());

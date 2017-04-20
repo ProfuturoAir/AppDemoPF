@@ -190,35 +190,31 @@ public class Encuesta2 extends Fragment {
                             Asesor asesor = (Asesor) getContext();
                             asesor.switchFirma(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
                         }else{
+                            AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
+                            dialogo.setTitle(getResources().getString(R.string.error_conexion));
+                            dialogo.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
+                            dialogo.setCancelable(false);
+                            dialogo.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    db.addObservaciones(idTramite,iParam1IdGerencia,iParam2IdMotivos,iParam3IdEstatus,iParam4IdTitulo,iParam5IdRegimentPensionario,iParam6IdDocumentacion,iParam7Telefono,iParam8Email,123);
+                                    db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+                                    Config.teclado(getContext(), etEmail);
+                                    Config.teclado(getContext(), etTelefono);
 
-                            final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-                            progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
-                            progressDialog.setTitle(getResources().getString(R.string.error_conexion));
-                            progressDialog.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
-                            progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            progressDialog.dismiss();
+                                    Fragment fragmentoGenerico = new Firma();
+                                    Asesor asesor = (Asesor) getContext();
+                                    asesor.switchFirma(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+                                }
+                            });
+                            dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
 
-                                            db.addObservaciones(idTramite,iParam1IdGerencia,iParam2IdMotivos,iParam3IdEstatus,iParam4IdTitulo,iParam5IdRegimentPensionario,iParam6IdDocumentacion,iParam7Telefono,iParam8Email,123);
-                                            db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
-                                            Config.teclado(getContext(), etEmail);
-                                            Config.teclado(getContext(), etTelefono);
 
-                                            Fragment fragmentoGenerico = new Firma();
-                                            Asesor asesor = (Asesor) getContext();
-                                            asesor.switchFirma(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
-                                        }
-                                    });
-                            progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-
-                                        }
-                                    });
-                            progressDialog.show();
+                                }
+                            });
+                            dialogo.show();
 
                             // *db.addObservaciones(idTramite,iParam1IdGerencia,iParam2IdMotivos,iParam3IdEstatus,iParam4IdTitulo,iParam5IdRegimentPensionario,iParam6IdDocumentacion,iParam7Telefono,iParam8Email,123);
                             // *db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
@@ -388,7 +384,7 @@ public class Encuesta2 extends Fragment {
             rqt.put("idDocumento", idDocumentacion);
             rqt.put("telefono", telefono);
             rqt.put("email", email);
-            rqt.put("estatusTramite", 1131);
+            rqt.put("estatusTramite", 1133);
             rqt.put("idTramite", Integer.parseInt(idTramite));
             obj.put("rqt", rqt);
             Log.d(TAG, "REQUEST-->" + obj);
@@ -402,6 +398,7 @@ public class Encuesta2 extends Fragment {
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
+                            Log.d("URL", "URL a consumir" + Config.URL_ENVIAR_ENCUESTA_2);
                             loading.dismiss();
                             //primerPaso(response);
                         }
@@ -411,20 +408,12 @@ public class Encuesta2 extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         loading.dismiss();
-                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
+                        //Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
                     }
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+                return Config.credenciales(getContext());
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);

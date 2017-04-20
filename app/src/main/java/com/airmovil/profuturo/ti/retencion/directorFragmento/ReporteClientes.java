@@ -478,27 +478,6 @@ public class ReporteClientes extends Fragment {
         JSONObject rqt = new JSONObject();
         JSONObject filtroCliente = new JSONObject();
         JSONObject periodo = new JSONObject();
-
-
-        /*
-         {"rqt": {
-   "cita": 1,
-   "filtroCliente": {
-     "curp": "TOHR900207HDFRRC07",
-     "nss": "123456789",
-     "numeroCuenta": "3200012345"
-   },
-   "idGerencia": 1,
-   "idSucursal": 1,
-   "pagina": 1,
-   "periodo": {
-     "fechaFin": "20‐02‐2017",
-     "fechaInicio": "01‐02‐2017"
-   },
-   "retenido": 1,
-   "usuario": "072694"
- }}
-         */
         try{
             if(getArguments() != null){
 

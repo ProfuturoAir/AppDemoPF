@@ -404,12 +404,12 @@ public class ReporteAsistencia extends Fragment {
                 periodo.put("fechaFin", mParam2);
                 periodo.put("fechaIni", mParam1);
                 rqt.put("perido", periodo);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }else{
                 Map<String, String> fecha = Config.fechas(1);
                 String param1 = fecha.get("fechaIni");
                 String param2 = fecha.get("fechaFin");
-
                 rqt.put("idGerencia", 0);
                 rqt.put("idSucursal", 0);
                 rqt.put("numeroEmpleado", numeroEmpleado);
@@ -417,6 +417,7 @@ public class ReporteAsistencia extends Fragment {
                 periodo.put("fechaFin", param1);
                 periodo.put("fechaIni", param2);
                 rqt.put("perido", periodo);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }
             Log.d("Rqt", "" + obj);

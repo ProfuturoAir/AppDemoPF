@@ -256,31 +256,37 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                                     Asesor asesor = (Asesor) getContext();
                                     asesor.switchDocumento(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
                                 }else{
+                                    AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
+                                    dialogo.setTitle(getResources().getString(R.string.error_conexion));
+                                    dialogo.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
+                                    dialogo.setCancelable(false);
+                                    dialogo.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            double w, z;
+                                            try {
+                                                z = new Double(lblLatitud.getText().toString());
+                                                w = new Double(lblLongitud.getText().toString());
+                                            } catch (NumberFormatException e) {
+                                                z = 0;
+                                                w = 0;
+                                            }
 
-                                    final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-                                    progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
-                                    progressDialog.setTitle(getResources().getString(R.string.error_conexion));
-                                    progressDialog.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
-                                    progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
-                                            new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    progressDialog.dismiss();
-                                                    db.addFirma(idTramite,123,base64,90.2349,-23.9897);
-                                                    db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
-                                                    Fragment fragmentoGenerico = new Escaner();
-                                                    Asesor asesor = (Asesor) getContext();
-                                                    asesor.switchDocumento(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
-                                                }
-                                            });
-                                    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
-                                            new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
+                                            db.addFirma(idTramite,1137,base64,z,w);
+                                            db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+                                            Fragment fragmentoGenerico = new Escaner();
+                                            Asesor asesor = (Asesor) getContext();
+                                            asesor.switchDocumento(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+                                        }
+                                    });
+                                    dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
 
-                                                }
-                                            });
-                                    progressDialog.show();
+
+                                        }
+                                    });
+                                    dialogo.show();
 
                                     /*
                                     rqt.put("estatusTramite", 123);
@@ -560,6 +566,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
+                            Log.d("URL", "URL a consumir" + Config.URL_ENVIAR_FIRMA);
                             loading.dismiss();
                             //primerPaso(response);
                         }

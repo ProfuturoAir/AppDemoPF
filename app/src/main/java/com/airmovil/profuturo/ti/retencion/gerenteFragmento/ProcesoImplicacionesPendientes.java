@@ -144,6 +144,32 @@ public class ProcesoImplicacionesPendientes extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
+        final EnviaJSON enviaPrevio = new EnviaJSON();
+        Cursor pendientes = db.getAllPending();
+                            try {
+
+                                for(int i=0;i<getDatos1.size();i++)
+                                {
+                                    String iT = String.valueOf(getDatos1.get(i).getId_tramite());
+                                    Log.d("HOLA","EL ID : "+ iT);
+                                    enviaPrevio.sendPrevios(iT, getContext());
+                                    getDatos1.remove(i);
+                                    adapter.notifyDataSetChanged();
+                                }
+
+                                //while (pendientes.moveToNext()) {
+                                    //EnviosPendientesModel getDatos2 = new EnviosPendientesModel();
+
+                                    //Log.d("HOLA","EL ID : "+pendientes.getString(0));
+                                    //if(){
+                                    //    Log.d("Eliminado","Exitoso");
+                                    //    getDatos1.remove(pendientes.getString(0));
+                                    enviaPrevio.sendPrevios(pendientes.getString(0), getContext());
+                                    //Log.d("Respuesta","AQUI: "+enviaPrevio.sendPrevios(pendientes.getString(0), getContext()));
+                                //}
+                            } finally {
+                                pendientes.close();
+                            }
 
         btnEnviarPendientes.setOnClickListener(new View.OnClickListener() {
             @Override

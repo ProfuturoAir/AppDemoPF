@@ -1,9 +1,16 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientesDetalles">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
 
     <TextView style="@style/tituloProceso" android:text="Cliente " />
 
@@ -65,9 +72,9 @@
             <TextView style="@style/datoMuestra"  android:id="@+id/afrcd_tv_hora_atencion" android:text=""/>
         </LinearLayout>
     </LinearLayout>
+    </LinearLayout>
 
-
-</LinearLayout>
+</ScrollView>
 
 
 

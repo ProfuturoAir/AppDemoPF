@@ -27,6 +27,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteSucursalesAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
@@ -62,14 +63,18 @@ import java.util.Map;
 public class ReporteSucursales extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "parametro1";
-    private static final String ARG_PARAM2 = "parametro2";
-    private static final String ARG_PARAM3 = "parametro3";
+    private static final String ARG_PARAM1 = "idGerencia";
+    private static final String ARG_PARAM2 = "idSucursal";
+    private static final String ARG_PARAM3 = "numeroEmpleado";
+    private static final String ARG_PARAM4 = "fechaInicio";
+    private static final String ARG_PARAM5 = "fechaFin";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-    private int mParam3;
+    private int mParam1; // id gerencia
+    private int mParam2; // id sucursal
+    private String mParam3; // numero de empleado
+    private String mParam4; // fecha inicio
+    private String mParam5; // fecha fin
 
     private OnFragmentInteractionListener mListener;
 
@@ -115,8 +120,11 @@ public class ReporteSucursales extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mParam1 = getArguments().getInt(ARG_PARAM1);
+            mParam2 = getArguments().getInt(ARG_PARAM2);
+            mParam3 = getArguments().getString(ARG_PARAM3);
+            mParam4 = getArguments().getString(ARG_PARAM4);
+            mParam5 = getArguments().getString(ARG_PARAM5);
         }
     }
 
@@ -153,14 +161,15 @@ public class ReporteSucursales extends Fragment {
             @Override
             public void onClick(View v) {
                 if(connected.estaConectado(getContext())){
-                    final String fechaIncial = tvRangoFecha1.getText().toString();
-                    final String fechaFinal = tvRangoFecha2.getText().toString();
-                    mParam3 = spinnerSucursales.getSelectedItemPosition();
-                    if(fechaIncial.isEmpty() || fechaFinal.isEmpty() || mParam3 == 0){
+                    mParam2 = spinnerSucursales.getSelectedItemPosition();
+                    mParam4 = tvRangoFecha1.getText().toString();
+                    mParam5 = tvRangoFecha2.getText().toString();
+
+                    if(mParam4.isEmpty() || mParam5.isEmpty() || mParam2 == 0){
                         Config.dialogoDatosVacios(getContext());
                     }else{
                         idSucursal = spinnerSucursales.getSelectedItemPosition();
-                        ReporteSucursales fragmento = ReporteSucursales.newInstance(fechaIncial, fechaFinal, idSucursal, rootView.getContext());
+                        ReporteSucursales fragmento = ReporteSucursales.newInstance(0, mParam2, "", mParam4, mParam5, rootView.getContext());
                         borrar.onDestroy();
                         ft.remove(borrar);
                         ft.replace(R.id.content_director, fragmento);
@@ -216,12 +225,14 @@ public class ReporteSucursales extends Fragment {
 
     }
 
-    public static ReporteSucursales newInstance(String param1, String param2, int param3, Context context){
+    public static ReporteSucursales newInstance(int param1, int param2, String param3,  String param4, String param5, Context context){
         ReporteSucursales fragment = new ReporteSucursales();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        args.putInt(ARG_PARAM3, param3);
+        args.putInt(ARG_PARAM1, param1);
+        args.putInt(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM3, param3);
+        args.putString(ARG_PARAM4, param4);
+        args.putString(ARG_PARAM5, param5);
         fragment.setArguments(args);
         return fragment;
     }
@@ -300,43 +311,42 @@ public class ReporteSucursales extends Fragment {
     private void sendJson(final boolean primerPeticion) {
 
         JSONObject obj = new JSONObject();
+        JSONObject periodo = new JSONObject();
+        JSONObject rqt = new JSONObject();
 
-        Map<String, Integer> fechaDatos = Config.dias();
         Map<String, String> fechaActual = Config.fechas(1);
-        HashMap<String, String> usuario = sessionManager.getUserDetails();
-        String numeroUsuario = usuario.get(SessionManager.USER_ID);
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
         String smParam1 = fechaActual.get("fechaIni");
         String smParam2 = fechaActual.get("fechaFin");
-        mParam3 = 0;
 
         try {
-            JSONObject periodo = new JSONObject();
-            JSONObject rqt = new JSONObject();
 
             if(getArguments() != null){
-                mParam1 = getArguments().getString(ARG_PARAM1);
-                mParam2 = getArguments().getString(ARG_PARAM2);
-                mParam3 = getArguments().getInt(ARG_PARAM3);
-                rqt.put("idGerencia", mParam3);
+
+                mParam1 = getArguments().getInt(ARG_PARAM1);
+                mParam2 = getArguments().getInt(ARG_PARAM2);
+                mParam3 = getArguments().getString(ARG_PARAM3);
+                mParam4 = getArguments().getString(ARG_PARAM4);
+                mParam5 = getArguments().getString(ARG_PARAM5);
+
+                Log.d("*****", "parametro 1: " + mParam1 + " parametro 2: " + mParam2 + " paramatro3: " + mParam3 +  " parametro 4: " +  mParam4 + " parametro 5: " + mParam5);
+
+                rqt.put("idGerencia", mParam1);
+                rqt.put("idSucursal", mParam2);
+                rqt.put("numeroEmpleado", mParam3);
                 rqt.put("pagina", pagina);
-                periodo.put("fechaFin", mParam1);
-                periodo.put("fechaIni", mParam2);
+                periodo.put("fechaIni", mParam4);
+                periodo.put("fechaFin", mParam5);
                 rqt.put("perido", periodo);
-                rqt.put("usuario", numeroUsuario);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }else{
-                Map<String, String> fecha = Config.fechas(1);
-                String sparam1 = fecha.get("fechaIni");
-                String sparam2 = fecha.get("fechaFin");
+
                 rqt.put("idGerencia", 0);
                 rqt.put("pagina", pagina);
-                periodo.put("fechaFin", sparam1);
-                periodo.put("fechaIni", sparam2);
+                periodo.put("fechaFin", smParam1);
+                periodo.put("fechaIni", smParam2);
                 rqt.put("perido", periodo);
-                rqt.put("usuario", numeroUsuario);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }
             Log.d("ReporteSucursales", " RQT -->" + obj);
@@ -560,12 +570,10 @@ public class ReporteSucursales extends Fragment {
         mDay   = fechaDatos.get("dia");
         String smParam1 = fechaActual.get("fechaIni");
         String smParam2 = fechaActual.get("fechaFin");
-        mParam3 = 0;
         if(getArguments() != null){
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-            mParam3 = getArguments().getInt(ARG_PARAM3);
-            tvFecha.setText(mParam1 + " - " + mParam2);
+            mParam4 = getArguments().getString(ARG_PARAM4);
+            mParam5 = getArguments().getString(ARG_PARAM5);
+            tvFecha.setText(mParam4 + " - " + mParam5);
         }else{
             tvFecha.setText(smParam1 + " - " + smParam2);
         }
