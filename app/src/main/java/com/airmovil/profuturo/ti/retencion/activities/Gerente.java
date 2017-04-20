@@ -631,4 +631,22 @@ public class Gerente extends AppCompatActivity{
         ft.addToBackStack(null);
         ft.commit();
     }
+
+    public void switchAsesoresFA(Fragment frag, int numeroEmpleado,String fechaIni,String fechaFin) {
+        Bundle bundle=new Bundle();
+        bundle.putInt("numeroEmpleado",numeroEmpleado);
+        bundle.putString("fechaIni",fechaIni);
+        bundle.putString("fechaFin",fechaFin);
+        //bundle.putString("idGerencia",idGerencia);
+        //bundle.putString("idSucursal",idSucursal);
+        //bundle.putString("hora",hora);
+
+        Log.d("GERENTE", "SUCURSAL - #iNumero Empleado " + numeroEmpleado + " FIN: " + fechaFin + " ");
+
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_gerente, frag, frag.toString());
+        ft.addToBackStack(null);
+        ft.commit();
+    }
 }

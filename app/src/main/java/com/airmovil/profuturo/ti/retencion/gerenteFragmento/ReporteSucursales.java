@@ -494,7 +494,6 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         MySingleton.getInstance(getContext()).addToRequestQueue(jsonArrayRequest);
     }
 
-    //obtener delegaciones
     private void getSucursales(JSONArray j){
         sucursales.add("Selecciona una sucursal");
         id_sucursales.add("0");
@@ -571,8 +570,8 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
             rqt.put("usuario", numeroEmpleado);
             JSONObject periodo = new JSONObject();
             rqt.put("periodo", periodo);
-            periodo.put("fechaInicio", "");
-            periodo.put("fechaFin", "");
+            periodo.put("fechaInicio", fechaIni);
+            periodo.put("fechaFin", fechaFin);
             rqt.put("usuario", Config.usuarioCusp(getContext()));
             obj.put("rqt", rqt);
             Log.d("ReporteSucursales ", "RQT --> " + obj);
