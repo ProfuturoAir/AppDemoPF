@@ -176,7 +176,7 @@ public class GerenteReporteSucursalesAdapter extends RecyclerView.Adapter{
                 case R.id.sub_menu_reporte_sucusal_nav_clientes:
                     ReporteClientes fragmentoClientes = new ReporteClientes();
                     Gerente gerente = (Gerente) mRecyclerView.getContext();
-                    gerente.switchClientes(fragmentoClientes, lista.getIdSucursal(),fechaIni,fechaFin);
+                    gerente.switchClientesFS(fragmentoClientes, lista.getIdSucursal(),fechaIni,fechaFin);
                     //AppCompatActivity a2 = (AppCompatActivity) mRecyclerView.getContext();
                     //com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes f2 = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes();
                     //a2.getSupportFragmentManager().beginTransaction().replace(R.id.content_gerente, f2).addToBackStack(null).commit();
@@ -184,7 +184,7 @@ public class GerenteReporteSucursalesAdapter extends RecyclerView.Adapter{
                 case R.id.sub_menu_reporte_sucusal_nav_asistencia:
                     ReporteAsistencia fragmentoAsistencia = new ReporteAsistencia();
                     Gerente dt = (Gerente) mRecyclerView.getContext();
-                    dt.switchAsistencia(fragmentoAsistencia, lista.getIdSucursal(),fechaIni,fechaFin);
+                    dt.switchAsistenciaFS(fragmentoAsistencia, lista.getIdSucursal(),fechaIni,fechaFin);
                     //AppCompatActivity a3 = (AppCompatActivity) mRecyclerView.getContext();
                     //com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia f3 = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia();
                     //a3.getSupportFragmentManager().beginTransaction().replace(R.id.content_gerente, f3).addToBackStack(null).commit();

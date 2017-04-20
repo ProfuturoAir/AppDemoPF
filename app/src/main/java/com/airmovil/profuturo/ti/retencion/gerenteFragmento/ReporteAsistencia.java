@@ -115,6 +115,8 @@ public class ReporteAsistencia extends Fragment {
     private Connected connected;
 
     private OnFragmentInteractionListener mListener;
+    private int numeroEmpleado;
+    private int  idSucursal;
 
     public ReporteAsistencia() {
         // Required empty public constructor
@@ -166,6 +168,24 @@ public class ReporteAsistencia extends Fragment {
 
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(etAsesor.getWindowToken(), 0);
+
+        if(getArguments() != null) {
+            Log.d("HOLA", "Todos : " + getArguments().toString());
+            idSucursal = getArguments().getInt("idSucursal");
+            numeroEmpleado = getArguments().getInt("numeroEmpleado");
+            fechaIni = getArguments().getString("fechaIni");
+            fechaFin = getArguments().getString("fechaFin");
+
+            if(fechaIni!=null){
+                tvRangoFecha1.setText(fechaIni);
+                tvRangoFecha2.setText(fechaFin);
+                tvFecha.setText(fechaIni + " - " + fechaFin);
+            }
+        }
+
+        Log.d("DATOS","FREG: "+idSucursal+" DI: "+fechaIni+" DF: "+fechaFin);
+
+
         sessionManager = new SessionManager(getContext());
         connected = new Connected();
 
