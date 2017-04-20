@@ -35,6 +35,7 @@ import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteClientesAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
@@ -125,8 +126,13 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
 
     private OnFragmentInteractionListener mListener;
 
-    private int numeroEmpleado;
-    private int  idSucursal;
+    int numeroEmpleado;
+    int  idSucursal;
+
+    int tipoBuscar;
+    int numeroId ;
+    int estatus ;
+    int retenido;
 
 
     public ReporteClientes() {
@@ -193,12 +199,20 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
             fechaIni = getArguments().getString("fechaIni");
             fechaFin = getArguments().getString("fechaFin");
 
+            tipoBuscar = getArguments().getInt("tipoBuscar");
+            numeroId = getArguments().getInt("numeroId");
+            retenido = getArguments().getInt("retenido");
+            estatus = getArguments().getInt("estatus");
+
             if(fechaIni!=null){
                 tvRangoFecha1.setText(fechaIni);
                 tvRangoFecha2.setText(fechaFin);
                 tvFecha.setText(fechaIni + " - " + fechaFin);
             }
 
+            if(etIngresarAsesor!=null){
+                etIngresarAsesor.setText(String.valueOf(numeroEmpleado));
+            }
         }
 
         Log.d("DATOS","FREG: "+idSucursal+" DI: "+fechaIni+" DF: "+fechaFin);
@@ -284,7 +298,11 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     if(mParam1.isEmpty() || mParam2.isEmpty()){
                         Config.dialogoFechasVacias(getContext());
                     }else{
-                        ReporteClientes fragmento = ReporteClientes.newInstance(
+                        Log.d("idS","SS: "+idSucursal + " ___ " +mParam6);
+                        ReporteClientes fragmentoClientes = new ReporteClientes();
+                        Gerente gerente = (Gerente) getContext();
+                        gerente.switchClientesFCQ(fragmentoClientes,idSucursal,Integer.valueOf(mParam6),mParam1,mParam2,mParam9,Integer.valueOf(mParam3),mParam7,mParam8);
+                        /*ReporteClientes fragmento = ReporteClientes.newInstance(
                                 mParam1, mParam2, mParam3, mParam5, mParam6, mParam7, mParam8, mParam9,
                                 rootView.getContext()
                         );
@@ -294,7 +312,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                         ft.addToBackStack(null);
                         ft.commit();
                         Config.teclado(getContext(),etIngresarDato);
-                        Config.teclado(getContext(),etIngresarAsesor);
+                        Config.teclado(getContext(),etIngresarAsesor);*/
                     }
                 }else{
                     Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
@@ -447,7 +465,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         switch (parent.getId())
         {
-            case R.id.ddfrc_spinner_sucursal:
+            case R.id.gfrc_spinner_sucursal:
                 String sim = id_sucursales.get(position);
                 Log.d("SELE","ESTA ->: "+sim);
                 idSucursal = Integer.valueOf(sim);

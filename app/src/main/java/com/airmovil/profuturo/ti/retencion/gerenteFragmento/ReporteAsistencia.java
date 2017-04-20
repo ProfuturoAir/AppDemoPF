@@ -34,6 +34,7 @@ import com.airmovil.profuturo.ti.retencion.Adapter.CitasClientesAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteAsistenciaAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteAsistenciaAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.*;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
@@ -189,6 +190,10 @@ public class ReporteAsistencia extends Fragment implements  Spinner.OnItemSelect
                 tvRangoFecha2.setText(fechaFin);
                 tvFecha.setText(fechaIni + " - " + fechaFin);
             }
+
+            if(etAsesor!=null){
+                etAsesor.setText(String.valueOf(numeroEmpleado));
+            }
         }
 
         Log.d("DATOS","FREG: "+idSucursal+" DI: "+fechaIni+" DF: "+fechaFin);
@@ -218,14 +223,18 @@ public class ReporteAsistencia extends Fragment implements  Spinner.OnItemSelect
                     if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
                         Config.dialogoFechasVacias(getContext());
                     }else{
-                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        ReporteAsistencia fragmentoAsistenia = new ReporteAsistencia();
+                        Gerente gerente = (Gerente) getContext();
+                        gerente.switchAsistenciaFAT(fragmentoAsistenia, idSucursal,Integer.valueOf(idAsesor),fechaIncial,fechaFinal);
+
+                        /*FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         ReporteAsistencia fragmento = ReporteAsistencia.newInstance(fechaIncial, fechaFinal, idSucursal, idAsesor, rootView.getContext());
                         borrar.onDestroy();
                         ft.remove(borrar);
                         ft.replace(R.id.content_gerente, fragmento);
                         ft.addToBackStack(null);
                         ft.commit();
-                        Config.teclado(getContext(), etAsesor);
+                        Config.teclado(getContext(), etAsesor);*/
                     }
                 }else{
                     Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
