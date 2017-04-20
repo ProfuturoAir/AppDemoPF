@@ -30,10 +30,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteAsesoresAdapter;
+import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteSucursalesAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteAsesoresAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.EnviaMail;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
@@ -106,7 +108,7 @@ public class ReporteAsesores extends Fragment {
     private EditText etAsesor;
     private TextView tvRangoFecha1, tvRangoFecha2;
     private Button btnBuscar;
-    private TextView tvTotalResultados;
+    private TextView tvResultados;
     int filas;
     final Fragment borrar = this;
 
@@ -158,7 +160,7 @@ public class ReporteAsesores extends Fragment {
         tvSaldoEmitido = (TextView) rootView.findViewById(R.id.dfra_tv_saldo_emitido);
         tvSaldoNoEmitido = (TextView) rootView.findViewById(R.id.dfra_tv_saldo_no_emitido);
         etAsesor = (EditText) rootView.findViewById(R.id.dfra_et_asesor);
-        tvTotalResultados = (TextView) rootView.findViewById(R.id.dfra_tv_total_registros);
+        tvResultados = (TextView) rootView.findViewById(R.id.dfra_tv_total_registros);
         tvRangoFecha1 = (TextView) rootView.findViewById(R.id.dfra_tv_fecha_rango1);
         tvRangoFecha2 = (TextView) rootView.findViewById(R.id.dfra_tv_fecha_rango2);
         btnBuscar = (Button) rootView.findViewById(R.id.dfra_btn_buscar);
@@ -221,14 +223,14 @@ public class ReporteAsesores extends Fragment {
             }
         });
 
-        tvTotalResultados.setOnClickListener(new View.OnClickListener() {
+        tvResultados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final Dialog dialog = new Dialog(getContext());
                 dialog.setContentView(R.layout.custom_layout);
 
                 Button btn = (Button) dialog.findViewById(R.id.dialog_btn_enviar);
-                Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
+                final Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
 
                 // TODO: Spinner
                 ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item_azul, Config.EMAIL);
@@ -238,18 +240,79 @@ public class ReporteAsesores extends Fragment {
                 btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
+                        final EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
 
                         final String datoEditText = editText.getText().toString();
-                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
-                        Connected connected = new Connected();
-                        if(connected.estaConectado(getContext())){
-                            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-                            Config.msjTime(getContext(), "Mensaje datos1", "Se está enviado los datos a " + datoEditText + "@profuturo.com", 8000);
-                            dialog.dismiss();
+                        final String datoSpinner = spinner.getSelectedItem().toString();
+
+                        Log.d("DATOS USER","SPINNER: "+datoEditText+" datosSpinner: "+ datoSpinner);
+                        if(datoEditText == "" || datoSpinner == "Seleciona un email"){
+                            Config.msj(getContext(), "Error", "Ingresa email valido");
                         }else{
-                            Config.msj(getContext(), "Error conexión", "Por favor, revisa tu conexión a internet");
-                            dialog.dismiss();
+                            String email = datoEditText+"@"+datoSpinner;
+                            Connected connected = new Connected();
+                            final InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Service.INPUT_METHOD_SERVICE);
+                            if(connected.estaConectado(getContext())){
+                                JSONObject obj = new JSONObject();
+                                boolean checa = true;
+                                if (getArguments() != null){
+                                    mParam3 = getArguments().getString(ARG_PARAM3);
+                                    checa = true;
+                                }else{
+                                    mParam3 = "";
+                                    checa = false;
+                                }
+
+                                try {
+                                    JSONObject rqt = new JSONObject();
+                                    rqt.put("correo", email);
+                                    rqt.put("detalle", checa);
+                                    rqt.put("idEmpleado", mParam3);
+                                    JSONObject periodo = new JSONObject();
+                                    periodo.put("fechaFin", fechaFin);
+                                    periodo.put("fechaInicio", fechaIni);
+                                    rqt.put("periodo", periodo);
+                                    rqt.put("usuario", Config.usuarioCusp(getContext()));
+                                    obj.put("rqt", rqt);
+                                    Log.d("datos", "REQUEST-->" + obj);
+                                } catch (JSONException e) {
+                                    Config.msj(getContext(), "Error", "Error al formar los datos");
+                                }
+                                EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_SUCURSAL,getContext(),new EnviaMail.VolleyCallback() {
+
+                                    @Override
+                                    public void onSuccess(JSONObject result) {
+                                        Log.d("RESPUESTA SUCURSAL", result.toString());
+                                        int status;
+
+                                        try {
+                                            status = result.getInt("status");
+                                        }catch(JSONException error){
+                                            status = 400;
+                                        }
+
+                                        Log.d("EST","EE: "+status);
+                                        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                                        if(status == 200) {
+                                            Config.msj(getContext(), "Enviando", "Se ha enviado el mensaje al destino");
+                                            //Config.msjTime(getContext(), "Enviando", "Se ha enviado el mensaje al destino", 4000);
+                                            dialog.dismiss();
+                                        }else{
+                                            Config.msj(getContext(), "Error", "Ups algo salio mal =(");
+                                            dialog.dismiss();
+                                        }
+                                        //db.addUserCredits(fk_id_usuario,result);
+                                    }
+                                    @Override
+                                    public void onError(String result) {
+                                        Log.d("RESPUESTA ERROR", result);
+                                        Config.msj(getContext(), "Error en conexión", "Por favor, revisa tu conexión a internet ++");
+                                        //db.addUserCredits(fk_id_usuario, "ND");
+                                    }
+                                });
+                            }else{
+                                Config.msj(getContext(), "Error en conexión", "Por favor, revisa tu conexión a internet");
+                            }
                         }
                     }
                 });
@@ -331,33 +394,13 @@ public class ReporteAsesores extends Fragment {
 
         final String smParam1 = fechaActual.get("fechaIni");
         final String smParam2 = fechaActual.get("fechaFin");
-/*
-
-{"rqt": {
-   "idGerencia": 1,
-   "idSucursal": 1,
-   "numeroEmpleadoAsesor": "04261",
-   "pagina": 1,
-   "periodo": {
-     "fechaFin": "20‐02‐2017",
-     "fechaInicio": "01‐02‐2017"
-   },
-   "usuario": "072694"
- }}
-
- */
-
         try{
             if(getArguments() != null){
-
                 mParam1 = getArguments().getString(ARG_PARAM1); // fecha inicio
                 mParam2 = getArguments().getString(ARG_PARAM2); // fecha Fin
                 mParam3 = getArguments().getString(ARG_PARAM3); // id asesor
                 mParam4 = getArguments().getInt(ARG_PARAM4); // id gerencia
                 mParam5 = getArguments().getInt(ARG_PARAM5); // id sucursal
-
-                Log.d("OBTENIENDO PARAMETROS", "id gerencia: " + mParam4 + " id sucursal: " + mParam5);
-
                 rqt.put("idGerencia", "");
                 rqt.put("idSucursal", "");
                 rqt.put("numeroEmpleadoAsesor", mParam3);
@@ -378,49 +421,11 @@ public class ReporteAsesores extends Fragment {
                 rqt.put("usuario", Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }
-
             Log.d("RQT", " ReporteAsesores ->" + obj);
         }catch (JSONException e){
             e.printStackTrace();
         }
 
-
-        /*
-        try {
-            if(getArguments() != null) {
-                mParam1 = getArguments().getString(ARG_PARAM1);
-                mParam2 = getArguments().getString(ARG_PARAM2);
-                mParam3 = getArguments().getString(ARG_PARAM3);
-
-                Map<String, String> fecha = Config.fechas(1);
-                String param1 = fecha.get("fechaIni");
-                String param2 = fecha.get("fechaFin");
-
-                JSONObject rqt = new JSONObject();
-                JSONObject periodo = new JSONObject();
-
-                rqt.put("numeroEmpleadoAsesor", mParam3);
-                rqt.put("pagina", pagina);
-                periodo.put("fechaFin", mParam1);
-                periodo.put("fechaIni", mParam2);
-                rqt.put("perido", periodo);
-                rqt.put("usuario", usuario.get(SessionManager.USER_ID));
-                obj.put("rqt", rqt);
-            }else{
-                JSONObject rqt = new JSONObject();
-                rqt.put("numeroEmpleadoAsesor", "");
-                rqt.put("pagina", pagina);
-                JSONObject periodo = new JSONObject();
-                periodo.put("fechaFin", smParam2);
-                periodo.put("fechaIni", smParam1);
-                rqt.put("perido", periodo);
-                rqt.put("usuario", usuario.get(SessionManager.ID));
-                obj.put("rqt", rqt);
-            }
-            Log.d("ReporteSucursales", " RQT -->" + obj);
-        } catch (JSONException e) {
-            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un right_in al formar los datos.");
-        }*/
         //Creating a json array request
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_ASESORES, obj,
                 new Response.Listener<JSONObject>() {
@@ -450,7 +455,7 @@ public class ReporteAsesores extends Fragment {
                             dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    sendJson(true);
+                                    //sendJson(true);
                                 }
                             });
                             dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -534,7 +539,7 @@ public class ReporteAsesores extends Fragment {
         tvNoEmitidas.setText("" + noEmitido);
         tvSaldoEmitido.setText("" + Config.nf.format(saldoEmitido));
         tvSaldoNoEmitido.setText("" + Config.nf.format(saldoNoEmitido));
-        tvTotalResultados.setText("" + filas + " Resultados ");
+        tvResultados.setText("" + filas + " Resultados ");
 
 
         //String smParam1 = fechaActual.get("fechaIni");
@@ -544,7 +549,16 @@ public class ReporteAsesores extends Fragment {
         String PtvFecha = tvFecha.getText().toString();
         String[] separated = PtvFecha.split(" - ");
 
-        adapter = new DirectorReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView,separated[0].trim(),separated[1].trim());
+        Map<String, String> fechaActual = Config.fechas(1);
+        String sParam1 = fechaActual.get("fechaIni");
+        String sParam2 = fechaActual.get("fechaFin");
+        if(getArguments() != null){
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+            adapter = new DirectorReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView, mParam1, mParam2);
+        }else{
+            adapter = new DirectorReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView, sParam1, sParam2);
+        }
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
