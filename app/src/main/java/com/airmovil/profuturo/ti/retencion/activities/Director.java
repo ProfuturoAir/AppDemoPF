@@ -207,7 +207,7 @@ public class Director extends AppCompatActivity{
                 fragmentoGenerico = new ReporteAsesores();
                 break;
             case R.id.director_nav_clientes:
-                fragmentoGenerico = new ReporteAsistencia();
+                fragmentoGenerico = new ReporteClientes();
                 break;
             case R.id.director_nav_asistencia:
                 fragmentoGenerico = new ReporteAsistencia();

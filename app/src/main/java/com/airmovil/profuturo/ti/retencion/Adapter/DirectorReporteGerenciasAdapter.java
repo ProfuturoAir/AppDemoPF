@@ -214,8 +214,6 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
                 case R.id.nav_sucursales:
                     ReporteSucursales reporteSucursales = new ReporteSucursales();
                     Director director = (Director) mRecyclerView.getContext();
-                    Toast.makeText(mContext, "Gerencia: " + list.getIdGerencia() + " fecha1: "
-                            + mFechaInicio + " fechaFin " + mFechaFin, Toast.LENGTH_SHORT).show();
                     director.switchSucursales(reporteSucursales, list.idGerencia, mFechaInicio, mFechaFin);
                     return true;
                 case R.id.nav_clientes:

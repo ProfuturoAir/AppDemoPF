@@ -107,6 +107,9 @@ public class ReporteGerencias extends Fragment {
     private InputMethodManager imm;
     final Fragment borrar = this;
 
+    private ArrayList<String> gerencias;
+    private ArrayList<String> id_gerencias;
+
     private HashMap<String, String> usuario;
 
     public ReporteGerencias() {
@@ -344,10 +347,6 @@ public class ReporteGerencias extends Fragment {
                 mParam1 = getArguments().getString(ARG_PARAM1);
                 mParam2 = getArguments().getString(ARG_PARAM2);
                 mParam3 = getArguments().getInt(ARG_PARAM3);
-
-
-                Log.d("*****", "parametro 1: " + mParam1 + " parametro 2: " + mParam2 + " paramatro3: " + mParam3);
-
                 rqt.put("idGerencia", mParam3);
                 rqt.put("pagina", pagina);
                 periodo.put("fechaFin", mParam1);

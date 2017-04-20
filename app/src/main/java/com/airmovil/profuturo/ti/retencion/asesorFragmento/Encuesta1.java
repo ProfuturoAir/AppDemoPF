@@ -371,11 +371,11 @@ public class Encuesta1 extends Fragment {
         try{
             JSONObject rqt = new JSONObject();
             JSONObject encuesta = new JSONObject();
-            encuesta.put("observaciones", observaciones);
-            encuesta.put("pregunta3", opc3);
+            encuesta.put("pregunta1", opc1);
             encuesta.put("pregunta2", opc2);
-            rqt.put("pregunta1", opc1);
+            encuesta.put("pregunta3", opc3);
             rqt.put("encuesta", encuesta);
+            rqt.put("observaciones", observaciones);
             rqt.put("estatusTramite", 1134);
             rqt.put("idTramite", Integer.parseInt(idTramite));
             obj.put("rqt", rqt);
