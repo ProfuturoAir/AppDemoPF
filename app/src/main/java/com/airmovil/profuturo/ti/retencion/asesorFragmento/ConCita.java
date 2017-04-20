@@ -463,7 +463,6 @@ public class ConCita extends Fragment {
         tvRegistros.setText(filas + " Registros");
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         adapter = new CitasClientesAdapter(rootView.getContext(), getDatos1, recyclerView);
-
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
@@ -488,13 +487,15 @@ public class ConCita extends Fragment {
                 //Load more data for reyclerview
                 new Handler().postDelayed(new Runnable() {
                     @Override
-                    public void run() {Log.e("haint", "Load More 2");
+                    public void run() {
+                        Log.e("haint", "Load More 2");
                         //Remove loading itm
                         getDatos1.remove(getDatos1.size() - 1);
                         adapter.notifyItemRemoved(getDatos1.size());
                         //Load data
                         Log.d("EnvioIndex", getDatos1.size() + "");
                         pagina = Config.pidePagina(getDatos1);
+                        Log.d("Dato pagina 2", " - > " + pagina);
                         sendJson(false);
                     }
                 }, 5000);

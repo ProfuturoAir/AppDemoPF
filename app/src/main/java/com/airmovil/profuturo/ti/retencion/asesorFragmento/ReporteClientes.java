@@ -182,7 +182,7 @@ public class ReporteClientes extends Fragment {
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
 
         // TODO: webservice
-        sendJson(true);
+        //sendJson(true);
 
         final Fragment borrar = this;
         btnBuscar.setOnClickListener(new View.OnClickListener() {
@@ -399,7 +399,7 @@ public class ReporteClientes extends Fragment {
                 rqt.put("usuario", Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }
-            Log.d(TAG, "PETICION VACIA-->" + obj);
+            Log.d(TAG, "RQT-->" + obj);
         }catch (JSONException e){
             e.printStackTrace();
         }
@@ -532,18 +532,13 @@ public class ReporteClientes extends Fragment {
         }else{
             adapter = new AsesorReporteClientesAdapter(rootView.getContext(), getDatos1, recyclerView, fechaIni, fechaFin);
         }
-
-
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
-
-
         try {
             adapter.notifyDataSetChanged();
         } catch (Exception e) {
             Log.d(TAG, e.toString());
         }
-
 
         adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
@@ -563,11 +558,13 @@ public class ReporteClientes extends Fragment {
                     public void run() {
                         Log.e("haint", "Load More 2");
                         //Remove loading item
+                        Log.d("handler", "pagina " +  pagina);
                         getDatos1.remove(getDatos1.size() - 1);
                         adapter.notifyItemRemoved(getDatos1.size());
                         //Load data
                         Log.d("EnvioIndex", getDatos1.size() + "");
                         pagina = Config.pidePagina(getDatos1);
+                        Log.d("Dato pagina 2", " - > " + pagina);
                         sendJson(false);
                     }
                 }, 5000);

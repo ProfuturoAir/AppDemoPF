@@ -96,26 +96,12 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
         if(holder instanceof MyViewHolder){
             final DirectorReporteClientesModel lista = list.get(position);
             final MyViewHolder myholder = (MyViewHolder) holder;
-
             myholder.campoNombreCliente.setText("Nombre del cliente: " + lista.getNombreCliente());
             myholder.campoCuentaCliente.setText("Número de cuenta: " + lista.getNumeroCuenta());
             myholder.campoAsesorCliente.setText("Asesor: " + lista.getNumeroEmpleado());
-
-            boolean citas = Boolean.parseBoolean(lista.getCita());
-            if (citas == true)
-                myholder.campoConCitaCliente.setText("Con cita");
-            else
-                myholder.campoConCitaCliente.setText("Sin cita");
-
-            boolean retenido = Boolean.parseBoolean(lista.getRetenido());
-            if(retenido == true)
-                myholder.campoNoRetenidoCliente.setText("Retenido");
-            else
-                myholder.campoNoRetenidoCliente.setText("No retenido");
-
+            myholder.campoConCitaCliente.setText((Boolean.parseBoolean(lista.getCita()) ? "Si" : "No"));
+            myholder.campoNoRetenidoCliente.setText((Boolean.parseBoolean(lista.getRetenido()) ? "Retenido" : "No Retenido"));
             myholder.campoSucursalCliente.setText("Sucursal" + lista.getIdSucursal());
-            //myholder.campoSaldoNoEmitido.setText(lista.getSaldoNoEmetido());
-
             int var = lista.getIdSucursal();
             String intToString = String.valueOf(var);
             char dato = intToString.charAt(0);
@@ -128,13 +114,6 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
                     fragmentJumpDatosUsuario("", v);
                 }
             });
-
-            /*myholder.btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    surgirMenu(v);
-                }
-            });*/
         } else{
             ((LoadingViewHolder) holder).progressBar.setIndeterminate(true);
         }

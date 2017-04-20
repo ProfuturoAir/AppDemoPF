@@ -100,14 +100,11 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
         if(holder instanceof MyViewHolder){
             final GerenteReporteClientesModel lista = list.get(position);
             final MyViewHolder myholder = (MyViewHolder) holder;
-
             myholder.campoNombreCliente.setText("Asesor: " + lista.getNombreCliente());
             myholder.campoCuentaCliente.setText(" " + lista.getNumeroCuenta());
             myholder.campoAsesorCliente.setText(" " + lista.getNumeroEmpleado());
-            myholder.campoNoRetenidoCliente.setText(lista.getRetenido());
-            //myholder.campoSucursalCliente.setText(lista.getIdSucursal());
-            //myholder.campoSaldoNoEmitido.setText(lista.getSaldoNoEmetido());
-
+            //myholder.campoNoRetenidoCliente.setText(" " + lista.getRetenido());
+            myholder.campoNoRetenidoCliente.setText((Boolean.parseBoolean(lista.getRetenido()) ? "Retenido" : "No Retenido"));
             int var = lista.getIdSucursal();
             String intToString = String.valueOf(var);
             char dato = intToString.charAt(0);
@@ -203,11 +200,6 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
                                 Connected connected = new Connected();
                                 final InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Service.INPUT_METHOD_SERVICE);
                                 if(connected.estaConectado(mContext)){
-                                    //final EnviaMail envia = new EnviaMail();
-                                    //String respuesta = envia.sendMail("1","correo",true,"1","12","12",Config.URL_SEND_MAIL,mContext);
-                                /*imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-                                Config.msjTime(mContext, "Enviando", "Se ha enviado el mensaje al destino", 4000);
-                                dialog.dismiss();*/
                                     JSONObject obj = new JSONObject();
                                     try {
                                         JSONObject rqt = new JSONObject();
@@ -235,18 +227,15 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
                                         Config.msj(mContext, "Error", "Error al formar los datos");
                                     }
                                     EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_CLIENTE,mContext,new EnviaMail.VolleyCallback() {
-
                                         @Override
                                         public void onSuccess(JSONObject result) {
                                             Log.d("RESPUESTA DIRECTOR", result.toString());
                                             int status;
-
                                             try {
                                                 status = result.getInt("status");
                                             }catch(JSONException error){
                                                 status = 400;
                                             }
-
                                             Log.d("EST","EE: "+status);
                                             imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
                                             if(status == 200) {
@@ -279,7 +268,6 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
 
     public static class LoadingViewHolder extends RecyclerView.ViewHolder {
         public ProgressBar progressBar;
-
         public LoadingViewHolder(View itemView) {
             super(itemView);
             progressBar = (ProgressBar) itemView.findViewById(R.id.loading);

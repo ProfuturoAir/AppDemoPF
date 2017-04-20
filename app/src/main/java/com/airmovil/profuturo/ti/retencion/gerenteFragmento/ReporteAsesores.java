@@ -3,7 +3,6 @@ package com.airmovil.profuturo.ti.retencion.gerenteFragmento;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
@@ -29,7 +28,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteAsesoresAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteAsesoresAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
@@ -79,7 +77,6 @@ public class ReporteAsesores extends Fragment {
     private RecyclerView.Adapter recyclerViewAdapter;
 
     private InputMethodManager imm;
-
     // TODO: View, sessionManager, datePickerDialog
     private View rootView;
     private SessionManager sessionManager;
@@ -341,8 +338,6 @@ public class ReporteAsesores extends Fragment {
 
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
-        HashMap<String, String> usuario = sessionManager.getUserDetails();
-        String numeroUsuario = usuario.get(SessionManager.ID);
 
         JSONObject obj = new JSONObject();
         try {
@@ -355,7 +350,7 @@ public class ReporteAsesores extends Fragment {
             rqt.put("periodo", periodo);
             periodo.put("fechaInicio", "");
             periodo.put("fechaFin", "");
-            rqt.put("usuario", usuario.get(SessionManager.USER_ID));
+            rqt.put("usuario", Config.usuarioCusp(getContext()));
             obj.put("rqt", rqt);
             Log.d("ReporteSucursales ", "RQT --> " + obj);
         } catch (JSONException e) {
