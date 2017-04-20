@@ -33,6 +33,7 @@ import com.airmovil.profuturo.ti.retencion.Adapter.CitasClientesAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteSucursalesAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteSucursalesAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.*;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
@@ -119,6 +120,9 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
     private OnFragmentInteractionListener mListener;
     private Connected connected;
 
+    int idSucursal;
+    int numeroEmpleado;
+
     public ReporteSucursales() {
         // Required empty public constructor
     }
@@ -151,6 +155,9 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         sucursales = new ArrayList<String>();
         id_sucursales = new ArrayList<String>();
 
+        idSucursal = 0;
+        numeroEmpleado = 0;
+
         variables();
         fechas();
         // TODO: Spinner
@@ -162,6 +169,32 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
 
         sessionManager = new SessionManager(getContext());
         connected = new Connected();
+
+        if(getArguments() != null) {
+            Log.d("HOLA", "Todos : " + getArguments().toString());
+            idSucursal = getArguments().getInt("idSucursal");
+            numeroEmpleado = getArguments().getInt("numeroEmpleado");
+            fechaIni = getArguments().getString("fechaIni");
+            fechaFin = getArguments().getString("fechaFin");
+
+            if(fechaIni!=null){
+                tvRangoFecha1.setText(fechaIni);
+                tvRangoFecha2.setText(fechaFin);
+                tvFecha.setText(fechaIni + " - " + fechaFin);
+            }
+
+            if(idSucursal!=0){
+                Log.d("SELE","SIZE ->: "+id_sucursales);
+                int size = id_sucursales.size();
+                /*for(int i=0; i < id_sucursales.size(); i++) {
+                    if (id_sucursales[i].contains("#abc"))
+                        aPosition = i;
+                }*/
+                //String sim = id_sucursales;
+                Log.d("SELE","SIZE ->: "+size);
+                //idSucursal = Integer.valueOf(sim);
+            }
+        }
         // TODO: model
         getDatos1 = new ArrayList<>();
         // TODO: Recycler
@@ -177,15 +210,18 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
 
                 final String fechaIncial = tvRangoFecha1.getText().toString();
                 final String fechaFinal = tvRangoFecha2.getText().toString();
-                if(fechaIncial.equals("") || fechaFinal.equals("")){
-                    Config.dialogoFechasVacias(getContext());
+                if(fechaIncial.equals("") || fechaFinal.equals("") || idSucursal == 0){
+                    Config.dialogoDatosVacios(getContext());
                 }else {
-                    ReporteSucursales fragmento = ReporteSucursales.newInstance(fechaIncial, fechaFinal, rootView.getContext());
+                    ReporteSucursales fragmentoSucursales = new ReporteSucursales();
+                    Gerente gerente = (Gerente) getContext();
+                    gerente.switchSucursalFS(fragmentoSucursales, idSucursal,fechaIncial,fechaFinal);
+                    /*ReporteSucursales fragmento = ReporteSucursales.newInstance(fechaIni, fechaFin, rootView.getContext());
                     borrar.onDestroy();
                     ft.remove(borrar);
                     ft.replace(R.id.content_gerente, fragmento);
                     ft.addToBackStack(null);
-                    ft.commit();
+                    ft.commit();*/
                 }
             }
         });
@@ -226,14 +262,19 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
                                 /*imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
                                 Config.msjTime(getContext(), "Enviando", "Se ha enviado el mensaje al destino", 4000);
                                 dialog.dismiss();*/
-                                final String idSucursal = spinnerSucursales.getSelectedItem().toString();
+                                //final String idSucursal = spinnerSucursales.getSelectedItem().toString();
 
                                 Log.d("DATOS","+++++: "+idSucursal);
                                 JSONObject obj = new JSONObject();
+                                boolean checa = true;
+                                if (idSucursal == 0){
+                                    checa = false;
+                                }
+
                                 try {
                                     JSONObject rqt = new JSONObject();
                                     rqt.put("correo", email);
-                                    rqt.put("detalle", false);
+                                    rqt.put("detalle", checa);
                                     rqt.put("idSucursal", idSucursal);
                                     JSONObject periodo = new JSONObject();
                                     periodo.put("fechaFin", fechaFin);
@@ -245,11 +286,11 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
                                 } catch (JSONException e) {
                                     Config.msj(getContext(), "Error", "Error al formar los datos");
                                 }
-                                EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_ASESOR,getContext(),new EnviaMail.VolleyCallback() {
+                                EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_SUCURSAL,getContext(),new EnviaMail.VolleyCallback() {
 
                                     @Override
                                     public void onSuccess(JSONObject result) {
-                                        Log.d("RESPUESTA DIRECTOR", result.toString());
+                                        Log.d("RESPUESTA SUCURSAL", result.toString());
                                         int status;
 
                                         try {
@@ -391,6 +432,8 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
                 break;*/
             case R.id.gfrs_spinner_sucursales:
                 String sim = id_sucursales.get(position);
+                Log.d("SELE","ESTA ->: "+sim);
+                idSucursal = Integer.valueOf(sim);
                 //id_sucursales.clear();
                 //sucursales.clear();
                 //spinnerSucursales.setAdapter(null);
@@ -457,9 +500,7 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         id_sucursales.add("0");
         for(int i=0;i<j.length();i++){
             try {
-
                 JSONObject json = j.getJSONObject(i);
-                //Log.d("LLENA", "EL OBJ: ->" + json);
                 sucursales.add(json.getString("nombre"));
                 id_sucursales.add(json.getString("idSucursal"));
             } catch (JSONException e) {
@@ -467,12 +508,32 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
             }
         }
 
-        Log.d("LLENA", "LAS SUCURSALES : ->" + sucursales);
+        //Log.d("LLENA", "LAS SUCURSALES : ->" + sucursales);
+
+        int position=0;
+        if(idSucursal!=0){
+
+            //Log.d("SELE","By Position ->: "+position);
+
+            int size = id_sucursales.size();
+                for(int i=0; i < id_sucursales.size(); i++) {
+                    Log.d("SELE","by ID ->: " +id_sucursales.get(i));
+                    Log.d("SELE","ID ->: " +idSucursal);
+                    if(Integer.valueOf(id_sucursales.get(i)) == idSucursal){
+                        Log.d("SELE","SIZE ->: "+position);
+                        position = i;
+                        break;
+                    }
+                }
+            //Log.d("SELE","SIZE ->: "+size);
+            //Log.d("SELE","By Position ->: "+position);
+        }
 
         //spinnerSucursales.setAdapter(new ArrayAdapter<String>(getActivity(), R.layout.spinner_item, sucursales));
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, sucursales);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinnerSucursales.setAdapter(adapter);
+        spinnerSucursales.setSelection(position);
     }
 
     /**
@@ -505,14 +566,14 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         try {
             // TODO: Formacion del JSON request
             JSONObject rqt = new JSONObject();
-            rqt.put("idSucursal", 1);
+            rqt.put("idSucursal", idSucursal);
             rqt.put("pagina", pagina);
-            rqt.put("usuario", "USUARIO");
+            rqt.put("usuario", numeroEmpleado);
             JSONObject periodo = new JSONObject();
             rqt.put("periodo", periodo);
             periodo.put("fechaInicio", "");
             periodo.put("fechaFin", "");
-            rqt.put("usuario", "2222");
+            rqt.put("usuario", Config.usuarioCusp(getContext()));
             obj.put("rqt", rqt);
             Log.d("ReporteSucursales ", "RQT --> " + obj);
         } catch (JSONException e) {
@@ -736,7 +797,7 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                                 tvRangoFecha2.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
-                                fechaIni = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
+                                fechaFin = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
                             }
                         }, mYear, mMonth, mDay);
                 datePickerDialog.show();
