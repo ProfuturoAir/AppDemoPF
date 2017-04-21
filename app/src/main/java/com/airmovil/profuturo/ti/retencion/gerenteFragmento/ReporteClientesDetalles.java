@@ -47,12 +47,23 @@ import java.util.Map;
 public class ReporteClientesDetalles extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM1 = "param1"; // curp
+    private static final String ARG_PARAM2 = "param2"; // nss
+    private static final String ARG_PARAM3 = "param3"; // numero de cuenta
+    private static final String ARG_PARAM4 = "param4"; // idTramite
+    private static final String ARG_PARAM5 = "param5"; // fecha inicio
+    private static final String ARG_PARAM6 = "param6"; // fecha fin
+    private static final String ARG_PARAM7 = "param6"; // hora
+
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private String mParam3;
+    private int mParam4;
+    private String mParam5;
+    private String mParam6;
+    private String mParam7;
 
     private TextView tv1, tv2, tv3, tv4, tv5, tv6, tv7;
 
@@ -66,16 +77,27 @@ public class ReporteClientesDetalles extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param param1 parametro 1 curp.
+     * @param param1 parametro 2 nss.
+     * @param param1 parametro 3 numero de cuenta.
+     * @param param1 parametro 4 idTramite.
+     * @param param1 parametro 5 fecha inicio.
+     * @param param1 parametro 6 fecha fin.
+     * @param param1 parametro 7 fecha hora.
      * @return A new instance of fragment ReporteClientesDetalles.
      */
     // TODO: Rename and change types and number of parameters
-    public static ReporteClientesDetalles newInstance(String param1, String param2) {
+    public static ReporteClientesDetalles newInstance(String param1, String param2, String param3,
+                                                      int param4, String param5, String param6, String param7) {
         ReporteClientesDetalles fragment = new ReporteClientesDetalles();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM3, param3);
+        args.putInt(ARG_PARAM4, param4);
+        args.putString(ARG_PARAM5, param5);
+        args.putString(ARG_PARAM6, param6);
+        args.putString(ARG_PARAM7, param7);
         fragment.setArguments(args);
         return fragment;
     }
@@ -86,6 +108,11 @@ public class ReporteClientesDetalles extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+            mParam3 = getArguments().getString(ARG_PARAM3);
+            mParam4 = getArguments().getInt(ARG_PARAM4);
+            mParam5 = getArguments().getString(ARG_PARAM5);
+            mParam6 = getArguments().getString(ARG_PARAM6);
+            mParam7 = getArguments().getString(ARG_PARAM7);
         }
     }
 
@@ -154,22 +181,37 @@ public class ReporteClientesDetalles extends Fragment {
             loading = null;
 
 
-        JSONObject json = new JSONObject();
+        JSONObject obj = new JSONObject();
         JSONObject rqt = new JSONObject();
+        JSONObject filtro = new JSONObject();
+        JSONObject periodo = new JSONObject();
         try{
-            JSONObject periodo = new JSONObject();
-            rqt.put("periodo", periodo);
-            periodo.put("fechaInicio", "");
-            periodo.put("fechaFin", "");
-            rqt.put("usuario", "");
-            json.put("rqt", rqt);
-            Log.d("sendJson", " REQUEST -->" + json);
+            /*  ARG_PARAM1 = "param1"; // curp
+                ARG_PARAM2 = "param2"; // nss
+                ARG_PARAM3 = "param3"; // numero de cuenta
+                ARG_PARAM4 = "param4"; // idTramite
+                ARG_PARAM5 = "param5"; // fecha inicio
+                ARG_PARAM6 = "param6"; // fecha fin
+                ARG_PARAM7 = "param6"; // hora  */
+            if(getArguments() != null){
 
+                rqt.put("filtro", filtro);
+                    filtro.put("nss", mParam1);
+                    filtro.put("curp", mParam2);
+                    filtro.put("numeroCuenta", mParam3);
+                rqt.put("idTramite", mParam4);
+                rqt.put("periodo", periodo);
+                    periodo.put("fechaInicio", mParam5);
+                    periodo.put("fechaFin", mParam6);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
+                obj.put("rqt", rqt);
+            }
+            Log.d("sendJson", " REQUEST -->" + obj);
         } catch (JSONException e){
             Config.msj(getContext(),"Error","Existe un right_in al formar la peticion");
         }
 
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_CLIENTES, json,
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_CLIENTES, obj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -233,15 +275,7 @@ public class ReporteClientesDetalles extends Fragment {
         {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+                return Config.credenciales(getContext());
             }
         };
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);

@@ -401,8 +401,8 @@ public class ReporteAsesores extends Fragment {
                 mParam3 = getArguments().getString(ARG_PARAM3); // id asesor
                 mParam4 = getArguments().getInt(ARG_PARAM4); // id gerencia
                 mParam5 = getArguments().getInt(ARG_PARAM5); // id sucursal
-                rqt.put("idGerencia", "");
-                rqt.put("idSucursal", "");
+                rqt.put("idGerencia", mParam4);
+                rqt.put("idSucursal", mParam5);
                 rqt.put("numeroEmpleadoAsesor", mParam3);
                 rqt.put("pagina", pagina);
                 periodo.put("fechaFin", fechaFin);

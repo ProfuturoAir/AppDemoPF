@@ -566,6 +566,7 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         try {
             // TODO: Formacion del JSON request
             JSONObject rqt = new JSONObject();
+            rqt.put("idGerencia", 0);
             rqt.put("idSucursal", idSucursal);
             rqt.put("pagina", pagina);
             rqt.put("usuario", numeroEmpleado);
@@ -576,6 +577,10 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
             rqt.put("usuario", Config.usuarioCusp(getContext()));
             obj.put("rqt", rqt);
             Log.d("ReporteSucursales ", "RQT --> " + obj);
+
+            /*
+            checar argumentos
+             */
         } catch (JSONException e) {
             Config.msj(getContext(),"Error json","Lo sentimos ocurrio un right_in al formar los datos.");
         }

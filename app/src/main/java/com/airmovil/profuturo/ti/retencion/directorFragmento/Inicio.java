@@ -302,7 +302,7 @@ public class Inicio extends Fragment {
                 rqt.put("periodo", periodo);
                 periodo.put("fechaInicio", mParam1);
                 periodo.put("fechaFin", mParam2);
-                rqt.put("usuario", numeroUsuario);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
                 json.put("rqt", rqt);
             }else{
                 Map<String, String> fecha = Config.fechas(1);
@@ -312,7 +312,7 @@ public class Inicio extends Fragment {
                 rqt.put("periodo", periodo);
                 periodo.put("fechaInicio", param1);
                 periodo.put("fechaFin", param2);
-                rqt.put("usuario", numeroUsuario);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
                 json.put("rqt", rqt);
             }
             Log.d(TAG, "REQUEST -->" + json);

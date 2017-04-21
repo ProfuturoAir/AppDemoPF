@@ -326,4 +326,20 @@ public class Director extends AppCompatActivity{
         ft.addToBackStack(null);
         ft.commit();
     }
+
+   public void switchDetalleClientes(int idSucursal, int idTramite, String numeroCuenta, String fechaInicio, String fechaFin, String usuario, Fragment frag){
+       Log.d("switchDetallesClie", " --> " + " --> " + idSucursal + " --> " + idTramite + " --> " + numeroCuenta + " --> " + fechaInicio + " --> " + fechaFin + " --> " + usuario);
+       Bundle bundle=new Bundle();
+       bundle.putInt("idSucursal", idSucursal);
+       bundle.putInt("idTramite", idTramite);
+       bundle.putString("numeroCuenta", numeroCuenta);
+       bundle.putString("fechaInicio", fechaInicio);
+       bundle.putString("fechaFin", fechaFin);
+       bundle.putString("usuario", usuario);
+       frag.setArguments(bundle);
+       FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+       ft.replace(R.id.content_director, frag, frag.toString());
+       ft.addToBackStack(null);
+       ft.commit();
+    }
 }

@@ -22,20 +22,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.airmovil.profuturo.ti.retencion.Adapter.CitasClientesAdapter;
+import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteAsistenciaAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteAsistenciaAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.*;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
+import com.airmovil.profuturo.ti.retencion.model.CitasClientesModel;
+import com.airmovil.profuturo.ti.retencion.model.DirectorReporteAsistenciaModel;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteAsistenciaModel;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -60,22 +67,18 @@ import java.util.Map;
  * Use the {@link ReporteAsistencia#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ReporteAsistencia extends Fragment {
+public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelectedListener{
     // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "parametro1";
-    private static final String ARG_PARAM2 = "parametro2";
-    private static final String ARG_PARAM3 = "parametro3IdGerencia";
-    private static final String ARG_PARAM4 = "parametro4IdSucursal";
-    private static final String ARG_PARAM5 = "parametro5IdAsesor";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;// fechaInicial
-    private String mParam2;// fechaFinal
-    private int mParam3;// idGerencia
-    private int mParam4;// idSucursal
-    private String mParam5;// idAsesor
-
+    private static final String ARG_PARAM1 = "idGerencia";
+    private static final String ARG_PARAM2 = "idSucursal";
+    private static final String ARG_PARAM3 = "idAsesor";
+    private static final String ARG_PARAM4 = "fechaInicio";
+    private static final String ARG_PARAM5 = "fechaFin";
+    private int mParam1; //idGerencia
+    private int mParam2; //idSucursal
+    private String mParam3; //idAsesor
+    private String mParam4; //fechaInicio
+    private String mParam5; //fechaFin
     // TODO: LIST
     private List<DirectorReporteAsistenciaModel> getDatos1;
     private RecyclerView recyclerView;
@@ -86,35 +89,37 @@ public class ReporteAsistencia extends Fragment {
     private int pagina = 1;
     private int numeroMaximoPaginas = 0;
     private int totalF;
-
     // TODO: View, sessionManager, datePickerDialog
     private View rootView;
     private SessionManager sessionManager;
     private DatePickerDialog datePickerDialog;
-    private Connected connected;
-
     // TODO: Elements XML
     private TextView tvFecha;
     private TextView tvATiempo, tvRetardados, tvSinAsistencia;
-    private Spinner spinnerGerencia, spinnerSucursal;
+    private Spinner spinnerSucursal;
+    private Spinner spinnerGerencia;
     private EditText etAsesor;
     private TextView tvRangoFecha1, tvRangoFecha2;
     private Button btnFiltro;
     private TextView tvResultados;
     private InputMethodManager imm;
-
     private int mYear;
     private int mMonth;
     private int mDay;
-    private int numeroEmpleado;
     private String fechaIni = "";
     private String fechaFin = "";
-    private int idGerencia;
-    private int idSucursal;
     private String fechaMostrar = "";
-
+    private Connected connected;
     private OnFragmentInteractionListener mListener;
+    private int numeroEmpleado;
+    private int idSucursal;
+    private int idGerencia;
+    private ArrayList<String> sucursales;
+    private ArrayList<String> id_sucursales;
+    private ArrayList<String> gerencia;
+    private ArrayList<String> id_gerencias;
 
+    int idSucursal123;
     public ReporteAsistencia() {
         // Required empty public constructor
     }
@@ -123,134 +128,105 @@ public class ReporteAsistencia extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param param1 parametro 1 id gerencia.
+     * @param param2 parametro 2 id sucursal.
+     * @param param3 parametro 3 id asesor
+     * @param param4 parametro 4 id fecha inicio
+     * @param param5 parametro 5 id fecha fin
      * @return A new instance of fragment ReporteAsistencia.
      */
     // TODO: Rename and change types and number of parameters
-    public static ReporteAsistencia newInstance(String param1, String param2, int param3, int param4, String param5, Context context) {
+    public static ReporteAsistencia newInstance(int param1, int param2, String param3, String param4, String param5, Context context) {
         ReporteAsistencia fragment = new ReporteAsistencia();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        args.putInt(ARG_PARAM3, param3);
-        args.putInt(ARG_PARAM4, param4);
+        args.putInt(ARG_PARAM1, param1);
+        args.putInt(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM3, param3);
+        args.putString(ARG_PARAM4, param4);
         args.putString(ARG_PARAM5, param5);
         fragment.setArguments(args);
         return fragment;
     }
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mParam1 = getArguments().getInt(ARG_PARAM1);
+            mParam2 = getArguments().getInt(ARG_PARAM2);
+            mParam3 = getArguments().getString(ARG_PARAM3);
+            mParam4 = getArguments().getString(ARG_PARAM4);
+            mParam5 = getArguments().getString(ARG_PARAM5);
         }
-
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
 
-        variables();
         primeraPeticion();
-        final Fragment borrar = this;
+        variables();
+        fechas();
 
-        // TODO: ocultar teclado
-        imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+
         connected = new Connected();
+        sucursales = new ArrayList<String>();
+        id_sucursales = new ArrayList<String>();
+        gerencia = new ArrayList<String>();
+        id_gerencias = new ArrayList<String>();
+
+
+        idGerencia = 0;
+        idSucursal123 = 0;
+
 
         if(getArguments() != null) {
-            Log.d("HOLA", "Todos : " + getArguments().toString());
-            numeroEmpleado = getArguments().getInt("numeroEmpleado");
-            fechaIni = getArguments().getString("fechaIni");
-            fechaFin = getArguments().getString("fechaFin");
-            //idGerencia = getArguments().getInt("idGerencia");
-            //idSucursal = getArguments().getInt("idSucursal");
+            mParam1 = getArguments().getInt(ARG_PARAM1);
+            mParam2 = getArguments().getInt(ARG_PARAM2);
+            mParam3 = getArguments().getString(ARG_PARAM3);
+            mParam4 = getArguments().getString(ARG_PARAM4);
+            mParam5 = getArguments().getString(ARG_PARAM5);
         }
-
-        Log.d("DATOS","FREG: "+numeroEmpleado+" DI: "+fechaIni+" DF: "+fechaFin);
-
-        if(fechaIni!=null){
-            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-            ReporteAsistencia fragmento = ReporteAsistencia.newInstance(fechaIni, fechaFin, 0, 0, String.valueOf(numeroEmpleado), rootView.getContext());
-            ReporteAsistenciaDetalles pass = ReporteAsistenciaDetalles.newInstance(fechaIni, fechaFin, rootView.getContext());
-            borrar.onDestroy();
-            ft.remove(borrar);
-            ft.replace(R.id.content_director, fragmento);
-            ft.replace(R.id.content_director, pass);
-            ft.addToBackStack(null);
-            ft.commit();
-        }
-
-        // TODO: Spinner
-        ArrayAdapter<String> adapterGerencia = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.GERENCIAS);
-        adapterGerencia.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerGerencia.setAdapter(adapterGerencia);
-
-        // TODO: Spinner
-        ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.SUCURSALES);
-        adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerSucursal.setAdapter(adapterSucursal);
-
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(etAsesor.getWindowToken(), 0);
-
-        // TODO: modelo
+        sessionManager = new SessionManager(getContext());
+        // TODO: Recycler y modelo
         getDatos1 = new ArrayList<>();
-        // TODO: Recycler
         recyclerView = (RecyclerView) rootView.findViewById(R.id.ddfras_rv_lista);
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
 
-        // TODO: fechas
-        Map<String, Integer> fechaDatos = Config.dias();
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
-
-        fechas();
-
-        rangoInicial();
-        rangoFinal();
-
         // TODO: btn filtro
-
-
+        final Fragment borrar = this;
         btnFiltro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(connected.estaConectado(getContext())){
-                    final String fechaIncial = tvRangoFecha1.getText().toString();
-                    final String fechaFinal = tvRangoFecha2.getText().toString();
-                    final int idGerencia = spinnerGerencia.getSelectedItemPosition();
-                    final int idSucursal = spinnerSucursal.getSelectedItemPosition();
-                    final String idAsesor = etAsesor.getText().toString();
 
-                    if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
-                        Config.dialogoFechasVacias(getContext());
+                    mParam3 = etAsesor.getText().toString().trim();
+                    mParam4 = tvRangoFecha1.getText().toString().trim();
+                    mParam5 = tvRangoFecha2.getText().toString().trim();
+
+                    Toast.makeText(getContext(), "Id gerencia: " + idGerencia, Toast.LENGTH_SHORT).show();
+                    if(mParam3.isEmpty() || mParam4.isEmpty() || mParam5.isEmpty()){
+                        Config.dialogoDatosVacios(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ReporteAsistencia fragmento = ReporteAsistencia.newInstance(fechaIncial, fechaFinal, idGerencia, idSucursal, idAsesor, rootView.getContext());
-                        ReporteAsistenciaDetalles pass = ReporteAsistenciaDetalles.newInstance(fechaIncial, fechaFinal, rootView.getContext());
+                        ReporteAsistencia fragmento = ReporteAsistencia.newInstance(mParam1, mParam2, mParam3, mParam4, mParam5, rootView.getContext());
                         borrar.onDestroy();
                         ft.remove(borrar);
                         ft.replace(R.id.content_director, fragmento);
-                        ft.replace(R.id.content_director, pass);
                         ft.addToBackStack(null);
                         ft.commit();
+                        Config.teclado(getContext(), etAsesor);
                     }
-                    // TODO: ocultar teclado
-                    //imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
                 }else{
                     Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                 }
-
             }
         });
+
         etAsesor.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -276,13 +252,10 @@ public class ReporteAsistencia extends Fragment {
                 adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinner.setAdapter(adapterSucursal);
 
-
-
                 btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
-
                         Connected connected = new Connected();
                         if(connected.estaConectado(getContext())){
                             final String datoEditText = editText.getText().toString();
@@ -297,8 +270,6 @@ public class ReporteAsistencia extends Fragment {
                             Config.msj(getContext(), "Error conexión", "Por favor, revisa tu conexión a internet");
                             dialog.dismiss();
                         }
-
-
                     }
                 });
                 dialog.show();
@@ -306,7 +277,6 @@ public class ReporteAsistencia extends Fragment {
         });
 
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -377,52 +347,217 @@ public class ReporteAsistencia extends Fragment {
         tvRangoFecha2 = (TextView) rootView.findViewById(R.id.ddfras_tv_fecha_rango2);
         btnFiltro = (Button) rootView.findViewById(R.id.ddfras_btn_filtro);
         tvResultados = (TextView) rootView.findViewById(R.id.ddfras_tv_registros);
+
+        spinnerSucursal.setOnItemSelectedListener(this);
+        getData1();
+        getData2();
+    }
+
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        switch (parent.getId()) {
+            case R.id.ddfras_spinner_sucursal:
+                String sim1 = id_sucursales.get(position);
+                Log.d("SELE","ESTA ->: "+sim1);
+                idSucursal = Integer.valueOf(sim1);
+                idSucursal123 = Integer.valueOf(sim1);
+                break;
+            case R.id.ddfras_spinner_gerencia:
+                String sim2 = id_gerencias.get(position);
+                Log.d("SELE","ESTA ->: "+sim2);
+                idGerencia = Integer.valueOf(sim2);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    private void getData1(){
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_SUCURSALES,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("LLENA", "SPINNER: ->" + response);
+                        JSONArray j = null;
+                        try {
+                            j = response.getJSONArray("Sucursales");
+                            Log.d("LLENA", "EL ARRAY: ->" + j);
+                            getSucursales(j);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("LLENA", "SPINNER: -> ERROR " + error);
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return Config.credenciales(getContext());
+            }
+        };
+        MySingleton.getInstance(getContext()).addToRequestQueue(jsonArrayRequest);
+    }
+    private void getData2(){
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_GERENCIAS,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("LLENA", "SPINNER: ->" + response);
+                        JSONArray j = null;
+                        try {
+                            j = response.getJSONArray("Gerencias");
+                            Log.d("LLENA", "EL ARRAY: ->" + j);
+                            getGerencias(j);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("LLENA", "SPINNER: -> ERROR " + error);
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return Config.credenciales(getContext());
+            }
+        };
+        MySingleton.getInstance(getContext()).addToRequestQueue(jsonArrayRequest);
+    }
+
+    //obtener sucursales
+    private void getSucursales(JSONArray j){
+        sucursales.add("Selecciona una sucursal");
+        id_sucursales.add("0");
+        for(int i=0;i<j.length();i++){
+            try {
+                JSONObject json = j.getJSONObject(i);
+                sucursales.add(json.getString("nombre"));
+                id_sucursales.add(json.getString("idSucursal"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        int position=0;
+        if(idSucursal!=0){
+            for(int i=0; i < id_sucursales.size(); i++) {
+                Log.d("SELE","by ID ->: " +id_sucursales.get(i));
+                Log.d("SELE","ID ->: " +idSucursal);
+                if(Integer.valueOf(id_sucursales.get(i)) == idSucursal){
+                    Log.d("SELE","SIZE ->: "+position);
+                    position = i;
+                    break;
+                }
+            }
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, sucursales);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinnerSucursal.setAdapter(adapter);
+        spinnerSucursal.setSelection(position);
+    }
+
+    //obtener gerencias
+    private void getGerencias(JSONArray j){
+        gerencia.add("Selecciona una sucursal");
+        id_gerencias.add("0");
+        for(int i=0;i<j.length();i++){
+            try {
+                JSONObject json = j.getJSONObject(i);
+                gerencia.add(json.getString("nombre"));
+                id_gerencias.add(json.getString("idGerencia"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        int position=0;
+        if(idGerencia!=0){
+            for(int i=0; i < id_gerencias.size(); i++) {
+                Log.d("SELE","by ID ->: " +id_gerencias.get(i));
+                Log.d("SELE","ID ->: " +idGerencia);
+                if(Integer.valueOf(id_gerencias.get(i)) == idGerencia){
+                    Log.d("SELE","SIZE ->: "+position);
+                    position = i;
+                    break;
+                }
+            }
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, gerencia);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinnerGerencia.setAdapter(adapter);
+        spinnerGerencia.setSelection(position);
+    }
+
+    private void fechas(){
+        rangoInicial();
+        rangoFinal();
+        Map<String, Integer> fechaDatos = Config.dias();
+        Map<String, String> fechaActual = Config.fechas(1);
+        mYear  = fechaDatos.get("anio");
+        mMonth = fechaDatos.get("mes");
+        mDay   = fechaDatos.get("dia");
+        String smParam1 = fechaActual.get("fechaIni");
+        String smParam2 = fechaActual.get("fechaFin");
+        if(getArguments() != null){
+            mParam4 = getArguments().getString(ARG_PARAM4);
+            mParam5= getArguments().getString(ARG_PARAM5);
+            tvFecha.setText(mParam4 + " - " + mParam5);
+        }else{
+            tvFecha.setText(smParam1 + " - " + smParam2);
+        }
     }
 
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
-
-        SessionManager sessionManager = new SessionManager(getContext());
-        HashMap<String, String> usuario = sessionManager.getUserDetails();
-        String numeroEmpleado = usuario.get(SessionManager.ID);
-
         JSONObject obj = new JSONObject();
         JSONObject rqt = new JSONObject();
         JSONObject periodo = new JSONObject();
+        SessionManager sessionManager = new SessionManager(getContext());
+        HashMap<String, String> usuario = sessionManager.getUserDetails();
+        String numeroEmpleado = usuario.get(SessionManager.ID);
         try {
             // TODO: Formacion del JSON request
             if(getArguments() != null) {
-                mParam1 = getArguments().getString(ARG_PARAM1);
-                mParam2 = getArguments().getString(ARG_PARAM2);
-                mParam3 = getArguments().getInt(ARG_PARAM3);
-                mParam4 = getArguments().getInt(ARG_PARAM4);
+                mParam1 = getArguments().getInt(ARG_PARAM1);
+                mParam2 = getArguments().getInt(ARG_PARAM2);
+                mParam3 = getArguments().getString(ARG_PARAM3);
+                mParam3 = getArguments().getString(ARG_PARAM4);
                 mParam5 = getArguments().getString(ARG_PARAM5);
-                rqt.put("idGerencia", mParam3);
-                rqt.put("idSucursal", mParam4);
-                rqt.put("numeroEmpleado", mParam5);
+                rqt.put("idSucursal", mParam1);
+                rqt.put("idSucursal", mParam2);
+                rqt.put("numeroEmpleado", mParam3);
                 rqt.put("pagina", pagina);
-                periodo.put("fechaFin", mParam2);
-                periodo.put("fechaIni", mParam1);
+                periodo.put("fechaIni", mParam4);
+                periodo.put("fechaFin", mParam5);
                 rqt.put("perido", periodo);
-                rqt.put("usuario", Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }else{
                 Map<String, String> fecha = Config.fechas(1);
                 String param1 = fecha.get("fechaIni");
                 String param2 = fecha.get("fechaFin");
-                rqt.put("idGerencia", 0);
                 rqt.put("idSucursal", 0);
-                rqt.put("numeroEmpleado", numeroEmpleado);
+                rqt.put("idSucursal", 0);
+                rqt.put("numeroEmpleado",numeroEmpleado);
                 rqt.put("pagina", pagina);
-                periodo.put("fechaFin", param1);
-                periodo.put("fechaIni", param2);
+                periodo.put("fechaIni", param1);
+                periodo.put("fechaFin", param2);
                 rqt.put("perido", periodo);
-                rqt.put("usuario", Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }
             Log.d("Rqt", "" + obj);
         } catch (JSONException e) {
-            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un right_in al formar los datos.");
+            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
         }
         //Creating a json array request
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_ASISTENCIA, obj,
@@ -499,11 +634,9 @@ public class ReporteAsistencia extends Fragment {
         int retardo = 0;
         int inasistencia = 0;
         int totalFilas = 1;
-
         int filas = 0;
-
         try{
-            JSONObject asistencia = obj.getJSONObject("Asistencia");
+            JSONObject asistencia = obj.getJSONObject("asistencia");
             onTime = asistencia.getInt("onTime");
             retardo = asistencia.getInt("retardo");
             inasistencia = asistencia.getInt("inasistencia");
@@ -516,8 +649,8 @@ public class ReporteAsistencia extends Fragment {
                 try{
                     json = empleado.getJSONObject(i);
                     getDatos2.setNombre(json.getString("nombre"));
-                    getDatos2.setNumeroEmpleado(json.getInt("idSucursal"));
-                    getDatos2.setnEmpleado(json.getString("numeroEmpleado"));
+                    getDatos2.setNumeroEmpleado(json.getInt("numeroEmpleado"));
+                    getDatos2.setIdSucursal(json.getInt("idSucursal"));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -528,11 +661,14 @@ public class ReporteAsistencia extends Fragment {
         }
 
         tvResultados.setText(filas + " Resulatdos");
-
         tvATiempo.setText("" + onTime);
         tvRetardados.setText("" + retardo);
         tvSinAsistencia.setText("" + inasistencia);
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
+        String PtvFecha = tvFecha.getText().toString();
+        String[] separated = PtvFecha.split(" - ");
+
+
         adapter = new DirectorReporteAsistenciaAdapter(rootView.getContext(), getDatos1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
@@ -570,8 +706,6 @@ public class ReporteAsistencia extends Fragment {
     }
 
     private void segundoPaso(JSONObject obj) {
-
-
         try{
             JSONObject asistencia = obj.getJSONObject("Asistencia");
             JSONArray empleado = obj.getJSONArray("Empleado");
@@ -582,8 +716,8 @@ public class ReporteAsistencia extends Fragment {
                 try{
                     json = empleado.getJSONObject(i);
                     getDatos2.setNombre(json.getString("nombre"));
-                    getDatos2.setNumeroEmpleado(json.getInt("idSucursal"));
-                    getDatos2.setnEmpleado(json.getString("numeroEmpleado"));
+                    getDatos2.setNumeroEmpleado(json.getInt("numeroEmpleado"));
+                    getDatos2.setIdSucursal(json.getInt("idSucursal"));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -592,11 +726,9 @@ public class ReporteAsistencia extends Fragment {
         }catch (JSONException e){
             e.printStackTrace();
         }
-
         adapter.notifyDataSetChanged();
         adapter.setLoaded();
     }
-
 
     private void rangoInicial(){
         tvRangoFecha1.setOnClickListener(new View.OnClickListener() {
@@ -630,22 +762,5 @@ public class ReporteAsistencia extends Fragment {
                 datePickerDialog.show();
             }
         });
-    }
-
-    private void fechas(){
-        Map<String, Integer> fechaDatos = Config.dias();
-        Map<String, String> fechaActual = Config.fechas(1);
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
-        String smParam1 = fechaActual.get("fechaIni");
-        String smParam2 = fechaActual.get("fechaFin");
-        if(getArguments() != null){
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-            tvFecha.setText(mParam1 + " - " + mParam2);
-        }else{
-            tvFecha.setText(smParam1 + " - " + smParam2);
-        }
     }
 }

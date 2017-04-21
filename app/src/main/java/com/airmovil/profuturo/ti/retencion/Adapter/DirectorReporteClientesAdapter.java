@@ -26,9 +26,11 @@ import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Director;
+import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.ReporteClientesDetalle;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientesDetalles;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteSucursales;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistenciaDetalles;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.EnviaMail;
@@ -111,6 +113,7 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
             myholder.campoConCitaCliente.setText((Boolean.parseBoolean(lista.getCita()) ? "Si" : "No"));
             myholder.campoNoRetenidoCliente.setText((Boolean.parseBoolean(lista.getRetenido()) ? "Retenido" : "No Retenido"));
             myholder.campoSucursalCliente.setText("Sucursal" + lista.getIdSucursal());
+
             int var = lista.getIdSucursal();
             String intToString = String.valueOf(var);
             char dato = intToString.charAt(0);
@@ -170,7 +173,7 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
         PopupMenu popup = new PopupMenu(mContext, view);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.sub_menu_reporte_clientes, popup.getMenu());
-        popup.setOnMenuItemClickListener(new MyMenuItemClickListener(list));
+        popup.setOnMenuItemClickListener(new MyMenuItemClickListener(list, view));
         popup.show();
     }
 
@@ -183,23 +186,38 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
     }
 
 
+    public void fragmentoCambioClienteDetalles(int idSucursal, int idTramite, String numeroCuenta, String fechaInicio, String fechaFin, String usuario, View view) {
+        Log.d("fragmentoCambio", " --> " + idSucursal + " -> " + idTramite + " -> " + numeroCuenta + " -> " + fechaInicio + " -> " + fechaFin + " -> " + usuario);
+        Fragment fragmento = new ReporteClientesDetalles();
+        if (view.getContext() == null)
+            return;
+        if (view.getContext() instanceof Gerente) {
+            Director director = (Director) view.getContext();
+            director.switchDetalleClientes(idSucursal, idTramite, numeroCuenta, fechaInicio, fechaFin, usuario, fragmento);
+        }
+    }
+
     /**
      * Click listener for popup menu items
      */
     class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
         DirectorReporteClientesModel list;
-        public MyMenuItemClickListener(DirectorReporteClientesModel list) {
+        View view;
+        public MyMenuItemClickListener(DirectorReporteClientesModel list, View view) {
             this.list = list;
+            this.view = view;
         }
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.sub_menu_reporte_clientes_detalles:
-                    AppCompatActivity ReporteClientesDetalles = (AppCompatActivity) mRecyclerView.getContext();
-                    ReporteClientesDetalles fragmentoClienteDetalles = new ReporteClientesDetalles();
-                    //Create a bundle to pass data, add data, set the bundle to your fragment and:
-                    ReporteClientesDetalles.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoClienteDetalles).addToBackStack(null).commit();
+                    Fragment fragmento = new ReporteClientesDetalles();
+                    if (view.getContext() instanceof Director) {
+                        Director director = (Director) view.getContext();
+                        Log.d("onMenuItemClick", list.getIdSucursal() + " -> " + list.getIdTramite() +  " -> " + list.getNumeroCuenta() + " -> " +  fechaInicio + " -> " + fechaFin + " -> " + Config.usuarioCusp(mContext) + " -> " + view);
+                        director.switchDetalleClientes(list.getIdSucursal(), list.getIdTramite(), list.getNumeroCuenta(),  fechaInicio, fechaFin, Config.usuarioCusp(mContext), fragmento);
+                    }
                     return true;
                 case R.id.sub_menu_reporte_clientes_email:
                     final Dialog dialog = new Dialog(mContext);

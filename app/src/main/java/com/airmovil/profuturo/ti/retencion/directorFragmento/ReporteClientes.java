@@ -728,6 +728,7 @@ public class ReporteClientes extends Fragment {
                     getDatos2.setCita(json.getString("cita"));
                     getDatos2.setRetenido(json.getString("retenido"));
                     getDatos2.setIdSucursal(json.getInt("idSucursal"));
+                    getDatos2.setIdTramite(json.getInt("idTramite"));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -808,6 +809,7 @@ public class ReporteClientes extends Fragment {
                     getDatos2.setCita(json.getString("cita"));
                     getDatos2.setRetenido(json.getString("retenido"));
                     getDatos2.setIdSucursal(json.getInt("idSucursal"));
+                    getDatos2.setIdTramite(json.getInt("idTramite"));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }

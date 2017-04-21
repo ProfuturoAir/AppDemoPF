@@ -164,7 +164,7 @@ public class ProcesoImplicacionesPendientes extends Fragment {
                                     //if(){
                                     //    Log.d("Eliminado","Exitoso");
                                     //    getDatos1.remove(pendientes.getString(0));
-                                    enviaPrevio.sendPrevios(pendientes.getString(0), getContext());
+                                    //enviaPrevio.sendPrevios(pendientes.getString(0), getContext());
                                     //Log.d("Respuesta","AQUI: "+enviaPrevio.sendPrevios(pendientes.getString(0), getContext()));
                                 //}
                             } finally {

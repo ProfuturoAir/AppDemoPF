@@ -43,12 +43,20 @@ import java.util.Map;
 public class ReporteClientesDetalles extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM1 = "idSucursal";
+    private static final String ARG_PARAM2 = "idTramite";
+    private static final String ARG_PARAM3 = "numeroCuenta";
+    private static final String ARG_PARAM4 = "fechaInicio";
+    private static final String ARG_PARAM5 = "fechaFin";
+    private static final String ARG_PARAM6 = "usuario";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private int mParam1; // id sucursal
+    private int mParam2; // id tramite
+    private String mParam3; // numeroCuenta
+    private String mParam4; // fechaInicio
+    private String mParam5; // fechafin
+    private String mParam6; // usuario
 
     private TextView tv1, tv2, tv3, tv4, tv5, tv6, tv7;
     private TextView ddfrasd_tv_fecha;
@@ -64,16 +72,24 @@ public class ReporteClientesDetalles extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param param1 parametro 1 idsucursal.
+     * @param param2 parametro 2 idTramite.
+     * @param param3 parametro 3 numeroCuenta.
+     * @param param4 parametro 4 fechaInicio.
+     * @param param5 parametro 5 fechaFin.
+     * @param param6 parametro 6 usuario.
      * @return A new instance of fragment ReporteClientesDetalles.
      */
     // TODO: Rename and change types and number of parameters
-    public static ReporteClientesDetalles newInstance(String param1, String param2) {
+    public static ReporteClientesDetalles newInstance(int param1, int param2, String param3, String param4, String param5, String param6, View view ) {
         ReporteClientesDetalles fragment = new ReporteClientesDetalles();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putInt(ARG_PARAM1, param1);
+        args.putInt(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM3, param3);
+        args.putString(ARG_PARAM4, param4);
+        args.putString(ARG_PARAM5, param5);
+        args.putString(ARG_PARAM6, param6);
         fragment.setArguments(args);
         return fragment;
     }
@@ -82,22 +98,25 @@ public class ReporteClientesDetalles extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mParam1 = getArguments().getInt(ARG_PARAM1);
+            mParam2 = getArguments().getInt(ARG_PARAM2);
+            mParam3 = getArguments().getString(ARG_PARAM3);
+            mParam4 = getArguments().getString(ARG_PARAM4);
+            mParam5 = getArguments().getString(ARG_PARAM5);
+            mParam6 = getArguments().getString(ARG_PARAM6);
         }
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        tv1 = (TextView) view.findViewById(R.id.tv_clientes_detalles1);
-        tv2 = (TextView) view.findViewById(R.id.tv_clientes_detalles2);
-        tv3 = (TextView) view.findViewById(R.id.tv_clientes_detalles3);
-        tv4 = (TextView) view.findViewById(R.id.tv_clientes_detalles4);
-        tv5 = (TextView) view.findViewById(R.id.tv_clientes_detalles5);
-        tv6 = (TextView) view.findViewById(R.id.tv_clientes_detalles6);
-        tv7 = (TextView) view.findViewById(R.id.tv_clientes_detalles7);
+        tv1 = (TextView) view.findViewById(R.id.ddd_tv_clientes_numero_cuenta);
+        tv2 = (TextView) view.findViewById(R.id.ddd_tv_clientes_detalles_nss);
+        tv3 = (TextView) view.findViewById(R.id.ddd_tv_clientes_detalles_curp);
+        tv4 = (TextView) view.findViewById(R.id.ddd_tv_clientes_detalles_estatus);
+        tv5 = (TextView) view.findViewById(R.id.ddd_tv_clientes_detalles_saldo);
+        tv6 = (TextView) view.findViewById(R.id.ddd_tv_clientes_detalles_sucursal);
+        tv7 = (TextView) view.findViewById(R.id.ddd_tv_clientes_detalles_hora_atencion);
         ddfrasd_tv_fecha = (TextView) view.findViewById(R.id.ddfrasd_tv_fecha);
-
         primeraPeticion();
     }
 
@@ -167,22 +186,44 @@ public class ReporteClientesDetalles extends Fragment {
         else
             loading = null;
 
-        JSONObject json = new JSONObject();
+        JSONObject obj = new JSONObject();
         JSONObject rqt = new JSONObject();
+        JSONObject periodo = new JSONObject();
+        JSONObject filtro = new JSONObject();
+
         try{
-            JSONObject periodo = new JSONObject();
-            rqt.put("periodo", periodo);
-            periodo.put("fechaInicio", "");
-            periodo.put("fechaFin", "");
-            rqt.put("usuario", Config.usuarioCusp(getContext()));
-            json.put("rqt", rqt);
-            Log.d("sendJson", " REQUEST -->" + json);
+
+            // param1 parametro 1 idsucursal.
+            // param2 parametro 2 idTramite.
+            // param3 parametro 3 numeroCuenta.
+            // param4 parametro 4 fechaInicio.
+            // param5 parametro 5 fechaFin.
+            // param6 parametro 6 usuario.
+            if(getArguments() != null){
+                mParam1 = getArguments().getInt(ARG_PARAM1);
+                mParam2 = getArguments().getInt(ARG_PARAM2);
+                mParam3 = getArguments().getString(ARG_PARAM3);
+                mParam4 = getArguments().getString(ARG_PARAM4);
+                mParam5 = getArguments().getString(ARG_PARAM5);
+                mParam6 = getArguments().getString(ARG_PARAM6);
+                rqt.put("filtro", filtro);
+                    filtro.put("curp", "");
+                    filtro.put("nss", "");
+                    filtro.put("numeroCuenta", mParam3);
+                rqt.put("idTramite", mParam2);
+                rqt.put("periodo", periodo);
+                    periodo.put("fechaInicio", mParam4);
+                    periodo.put("fechaFin", mParam5);
+                rqt.put("usuario", mParam6);
+                obj.put("rqt", rqt);
+            }
+            Log.d("sendJson", " REQUEST -->" + obj);
 
         } catch (JSONException e){
             Config.msj(getContext(),"Error","Existe un error al formar la peticion");
         }
 
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_CLIENTE_DETALLE, json,
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_CLIENTE_DETALLE, obj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -254,5 +295,6 @@ public class ReporteClientesDetalles extends Fragment {
 
     private void primerPaso(JSONObject obj){
         Log.d("response -> 1", "" + obj);
+
     }
 }
