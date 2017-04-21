@@ -240,7 +240,7 @@ public class EnviaJSON {
             rqt.put("idEstatus", IdEstatus);
             rqt.put("idInstituto", idTitulo);
             rqt.put("idRegimentPensionario", idRegimentPensionario);
-            rqt.put("idDocumentocion", idDocumentacion);
+            rqt.put("idDocumentacion", idDocumentacion);
             rqt.put("telefono", telefono);
             rqt.put("email", email);
             rqt.put("estatusTramite", estatusTramite);
