@@ -27,7 +27,7 @@ import android.widget.Toast;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
-import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientesDetalles;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientesDetalles;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.Inicio;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
@@ -180,7 +180,7 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
                         Gerente gerente = (Gerente) mContext;
                         //Log.d("onMenuItemClick", list.getIdSucursal() + " -> " + list.getIdTramite() +  " -> " + list.getNumeroCuenta() + " -> " +  fechaInicio + " -> " + fechaFin + " -> " + Config.usuarioCusp(mContext) + " -> " + view);
                         //director.switchDetalleClientes(list.getIdSucursal(), list.getIdTramite(), list.getNumeroCuenta(),  fechaInicio, fechaFin, Config.usuarioCusp(mContext), fragmento);
-                        gerente.switchDetalleCliente(lista.getNumeroCuenta(), lista.getCita(), lista.getIdTramite(), fechaIni, fechaFin, lista.getHora(), Config.usuarioCusp(mContext), fragmento);
+                        gerente.switchDetalleCliente(lista.getNumeroEmpleado(),lista.getNombreAsesor(),lista.getNumeroCuenta(), lista.getCita(), lista.getIdTramite(), fechaIni, fechaFin, lista.getHora(), Config.usuarioCusp(mContext), fragmento);
                     }
                     
                     //AppCompatActivity ReporteClientesDetalles = (AppCompatActivity) mRecyclerView.getContext();

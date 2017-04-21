@@ -722,8 +722,9 @@ public class Gerente extends AppCompatActivity{
     }
 
     //lista.getNumeroCuenta(), lista.getCita(), lista.idTramite, fechaIni, fechaFin, Config.usuarioCusp(mContext), fragmento
-    public void switchDetalleCliente(String numeroCuenta, String cita, int idTramite, String fechaInicio, String fechaFin, String hora, String usuario, Fragment frag) {
+    public void switchDetalleCliente(String numeroEmpleado, String nombreAsesor,String numeroCuenta, String cita, int idTramite, String fechaInicio, String fechaFin, String hora, String usuario, Fragment frag) {
         Bundle bundle=new Bundle();
+        bundle.putString("numeroEmpleado",numeroEmpleado);
         bundle.putString("numeroCuenta",numeroCuenta);
         bundle.putString("cita",cita);
         bundle.putString("hora",hora);
@@ -731,7 +732,9 @@ public class Gerente extends AppCompatActivity{
         bundle.putString("fechaInicio", fechaInicio);
         bundle.putString("fechaFin", fechaFin);
         bundle.putString("usuario", usuario);
+        bundle.putString("nombreAsesor",nombreAsesor);
         frag.setArguments(bundle);
+
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_gerente, frag);
         ft.addToBackStack(null);

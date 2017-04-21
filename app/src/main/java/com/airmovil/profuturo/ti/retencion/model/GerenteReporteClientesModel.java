@@ -15,6 +15,7 @@ public class GerenteReporteClientesModel {
     public String curp;
     public String nss;
     public String hora;
+    public String nombreAsesor;
 
     public String getHora() {
         return hora;
@@ -94,5 +95,13 @@ public class GerenteReporteClientesModel {
 
     public void setNss(String nss) {
         this.nss = nss;
+    }
+
+    public String getNombreAsesor() {
+        return nombreAsesor;
+    }
+
+    public void setNombreAsesor(String nombreAsesor) {
+        this.nombreAsesor = nombreAsesor;
     }
 }

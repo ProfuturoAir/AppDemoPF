@@ -55,6 +55,8 @@ public class ReporteClientesDetalles extends Fragment {
     private static final String ARG_PARAM6 = "fechaFin"; // fecha fin
     private static final String ARG_PARAM7 = "hora"; // hora
     private static final String ARG_PARAM8 = "usuario";
+    private static final String ARG_PARAM9 = "numeroEmpleado";
+    private static final String ARG_PARAM10 = "nombreAsesor";
 
     // TODO: Rename and change types of parameters
     private String mParam1; // numero cuenta
@@ -65,6 +67,8 @@ public class ReporteClientesDetalles extends Fragment {
     private String mParam6; // fechaFin
     private String mParam7; // usuario
     private String mParam8; // usuario
+    private String mParam9;
+    private String mParam10;
     private int pagina = 1;
 
     private TextView tv_nombre, tv_numero_cuenta, tv_nss, tv_curp, tv_estatus, tv_saldo, tv_sucursal, tv_hora_atencion;
@@ -91,7 +95,7 @@ public class ReporteClientesDetalles extends Fragment {
      * @return A new instance of fragment ReporteClientesDetalles.
      */
     // TODO: Rename and change types and number of parameters
-    public static ReporteClientesDetalles newInstance(String param1, String param2, String param3, int param4, String param5, String param6, String param7, String param8) {
+    public static ReporteClientesDetalles newInstance(String param1, String param2, String param3, int param4, String param5, String param6, String param7, String param8,String param9,String param10) {
         ReporteClientesDetalles fragment = new ReporteClientesDetalles();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
@@ -102,6 +106,8 @@ public class ReporteClientesDetalles extends Fragment {
         args.putString(ARG_PARAM6, param6);
         args.putString(ARG_PARAM7, param7);
         args.putString(ARG_PARAM8, param8);
+        args.putString(ARG_PARAM9, param9);
+        args.putString(ARG_PARAM9, param10);
         fragment.setArguments(args);
         return fragment;
     }
@@ -118,6 +124,8 @@ public class ReporteClientesDetalles extends Fragment {
             mParam6 = getArguments().getString(ARG_PARAM6);
             mParam7 = getArguments().getString(ARG_PARAM7);
             mParam8 = getArguments().getString(ARG_PARAM8);
+            mParam9 = getArguments().getString(ARG_PARAM9);
+            mParam10 = getArguments().getString(ARG_PARAM10);
         }
     }
 
@@ -136,9 +144,11 @@ public class ReporteClientesDetalles extends Fragment {
         tv_inicial = (TextView) view.findViewById(R.id.ggfrasd_tv_letra);
         tv_fechas = (TextView) view.findViewById(R.id.ggfrasd_tv_fecha);
 
-        tv_nombre.setText("123123123");
+        //tv_nombre.setText("123123123");
+        tv_numero_empleado.setText(mParam9);
+        tv_nombre_asesor.setText(mParam10);
+        tv_fechas.setText(mParam6 + " - "+mParam7);
 
-        tv_fechas.setText(mParam6 + " - ");
 
         sendJson(true);
     }
@@ -217,7 +227,7 @@ public class ReporteClientesDetalles extends Fragment {
             Config.msj(getContext(),"Error","Existe un right_in al formar la peticion");
         }
 
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_CLIENTES, obj,
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_CLIENTE_DETALLE, obj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -315,11 +325,17 @@ public class ReporteClientesDetalles extends Fragment {
             e.printStackTrace();
         }
 
+        String retencion = "No Retenido";;
+
+        if(retenido){
+            retencion = "Retenido";
+        }
+
         tv_nombre.setText("" + nombre);
-        tv_numero_cuenta.setText("123" + numeroCuenta);
+        tv_numero_cuenta.setText("" + numeroCuenta);
         tv_nss.setText("" + nss);
         tv_curp.setText("" + curp);
-        tv_estatus.setText("" + retenido);
+        tv_estatus.setText("" + retencion);
         tv_saldo.setText("" + saldo);
         tv_sucursal.setText("" + nombreSucursal);
         tv_hora_atencion.setText("hora: " + horaAtencion);
