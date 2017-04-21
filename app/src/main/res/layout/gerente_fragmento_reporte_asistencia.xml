@@ -3,10 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
-    android:orientation="vertical"
-    tools:context="com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistencia">
-    <TextView style="@style/tituloProceso" android:text="Asistencia Asesor " />
-    <TextView android:id="@+id/gfras_tv_fecha" style="@style/fecha"/>
+    android:orientation="vertical">
+    <TextView style="@style/tituloProceso" android:text="Asistencia test " />
+    <TextView android:id="@+id/ggfras_tv_fecha" style="@style/fecha"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,8 +20,7 @@
             android:layout_marginRight="5dp"
             android:background="@color/colorPrimaryDark">
             <TextView style="@style/textoRetenidos" android:text="A tiempo" android:gravity="center"/>
-            <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/gfras_tv_a_tiempo"/>
-            <TextView style="@style/iconoAcceso"/>
+            <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/ggfras_tv_a_tiempo"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -33,8 +31,7 @@
             android:layout_marginRight="5dp"
             android:background="@color/colorPrimaryDark">
             <TextView style="@style/textoNoRetenidos" android:text="Retardados" android:gravity="center"/>
-            <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/gfras_tv_retardados"/>
-            <TextView style="@style/iconoAcceso"/>
+            <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/ggfras_tv_retardados"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -43,43 +40,49 @@
             android:layout_weight="1"
             android:background="@color/colorPrimaryDark">
             <TextView style="@style/textoNoRetenidos" android:text="Sin asistencia" android:gravity="center"/>
-            <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/gfras_tv_sin_asistencia"/>
-            <TextView style="@style/iconoAcceso"/>
+            <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/ggfras_tv_sin_asistencia"/>
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout style="@style/contenedorFiltros2">
 
         <LinearLayout style="@style/linearLayoutHorizontal">
+            <!--<LinearLayout style="@style/contenedorSpinner">
+                <Spinner android:id="@+id/ggfras_spinner_gerencia"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:backgroundTint="@color/colorWhite"/>
+                <TextView style="@style/linea"/>
+            </LinearLayout>-->
             <LinearLayout style="@style/contenedorSpinner">
-                <Spinner android:id="@+id/gfras_spinner_sucursal"
+                <Spinner android:id="@+id/ggfras_spinner_sucursal"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:backgroundTint="@color/colorWhite"/>
                 <TextView style="@style/linea"/>
             </LinearLayout>
-            <EditText android:id="@+id/gfras_et_asesor" style="@style/busqueda" android:hint="Ingresa ID Asesor" android:inputType="number"/>
+            <EditText android:id="@+id/ggfras_et_asesor" style="@style/busqueda" android:hint="Ingresa ID Asesor" android:inputType="number"/>
         </LinearLayout>
 
         <LinearLayout style="@style/linearLayoutHorizontal">
-            <TextView android:id="@+id/gfras_tv_fecha_rango1" style="@style/fechaInicial2" />
-            <TextView android:id="@+id/gfras_tv_fecha_rango2" style="@style/fechaFinal2"/>
+            <TextView android:id="@+id/ggfras_tv_fecha_rango1" style="@style/fechaInicial2" />
+            <TextView android:id="@+id/ggfras_tv_fecha_rango2" style="@style/fechaFinal2"/>
         </LinearLayout>
 
-        <Button android:id="@+id/gfras_btn_filtro" style="@style/btnBuscar"/>
+        <Button android:id="@+id/ggfras_btn_filtro" style="@style/btnBuscar"/>
 
     </LinearLayout>
 
     <LinearLayout style="@style/cabeceraLista">
         <TextView style="@style/tituloLista" android:text="@string/texto_asesores"/>
-        <TextView android:id="@+id/gfras_tv_registros" style="@style/campoCantidadesMail"/>
+        <TextView android:id="@+id/ggfras_tv_registros" style="@style/campoCantidadesMail"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/gfras_rv_lista"
+            android:id="@+id/ggfras_rv_lista"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

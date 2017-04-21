@@ -27,8 +27,10 @@ import android.widget.Toast;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.ReporteClientesDetalle;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientesDetalles;
-import com.airmovil.profuturo.ti.retencion.gerenteFragmento.Inicio;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteSucursales;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistenciaDetalles;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.EnviaMail;
@@ -55,15 +57,17 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
     private int visibleThreshold = 10;
     private int lastVisibleItem, totalItemCount;
     private RecyclerView mRecyclerView;
-    private String fechaIni;
+    private String fechaInicio;
     private String fechaFin;
 
-    public GerenteReporteClientesAdapter(Context mContext, List<GerenteReporteClientesModel> list, RecyclerView mRecyclerView,String fechaIni,String fechaFin) {
+    public GerenteReporteClientesAdapter(Context mContext, List<GerenteReporteClientesModel> list, RecyclerView mRecyclerView, String fechaInicio, String fechaFin) {
         this.mContext = mContext;
         this.list = list;
         this.mRecyclerView = mRecyclerView;
-        this.fechaIni = fechaIni;
+
+        this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
+        Log.d("SIGUE","AQUI ->");
 
         final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) this.mRecyclerView.getLayoutManager();
         this.mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -103,26 +107,51 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
         if(holder instanceof MyViewHolder){
             final GerenteReporteClientesModel lista = list.get(position);
             final MyViewHolder myholder = (MyViewHolder) holder;
-            myholder.campoNombreCliente.setText("Asesor: " + lista.getNombreCliente());
-            myholder.campoCuentaCliente.setText(" " + lista.getNumeroCuenta());
-            myholder.campoAsesorCliente.setText(" " + lista.getNumeroEmpleado());
-            //myholder.campoNoRetenidoCliente.setText(" " + lista.getRetenido());
+            myholder.campoNombreCliente.setText("Nombre del cliente: " + lista.getNombreCliente());
+            myholder.campoCuentaCliente.setText("Número de cuenta: " + lista.getNumeroCuenta());
+            myholder.campoAsesorCliente.setText("Asesor: " + lista.getNumeroEmpleado());
+            myholder.campoConCitaCliente.setText((Boolean.parseBoolean(lista.getCita()) ? "Si" : "No"));
             myholder.campoNoRetenidoCliente.setText((Boolean.parseBoolean(lista.getRetenido()) ? "Retenido" : "No Retenido"));
+            myholder.campoSucursalCliente.setText("Sucursal" + lista.getIdSucursal());
+
             int var = lista.getIdSucursal();
             String intToString = String.valueOf(var);
             char dato = intToString.charAt(0);
             final String inicial = Character.toString(dato);
 
-            myholder.campoLetra.setText(inicial);
-
             myholder.btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    surgirMenu(v,lista);
+                    surgirMenu(v, lista);
+                }
+            });
+
+            myholder.campoLetra.setText(inicial);
+            myholder.cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    fragmentJumpDatosUsuario("", v);
                 }
             });
         } else{
             ((LoadingViewHolder) holder).progressBar.setIndeterminate(true);
+        }
+    }
+
+    public void fragmentJumpDatosUsuario(String idClienteCuenta, View view) {
+        Fragment fragmento = new ReporteClientesDetalles();
+        if (view.getContext() == null)
+            return;
+        if (view.getContext() instanceof Director) {
+            Director gerente = (Director) view.getContext();
+
+            final Connected conected = new Connected();
+            if(conected.estaConectado(view.getContext())) {
+
+            }else{
+                Config.msj(view.getContext(),"Error conexión", "Sin Conexion por el momento.Cliente P-1.1.3");
+            }
+            gerente.switchContent(fragmento, idClienteCuenta);
         }
     }
 
@@ -139,12 +168,12 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
     /**
      * Muesta el menu cuando se hace click en los 3 botonos de la lista
      */
-    private void surgirMenu(View view,GerenteReporteClientesModel lista) {
+    private void surgirMenu(View view, GerenteReporteClientesModel list) {
         // inflate menu
         PopupMenu popup = new PopupMenu(mContext, view);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.sub_menu_reporte_clientes, popup.getMenu());
-        popup.setOnMenuItemClickListener(new MyMenuItemClickListener(lista));
+        popup.setOnMenuItemClickListener(new MyMenuItemClickListener(list, view));
         popup.show();
     }
 
@@ -157,35 +186,38 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
     }
 
 
+    public void fragmentoCambioClienteDetalles(int idSucursal, int idTramite, String numeroCuenta, String fechaInicio, String fechaFin, String usuario, View view) {
+        Log.d("fragmentoCambio", " --> " + idSucursal + " -> " + idTramite + " -> " + numeroCuenta + " -> " + fechaInicio + " -> " + fechaFin + " -> " + usuario);
+        Fragment fragmento = new ReporteClientesDetalles();
+        if (view.getContext() == null)
+            return;
+        if (view.getContext() instanceof Gerente) {
+            Director gerente = (Director) view.getContext();
+            gerente.switchDetalleClientes(idSucursal, idTramite, numeroCuenta, fechaInicio, fechaFin, usuario, fragmento);
+        }
+    }
+
     /**
      * Click listener for popup menu items
      */
     class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
-        GerenteReporteClientesModel lista;
-
-        public MyMenuItemClickListener(GerenteReporteClientesModel lista) {
-            this.lista = lista;
+        GerenteReporteClientesModel list;
+        View view;
+        public MyMenuItemClickListener(GerenteReporteClientesModel list, View view) {
+            this.list = list;
+            this.view = view;
         }
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.sub_menu_reporte_clientes_detalles:
-
-
-                    Toast.makeText(mContext, "ID SUCURSAL" + lista.getIdSucursal(), Toast.LENGTH_SHORT).show();
-
                     Fragment fragmento = new ReporteClientesDetalles();
-                    if (mContext instanceof Gerente) {
-                        Gerente gerente = (Gerente) mContext;
-                        //Log.d("onMenuItemClick", list.getIdSucursal() + " -> " + list.getIdTramite() +  " -> " + list.getNumeroCuenta() + " -> " +  fechaInicio + " -> " + fechaFin + " -> " + Config.usuarioCusp(mContext) + " -> " + view);
-                        //director.switchDetalleClientes(list.getIdSucursal(), list.getIdTramite(), list.getNumeroCuenta(),  fechaInicio, fechaFin, Config.usuarioCusp(mContext), fragmento);
-                        gerente.switchDetalleCliente(lista.getNumeroEmpleado(),lista.getNombreAsesor(),lista.getNumeroCuenta(), lista.getCita(), lista.getIdTramite(), fechaIni, fechaFin, lista.getHora(), Config.usuarioCusp(mContext), fragmento);
+                    if (view.getContext() instanceof Gerente) {
+                        Gerente gerente = (Gerente) view.getContext();
+                        Log.d("onMenuItemClick", list.getIdSucursal() + " -> " + list.getIdTramite() +  " -> " + list.getNumeroCuenta() + " -> " +  fechaInicio + " -> " + fechaFin + " -> " + Config.usuarioCusp(mContext) + " -> " + view);
+                        gerente.switchDetalleClientes(list.getIdSucursal(), list.getIdTramite(), list.getNumeroCuenta(),  fechaInicio, fechaFin, Config.usuarioCusp(mContext), fragmento);
                     }
-                    
-                    //AppCompatActivity ReporteClientesDetalles = (AppCompatActivity) mRecyclerView.getContext();
-                    //com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientesDetalles fragmentoClienteDetalles = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientesDetalles();
-                    //ReporteClientesDetalles.getSupportFragmentManager().beginTransaction().replace(R.id.content_gerente, fragmentoClienteDetalles).addToBackStack(null).commit();
                     return true;
                 case R.id.sub_menu_reporte_clientes_email:
                     final Dialog dialog = new Dialog(mContext);
@@ -216,55 +248,61 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
                                 final InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Service.INPUT_METHOD_SERVICE);
                                 if(connected.estaConectado(mContext)){
                                     JSONObject obj = new JSONObject();
+                                    JSONObject rqt = new JSONObject();
+                                    JSONObject filtro = new JSONObject();
+                                    JSONObject filtroCliente = new JSONObject();
+                                    JSONObject periodo = new JSONObject();
                                     try {
-                                        JSONObject rqt = new JSONObject();
+
+                                        boolean detalle = true;
                                         rqt.put("correo", email);
-                                        rqt.put("detalle", true);
-                                        JSONObject filtro = new JSONObject();
-                                        filtro.put("cita", lista.getCita());
-                                        JSONObject filtroCliente = new JSONObject();
-                                        //filtroCliente.put("curp", lista.getCurp());
-                                        //filtroCliente.put("nss", lista.getNss());
-                                        filtroCliente.put("numeroCuenta", lista.getNumeroCuenta());
-                                        filtro.put("filtroCliente", filtroCliente);
-                                        filtro.put("filtroRetencion", lista.getRetenido());
-                                        filtro.put("idSucursal", lista.getIdSucursal());
-                                        filtro.put("numeroEmpleado", lista.getNumeroEmpleado());
+                                        rqt.put("detalle", detalle);
                                         rqt.put("filtro", filtro);
-                                        rqt.put("numeroEmpleado", lista.getNumeroEmpleado());
-                                        JSONObject periodo = new JSONObject();
-                                        periodo.put("fechaFin", fechaFin);
-                                        periodo.put("fechaInicio", fechaIni);
+                                        filtro.put("cita", list.getCita());
+                                        filtro.put("filtroRetenicion", list.getRetenido());
+                                        filtroCliente.put("curp", "");
+                                        filtroCliente.put("nss", "");
+                                        filtroCliente.put("numeroCuenta", "");
+                                        filtro.put("idSucursal", list.getIdSucursal());
+                                        filtro.put("numeroEmpleado", list.getIdSucursal());
+                                        rqt.put("numeroEmpleado", list.getNumeroEmpleado());
                                         rqt.put("periodo", periodo);
+                                        periodo.put("fechaInicio", fechaInicio);
+                                        periodo.put("fechaFin", fechaFin);
                                         obj.put("rqt", rqt);
-                                        Log.d("datos", "REQUEST-->" + obj);
                                     } catch (JSONException e) {
                                         Config.msj(mContext, "Error", "Error al formar los datos");
                                     }
                                     EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_CLIENTE,mContext,new EnviaMail.VolleyCallback() {
+
                                         @Override
                                         public void onSuccess(JSONObject result) {
                                             Log.d("RESPUESTA DIRECTOR", result.toString());
                                             int status;
+
                                             try {
                                                 status = result.getInt("status");
                                             }catch(JSONException error){
                                                 status = 400;
                                             }
+
                                             Log.d("EST","EE: "+status);
                                             imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
                                             if(status == 200) {
                                                 Config.msj(mContext, "Enviando", "Se ha enviado el mensaje al destino");
+                                                //Config.msjTime(mContext, "Enviando", "Se ha enviado el mensaje al destino", 4000);
                                                 dialog.dismiss();
                                             }else{
                                                 Config.msj(mContext, "Error", "Ups algo salio mal =(");
                                                 dialog.dismiss();
                                             }
+                                            //db.addUserCredits(fk_id_usuario,result);
                                         }
                                         @Override
                                         public void onError(String result) {
                                             Log.d("RESPUESTA ERROR", result);
                                             Config.msj(mContext, "Error en conexión", "Por favor, revisa tu conexión a internet ++");
+                                            //db.addUserCredits(fk_id_usuario, "ND");
                                         }
                                     });
                                 }else{
@@ -274,7 +312,7 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
                         }
                     });
                     dialog.show();
-                    return  true;
+                    return true;
                 default:
             }
             return false;
@@ -283,6 +321,7 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
 
     public static class LoadingViewHolder extends RecyclerView.ViewHolder {
         public ProgressBar progressBar;
+
         public LoadingViewHolder(View itemView) {
             super(itemView);
             progressBar = (ProgressBar) itemView.findViewById(R.id.loading);

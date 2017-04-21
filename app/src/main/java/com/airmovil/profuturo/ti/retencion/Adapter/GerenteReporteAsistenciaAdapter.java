@@ -24,11 +24,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
-import com.airmovil.profuturo.ti.retencion.asesorFragmento.DatosAsesor;
-import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
+import com.airmovil.profuturo.ti.retencion.activities.Gerente;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsesores;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistenciaDetalles;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientesDetalles;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteSucursales;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.EnviaMail;
@@ -56,15 +59,17 @@ public class GerenteReporteAsistenciaAdapter extends RecyclerView.Adapter {
     private int visibleThreshold = 10;
     private int lastVisibleItem, totalItemCount;
     private RecyclerView mRecyclerView;
-    private String fechaIni;
-    private String fechaFin;
+    private String numeroEmpleado = "";
+    private String nombreEmpleado = "";
+    private String mParam4 = "";
+    private String mParam5 = "";
 
-    public GerenteReporteAsistenciaAdapter(Context mContext, List<GerenteReporteAsistenciaModel> list, RecyclerView mRecyclerView,String fechaIni,String fechaFin){
+    public GerenteReporteAsistenciaAdapter(Context mContext, List<GerenteReporteAsistenciaModel> list, RecyclerView mRecyclerView, String mParam4, String mParam5){
         this.mContext = mContext;
+        this.mParam4 = mParam4;
+        this.mParam5 = mParam5;
         this.list = list;
         this.mRecyclerView = mRecyclerView;
-        this.fechaIni = fechaIni;
-        this.fechaFin = fechaFin;
 
         final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) this.mRecyclerView.getLayoutManager();
         this.mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -108,10 +113,12 @@ public class GerenteReporteAsistenciaAdapter extends RecyclerView.Adapter {
             final GerenteReporteAsistenciaModel lista = list.get(position);
             final MyViewHolder myholder = (MyViewHolder) holder;
 
-            myholder.campoNombreAsesor.setText(lista.getNombre());
-            myholder.campoNumeroCuentaAsesor.setText("Numero empleado " + lista.getNumeroEmpleado());
-            //myholder.campoSucursalAsesor.setText(lista.getIdSucursal());
+            myholder.campoNombreAsesor.setText("Asesor: " + lista.getNombre());
+            myholder.campoNumeroCuentaAsesor.setText("Sucursal: " + lista.getIdSucursal());
+            myholder.campoSucursalAsesor.setText("Numero de empleado: " + lista.getnEmpleado());
 
+            numeroEmpleado = lista.getnEmpleado();
+            nombreEmpleado = lista.getNombre();
 
             char nombre = lista.getNombre().charAt(0);
             final String pLetra = Character.toString(nombre);
@@ -121,14 +128,20 @@ public class GerenteReporteAsistenciaAdapter extends RecyclerView.Adapter {
             myholder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    fragmentJumpDatosUsuario(pLetra, v);
+                    //fragmentJumpDatosUsuario(pLetra, v);
+                    Fragment fragmento = new ReporteAsistenciaDetalles();
+                    if (mContext instanceof Gerente) {
+                        Gerente gerente = (Gerente) mContext;
+                        Log.d("-->>>>ENVIO frag:", "num :" + numeroEmpleado + ", fIni: " + mParam4 + ", fFin:" + mParam5);
+                        gerente.switchAsistenciaDetalle(fragmento, numeroEmpleado, nombreEmpleado, mParam4, mParam5);
+                    }
                 }
             });
 
             myholder.btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    surgirMenu(v,lista);
+                    surgirMenu(v);
                 }
             });
 
@@ -140,12 +153,12 @@ public class GerenteReporteAsistenciaAdapter extends RecyclerView.Adapter {
     /**
      * Muesta el menu cuando se hace click en los 3 botonos de la lista
      */
-    private void surgirMenu(View view,GerenteReporteAsistenciaModel lista) {
+    private void surgirMenu(View view) {
         // inflate menu
         PopupMenu popup = new PopupMenu(mContext, view);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.sub_menu_reporte_asistencia, popup.getMenu());
-        popup.setOnMenuItemClickListener(new MyMenuItemClickListener(lista));
+        popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
         popup.show();
     }
 
@@ -153,20 +166,22 @@ public class GerenteReporteAsistenciaAdapter extends RecyclerView.Adapter {
      * escucha el popup al dar click
      */
     class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
-        GerenteReporteAsistenciaModel lista;
 
-        public MyMenuItemClickListener(GerenteReporteAsistenciaModel lista) {
-            this.lista = lista;
+        public MyMenuItemClickListener() {
         }
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.sub_menu_reporte_asistencia_nav_detalle_asistencia:
-                    AppCompatActivity AsistenciaDetalles = (AppCompatActivity) mRecyclerView.getContext();
-                    com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistenciaDetalles fragmentoAsistenciaDetalles = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistenciaDetalles();
-                    //Create a bundle to pass data, add data, set the bundle to your fragment and:
-                    AsistenciaDetalles.getSupportFragmentManager().beginTransaction().replace(R.id.content_gerente, fragmentoAsistenciaDetalles).addToBackStack(null).commit();
+                    Fragment fragmento = new ReporteAsistenciaDetalles();
+                    if (mContext instanceof Gerente) {
+                        Gerente gerente = (Gerente) mContext;
+                        Log.d("-->>>>ENVIO frag:", "num :" + numeroEmpleado + ", fIni: " + mParam4 + ", fFin:" + mParam5);
+                        gerente.switchAsistenciaDetalle(fragmento, numeroEmpleado, nombreEmpleado, mParam4, mParam5);
+                    }
                     return true;
+
+
                 case R.id.sub_menu_reporte_asistencia_email:
                     final Dialog dialog = new Dialog(mContext);
                     dialog.setContentView(R.layout.custom_layout);
@@ -186,7 +201,6 @@ public class GerenteReporteAsistenciaAdapter extends RecyclerView.Adapter {
 
                             final String datoEditText = editText.getText().toString();
                             final String datoSpinner = spinner.getSelectedItem().toString();
-
                             Log.d("DATOS USER","SPINNER: "+datoEditText+" datosSpinner: "+ datoSpinner);
                             if(datoEditText == "" || datoSpinner == "Seleciona un email"){
                                 Config.msj(mContext, "Error", "Ingresa email valido");
@@ -195,18 +209,23 @@ public class GerenteReporteAsistenciaAdapter extends RecyclerView.Adapter {
                                 Connected connected = new Connected();
                                 final InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Service.INPUT_METHOD_SERVICE);
                                 if(connected.estaConectado(mContext)){
+
                                     JSONObject obj = new JSONObject();
+
                                     try {
                                         JSONObject rqt = new JSONObject();
                                         rqt.put("correo", email);
                                         rqt.put("detalle", true);
-                                        rqt.put("numeroEmpleado", lista.getNumeroEmpleado());
+                                        rqt.put("idSucursal", 0);
+                                        rqt.put("idGerencia", 0);
+                                        rqt.put("numeroEmpleado", numeroEmpleado);
                                         JSONObject periodo = new JSONObject();
-                                        periodo.put("fechaFin", fechaFin);
-                                        periodo.put("fechaInicio", fechaIni);
+                                        periodo.put("fechaFin", mParam5);
+                                        periodo.put("fechaInicio", mParam4);
                                         rqt.put("periodo", periodo);
+                                        rqt.put("usuario", Config.usuarioCusp(mContext));
                                         obj.put("rqt", rqt);
-                                        Log.d("datos", "REQUEST-->" + obj);
+                                        Log.d("-->>>>datos Email array", "REQUEST-->" + obj);
                                     } catch (JSONException e) {
                                         Config.msj(mContext, "Error", "Error al formar los datos");
                                     }
@@ -214,7 +233,6 @@ public class GerenteReporteAsistenciaAdapter extends RecyclerView.Adapter {
 
                                         @Override
                                         public void onSuccess(JSONObject result) {
-                                            Log.d("RESPUESTA DIRECTOR", result.toString());
                                             int status;
 
                                             try {
@@ -227,7 +245,7 @@ public class GerenteReporteAsistenciaAdapter extends RecyclerView.Adapter {
                                             imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
                                             if(status == 200) {
                                                 Config.msj(mContext, "Enviando", "Se ha enviado el mensaje al destino");
-                                                //Config.msjTime(mContext, "Enviando", "Se ha enviado el mensaje al destino", 4000);
+                                                //Config.msjTime(getContext(), "Enviando", "Se ha enviado el mensaje al destino", 4000);
                                                 dialog.dismiss();
                                             }else{
                                                 Config.msj(mContext, "Error", "Ups algo salio mal =(");
@@ -246,6 +264,7 @@ public class GerenteReporteAsistenciaAdapter extends RecyclerView.Adapter {
                                     Config.msj(mContext, "Error en conexión", "Por favor, revisa tu conexión a internet");
                                 }
                             }
+
                         }
                     });
                     dialog.show();
@@ -255,7 +274,6 @@ public class GerenteReporteAsistenciaAdapter extends RecyclerView.Adapter {
             return false;
         }
     }
-
 
     @Override
     public int getItemCount() {
@@ -306,12 +324,12 @@ public class GerenteReporteAsistenciaAdapter extends RecyclerView.Adapter {
         public TextView btn;
         public MyViewHolder(View view){
             super(view);
-            campoLetra = (TextView) view.findViewById(R.id.gggfrasl_tv_letra);
-            campoNombreAsesor = (TextView) view.findViewById(R.id.gggfrasl_tv_nombre_asesor);
-            campoNumeroCuentaAsesor = (TextView) view.findViewById(R.id.gggfrasl_tv_numero_empleado_asesor);
-            campoSucursalAsesor = (TextView) view.findViewById(R.id.gggfrasl_tv_numero_sucursal_asesor);
-            btn = (TextView) view.findViewById(R.id.gggfrasl_btn_detalles);
-            cardView = (CardView) view.findViewById(R.id.gggfrasl_cv);
+            campoLetra = (TextView) view.findViewById(R.id.ggfrasl_tv_letra);
+            campoNombreAsesor = (TextView) view.findViewById(R.id.ggfrasl_tv_nombre_asesor);
+            campoNumeroCuentaAsesor = (TextView) view.findViewById(R.id.ggfrasl_tv_numero_empleado_asesor);
+            campoSucursalAsesor = (TextView) view.findViewById(R.id.ggfrasl_tv_numero_sucursal_asesor);
+            btn = (TextView) view.findViewById(R.id.ggfrasl_btn_detalles);
+            cardView = (CardView) view.findViewById(R.id.ggfrasl_cv);
         }
     }
 }

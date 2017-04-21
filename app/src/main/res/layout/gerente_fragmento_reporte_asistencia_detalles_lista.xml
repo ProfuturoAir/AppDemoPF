@@ -12,7 +12,7 @@
 
     <LinearLayout style="@style/contenedorLista" android:orientation="vertical">
         <TextView
-            android:id="@+id/gfrasdl_tv_fecha"
+            android:id="@+id/ggfrasdl_tv_fecha"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="22dp"
@@ -38,13 +38,13 @@
                     android:textStyle="bold"
                     android:textSize="18dp"/>
                 <TextView
-                    android:id="@+id/gfrasdl_tv_entrada_hora"
+                    android:id="@+id/ggfrasdl_tv_entrada_hora"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="7:20"
                     android:textSize="16dp"/>
                 <TextView
-                    android:id="@+id/gfrasdl_tv_entrada_coordenadas"
+                    android:id="@+id/ggfrasdl_tv_entrada_coordenadas"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Coordenadas: 19.33123123, -67.123123"
@@ -66,13 +66,13 @@
                     android:textStyle="bold"
                     android:textSize="18dp"/>
                 <TextView
-                    android:id="@+id/gfrasdl_tv_comida_hora"
+                    android:id="@+id/ggfrasdl_tv_comida_hora"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="7:20"
                     android:textSize="16dp"/>
                 <TextView
-                    android:id="@+id/gfrasdl_tv_comida_coordenadas"
+                    android:id="@+id/ggfrasdl_tv_comida_coordenadas"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Coordenadas: 19.33123123, -67.123123"
@@ -94,13 +94,13 @@
                     android:textStyle="bold"
                     android:textSize="18dp"/>
                 <TextView
-                    android:id="@+id/gfrasdl_tv_salida_hora"
+                    android:id="@+id/ggfrasdl_tv_salida_hora"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="7:20"
                     android:textSize="16dp"/>
                 <TextView
-                    android:id="@+id/gfrasdl_tv_salida_coordenadas"
+                    android:id="@+id/ggfrasdl_tv_salida_coordenadas"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Coordenadas: 19.33123123, -67.123123"
