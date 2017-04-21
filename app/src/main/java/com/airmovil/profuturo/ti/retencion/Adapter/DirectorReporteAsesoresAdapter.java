@@ -193,7 +193,7 @@ public class DirectorReporteAsesoresAdapter extends RecyclerView.Adapter{
                     //AppCompatActivity Asistencia = (AppCompatActivity) mRecyclerView.getContext();
                     ReporteAsistencia fragmentoAsistencia = new ReporteAsistencia();
                     Director dt = (Director) mRecyclerView.getContext();
-                    dt.switchAsistencia(fragmentoAsistencia, String.valueOf(lista.getNumeroEmpleado()),fechaIni,fechaFin);
+                    dt.switchAsistencia(fragmentoAsistencia,0,0, String.valueOf(lista.getNumeroEmpleado()),fechaIni,fechaFin);
                     //Create a bundle to pass data, add data, set the bundle to your fragment and:
                     //Asistencia.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoAsistencia).addToBackStack(null).commit();
                     return true;

@@ -712,9 +712,9 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         if(getArguments() != null){
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
-            adapter = new DirectorReporteSucursalesAdapter(rootView.getContext(), getDatos1, recyclerView, mParam1, mParam2);
+            adapter = new DirectorReporteSucursalesAdapter(rootView.getContext(), getDatos1, recyclerView,separated[0].trim(),separated[1].trim());
         }else{
-            adapter = new DirectorReporteSucursalesAdapter(rootView.getContext(), getDatos1, recyclerView, smParam1, smParam2);
+            adapter = new DirectorReporteSucursalesAdapter(rootView.getContext(), getDatos1, recyclerView,separated[0].trim(),separated[1].trim());
         }
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);

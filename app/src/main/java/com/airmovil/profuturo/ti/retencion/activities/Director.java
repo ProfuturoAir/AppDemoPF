@@ -297,14 +297,13 @@ public class Director extends AppCompatActivity{
     }
 
 
-    public void switchAsistencia(Fragment frag, String numeroEmpleado,String fechaIni,String fechaFin) {
+    public void switchAsistencia(Fragment frag,int idGerencia, int idSucursal,String numeroEmpleado,String fechaIni,String fechaFin) {
         Bundle bundle=new Bundle();
-        bundle.putString("numeroEmpleado",numeroEmpleado);
-        bundle.putString("fechaIni",fechaIni);
+        bundle.putInt("idGerencia",idGerencia);
+        bundle.putInt("idSucursal",idSucursal);
+        bundle.putString("idAsesor",numeroEmpleado);
+        bundle.putString("fechaInicio",fechaIni);
         bundle.putString("fechaFin",fechaFin);
-        //bundle.putString("idGerencia",idGerencia);
-        //bundle.putString("idSucursal",idSucursal);
-        //bundle.putString("hora",hora);
 
         Log.d("DIRECTOR", "ASITENCIA - #Empleado " + numeroEmpleado + " FIN: " + fechaFin + " ");
 
