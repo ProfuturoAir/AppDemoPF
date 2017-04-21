@@ -43,23 +43,32 @@ import java.util.Map;
 public class ReporteClientesDetalles extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "idSucursal";
-    private static final String ARG_PARAM2 = "idTramite";
-    private static final String ARG_PARAM3 = "numeroCuenta";
-    private static final String ARG_PARAM4 = "fechaInicio";
-    private static final String ARG_PARAM5 = "fechaFin";
-    private static final String ARG_PARAM6 = "usuario";
+    private static final String ARG_PARAM1 = "numeroCuenta"; // curp
+    private static final String ARG_PARAM2 = "cita"; // nss
+    private static final String ARG_PARAM4 = "idTramite"; // idTramite
+    private static final String ARG_PARAM5 = "fechaInicio"; // fecha inicio
+    private static final String ARG_PARAM6 = "fechaFin"; // fecha fin
+    private static final String ARG_PARAM7 = "hora"; // hora
+    private static final String ARG_PARAM8 = "usuario";
+    private static final String ARG_PARAM9 = "numeroEmpleado";
+    private static final String ARG_PARAM10 = "nombreAsesor";
+
 
     // TODO: Rename and change types of parameters
-    private int mParam1; // id sucursal
-    private int mParam2; // id tramite
+    private String mParam1; // numero cuenta
+    private String mParam2; // cita
     private String mParam3; // numeroCuenta
-    private String mParam4; // fechaInicio
-    private String mParam5; // fechafin
-    private String mParam6; // usuario
+    private int mParam4; // idtramite
+    private String mParam5; // fechaInicio
+    private String mParam6; // fechaFin
+    private String mParam7; // usuario
+    private String mParam8; // usuario
+    private String mParam9;
+    private String mParam10;
+    private int pagina = 1;
 
-    private TextView tv1, tv2, tv3, tv4, tv5, tv6, tv7;
-    private TextView ddfrasd_tv_fecha;
+    private TextView tv_nombre, tv_numero_cuenta, tv_nss, tv_curp, tv_estatus, tv_saldo, tv_sucursal, tv_hora_atencion;
+    private TextView tv_nombre_asesor, tv_numero_empleado, tv_inicial, tv_fechas;
     private SessionManager sessionManager;
 
     private OnFragmentInteractionListener mListener;
@@ -74,22 +83,24 @@ public class ReporteClientesDetalles extends Fragment {
      *
      * @param param1 parametro 1 idsucursal.
      * @param param2 parametro 2 idTramite.
-     * @param param3 parametro 3 numeroCuenta.
      * @param param4 parametro 4 fechaInicio.
      * @param param5 parametro 5 fechaFin.
      * @param param6 parametro 6 usuario.
      * @return A new instance of fragment ReporteClientesDetalles.
      */
     // TODO: Rename and change types and number of parameters
-    public static ReporteClientesDetalles newInstance(int param1, int param2, String param3, String param4, String param5, String param6, View view ) {
+    public static ReporteClientesDetalles newInstance(String param1, String param2,int param4, String param5, String param6, String param7, String param8,String param9,String param10) {
         ReporteClientesDetalles fragment = new ReporteClientesDetalles();
         Bundle args = new Bundle();
-        args.putInt(ARG_PARAM1, param1);
-        args.putInt(ARG_PARAM2, param2);
-        args.putString(ARG_PARAM3, param3);
-        args.putString(ARG_PARAM4, param4);
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        args.putInt(ARG_PARAM4, param4);
         args.putString(ARG_PARAM5, param5);
         args.putString(ARG_PARAM6, param6);
+        args.putString(ARG_PARAM7, param7);
+        args.putString(ARG_PARAM8, param8);
+        args.putString(ARG_PARAM9, param9);
+        args.putString(ARG_PARAM10, param10);
         fragment.setArguments(args);
         return fragment;
     }
@@ -98,26 +109,41 @@ public class ReporteClientesDetalles extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getInt(ARG_PARAM1);
-            mParam2 = getArguments().getInt(ARG_PARAM2);
-            mParam3 = getArguments().getString(ARG_PARAM3);
-            mParam4 = getArguments().getString(ARG_PARAM4);
+            Log.d("Creado","TODOS "+getArguments());
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+            mParam4 = getArguments().getInt(ARG_PARAM4);
             mParam5 = getArguments().getString(ARG_PARAM5);
             mParam6 = getArguments().getString(ARG_PARAM6);
+            mParam7 = getArguments().getString(ARG_PARAM7);
+            mParam8 = getArguments().getString(ARG_PARAM8);
+            mParam9 = getArguments().getString(ARG_PARAM9);
+            mParam10 = getArguments().getString(ARG_PARAM10);
         }
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        tv1 = (TextView) view.findViewById(R.id.ddd_tv_clientes_numero_cuenta);
-        tv2 = (TextView) view.findViewById(R.id.ddd_tv_clientes_detalles_nss);
-        tv3 = (TextView) view.findViewById(R.id.ddd_tv_clientes_detalles_curp);
-        tv4 = (TextView) view.findViewById(R.id.ddd_tv_clientes_detalles_estatus);
-        tv5 = (TextView) view.findViewById(R.id.ddd_tv_clientes_detalles_saldo);
-        tv6 = (TextView) view.findViewById(R.id.ddd_tv_clientes_detalles_sucursal);
-        tv7 = (TextView) view.findViewById(R.id.ddd_tv_clientes_detalles_hora_atencion);
-        ddfrasd_tv_fecha = (TextView) view.findViewById(R.id.ddfrasd_tv_fecha);
-        primeraPeticion();
+        tv_nombre = (TextView) view.findViewById(R.id.ddd_tv_clientes_nombre);
+        tv_numero_cuenta = (TextView) view.findViewById(R.id.ddd_tv_clientes_numero_cuenta);
+        tv_nss = (TextView) view.findViewById(R.id.ddd_tv_clientes_detalles_nss);
+        tv_curp = (TextView) view.findViewById(R.id.ddd_tv_clientes_detalles_curp);
+        tv_estatus = (TextView) view.findViewById(R.id.ddd_tv_clientes_detalles_estatus);
+        tv_saldo = (TextView) view.findViewById(R.id.ddd_tv_clientes_detalles_saldo);
+        tv_sucursal = (TextView) view.findViewById(R.id.ddd_tv_clientes_detalles_sucursal);
+        tv_hora_atencion = (TextView) view.findViewById(R.id.ddd_tv_clientes_detalles_hora_atencion);
+        tv_nombre_asesor = (TextView) view.findViewById(R.id.ddfrasd_tv_nombre_asesor);
+        tv_numero_empleado = (TextView) view.findViewById(R.id.ddfrasd_tv_numero_empleado_asesor);
+        tv_inicial = (TextView) view.findViewById(R.id.ddfrasd_tv_letra);
+        tv_fechas = (TextView) view.findViewById(R.id.ddfrasd_tv_fecha);
+
+        //tv_nombre.setText("123123123");
+        tv_numero_empleado.setText(mParam9);
+        tv_nombre_asesor.setText(mParam10);
+        tv_fechas.setText(mParam6 + " - "+mParam7);
+
+
+        sendJson(true);
     }
 
     @Override
@@ -162,7 +188,7 @@ public class ReporteClientesDetalles extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private void primeraPeticion(){
+   /* private void primeraPeticion(){
         final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
         progressDialog.setIcon(R.drawable.icono_abrir);
         progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
@@ -176,7 +202,7 @@ public class ReporteClientesDetalles extends Fragment {
                         sendJson(true);
                     }
                 }, 3000);
-    }
+    }*/
 
     private void sendJson(final boolean primeraPeticion){
 
@@ -185,42 +211,29 @@ public class ReporteClientesDetalles extends Fragment {
             loading = ProgressDialog.show(getActivity(), "Cargando datos", "Porfavor espere...", false, false);
         else
             loading = null;
-
         JSONObject obj = new JSONObject();
         JSONObject rqt = new JSONObject();
-        JSONObject periodo = new JSONObject();
         JSONObject filtro = new JSONObject();
-
+        JSONObject periodo = new JSONObject();
         try{
-
-            // param1 parametro 1 idsucursal.
-            // param2 parametro 2 idTramite.
-            // param3 parametro 3 numeroCuenta.
-            // param4 parametro 4 fechaInicio.
-            // param5 parametro 5 fechaFin.
-            // param6 parametro 6 usuario.
             if(getArguments() != null){
-                mParam1 = getArguments().getInt(ARG_PARAM1);
-                mParam2 = getArguments().getInt(ARG_PARAM2);
-                mParam3 = getArguments().getString(ARG_PARAM3);
-                mParam4 = getArguments().getString(ARG_PARAM4);
-                mParam5 = getArguments().getString(ARG_PARAM5);
-                mParam6 = getArguments().getString(ARG_PARAM6);
                 rqt.put("filtro", filtro);
-                    filtro.put("curp", "");
-                    filtro.put("nss", "");
-                    filtro.put("numeroCuenta", mParam3);
-                rqt.put("idTramite", mParam2);
+                filtro.put("curp", mParam1);
+                filtro.put("nss", mParam2);
+                filtro.put("numeroCuenta", mParam3);
+                rqt.put("idTramite", mParam4);
+                rqt.put("idSucursal", 0);
+                rqt.put("pagina", pagina);
                 rqt.put("periodo", periodo);
-                    periodo.put("fechaInicio", mParam4);
-                    periodo.put("fechaFin", mParam5);
-                rqt.put("usuario", mParam6);
+                periodo.put("fechaInicio", mParam5);
+                periodo.put("fechaFin", mParam6);
+                rqt.put("retenido", "retenido");
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }
             Log.d("sendJson", " REQUEST -->" + obj);
-
         } catch (JSONException e){
-            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
+            Config.msj(getContext(),"Error","Existe un right_in al formar la peticion");
         }
 
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_CLIENTE_DETALLE, obj,
@@ -294,22 +307,47 @@ public class ReporteClientesDetalles extends Fragment {
     }
 
     private void primerPaso(JSONObject obj){
-        Log.d("response -> 1", "" + obj);
+        Log.d("primer paso", "Response: "  + obj );
+
+        String curp = "";
+        String horaAtencion = "";
+        int idTramite = 0;
+        String nombre = "";
+        String nombreSucursal = "";
+        String nss = "";
+        String numeroCuenta = "";
+        boolean retenido = false;
+        String rfc = "";
+        String saldo = "";
+
         try{
             JSONObject cliente = obj.getJSONObject("cliente");
-            String nombre = cliente.getString("nombre");
-            String numeroCuenta = cliente.getString("nombreSucursal");
-            String nss = cliente.getString("nss");
-            String curp = cliente.getString("curp");
-            boolean status = cliente.getBoolean("retenido");
-            int saldo = cliente.getInt("saldo");
-
-            tv1.setText("" + nombre);
-
+            curp = cliente.getString("curp");
+            horaAtencion = cliente.getString("horaAtencion"); //
+            nombre = cliente.getString("nombre"); //
+            nombreSucursal = cliente.getString("nombreSucursal");
+            nss = cliente.getString("nss"); //
+            numeroCuenta = cliente.getString("numeroCuenta"); //
+            retenido = cliente.getBoolean("retenido");
+            saldo = cliente.getString("saldo");
         }catch (JSONException e){
             e.printStackTrace();
         }
 
+        String retencion = "No Retenido";;
+
+        if(retenido){
+            retencion = "Retenido";
+        }
+
+        tv_nombre.setText("" + nombre);
+        tv_numero_cuenta.setText("" + numeroCuenta);
+        tv_nss.setText("" + nss);
+        tv_curp.setText("" + curp);
+        tv_estatus.setText("" + retencion);
+        tv_saldo.setText("" + saldo);
+        tv_sucursal.setText("" + nombreSucursal);
+        tv_hora_atencion.setText("hora: " + horaAtencion);
 
     }
 }

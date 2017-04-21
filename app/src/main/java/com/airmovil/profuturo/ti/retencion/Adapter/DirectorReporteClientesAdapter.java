@@ -26,11 +26,8 @@ import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Director;
-import com.airmovil.profuturo.ti.retencion.activities.Gerente;
-import com.airmovil.profuturo.ti.retencion.asesorFragmento.ReporteClientesDetalle;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientesDetalles;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteSucursales;
-import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistenciaDetalles;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.EnviaMail;
@@ -185,7 +182,7 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
         this.mOnLoadMoreListener = mOnLoadMoreListener;
     }
 
-
+/*
     public void fragmentoCambioClienteDetalles(int idSucursal, int idTramite, String numeroCuenta, String fechaInicio, String fechaFin, String usuario, View view) {
         Log.d("fragmentoCambio", " --> " + idSucursal + " -> " + idTramite + " -> " + numeroCuenta + " -> " + fechaInicio + " -> " + fechaFin + " -> " + usuario);
         Fragment fragmento = new ReporteClientesDetalles();
@@ -195,7 +192,7 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
             Director director = (Director) view.getContext();
             director.switchDetalleClientes(idSucursal, idTramite, numeroCuenta, fechaInicio, fechaFin, usuario, fragmento);
         }
-    }
+    }*/
 
     /**
      * Click listener for popup menu items
@@ -216,7 +213,9 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
                     if (view.getContext() instanceof Director) {
                         Director director = (Director) view.getContext();
                         Log.d("onMenuItemClick", list.getIdSucursal() + " -> " + list.getIdTramite() +  " -> " + list.getNumeroCuenta() + " -> " +  fechaInicio + " -> " + fechaFin + " -> " + Config.usuarioCusp(mContext) + " -> " + view);
-                        director.switchDetalleClientes(list.getIdSucursal(), list.getIdTramite(), list.getNumeroCuenta(),  fechaInicio, fechaFin, Config.usuarioCusp(mContext), fragmento);
+                        //director.switchDetalleClientes(list.getIdSucursal(), list.getIdTramite(), list.getNumeroCuenta(),  fechaInicio, fechaFin, Config.usuarioCusp(mContext), fragmento);
+                        director.switchDetalleClientes(list.getNumeroEmpleado(),list.getNombreAsesor(),list.getNumeroCuenta(), list.getCita(), list.getIdTramite(), fechaInicio, fechaFin, list.getHora(), Config.usuarioCusp(mContext), fragmento);
+
                     }
                     return true;
                 case R.id.sub_menu_reporte_clientes_email:

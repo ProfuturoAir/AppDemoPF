@@ -12,6 +12,16 @@ public class DirectorReporteClientesModel {
     public String numeroCuenta;
     public String numeroEmpleado;
     public String retenido;
+    public String nombreAsesor;
+    public String hora;
+
+    public String getHora() {
+        return hora;
+    }
+
+    public void setHora(String hora) {
+        this.hora = hora;
+    }
 
     public String getCita() {
         return cita;
@@ -67,5 +77,13 @@ public class DirectorReporteClientesModel {
 
     public void setRetenido(String retenido) {
         this.retenido = retenido;
+    }
+
+    public String getNombreAsesor() {
+        return nombreAsesor;
+    }
+
+    public void setNombreAsesor(String nombreAsesor) {
+        this.nombreAsesor = nombreAsesor;
     }
 }

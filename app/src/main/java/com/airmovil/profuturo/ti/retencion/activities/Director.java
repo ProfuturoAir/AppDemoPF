@@ -369,15 +369,19 @@ public class Director extends AppCompatActivity{
         ft.commit();
     }
 
-   public void switchDetalleClientes(int idSucursal, int idTramite, String numeroCuenta, String fechaInicio, String fechaFin, String usuario, Fragment frag){
-       Log.d("switchDetallesClie", " --> " + " --> " + idSucursal + " --> " + idTramite + " --> " + numeroCuenta + " --> " + fechaInicio + " --> " + fechaFin + " --> " + usuario);
+   public void switchDetalleClientes(String numeroEmpleado, String nombreAsesor,String numeroCuenta, String cita, int idTramite, String fechaInicio, String fechaFin, String hora, String usuario, Fragment frag) {
        Bundle bundle=new Bundle();
-       bundle.putInt("idSucursal", idSucursal);
+       bundle.putString("numeroEmpleado",numeroEmpleado);
+       bundle.putString("numeroCuenta",numeroCuenta);
+       bundle.putString("cita",cita);
+       bundle.putString("hora",hora);
        bundle.putInt("idTramite", idTramite);
-       bundle.putString("numeroCuenta", numeroCuenta);
        bundle.putString("fechaInicio", fechaInicio);
        bundle.putString("fechaFin", fechaFin);
        bundle.putString("usuario", usuario);
+       bundle.putString("nombreAsesor",nombreAsesor);
+       frag.setArguments(bundle);
+
        frag.setArguments(bundle);
        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
        ft.replace(R.id.content_director, frag, frag.toString());

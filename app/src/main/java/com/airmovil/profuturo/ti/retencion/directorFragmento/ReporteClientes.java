@@ -966,10 +966,12 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     getDatos2.setNombreCliente(json.getString("nombreCliente"));
                     getDatos2.setNumeroCuenta(json.getString("numeroCuenta"));
                     getDatos2.setNumeroEmpleado(json.getString("numeroEmpleado"));
+                    getDatos2.setNombreAsesor(json.getString("nombreAsesor"));
                     getDatos2.setCita(json.getString("cita"));
                     getDatos2.setRetenido(json.getString("retenido"));
                     getDatos2.setIdSucursal(json.getInt("idSucursal"));
                     getDatos2.setIdTramite(json.getInt("idTramite"));
+                    getDatos2.setHora(json.getString("horaAtencion"));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -1047,10 +1049,12 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     getDatos2.setNombreCliente(json.getString("nombreCliente"));
                     getDatos2.setNumeroCuenta(json.getString("numeroCuenta"));
                     getDatos2.setNumeroEmpleado(json.getString("numeroEmpleado"));
+                    getDatos2.setNombreAsesor(json.getString("nombreAsesor"));
                     getDatos2.setCita(json.getString("cita"));
                     getDatos2.setRetenido(json.getString("retenido"));
                     getDatos2.setIdSucursal(json.getInt("idSucursal"));
                     getDatos2.setIdTramite(json.getInt("idTramite"));
+                    getDatos2.setHora(json.getString("horaAtencion"));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
