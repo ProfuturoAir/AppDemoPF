@@ -80,7 +80,15 @@ public class DirectorReporteAsistenciaDetalleAdapter extends RecyclerView.Adapte
             final DirectorReporteAsistenciaDetalleModel lista = list.get(position);
             final MyViewHolder myholder = (MyViewHolder) holder;
 
-            myholder.campoFechaDetalle.setText("01-12-2017");
+            myholder.campoFechaDetalle.setText(lista.getFechaAsistencia());
+            myholder.campoEntradasHoraDetalle.setText(lista.getEntradaHora());
+            myholder.campoEntradasCoordenadasDetalle.setText("Coordenadas: " + lista.getEntradaLatitud() + ", " + lista.entradaLongitud);
+
+            myholder.campoHoraComidasDetalle.setText(lista.getComidaHora());
+            myholder.campoComidasCoordenadasDetalle.setText("Coordenadas: " + lista.getComidaLatitud() + ", " + lista.comidaLatitud);
+
+            myholder.campoHoraSalidasDetalle.setText(lista.getSalidaHora());
+            myholder.campoSalidasCoordenadasDetalle.setText("Coordenadas: " + lista.getSalidaLatitud() + ", " + lista.getSalidaLongitud());
 
             /*myholder.campoNombre.setText(lista.getClienteNombre());
             myholder.campoCuenta.setText(lista.getClienteCuenta());

@@ -10,6 +10,7 @@ public class DirectorReporteAsistenciaDetalleModel {
     public String entradaLatitud;
     public String entradaLongitud;
     public String comidaHora;
+    public String comidaSalida;
     public String comidaLatitud;
     public String comidaLongitud;
     public String salidaHora;
@@ -70,6 +71,15 @@ public class DirectorReporteAsistenciaDetalleModel {
 
     public void setComidaLongitud(String comidaLongitud) {
         this.comidaLongitud = comidaLongitud;
+    }
+
+
+    public String getComidaSalida() {
+        return comidaSalida;
+    }
+
+    public void setComidaSalida(String comidaSalida) {
+        this.comidaSalida = comidaSalida;
     }
 
     public String getSalidaHora() {

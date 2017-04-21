@@ -72,7 +72,7 @@ public class Config extends Activity {
     public static final String URL_CONSULTAR_REPORTE_RETENCION_CLIENTES = URL_GENERAL + "mb/premium/rest/consultarReporteRetencionesCliente";
     public static final String URL_CONSULTAR_REPORTE_RETENCION_CLIENTE_DETALLE = URL_GENERAL + "mb/premium/rest/generarReporteCliente";
     public static final String URL_CONSULTAR_REPORTE_ASISTENCIA = URL_GENERAL + "mb/premium/rest/consultarReporteAsistencia";
-    public static final String URL_CONSULTAR_REPORTE_ASISTENCIA_DETALLE = URL_GENERAL + "Profuturo/consultarReporteProductividadAsistencia";
+    public static final String URL_CONSULTAR_REPORTE_ASISTENCIA_DETALLE = URL_GENERAL + "mb/premium/rest/consultarReporteProductividadAsistencia";
 
     //SUCURSALES LISTA
     public static final String URL_SUCURSALES = URL_GENERAL + "mb/premium/rest/seleccionSucursales";

@@ -63,12 +63,14 @@ import java.util.Map;
 public class ReporteAsistenciaDetalles extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "parametro1";
-    private static final String ARG_PARAM2 = "parametro2";
+    private static final String ARG_PARAM1 = "numeroEmpleado";
+    private static final String ARG_PARAM2 = "fechaIni";
+    private static final String ARG_PARAM3 = "fechaFin";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private String mParam3;
 
     // TODO: View, sessionManager, datePickerDialog
     private View rootView;
@@ -120,11 +122,12 @@ public class ReporteAsistenciaDetalles extends Fragment {
      * @return A new instance of fragment ReporteAsistenciaDetalles.
      */
     // TODO: Rename and change types and number of parameters
-    public static ReporteAsistenciaDetalles newInstance(String param1, String param2, Context context) {
+    public static ReporteAsistenciaDetalles newInstance(String param1, String param2, String param3, Context context) {
         ReporteAsistenciaDetalles fragment = new ReporteAsistenciaDetalles();
         Bundle args = new Bundle();
         args.putString("parametro1", param1);
         args.putString("parametro2", param2);
+        args.putString("parametro3", param3);
         fragment.setArguments(args);
         return fragment;
     }
@@ -135,6 +138,8 @@ public class ReporteAsistenciaDetalles extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+            mParam3 = getArguments().getString(ARG_PARAM3);
+            Log.d("-->>Detalles Datos", mParam1 + ", " + mParam2 + ", " + mParam3);
         }
     }
 
@@ -180,7 +185,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
 
         // TODO: webservice
-        sendJson(true);
+        //sendJson(true);
 
         final Fragment borrar = this;
         btnBuscar.setOnClickListener(new View.OnClickListener() {
@@ -194,7 +199,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
                         Config.dialogoFechasVacias(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ReporteAsistenciaDetalles fragmento = ReporteAsistenciaDetalles.newInstance(fechaIncial, fechaFinal, rootView.getContext());
+                        ReporteAsistenciaDetalles fragmento = ReporteAsistenciaDetalles.newInstance(mParam1, fechaIncial, fechaFinal, rootView.getContext());
                         borrar.onDestroy();
                         ft.remove(borrar);
                         ft.replace(R.id.content_director, fragmento);
@@ -324,26 +329,24 @@ public class ReporteAsistenciaDetalles extends Fragment {
 
         SessionManager sessionManager = new SessionManager(getContext());
         HashMap<String, String> usuario = sessionManager.getUserDetails();
-        String numeroEmpleado = usuario.get(SessionManager.ID);
+        String numeroEmpleado = mParam1;
 
         JSONObject obj = new JSONObject();
         JSONObject rqt = new JSONObject();
         JSONObject periodo = new JSONObject();
         try{
             if(getArguments() != null){
-                mParam1 = getArguments().getString(ARG_PARAM1);
-                mParam2 = getArguments().getString(ARG_PARAM2);
-                rqt.put("numeroEmpleado", numeroEmpleado);
+                rqt.put("numeroEmpleado", mParam1);
                 rqt.put("pagina", pagina);
                 periodo.put("fechaInicio", mParam2);
-                periodo.put("fechaFin", mParam1);
+                periodo.put("fechaFin", mParam3);
                 rqt.put("periodo", periodo);
                 obj.put("rqt", rqt);
             }else{
                 Map<String, String> fecha = Config.fechas(1);
                 String param1 = fecha.get("fechaIni");
                 String param2 = fecha.get("fechaFin");
-                rqt.put("numeroEmpleado", numeroEmpleado);
+                rqt.put("numeroEmpleado", mParam1);
                 rqt.put("pagina", pagina);
                 periodo.put("fechaInicio", param1);
                 periodo.put("fechaFin", param2);
@@ -351,7 +354,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
                 obj.put("rqt", rqt);
             }
 
-            Log.d("", "PETICION VACIA-->" + obj);
+            Log.d("-->>>>Req", "PETICION VACIA-->" + obj);
         }catch (JSONException e){
             e.printStackTrace();
         }
@@ -430,14 +433,14 @@ public class ReporteAsistenciaDetalles extends Fragment {
     }
 
     private void primerPaso(JSONObject obj) {
-        //Log.d("RQT", " primerPaso" + obj.toString());
+        Log.d("-->>RQT PRIMER", " primerPaso" + obj.toString());
         int onTime = 0;
         int retardo = 0;
         int inasistencia = 0;
         int totalFilas = 0;
 
         try{
-            JSONObject asistencia = obj.getJSONObject("asisitencia");
+            JSONObject asistencia = obj.getJSONObject("asistencia");
             onTime = asistencia.getInt("onTime");
             retardo = asistencia.getInt("retardo");
             inasistencia = asistencia.getInt("inasistencia");
@@ -449,7 +452,23 @@ public class ReporteAsistenciaDetalles extends Fragment {
                 try{
                     json = registroHorario.getJSONObject(i);
                     JSONObject comida = json.getJSONObject("comida");
-                    getDatos2.setFechaAsistencia(comida.getString("Fecha"));
+                    getDatos2.setComidaLatitud(comida.getString("latitud"));
+                    getDatos2.setComidaLongitud(comida.getString("longitud"));
+                    getDatos2.setComidaHora(comida.getString("horaEntrada"));
+                    getDatos2.setComidaSalida(comida.getString("horaSalida"));
+
+                    JSONObject entrada = json.getJSONObject("entrada");
+                    getDatos2.setEntradaHora(entrada.getString("hora"));
+                    getDatos2.setEntradaLatitud(entrada.getString("latitud"));
+                    getDatos2.setEntradaLongitud(entrada.getString("longitud"));
+
+                    JSONObject salida = json.getJSONObject("salida");
+                    getDatos2.setSalidaHora(salida.getString("hora"));
+                    getDatos2.setSalidaLatitud(salida.getString("latitud"));
+                    getDatos2.setSalidaLongitud(salida.getString("longitud"));
+
+                    getDatos2.setFechaAsistencia(json.getString("fecha"));
+
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -462,7 +481,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
         tvAtiempo.setText("" + onTime);
         tvRetardo.setText("" + retardo);
         tvSinAsistencia.setText("" + inasistencia);
-        tvResultados.setText("" + totalFilas + " ");
+        tvResultados.setText("" + totalFilas + " registros");
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         adapter = new DirectorReporteAsistenciaDetalleAdapter(rootView.getContext(), getDatos1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -501,8 +520,9 @@ public class ReporteAsistenciaDetalles extends Fragment {
     }
 
     private void segundoPaso(JSONObject obj) {
+        Log.d("-->>RQT SEGUNDO", " segundoPaso" + obj.toString());
         try{
-            JSONObject asistencia = obj.getJSONObject("asisitencia");
+            JSONObject asistencia = obj.getJSONObject("asistencia");
             filas = obj.getInt("filasTotal");
             JSONArray registroHorario = obj.getJSONArray("RegistroHorario");
             for(int i = 0; i < registroHorario.length(); i++){
@@ -510,9 +530,23 @@ public class ReporteAsistenciaDetalles extends Fragment {
                 JSONObject json = null;
                 try{
                     json = registroHorario.getJSONObject(i);
-                    getDatos2.setFechaAsistencia(json.getString("fecha"));
                     JSONObject comida = json.getJSONObject("comida");
-                    getDatos2.setComidaHora(comida.getString(""));
+                    getDatos2.setComidaLatitud(comida.getString("latitud"));
+                    getDatos2.setComidaLongitud(comida.getString("longitud"));
+                    getDatos2.setComidaHora(comida.getString("horaEntrada"));
+                    getDatos2.setComidaSalida(comida.getString("horaSalida"));
+
+                    JSONObject entrada = json.getJSONObject("entrada");
+                    getDatos2.setEntradaHora(entrada.getString("hora"));
+                    getDatos2.setEntradaLatitud(entrada.getString("latitud"));
+                    getDatos2.setEntradaLongitud(entrada.getString("longitud"));
+
+                    JSONObject salida = json.getJSONObject("salida");
+                    getDatos2.setSalidaHora(salida.getString("hora"));
+                    getDatos2.setSalidaLatitud(salida.getString("latitud"));
+                    getDatos2.setSalidaLongitud(salida.getString("longitud"));
+
+                    getDatos2.setFechaAsistencia(json.getString("fecha"));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -567,13 +601,9 @@ public class ReporteAsistenciaDetalles extends Fragment {
         final String smParam1 = fechaActual.get("fechaIni");
         final String smParam2 = fechaActual.get("fechaFin");
         if(getArguments() != null){
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-            tvFecha.setText(mParam1 + " - " + mParam2);
+            tvFecha.setText(mParam2 + " - " + mParam3);
         }else{
-            tvFecha.setText("15-04-2017");
+            tvFecha.setText(smParam1);
         }
     }
-
-
 }

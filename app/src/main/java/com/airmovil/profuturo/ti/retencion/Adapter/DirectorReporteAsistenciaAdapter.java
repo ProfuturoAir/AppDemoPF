@@ -9,6 +9,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -29,11 +30,16 @@ import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsesores;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistencia;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistenciaDetalles;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientes;
+import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientesDetalles;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteSucursales;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.EnviaMail;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteAsistenciaModel;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -53,9 +59,14 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
     private int visibleThreshold = 10;
     private int lastVisibleItem, totalItemCount;
     private RecyclerView mRecyclerView;
+    private String numeroEmpleado = "";
+    private String mParam4 = "";
+    private String mParam5 = "";
 
-    public DirectorReporteAsistenciaAdapter(Context mContext, List<DirectorReporteAsistenciaModel> list, RecyclerView mRecyclerView){
+    public DirectorReporteAsistenciaAdapter(Context mContext, List<DirectorReporteAsistenciaModel> list, RecyclerView mRecyclerView, String mParam4, String mParam5){
         this.mContext = mContext;
+        this.mParam4 = mParam4;
+        this.mParam5 = mParam5;
         this.list = list;
         this.mRecyclerView = mRecyclerView;
 
@@ -105,6 +116,7 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
             myholder.campoNumeroCuentaAsesor.setText("Sucursal: " + lista.getIdSucursal());
             myholder.campoSucursalAsesor.setText("Numero de empleado: " + lista.getnEmpleado());
 
+            numeroEmpleado = lista.getnEmpleado();
 
             char nombre = lista.getNombre().charAt(0);
             final String pLetra = Character.toString(nombre);
@@ -114,7 +126,13 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
             myholder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    fragmentJumpDatosUsuario(pLetra, v);
+                    //fragmentJumpDatosUsuario(pLetra, v);
+                    Fragment fragmento = new ReporteAsistenciaDetalles();
+                    if (mContext instanceof Director) {
+                        Director director = (Director) mContext;
+                        Log.d("-->>>>ENVIO frag:", "num :" + numeroEmpleado + ", fIni: " + mParam4 + ", fFin:" + mParam5);
+                        director.switchAsistencia(fragmento, numeroEmpleado, mParam4, mParam5);
+                    }
                 }
             });
 
@@ -153,17 +171,21 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.sub_menu_reporte_asistencia_nav_detalle_asistencia:
-                    AppCompatActivity AsistenciaDetalles = (AppCompatActivity) mRecyclerView.getContext();
-                    ReporteAsistenciaDetalles fragmentoAsistenciaDetalles = new ReporteAsistenciaDetalles();
-                    //Create a bundle to pass data, add data, set the bundle to your fragment and:
-                    AsistenciaDetalles.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoAsistenciaDetalles).addToBackStack(null).commit();
-                    return true;
+                Fragment fragmento = new ReporteAsistenciaDetalles();
+                if (mContext instanceof Director) {
+                    Director director = (Director) mContext;
+                    Log.d("-->>>>ENVIO frag:", "num :" + numeroEmpleado + ", fIni: " + mParam4 + ", fFin:" + mParam5);
+                    director.switchAsistencia(fragmento, numeroEmpleado, mParam4, mParam5);
+                }
+                return true;
+
+
                 case R.id.sub_menu_reporte_asistencia_email:
                     final Dialog dialog = new Dialog(mContext);
                     dialog.setContentView(R.layout.custom_layout);
 
                     Button btn = (Button) dialog.findViewById(R.id.dialog_btn_enviar);
-                    Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
+                    final Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
 
                     // TODO: Spinner
                     ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(mContext, R.layout.spinner_item_azul, Config.EMAIL);
@@ -173,21 +195,73 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
                     btn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
+                            final EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
 
                             final String datoEditText = editText.getText().toString();
-                            Connected connected = new Connected();
-                            if(connected.estaConectado(mContext)){
-
-                                InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Service.INPUT_METHOD_SERVICE);
-                                imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-                                Config.msjTime(mContext, "Enviando", "Se ha enviado el mensaje al destino", 4000);
-                                dialog.dismiss();
+                            final String datoSpinner = spinner.getSelectedItem().toString();
+                            Log.d("DATOS USER","SPINNER: "+datoEditText+" datosSpinner: "+ datoSpinner);
+                            if(datoEditText == "" || datoSpinner == "Seleciona un email"){
+                                Config.msj(mContext, "Error", "Ingresa email valido");
                             }else{
-                                Config.msj(mContext,"Error conexión", "Por favor, revisa tu conexión a internet");
-                                dialog.dismiss();
+                                String email = datoEditText+"@"+datoSpinner;
+                                Connected connected = new Connected();
+                                final InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Service.INPUT_METHOD_SERVICE);
+                                if(connected.estaConectado(mContext)){
+
+                                    JSONObject obj = new JSONObject();
+
+                                    try {
+                                        JSONObject rqt = new JSONObject();
+                                        rqt.put("correo", email);
+                                        rqt.put("detalle", true);
+                                        rqt.put("idSucursal", 0);
+                                        rqt.put("idGerencia", 0);
+                                        rqt.put("numeroEmpleado", numeroEmpleado);
+                                        JSONObject periodo = new JSONObject();
+                                        periodo.put("fechaFin", mParam4);
+                                        periodo.put("fechaInicio", mParam5);
+                                        rqt.put("periodo", periodo);
+                                        rqt.put("usuario", Config.usuarioCusp(mContext));
+                                        obj.put("rqt", rqt);
+                                        Log.d("-->>>>datos Email array", "REQUEST-->" + obj);
+                                    } catch (JSONException e) {
+                                        Config.msj(mContext, "Error", "Error al formar los datos");
+                                    }
+                                    EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_ASISTENCIA,mContext,new EnviaMail.VolleyCallback() {
+
+                                        @Override
+                                        public void onSuccess(JSONObject result) {
+                                            int status;
+
+                                            try {
+                                                status = result.getInt("status");
+                                            }catch(JSONException error){
+                                                status = 400;
+                                            }
+
+                                            Log.d("EST","EE: "+status);
+                                            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                                            if(status == 200) {
+                                                Config.msj(mContext, "Enviando", "Se ha enviado el mensaje al destino");
+                                                //Config.msjTime(getContext(), "Enviando", "Se ha enviado el mensaje al destino", 4000);
+                                                dialog.dismiss();
+                                            }else{
+                                                Config.msj(mContext, "Error", "Ups algo salio mal =(");
+                                                dialog.dismiss();
+                                            }
+                                            //db.addUserCredits(fk_id_usuario,result);
+                                        }
+                                        @Override
+                                        public void onError(String result) {
+                                            Log.d("RESPUESTA ERROR", result);
+                                            Config.msj(mContext, "Error en conexión", "Por favor, revisa tu conexión a internet ++");
+                                            //db.addUserCredits(fk_id_usuario, "ND");
+                                        }
+                                    });
+                                }else{
+                                    Config.msj(mContext, "Error en conexión", "Por favor, revisa tu conexión a internet");
+                                }
                             }
-                            //final String datoSpinner = spinner.getSelectedItem().toString()
 
                         }
                     });
