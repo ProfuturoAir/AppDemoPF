@@ -274,7 +274,8 @@ public class ReporteAsesores extends Fragment {
                                     JSONObject rqt = new JSONObject();
                                     rqt.put("correo", email);
                                     rqt.put("detalle", checa);
-                                    rqt.put("numeroEmpleado", numeroEmpleado);
+                                    String numEmpleado = (numeroEmpleado == 0) ? "" : String.valueOf(numeroEmpleado);
+                                    rqt.put("numeroEmpleado", numEmpleado);
                                     JSONObject periodo = new JSONObject();
                                     periodo.put("fechaFin", fechaFin);
                                     periodo.put("fechaInicio", fechaIni);

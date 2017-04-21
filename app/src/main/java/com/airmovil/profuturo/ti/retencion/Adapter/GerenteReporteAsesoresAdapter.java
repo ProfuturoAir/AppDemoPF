@@ -108,6 +108,8 @@ public class GerenteReporteAsesoresAdapter extends RecyclerView.Adapter{
             myholder.campoEmitidas.setText(" " + lista.getEmitido());
             myholder.campoNoEmitidas.setText( lista.getNoEmitido() + " ");
             myholder.campoSaldoEmitido.setText(" " + lista.getSaldoEmitido());
+            myholder.campoPorcentajes.setText(Config.df.format((float)(lista.getEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido())) +"% "
+                    + Config.df.format((float)(lista.getNoEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido()))+"%");
 
             //myholder.campoSaldoNoEmitido.setText(lista.getSaldoNoEmetido());
 
@@ -177,19 +179,11 @@ public class GerenteReporteAsesoresAdapter extends RecyclerView.Adapter{
                     ReporteClientes fragmentoClientes = new ReporteClientes();
                     Gerente gerente = (Gerente) mRecyclerView.getContext();
                     gerente.switchClientesFA(fragmentoClientes, lista.getNumeroEmpleado(),fechaIni,fechaFin);
-                    //AppCompatActivity a1 = (AppCompatActivity) mRecyclerView.getContext();
-                    //com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes f1 = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes();
-                    //Create a bundle to pass data, add data, set the bundle to your fragment and:
-                    //a1.getSupportFragmentManager().beginTransaction().replace(R.id.content_gerente, f1).addToBackStack(null).commit();
                     return true;
                 case R.id.sub_menu_reporte_asesores_nav_asistencia:
                     ReporteAsistencia fragmentoAsistencia = new ReporteAsistencia();
                     Gerente dt = (Gerente) mRecyclerView.getContext();
                     dt.switchAsistenciaFA(fragmentoAsistencia, lista.getNumeroEmpleado(),fechaIni,fechaFin);
-                    //AppCompatActivity a2 = (AppCompatActivity) mRecyclerView.getContext();
-                    //com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia f2 = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia();
-                    //Create a bundle to pass data, add data, set the bundle to your fragment and:
-                    //a2.getSupportFragmentManager().beginTransaction().replace(R.id.content_gerente, f2).addToBackStack(null).commit();
                     return true;
                 case R.id.sub_menu_reporte_asesores_email:
                     final Dialog dialog = new Dialog(mContext);
@@ -229,7 +223,7 @@ public class GerenteReporteAsesoresAdapter extends RecyclerView.Adapter{
                                         JSONObject rqt = new JSONObject();
                                         rqt.put("correo", email);
                                         rqt.put("detalle", true);
-                                        rqt.put("numeroEmpleado", lista.getNumeroEmpleado());
+                                        rqt.put("numeroEmpleado", String.valueOf(lista.getNumeroEmpleado()));
                                         JSONObject periodo = new JSONObject();
                                         periodo.put("fechaFin", fechaFin);
                                         periodo.put("fechaInicio", fechaIni);
@@ -295,7 +289,7 @@ public class GerenteReporteAsesoresAdapter extends RecyclerView.Adapter{
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        public TextView campoLetra, campoIdAsesor, campoConCita, campoSinCita, campoEmitidas, campoNoEmitidas, campoSaldoEmitido, campoSaldoNoEmitido;
+        public TextView campoLetra, campoIdAsesor, campoConCita, campoSinCita, campoEmitidas, campoNoEmitidas, campoSaldoEmitido, campoSaldoNoEmitido, campoPorcentajes;
         public TextView btn;
         public CardView cardView;
         public MyViewHolder(View view){
@@ -308,6 +302,7 @@ public class GerenteReporteAsesoresAdapter extends RecyclerView.Adapter{
             campoNoEmitidas = (TextView) view.findViewById(R.id.gfral_tv_no_emitidas);
             campoSaldoEmitido = (TextView) view.findViewById(R.id.gfral_tv_saldos_emitido);
             campoSaldoNoEmitido = (TextView) view.findViewById(R.id.gfral_tv_saldos_no_emitido);
+            campoPorcentajes = (TextView) view.findViewById(R.id.gfral_tv_procentaje);
             btn = (TextView) view.findViewById(R.id.gfral_btn_detalles);
             cardView = (CardView) view.findViewById(R.id.gfral_cv);
         }

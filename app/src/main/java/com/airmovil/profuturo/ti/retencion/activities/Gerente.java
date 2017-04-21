@@ -38,6 +38,7 @@ import com.airmovil.profuturo.ti.retencion.fragmento.Calculadora;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsesores;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteSucursales;
+import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
@@ -170,15 +171,10 @@ public class Gerente extends AppCompatActivity{
         String inicial = Character.toString(letra);
 
         navPrimeraLetra.setText(inicial);
-        navDatosGerente.setText(nombre + " " + apePaterno + " " + apeMaterno + "\nNúmero empleado: " + idEmpleado);
+        navDatosGerente.setText(nombre + " " + apePaterno + " " + apeMaterno + "\nNúmero empleado: " + Config.usuarioCusp(getApplicationContext()));
 
-        // TODO: Se utiliza
-        //char letra = sNombreEmpleado.charAt(0);
-        //String primeraLetra = Character.toString(letra);
         // TODO: Se utiliza para colocar la primera de todo el nombre dentro de un contenedor
-        //navPrimeraLetra.setText(primeraLetra);
-        // TODO: Se utiliza para colocar el nombre y el numero de cuenta del usuario
-        //navDatosGerente.setText("Nombre: " + sNombreEmpleado + "\nNumero Empleado: " + sNumeroEmpleado);
+        navPrimeraLetra.setText(inicial);
     }
 
     /**
@@ -578,14 +574,14 @@ public class Gerente extends AppCompatActivity{
         ft.commit();
     }
 
-    public void switchClientesFCQ(Fragment frag,int idSucursal, int numeroEmpleado,String fechaIni,String fechaFin,int tipoBuscar,int numeroId,int retenido,int estatus) {
+    public void switchClientesFCQ(Fragment frag, int idSucursal, String numeroEmpleado, String fechaIni, String fechaFin, int tipoBuscar, String numeroId, int retenido, int estatus) {
         Bundle bundle=new Bundle();
         bundle.putInt("idSucursal",idSucursal);
-        bundle.putInt("numeroEmpleado",numeroEmpleado);
+        bundle.putString("numeroEmpleado",numeroEmpleado);
         bundle.putString("fechaIni",fechaIni);
         bundle.putString("fechaFin",fechaFin);
         bundle.putInt("tipoBuscar",tipoBuscar);
-        bundle.putInt("numeroId",numeroId);
+        bundle.putString("numeroId",numeroId);
         bundle.putInt("retenido",retenido);
         bundle.putInt("estatus",estatus);
         //bundle.putString("hora",hora);

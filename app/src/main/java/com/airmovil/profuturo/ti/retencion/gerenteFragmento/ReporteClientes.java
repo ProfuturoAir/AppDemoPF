@@ -341,7 +341,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                         Log.d("HOLA", "Todos : " + mParam3);
                         ReporteClientes fragmentoClientes = new ReporteClientes();
                         Gerente gerente = (Gerente) getContext();
-                        gerente.switchClientesFCQ(fragmentoClientes,idSucursal,Integer.valueOf(mParam6),mParam1,mParam2,mParam9,Integer.valueOf(mParam3),mParam7,mParam8);
+                        gerente.switchClientesFCQ(fragmentoClientes,idSucursal,mParam6, mParam1,mParam2,mParam9,mParam3,mParam7,mParam8);
                         Config.teclado(getContext(), etIngresarAsesor);
                         Config.teclado(getContext(), etIngresarDato);
                     }
@@ -419,49 +419,55 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
 
                                 try {
                                     if(getArguments() != null){
-                                        boolean detalle = true;
+                                        boolean detalle = false;
                                         rqt.put("correo", email);
                                         rqt.put("detalle", detalle);
-                                        filtro.put("cita", mParam8);
-                                        if(spinId == 1){
-                                            filtroCliente.put("curp", "");
-                                            filtroCliente.put("nss", "");
-                                            filtroCliente.put("numeroCuenta", numeroId);
-                                        } else if(spinId == 2){
-                                            filtroCliente.put("curp", "");
-                                            filtroCliente.put("nss", numeroId);
-                                            filtroCliente.put("numeroCuenta", "");
-                                        }else if(spinId == 3){
-                                            filtroCliente.put("curp", numeroId);
-                                            filtroCliente.put("nss", "");
-                                            filtroCliente.put("numeroCuenta", "");
-                                        } else{
-                                            filtroCliente.put("curp", "");
-                                            filtroCliente.put("nss", "");
-                                            filtroCliente.put("numeroCuenta", "");
-                                        }
                                         rqt.put("filtro", filtro);
-                                        rqt.put("numeroEmpleado", numeroEmpleado);
-                                        periodo.put("fechaInicio", mParam1);
-                                        periodo.put("fechaFin", mParam2);
+                                            filtro.put("cita", mParam8);
+                                            filtro.put("filtroCliente", filtroCliente);
+                                            if(spinId == 1){
+                                                filtroCliente.put("curp", "");
+                                                filtroCliente.put("nss", "");
+                                                filtroCliente.put("numeroCuenta", numeroId);
+                                            } else if(spinId == 2){
+                                                filtroCliente.put("curp", "");
+                                                filtroCliente.put("nss", numeroId);
+                                                filtroCliente.put("numeroCuenta", "");
+                                            }else if(spinId == 3){
+                                                filtroCliente.put("curp", numeroId);
+                                                filtroCliente.put("nss", "");
+                                                filtroCliente.put("numeroCuenta", "");
+                                            } else{
+                                                filtroCliente.put("curp", "");
+                                                filtroCliente.put("nss", "");
+                                                filtroCliente.put("numeroCuenta", "");
+                                            }
+                                            filtro.put("filtroRetencion", retenido);
+                                            filtro.put("idSucursal", idSucursal);
+                                            filtro.put("numeroEmpleado", numeroEmpleado);
+                                        periodo.put("fechaInicio", fechaIni);
+                                        periodo.put("fechaFin", fechaFin);
                                         rqt.put("periodo", periodo);
                                         obj.put("rqt", rqt);
                                     }else {
+                                        Map<String, String> fechaActual = Config.fechas(1);
+                                        String smParam1 = fechaActual.get("fechaIni");
+                                        String smParam2 = fechaActual.get("fechaFin");
                                         boolean detalle = true;
                                         rqt.put("correo", email);
                                         rqt.put("detalle", detalle);
                                         rqt.put("filtro", filtro);
                                         filtro.put("cita", 0);
-                                        filtroCliente.put("curp", "");
-                                        filtroCliente.put("nss", "");
-                                        filtroCliente.put("numeroCuenta", "");
-                                        filtro.put("filtroRetenicion", mParam8);
-                                        filtro.put("idSucursal", idSucursal);
-                                        filtro.put("numeroEmpleado", numeroEmpleado);
-                                        rqt.put("numeroEmpleado", numeroEmpleado);
+                                        filtro.put("filtroCliente", filtroCliente);
+                                            filtroCliente.put("curp", "");
+                                            filtroCliente.put("nss", "");
+                                            filtroCliente.put("numeroCuenta", "");
+                                        filtro.put("filtroRetencion", 0);
+                                        filtro.put("idSucursal", 0);
+                                        filtro.put("numeroEmpleado", "");
+                                        periodo.put("fechaInicio", smParam1);
+                                        periodo.put("fechaFin", smParam2);
                                         rqt.put("periodo", periodo);
-                                        periodo.put("fechaInicio", fechaIni);
-                                        periodo.put("fechaFin", fechaFin);
                                         obj.put("rqt", rqt);
                                     }
                                     Log.d("sendJson", " REQUEST -->" + obj);

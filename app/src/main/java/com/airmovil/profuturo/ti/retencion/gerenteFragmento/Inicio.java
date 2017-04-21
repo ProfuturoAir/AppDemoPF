@@ -395,12 +395,12 @@ public class Inicio extends Fragment {
             iSaldoNoRetenido = (Integer) saldos.get( "saldoNoRetenido");
             Log.d("JSON", retenidos.toString());
         }catch (JSONException e){
-            Config.msj(getContext(), "Error", "Lo sentimos ocurrio un right_in con los datos");
+            Config.msj(getContext(), "Error", "Lo sentimos ocurrio un error con los datos");
         }
 
         tvRetenidos.setText("" + iRetenidos);
         tvNoRetenidos.setText("" + iNoRetenidos);
-        tvSaldoRetenido.setText("" + Config.nf.format(iSaldoRetenido) + "12311230001");
+        tvSaldoRetenido.setText("" + Config.nf.format(iSaldoRetenido));
         tvSaldoNoRetenido.setText("" + Config.nf.format(iSaldoNoRetenido));
     }
 }
