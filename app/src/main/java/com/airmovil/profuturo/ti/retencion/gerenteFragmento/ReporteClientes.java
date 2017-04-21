@@ -326,8 +326,8 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     mParam8 = spinnerCita.getSelectedItemPosition();
                     mParam9 = spinnerId.getSelectedItemPosition();
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    if(mParam1.isEmpty() || mParam2.isEmpty() || mParam3.isEmpty() || idSucursal == 0 || mParam6.isEmpty() || mParam7 == 0 || mParam8 == 0){
-                        Config.dialogoDatosVacios(getContext());
+                    if(mParam1.isEmpty() || mParam2.isEmpty()){
+                        Config.dialogoRequiereFirma(getContext());
                     }else{
                         Toast.makeText(getContext(), " idSucursal: " + idSucursal, Toast.LENGTH_SHORT).show();
                         Log.d("idS","SS: "+idSucursal + " ___ " +mParam3);
@@ -417,13 +417,12 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                                     checa = false;
                                 }
 
-
                                 try {
                                     if(getArguments() != null){
                                         boolean detalle = true;
                                         rqt.put("correo", email);
                                         rqt.put("detalle", detalle);
-                                        filtro.put("cita", mParam9);
+                                        filtro.put("cita", mParam8);
                                         if(spinId == 1){
                                             filtroCliente.put("curp", "");
                                             filtroCliente.put("nss", "");

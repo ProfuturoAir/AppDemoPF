@@ -615,6 +615,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                 periodo.put("fechaIni", mParam4);
                 periodo.put("fechaFin", mParam5);
                 rqt.put("perido", periodo);
+                rqt.put("asesor",Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }else{
                 Map<String, String> fecha = Config.fechas(1);
@@ -633,6 +634,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                 periodo.put("fechaIni", param1);
                 periodo.put("fechaFin", param2);
                 rqt.put("perido", periodo);
+                rqt.put("asesor",Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }
             Log.d("Rqt", "" + obj);

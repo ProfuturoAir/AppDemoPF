@@ -636,16 +636,16 @@ public class Gerente extends AppCompatActivity{
         ft.commit();
     }
 
-    public void switchAsistenciaFS(Fragment frag, int idSucursal,String fechaIni,String fechaFin) {
+    public void switchAsistenciaFS(Fragment frag,int idGerencia, int idSucursal,String numeroEmpleado,String fechaIni,String fechaFin) {
         Bundle bundle=new Bundle();
+        bundle.putInt("idGerencia",idGerencia);
         bundle.putInt("idSucursal",idSucursal);
-        bundle.putString("fechaIni",fechaIni);
+        bundle.putString("idAsesor",numeroEmpleado);
+        bundle.putString("fechaInicio",fechaIni);
         bundle.putString("fechaFin",fechaFin);
-        //bundle.putString("idGerencia",idGerencia);
-        //bundle.putString("idSucursal",idSucursal);
         //bundle.putString("hora",hora);
 
-        Log.d("GERENTE", "ASITENCIA - #idSucursal " + idSucursal + " FIN: " + fechaFin + " ");
+        Log.d("DIRECTOR", "CLIENTES - #idSucursal " + idSucursal + " FIN: " + fechaFin);
 
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -722,9 +722,8 @@ public class Gerente extends AppCompatActivity{
     }
 
     //lista.getNumeroCuenta(), lista.getCita(), lista.idTramite, fechaIni, fechaFin, Config.usuarioCusp(mContext), fragmento
-    public void switchDetalleCliente(String numeroEmpleado, String nombreAsesor,String numeroCuenta, String cita, int idTramite, String fechaInicio, String fechaFin, String hora, String usuario, Fragment frag) {
+    public void switchDetalleCliente(String numeroCuenta, String cita, int idTramite, String fechaInicio, String fechaFin, String hora, String usuario, Fragment frag) {
         Bundle bundle=new Bundle();
-        bundle.putString("numeroEmpleado",numeroEmpleado);
         bundle.putString("numeroCuenta",numeroCuenta);
         bundle.putString("cita",cita);
         bundle.putString("hora",hora);
@@ -732,11 +731,46 @@ public class Gerente extends AppCompatActivity{
         bundle.putString("fechaInicio", fechaInicio);
         bundle.putString("fechaFin", fechaFin);
         bundle.putString("usuario", usuario);
-        bundle.putString("nombreAsesor",nombreAsesor);
         frag.setArguments(bundle);
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_gerente, frag);
+            ft.addToBackStack(null);
+            ft.commit();
+    }
 
+    public void switchAsistenciaDetalle(Fragment frag, String numeroEmpleado, String nombreEmpleado, String fechaIni,String fechaFin) {
+        Bundle bundle=new Bundle();
+        bundle.putString("numeroEmpleado",numeroEmpleado);
+        bundle.putString("nombreEmpleado", nombreEmpleado);
+        bundle.putString("fechaIni",fechaIni);
+        bundle.putString("fechaFin",fechaFin);
+        //bundle.putString("idGerencia",idGerencia);
+        //bundle.putString("idSucursal",idSucursal);
+        //bundle.putString("hora",hora);
+
+        Log.d("DIRECTOR", "ASITENCIA - #Empleado " + numeroEmpleado + " FIN: " + fechaFin + " ");
+
+        frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_gerente, frag);
+        ft.replace(R.id.content_gerente, frag, frag.toString());
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
+    public void switchDetalleClientes(int idSucursal, int idTramite, String numeroCuenta, String fechaInicio, String fechaFin, String usuario, String nombreCliente, String idAsesor, Fragment frag){
+        Log.d("switchDetallesClie", " --> " + " --> " + idSucursal + " --> " + idTramite + " --> " + numeroCuenta + " --> " + fechaInicio + " --> " + fechaFin + " --> " + usuario);
+        Bundle bundle=new Bundle();
+        bundle.putInt("idSucursal", idSucursal);
+        bundle.putInt("idTramite", idTramite);
+        bundle.putString("numeroCuenta", numeroCuenta);
+        bundle.putString("fechaInicio", fechaInicio);
+        bundle.putString("fechaFin", fechaFin);
+        bundle.putString("usuario", usuario);
+        bundle.putString("nombreCliente", nombreCliente);
+        bundle.putString("idAsesor", idAsesor);
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_gerente, frag, frag.toString());
         ft.addToBackStack(null);
         ft.commit();
     }

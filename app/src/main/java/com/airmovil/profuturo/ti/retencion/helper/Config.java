@@ -37,7 +37,6 @@ import com.airmovil.profuturo.ti.retencion.directorFragmento.Inicio;
 public class Config extends Activity {
     // TODO: URL's
     public static final String URL_CALCULA_RETIRO_AFORE = "https://asesorprofuturo.mx/content/wps/portal/Calcula-tu-pension-de-retiro";
-
     public static final String URL_GENERAL = "http://52.38.211.22:90/";
     public static final String URL_AUTENTIFICACION = URL_GENERAL + "mb/cusp/rest/autenticacionUsuario";
     public static final String URL_CONSULTA_INFORMACION_USUARIO = URL_GENERAL + "mb/cusp/rest/consultaInformacionUsuario";
@@ -47,23 +46,19 @@ public class Config extends Activity {
     public static final String URL_CONSULTAR_DATOS_ASESOR = URL_GENERAL + "mb/premium/rest/consultarDatosAsesor";
     public static final String URL_CUNSULTAR_DATOS_CLIENTE = URL_GENERAL + "mb/premium/rest/consultarDatosCliente";
     public static final String URL_GENERAR_REPORTE_CLIENTE = URL_GENERAL + "mb/premium/rest/generarReporteAsesor";
-
     public static final String URL_GENERAL_REPORTE_CLIENTE = URL_GENERAL + "mb/premium/rest/generarReporteCliente";
-
     public static final String URL_ENVIAR_ENCUESTA = URL_GENERAL + "mb/premium/rest/enviarEncuesta";
     public static final String URL_ENVIAR_ENCUESTA_2 = URL_GENERAL + "mb/premium/rest/enviarEncuestaObservacion";
     public static final String URL_ENVIAR_FIRMA = URL_GENERAL + "mb/premium/rest/guardarFirmaCliente";
     public static final String URL_ENVIAR_DOCUMENTO_IFE_INE = URL_GENERAL + "mb/premium/rest/guardarDocumentacionCliente";
-
     public static final String URL_REGISTRAR_ASISTENCIA = URL_GENERAL + "mb/premium/rest/registrarAsistencia";
-
-    public static final String URL_SEND_MAIL_REPORTE_GERENCIA = URL_GENERAL + "/mb/premium/rest/enviarEmailReporteGerencia";
-
-    public static final String URL_SEND_MAIL_REPORTE_ASESOR = URL_GENERAL + "/mb/premium/rest/enviarEmailReporteAsesor";
-    public static final String URL_SEND_MAIL_REPORTE_ASISTENCIA = URL_GENERAL + "/mb/premium/rest/enviarEmailReporteAsistencia";
-    public static final String URL_SEND_MAIL_REPORTE_CLIENTE = URL_GENERAL + "/mb/premium/rest/enviarEmailReporteCliente";
-    public static final String URL_SEND_MAIL_REPORTE_SUCURSAL = URL_GENERAL + "/mb/premium/rest/enviarEmailReporteSucursal";
-
+    // TODO: Enviar por email
+    public static final String URL_SEND_MAIL_REPORTE_GERENCIA = URL_GENERAL + "mb/premium/rest/enviarEmailReporteGerencia";
+    public static final String URL_SEND_MAIL_REPORTE_ASESOR = URL_GENERAL + "mb/premium/rest/enviarEmailReporteAsesor";
+    public static final String URL_SEND_MAIL_REPORTE_ASISTENCIA = URL_GENERAL + "mb/premium/rest/enviarEmailReporteAsistencia";
+    public static final String URL_SEND_MAIL_REPORTE_CLIENTE = URL_GENERAL + "mb/premium/rest/enviarEmailReporteCliente";
+    public static final String URL_SEND_MAIL_REPORTE_SUCURSAL = URL_GENERAL + "mb/premium/rest/enviarEmailReporteSucursal";
+    public static final String URL_SEND_MAIL_REPORTE_ASISTENCIA_DETALLE = URL_GENERAL + "mb/premium/rest/enviarEmailReporteAsistenciaDetalle";
 
     // TODO: LISTO DIRECTOR
     public static final String URL_CONSULTAR_REPORTE_RETENCION_GERENCIAS = URL_GENERAL + "mb/premium/rest/consultarReporteRetencionesGerencia";
@@ -73,14 +68,10 @@ public class Config extends Activity {
     public static final String URL_CONSULTAR_REPORTE_RETENCION_CLIENTE_DETALLE = URL_GENERAL + "mb/premium/rest/generarReporteCliente";
     public static final String URL_CONSULTAR_REPORTE_ASISTENCIA = URL_GENERAL + "mb/premium/rest/consultarReporteAsistencia";
     public static final String URL_CONSULTAR_REPORTE_ASISTENCIA_DETALLE = URL_GENERAL + "mb/premium/rest/consultarReporteProductividadAsistencia";
-
-    //SUCURSALES LISTA
+    // TODO: SUCURSALES LISTA
     public static final String URL_SUCURSALES = URL_GENERAL + "mb/premium/rest/seleccionSucursales";
     public static final String URL_GERENCIAS = URL_GENERAL + "mb/premium/rest/seleccionGerencias";
-
     // TODO: String
-    public static final String[] GERENCIAS = new String[]{"Selecciona una Gerencia","Gerencia 1", "Gerencia 2", "Gerencia 3", "Gerencia 4"};
-    public static final String[] SUCURSALES = new String[]{"Selecciona una sucursal","Sucursal 1", "Sucursal 2", "Sucursal 3", "Sucursal 4", "Sucursal 5"};
     public static final String[] MOTIVOS = new String[]{"Selecciona el motivo", "Por mal servicio","Por falta de seguimiento ventas", "Promesas incumplidas", "Rendimiento", "Llevarse sus cuentas a la misma institución", "no da explicación", "familiares o amigos en afore de la competencia"};
     public static final String[] AFORES = new String[]{"Selecciona una AFORE","Azteca", "Banamex", "Coppel", "Inbursa", "Invercap", "Metlife", "PensionISSSTE", "Principal", "Profuturo", "SURA", "XXI-Banorte"};
     public static final String[] ESTATUS = new String[]{"Selecciona un estatus", "Activo", "Inactivo"};
@@ -91,7 +82,6 @@ public class Config extends Activity {
     public static final String[] IDS = new String[]{"Selecciona el tipo de ID a buscar","Número de cuenta", "NSS", "CURP"};
     public static final String[] RETENIDO = new String[]{"Selecciona el tipo de estatus de retenidos ", "Retenido", "No Retenido"};
     public static final String[] CITAS = new String[]{"Seleciona el tipo de estatus de citas", "Con Cita", "Sin Cita"};
-
     public static final String[] EMAIL = new String[]{"Seleciona un email","profuturo.com.mx", "profuturo.com", "profuturo.mx"};
 
     // TODO: Variables

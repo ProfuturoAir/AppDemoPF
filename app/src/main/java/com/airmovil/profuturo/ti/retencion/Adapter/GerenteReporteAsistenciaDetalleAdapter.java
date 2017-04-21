@@ -2,7 +2,6 @@ package com.airmovil.profuturo.ti.retencion.Adapter;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -81,7 +80,15 @@ public class GerenteReporteAsistenciaDetalleAdapter extends RecyclerView.Adapter
             final GerenteReporteAsistenciaDetalleModel lista = list.get(position);
             final MyViewHolder myholder = (MyViewHolder) holder;
 
-            myholder.campoFechaDetalle.setText("01-12-2017");
+            myholder.campoFechaDetalle.setText(lista.getFechaAsistencia());
+            myholder.campoEntradasHoraDetalle.setText(lista.getEntradaHora());
+            myholder.campoEntradasCoordenadasDetalle.setText("Coordenadas: " + lista.getEntradaLatitud() + ", " + lista.getEntradaLongitud());
+
+            myholder.campoHoraComidasDetalle.setText(lista.getComidaHora() + " - " + lista.getComidaSalida());
+            myholder.campoComidasCoordenadasDetalle.setText("Coordenadas: " + lista.getComidaLatitud() + ", " + lista.getComidaLongitud());
+
+            myholder.campoHoraSalidasDetalle.setText(lista.getSalidaHora());
+            myholder.campoSalidasCoordenadasDetalle.setText("Coordenadas: " + lista.getSalidaLatitud() + ", " + lista.getSalidaLongitud());
 
             /*myholder.campoNombre.setText(lista.getClienteNombre());
             myholder.campoCuenta.setText(lista.getClienteCuenta());
@@ -151,13 +158,13 @@ public class GerenteReporteAsistenciaDetalleAdapter extends RecyclerView.Adapter
         public TextView campoHoraSalidasDetalle, campoSalidasCoordenadasDetalle;
         public MyViewHolder(View view){
             super(view);
-            campoFechaDetalle = (TextView) view.findViewById(R.id.gfrasdl_tv_fecha);
-            campoEntradasHoraDetalle = (TextView) view.findViewById(R.id.gfrasdl_tv_entrada_hora);
-            campoEntradasCoordenadasDetalle = (TextView) view.findViewById(R.id.gfrasdl_tv_entrada_coordenadas);
-            campoHoraComidasDetalle = (TextView) view.findViewById(R.id.gfrasdl_tv_comida_hora);
-            campoComidasCoordenadasDetalle = (TextView) view.findViewById(R.id.gfrasdl_tv_comida_coordenadas);
-            campoHoraSalidasDetalle = (TextView) view.findViewById(R.id.gfrasdl_tv_salida_hora);
-            campoSalidasCoordenadasDetalle= (TextView) view.findViewById(R.id.gfrasdl_tv_salida_coordenadas);
+            campoFechaDetalle = (TextView) view.findViewById(R.id.ggfrasdl_tv_fecha);
+            campoEntradasHoraDetalle = (TextView) view.findViewById(R.id.ggfrasdl_tv_entrada_hora);
+            campoEntradasCoordenadasDetalle = (TextView) view.findViewById(R.id.ggfrasdl_tv_entrada_coordenadas);
+            campoHoraComidasDetalle = (TextView) view.findViewById(R.id.ggfrasdl_tv_comida_hora);
+            campoComidasCoordenadasDetalle = (TextView) view.findViewById(R.id.ggfrasdl_tv_comida_coordenadas);
+            campoHoraSalidasDetalle = (TextView) view.findViewById(R.id.ggfrasdl_tv_salida_hora);
+            campoSalidasCoordenadasDetalle= (TextView) view.findViewById(R.id.ggfrasdl_tv_salida_coordenadas);
         }
     }
 }

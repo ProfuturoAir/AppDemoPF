@@ -67,8 +67,8 @@ public class ReporteClientesDetalles extends Fragment {
     private String mParam6; // fechaFin
     private String mParam7; // usuario
     private String mParam8; // usuario
-    private String mParam9;
-    private String mParam10;
+    private String mParam9; // nombreCliente
+    private String mParam10; // idAsesor
     private int pagina = 1;
 
     private TextView tv_nombre, tv_numero_cuenta, tv_nss, tv_curp, tv_estatus, tv_saldo, tv_sucursal, tv_hora_atencion;
@@ -92,6 +92,8 @@ public class ReporteClientesDetalles extends Fragment {
      * @param param6 parametro 6 fecha fin.
      * @param param7 parametro 7 fecha hora.
      * @param param8 parametro 8 usuario
+     * @param param9 parametro 9 nombreCLiente
+     * @param param10 parametro 10 idAsesor*
      * @return A new instance of fragment ReporteClientesDetalles.
      */
     // TODO: Rename and change types and number of parameters
@@ -145,10 +147,9 @@ public class ReporteClientesDetalles extends Fragment {
         tv_fechas = (TextView) view.findViewById(R.id.ggfrasd_tv_fecha);
 
         //tv_nombre.setText("123123123");
-        tv_numero_empleado.setText(mParam9);
+        tv_numero_empleado.setText("-------");
         tv_nombre_asesor.setText(mParam10);
-        tv_fechas.setText(mParam6 + " - "+mParam7);
-
+        tv_fechas.setText(mParam5 + " - "+ mParam6);
 
         sendJson(true);
     }
@@ -336,7 +337,7 @@ public class ReporteClientesDetalles extends Fragment {
         tv_nss.setText("" + nss);
         tv_curp.setText("" + curp);
         tv_estatus.setText("" + retencion);
-        tv_saldo.setText("" + saldo);
+        tv_saldo.setText("" + Config.nf.format(Integer.parseInt(saldo)));
         tv_sucursal.setText("" + nombreSucursal);
         tv_hora_atencion.setText("hora: " + horaAtencion);
     }

@@ -210,8 +210,8 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
 
                 final String fechaIncial = tvRangoFecha1.getText().toString();
                 final String fechaFinal = tvRangoFecha2.getText().toString();
-                if(fechaIncial.equals("") || fechaFinal.equals("") || idSucursal == 0){
-                    Config.dialogoDatosVacios(getContext());
+                if(fechaIncial.equals("") || fechaFinal.equals("")){
+                    Config.dialogoFechasVacias(getContext());
                 }else {
                     ReporteSucursales fragmentoSucursales = new ReporteSucursales();
                     Gerente gerente = (Gerente) getContext();
