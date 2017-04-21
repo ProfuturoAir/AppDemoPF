@@ -580,9 +580,9 @@ public class ReporteAsesores extends Fragment {
         if(getArguments() != null){
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
-            adapter = new DirectorReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView, mParam1, mParam2);
+            adapter = new DirectorReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView,separated[0].trim(),separated[1].trim());
         }else{
-            adapter = new DirectorReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView, sParam1, sParam2);
+            adapter = new DirectorReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView,separated[0].trim(),separated[1].trim());
         }
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
