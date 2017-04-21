@@ -38,6 +38,7 @@ import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.EnviaMail;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
@@ -204,6 +205,8 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
             retenido = getArguments().getInt("retenido");
             estatus = getArguments().getInt("estatus");
 
+
+
             if(fechaIni!=null){
                 tvRangoFecha1.setText(fechaIni);
                 tvRangoFecha2.setText(fechaFin);
@@ -212,6 +215,26 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
 
             if(etIngresarAsesor!=null){
                 etIngresarAsesor.setText(String.valueOf(numeroEmpleado));
+            }
+
+            if(etIngresarDato!=null){
+                Log.d("HOLA", "Todos : " + numeroId);
+                etIngresarDato.setText(String.valueOf(numeroId));
+            }
+
+            if(estatus!=0){
+                Log.d("HOLA", "Todos : " + estatus);
+                spinnerRetenido.setSelection(estatus);
+            }
+
+            if(retenido!=0){
+                Log.d("HOLA", "Todos : " + retenido);
+                spinnerRetenido.setSelection(retenido);
+            }
+
+            if(tipoBuscar!=0){
+                Log.d("HOLA", "Todos : " + tipoBuscar);
+                spinnerId.setSelection(tipoBuscar);
             }
         }
 
@@ -298,7 +321,16 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     if(mParam1.isEmpty() || mParam2.isEmpty()){
                         Config.dialogoFechasVacias(getContext());
                     }else{
-                        Log.d("idS","SS: "+idSucursal + " ___ " +mParam6);
+                        Log.d("idS","SS: "+idSucursal + " ___ " +mParam3);
+                        if(mParam3.isEmpty()){
+                            mParam3 = "0";
+                        }
+                        if(mParam6.isEmpty()){
+                            mParam6 = "0";
+                        }
+
+                        Log.d("HOLA", "Todos : " + mParam6);
+                        Log.d("HOLA", "Todos : " + mParam3);
                         ReporteClientes fragmentoClientes = new ReporteClientes();
                         Gerente gerente = (Gerente) getContext();
                         gerente.switchClientesFCQ(fragmentoClientes,idSucursal,Integer.valueOf(mParam6),mParam1,mParam2,mParam9,Integer.valueOf(mParam3),mParam7,mParam8);
@@ -349,7 +381,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                 dialog.setContentView(R.layout.custom_layout);
 
                 Button btn = (Button) dialog.findViewById(R.id.dialog_btn_enviar);
-                Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
+                final Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
 
                 // TODO: Spinner
                 ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item_azul, Config.EMAIL);
@@ -359,22 +391,78 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                 btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
+                        final EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
 
-                        Connected connected = new Connected();
-                        if(connected.estaConectado(getContext())){
-                            final String datoEditText = editText.getText().toString();
-                            //final String datoSpinner = spinner.getSelectedItem().toString();
-                            dialog.dismiss();
+                        final String datoEditText = editText.getText().toString();
+                        final String datoSpinner = spinner.getSelectedItem().toString();
 
-                            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-                            Config.msjTime(getContext(), "Mensaje datos", "Se está enviado los datos a " + datoEditText + "@profuturo.com", 8000);
+                        Log.d("DATOS USER","SPINNER: "+datoEditText+" datosSpinner: "+ datoSpinner);
+                        if(datoEditText == "" || datoSpinner == "Seleciona un email"){
+                            Config.msj(getContext(), "Error", "Ingresa email valido");
                         }else{
-                            Config.msj(getContext(), "Error conexión", "Por favor, revisa tu conexión a internet");
-                            dialog.dismiss();
-                        }
+                            String email = datoEditText+"@"+datoSpinner;
+                            Connected connected = new Connected();
+                            final InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Service.INPUT_METHOD_SERVICE);
+                            if(connected.estaConectado(getContext())){
 
+                                Log.d("DATOS","+++++: "+idSucursal);
+                                JSONObject obj = new JSONObject();
+                                boolean checa = true;
+                                if (idSucursal == 0){
+                                    checa = false;
+                                }
+
+                                try {
+                                    JSONObject rqt = new JSONObject();
+                                    rqt.put("correo", email);
+                                    rqt.put("detalle", checa);
+                                    rqt.put("idSucursal", idSucursal);
+                                    JSONObject periodo = new JSONObject();
+                                    periodo.put("fechaFin", fechaFin);
+                                    periodo.put("fechaInicio", fechaIni);
+                                    rqt.put("periodo", periodo);
+                                    rqt.put("usuario", Config.usuarioCusp(getContext()));
+                                    obj.put("rqt", rqt);
+                                    Log.d("datos", "REQUEST-->" + obj);
+                                } catch (JSONException e) {
+                                    Config.msj(getContext(), "Error", "Error al formar los datos");
+                                }
+                                EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_SUCURSAL,getContext(),new EnviaMail.VolleyCallback() {
+
+                                    @Override
+                                    public void onSuccess(JSONObject result) {
+                                        Log.d("RESPUESTA SUCURSAL", result.toString());
+                                        int status;
+
+                                        try {
+                                            status = result.getInt("status");
+                                        }catch(JSONException error){
+                                            status = 400;
+                                        }
+
+                                        Log.d("EST","EE: "+status);
+                                        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                                        if(status == 200) {
+                                            Config.msj(getContext(), "Enviando", "Se ha enviado el mensaje al destino");
+                                            //Config.msjTime(getContext(), "Enviando", "Se ha enviado el mensaje al destino", 4000);
+                                            dialog.dismiss();
+                                        }else{
+                                            Config.msj(getContext(), "Error", "Ups algo salio mal =(");
+                                            dialog.dismiss();
+                                        }
+                                        //db.addUserCredits(fk_id_usuario,result);
+                                    }
+                                    @Override
+                                    public void onError(String result) {
+                                        Log.d("RESPUESTA ERROR", result);
+                                        Config.msj(getContext(), "Error en conexión", "Por favor, revisa tu conexión a internet ++");
+                                        //db.addUserCredits(fk_id_usuario, "ND");
+                                    }
+                                });
+                            }else{
+                                Config.msj(getContext(), "Error en conexión", "Por favor, revisa tu conexión a internet");
+                            }
+                        }
 
                     }
                 });
