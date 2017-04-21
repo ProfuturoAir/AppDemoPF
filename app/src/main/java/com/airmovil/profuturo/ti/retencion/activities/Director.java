@@ -318,7 +318,7 @@ public class Director extends AppCompatActivity{
     public void switchSucursales(Fragment frag, int idGerencia, String fechaInicio, String fechaFin){
         Bundle bundle=new Bundle();
         bundle.putInt("idGerencia",idGerencia);
-        bundle.putString("fechaInicio",fechaInicio);
+        bundle.putString("fechaIni",fechaInicio);
         bundle.putString("fechaFin",fechaFin);
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

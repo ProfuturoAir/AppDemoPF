@@ -75,9 +75,9 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
     private static final String ARG_PARAM3 = "parametro3";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-    private int mParam3;
+    String mParam1;
+    String mParam2;
+    int mParam3;
 
     private OnFragmentInteractionListener mListener;
 
@@ -90,7 +90,7 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
     private String fechaMostrar = "";
     private int pagina = 1;
     private int numeroMaximoPaginas = 0;
-    private int idGerencia;
+    int idGerencia;
 
     private TextView tvFecha, tvEntidaes, tvNoEntidades, tvSaldoEmitido, tvSaldoNoEmitido;
     private Spinner spinnerGerencias;
@@ -141,8 +141,18 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            Log.d("HOLA", "Todos  hola: " + getArguments().toString());
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+            idGerencia = getArguments().getInt(ARG_PARAM3);
+
+
+            Log.d("HOLA", "Todos  hola: " + mParam2 +" : "+idGerencia +" : "+ mParam2 );
+            /*if(!mParam1.isEmpty()){
+                tvRangoFecha1.setText(mParam1);
+                tvRangoFecha2.setText(mParam2);
+                tvFecha.setText(mParam1 + " - " + mParam2);
+            }*/
         }
     }
 
@@ -155,6 +165,12 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
 
         // TODO: Casteo
         variables();
+
+        if(mParam1 != null){
+            tvRangoFecha1.setText(mParam1);
+            tvRangoFecha2.setText(mParam2);
+            tvFecha.setText(mParam1 + " - " + mParam2);
+        }
 
         // TODO: ocultar teclado
         imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
@@ -189,9 +205,9 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
                 if(connected.estaConectado(getContext())){
                     final String fechaIncial = tvRangoFecha1.getText().toString();
                     final String fechaFinal = tvRangoFecha2.getText().toString();
-                    int idgerencia = spinnerGerencias.getSelectedItemPosition();
+                    //int idgerencia = spinnerGerencias.getSelectedItemPosition();
                     Log.d("spinner", "selccion del spinner: " + idGerencia);
-                    if(fechaIncial.isEmpty() || fechaFinal.isEmpty() || idgerencia == 0){
+                    if(fechaIncial.isEmpty() || fechaFinal.isEmpty() || idGerencia == 0){
                         Config.dialogoDatosVacios(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
@@ -345,6 +361,7 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         switch (parent.getId()) {
             case R.id.dfrg_spinner_gerencias:
                 String sim = id_gerencias.get(position);
+                idGerencia = Integer.valueOf(sim);
                 break;
             default:
 
@@ -436,12 +453,25 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
             }
         }
 
+        int position=0;
+        if(idGerencia!=0){
+
+            for(int i=0; i < id_gerencias.size(); i++) {
+                if(Integer.valueOf(id_gerencias.get(i)) == idGerencia){
+                    Log.d("SELE","SIZE ->: "+position);
+                    position = i;
+                    break;
+                }
+            }
+        }
+
         Log.d("LLENA", "LAS SUCURSALES : ->" + gerencias);
 
         //spinnerSucursales.setAdapter(new ArrayAdapter<String>(getActivity(), R.layout.spinner_item, gerencias));
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, gerencias);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinnerGerencias.setAdapter(adapter);
+        spinnerGerencias.setSelection(position);
     }
 
     public void primeraPeticion(){

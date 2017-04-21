@@ -285,7 +285,7 @@ public class ReporteAsesores extends Fragment {
                                 } catch (JSONException e) {
                                     Config.msj(getContext(), "Error", "Error al formar los datos");
                                 }
-                                EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_SUCURSAL,getContext(),new EnviaMail.VolleyCallback() {
+                                EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_ASESOR,getContext(),new EnviaMail.VolleyCallback() {
 
                                     @Override
                                     public void onSuccess(JSONObject result) {

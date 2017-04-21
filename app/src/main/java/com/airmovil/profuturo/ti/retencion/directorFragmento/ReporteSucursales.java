@@ -121,7 +121,7 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
     private OnFragmentInteractionListener mListener;
     private Connected connected;
 
-    int idSucursal;
+    int idSucursal,idGerencia;
     int numeroEmpleado;
 
     public ReporteSucursales() {
@@ -174,6 +174,7 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         if(getArguments() != null) {
             Log.d("HOLA", "Todos : " + getArguments().toString());
             idSucursal = getArguments().getInt("idSucursal");
+            idGerencia = getArguments().getInt("idGerencia");
             numeroEmpleado = getArguments().getInt("numeroEmpleado");
             fechaIni = getArguments().getString("fechaIni");
             fechaFin = getArguments().getString("fechaFin");
