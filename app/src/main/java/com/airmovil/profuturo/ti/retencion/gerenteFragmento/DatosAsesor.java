@@ -111,13 +111,18 @@ public class DatosAsesor extends Fragment {
         nombre = getArguments().getString("nombre");
         numeroDeCuenta = getArguments().getString("numeroDeCuenta");
         hora = getArguments().getString("hora");
+
         Log.d("NOMBRES 1 ++", "1" + nombre + " numero" + numeroDeCuenta);
+
         // TODO: Fragmentos
         final Fragment fragmentoDatosCliente = new DatosCliente();
         final FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
         // TODO: obteniendo el numero del usuario
         HashMap<String, String> hashMap = sessionManager.getUserDetails();
-        String numeroUsuario = hashMap.get(SessionManager.USER_ID);
+        String numeroUsuario = hashMap.get(SessionManager.ID);
+
+
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,7 +131,7 @@ public class DatosAsesor extends Fragment {
                     //fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoDatosCliente).commit();
                     Fragment fragmentoGenerico = new DatosCliente();
                     Gerente gerente = (Gerente) getContext();
-                    gerente.switchDatosCliente(fragmentoGenerico,nombre,numeroDeCuenta);
+                    gerente.switchDatosCliente(fragmentoGenerico,nombre,numeroDeCuenta,hora);
                 }else {
 
                     final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
@@ -160,8 +165,8 @@ public class DatosAsesor extends Fragment {
                             //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                             //fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
                             Fragment fragmentoGenerico = new DatosCliente();
-                            Asesor asesor = (Asesor) getContext();
-                            asesor.switchDatosCliente(fragmentoGenerico,nombre,numeroDeCuenta,hora);
+                            Gerente gerente = (Gerente) getContext();
+                            gerente.switchDatosCliente(fragmentoGenerico,nombre,numeroDeCuenta,hora);
                         }
                     });
                     dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -211,7 +216,7 @@ public class DatosAsesor extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.asesor_fragmento_datos_asesor, container, false);
+        return inflater.inflate(R.layout.gerente_fragmento_datos_asesor, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -306,30 +311,25 @@ public class DatosAsesor extends Fragment {
     }
 
     private void variables(){
-        tvNombre = (TextView) rootView.findViewById(R.id.afda_tv_nombre_usuario);
-        tvNumeroEmpleado = (TextView) rootView.findViewById(R.id.afda_tv_numero_empleado);
-        tvSucursal = (TextView) rootView.findViewById(R.id.afda_tv_sucursal);
-        btnContinuar = (Button) rootView.findViewById(R.id.afda_btn_continuar);
-        btnCancelar = (Button) rootView.findViewById(R.id.afda_btn_cancelar);
+        tvNombre = (TextView) rootView.findViewById(R.id.gfda_tv_nombre_usuario);
+        tvNumeroEmpleado = (TextView) rootView.findViewById(R.id.gfda_tv_numero_empleado);
+        tvSucursal = (TextView) rootView.findViewById(R.id.gfda_tv_sucursal);
+        btnContinuar = (Button) rootView.findViewById(R.id.gfda_btn_continuar);
+        btnCancelar = (Button) rootView.findViewById(R.id.gfda_btn_cancelar);
     }
 
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
-
-        HashMap<String, String> datos = sessionManager.getUserDetails();
-        String numeroUsuario = datos.get(SessionManager.USER_ID);
-
         JSONObject obj = new JSONObject();
         // TODO: Formacion del JSON request
         JSONObject rqt = new JSONObject();
         try{
-            rqt.put("usuario", numeroUsuario);
+            rqt.put("usuario", Config.usuarioCusp(getContext()));
             obj.put("rqt", rqt);
-            Log.d("DatosAsesor", ":rqt -->" + obj);
         }catch (JSONException e){
             e.printStackTrace();
         }
-
+        Log.d("DatosAsesor", ":rqt -->" + obj);
         //Creating a json array request
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_DATOS_ASESOR, obj,
                 new Response.Listener<JSONObject>() {

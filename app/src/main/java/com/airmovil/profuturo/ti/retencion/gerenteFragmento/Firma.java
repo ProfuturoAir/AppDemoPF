@@ -47,7 +47,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -143,18 +142,16 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                     .addApi(LocationServices.API)
                     .build();
 
-            dvFirma = (DrawingView) view.findViewById(R.id.gff_dv_firma);
-            dvFirma.setBrushSize(5);
-            dvFirma.setColor("#000000");
-            dvFirma.setFocusable(true);
-
         } catch (Exception e){
 
         }
 
+        dvFirma = (DrawingView) view.findViewById(R.id.gff_dv_firma);
+        dvFirma.setBrushSize(5);
+        dvFirma.setColor("#000000");
+        dvFirma.setFocusable(true);
 
-
-        //final SignatureView signatureView = (SignatureView) view.findViewById(R.id.afae_signature_view);
+        //final SignatureView signatureView = (SignatureView) view.findViewById(R.id.gfae_signature_view);
         btnLimpiar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -234,14 +231,6 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                     dialogo1.show();
                     */
                 }else{
-                    Calendar calendario = Calendar.getInstance();
-                    int hora, minutos, segundos;
-
-
-                    hora =calendario.get(Calendar.HOUR_OF_DAY);
-                    minutos = calendario.get(Calendar.MINUTE);
-                    segundos = calendario.get(Calendar.SECOND);
-
                     if(dvFirma.isActive()){
                         AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
                         dialogo1.setTitle("Importante");
@@ -267,31 +256,37 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                                     Gerente gerente = (Gerente) getContext();
                                     gerente.switchDocumento(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta);
                                 }else{
+                                    AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
+                                    dialogo.setTitle(getResources().getString(R.string.error_conexion));
+                                    dialogo.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
+                                    dialogo.setCancelable(false);
+                                    dialogo.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            double w, z;
+                                            try {
+                                                z = new Double(lblLatitud.getText().toString());
+                                                w = new Double(lblLongitud.getText().toString());
+                                            } catch (NumberFormatException e) {
+                                                z = 0;
+                                                w = 0;
+                                            }
 
-                                    final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-                                    progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
-                                    progressDialog.setTitle(getResources().getString(R.string.error_conexion));
-                                    progressDialog.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
-                                    progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
-                                            new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    progressDialog.dismiss();
-                                                    db.addFirma(idTramite,123,base64,90.2349,-23.9897);
-                                                    db.addIDTramite(idTramite,nombre,numeroDeCuenta,"");
-                                                    Fragment fragmentoGenerico = new Escaner();
-                                                    Gerente gerente = (Gerente) getContext();
-                                                    gerente.switchDocumento(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta);
-                                                }
-                                            });
-                                    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
-                                            new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
+                                            db.addFirma(idTramite,1137,base64,z,w);
+                                            db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+                                            Fragment fragmentoGenerico = new Escaner();
+                                            Gerente gerente = (Gerente) getContext();
+                                            gerente.switchDocumento(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta);
+                                        }
+                                    });
+                                    dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
 
-                                                }
-                                            });
-                                    progressDialog.show();
+
+                                        }
+                                    });
+                                    dialogo.show();
 
                                     /*
                                     rqt.put("estatusTramite", 123);
@@ -395,7 +390,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
                     AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
                     dialogo1.setTitle("Confirmar");
-                    dialogo1.setMessage("¿Estás seguro que deseas cancelar y guardar los cambios del proceso 1.1.3.7?");
+                    dialogo1.setMessage("¿Estàs seguro que deseas cancelar y guardar los cambios del proceso 1.1.3.7?");
                     dialogo1.setCancelable(false);
                     dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
@@ -552,15 +547,15 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
         // TODO: Formacion del JSON request
         try{
             JSONObject rqt = new JSONObject();
-            rqt.put("estatusTramite", idTramite);
-            rqt.put("idTramite", 1);
+            rqt.put("estatusTramite", 1137);
+            rqt.put("idTramite", Integer.parseInt(idTramite));
             JSONObject ubicacion = new JSONObject();
             ubicacion.put("latitud", latitud);
             ubicacion.put("longitud", lonngitud);
             rqt.put("ubicacion", ubicacion);
             rqt.put("firmaCliente", firmaIMG);
             obj.put("rqt", rqt);
-            Log.d("FirmaGerente", " rqt ->" + obj);
+            Log.d("datos", "REQUEST-->" + obj);
         } catch (JSONException e){
             Config.msj(getContext(), "Error", "Error al formar los datos");
         }
@@ -571,6 +566,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
+                            Log.d("URL", "URL a consumir" + Config.URL_ENVIAR_FIRMA);
                             loading.dismiss();
                             //primerPaso(response);
                         }

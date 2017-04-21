@@ -33,7 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteSinCitaAdapter;
-import com.airmovil.profuturo.ti.retencion.Adapter.SinCitaAdapter;
+import com.airmovil.profuturo.ti.retencion.Adapter.GerenteSinCitaAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
@@ -43,7 +43,7 @@ import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.model.GerenteSinCitaModel;
-import com.airmovil.profuturo.ti.retencion.model.SinCitaModel;
+import com.airmovil.profuturo.ti.retencion.model.GerenteSinCitaModel;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -115,7 +115,7 @@ public class SinCita extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment SinCitaModel.
+     * @return A new instance of fragment GerenteSinCitaModel.
      */
     // TODO: Rename and change types and number of parameters
     public static SinCita newInstance(String param1, String param2) {
@@ -140,7 +140,6 @@ public class SinCita extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // TODO: Casteo
         rootView = view;
-
         tvFecha = (TextView) rootView.findViewById(R.id.gfsc_tv_fecha);
         spinner = (Spinner) rootView.findViewById(R.id.gfsc_spinner_tipo_dato);
         etDatos = (EditText) rootView.findViewById(R.id.gfsc_et_datos);
@@ -154,22 +153,29 @@ public class SinCita extends Fragment {
         mMonth = fechaDatos.get("mes");
         mDay   = fechaDatos.get("dia");
 
+        Map<String, String> fechas = Config.fechas(1);
+        fechaFin = fechas.get("fechaFin");
+        fechaIni = fechas.get("fechaIni");
+        fechaMostrar = fechaIni;
 
-
+        String llave = "";
+        String valor = "";
+        boolean procesa = false;
         if(getArguments() != null){
-            fechaIni = getArguments().getString(ARG_PARAM1);
-            fechaFin = getArguments().getString(ARG_PARAM2);
-            tvFecha.setText(fechaIni+" - "+fechaFin);
+            llave = getArguments().getString(ARG_PARAM1);
+            valor = getArguments().getString(ARG_PARAM2);
+            tvFecha.setText(fechaMostrar);
+            procesa = true;
         }else {
-            Map<String, String> fechas = Config.fechas(1);
-            fechaFin = fechas.get("fechaFin");
-            fechaIni = fechas.get("fechaIni");
-            fechaMostrar = fechaIni;
             tvFecha.setText(fechaMostrar);
         }
 
         etDatos.setFocusable(false);
         etDatos.setFocusableInTouchMode(false);
+
+        if(procesa)
+            sendJson(true, llave, valor);
+
 
         // TODO: Spinner
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, ESTADOS_CITAS);
@@ -253,16 +259,23 @@ public class SinCita extends Fragment {
                             }
                         }else{
                             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                            /*
                             SinCita clase = SinCita.newInstance(
                                     valores, rootView.getContext()
                             );
+                            */
+
+                            SinCita clase = SinCita.newInstance(
+                                    seleccion, valores
+                            );
+
                             Config.teclado(getContext(), etDatos);
                             borrar.onDestroy();
                             ft.remove(borrar);
                             ft.replace(R.id.content_gerente, clase);
                             ft.addToBackStack(null);
-                            sendJson(true, seleccion, valores);
-
+                            //sendJson(true, seleccion, valores);
+                            ft.commit();
                         }
                     }
                 }else{
@@ -313,7 +326,6 @@ public class SinCita extends Fragment {
         getView().setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
                     AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
                     dialogo1.setTitle("Confirmar");
@@ -325,16 +337,13 @@ public class SinCita extends Fragment {
                             Fragment fragmentoGenerico = new Inicio();
                             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                             if (fragmentoGenerico != null) {
-                                fragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.content_gerente, fragmentoGenerico).commit();
+                                fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
                             }
                         }
                     });
                     dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-
                         }
                     });
                     dialogo1.show();
