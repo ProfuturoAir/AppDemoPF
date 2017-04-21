@@ -60,6 +60,7 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
     private int lastVisibleItem, totalItemCount;
     private RecyclerView mRecyclerView;
     private String numeroEmpleado = "";
+    private String nombreEmpleado = "";
     private String mParam4 = "";
     private String mParam5 = "";
 
@@ -117,6 +118,7 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
             myholder.campoSucursalAsesor.setText("Numero de empleado: " + lista.getnEmpleado());
 
             numeroEmpleado = lista.getnEmpleado();
+            nombreEmpleado = lista.getNombre();
 
             char nombre = lista.getNombre().charAt(0);
             final String pLetra = Character.toString(nombre);
@@ -131,7 +133,7 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
                     if (mContext instanceof Director) {
                         Director director = (Director) mContext;
                         Log.d("-->>>>ENVIO frag:", "num :" + numeroEmpleado + ", fIni: " + mParam4 + ", fFin:" + mParam5);
-                        director.switchAsistencia(fragmento, numeroEmpleado, mParam4, mParam5);
+                        director.switchAsistenciaDetalle(fragmento, numeroEmpleado, nombreEmpleado, mParam4, mParam5);
                     }
                 }
             });
@@ -175,7 +177,7 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
                 if (mContext instanceof Director) {
                     Director director = (Director) mContext;
                     Log.d("-->>>>ENVIO frag:", "num :" + numeroEmpleado + ", fIni: " + mParam4 + ", fFin:" + mParam5);
-                    director.switchAsistencia(fragmento, numeroEmpleado, mParam4, mParam5);
+                    director.switchAsistenciaDetalle(fragmento, numeroEmpleado, nombreEmpleado, mParam4, mParam5);
                 }
                 return true;
 
@@ -218,8 +220,8 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
                                         rqt.put("idGerencia", 0);
                                         rqt.put("numeroEmpleado", numeroEmpleado);
                                         JSONObject periodo = new JSONObject();
-                                        periodo.put("fechaFin", mParam4);
-                                        periodo.put("fechaInicio", mParam5);
+                                        periodo.put("fechaFin", mParam5);
+                                        periodo.put("fechaInicio", mParam4);
                                         rqt.put("periodo", periodo);
                                         rqt.put("usuario", Config.usuarioCusp(mContext));
                                         obj.put("rqt", rqt);

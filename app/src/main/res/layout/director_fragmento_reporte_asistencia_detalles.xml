@@ -30,22 +30,9 @@
                 android:textSize="16dp"
                 android:layout_marginTop="5dp"
                 android:text="Numero de empleado asesor: "/>
-            <TextView
-                android:id="@+id/ddfrasd_tv_rango_fechas"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="14dp"
-                android:layout_marginTop="5dp"
-                android:textStyle="bold"
-                android:text="01-01-2017 a 02-02-2017"/>
+
         </LinearLayout>
-        <ImageView
-            android:id="@+id/ddfrasd_iv_mail"
-            android:layout_width="30dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="-130dp"
-            android:layout_weight="1"
-            android:src="@drawable/icono_mail"/>
+
     </LinearLayout>
 
     <LinearLayout
@@ -62,7 +49,6 @@
             android:background="@color/colorPrimaryDark">
             <TextView style="@style/textoRetenidos" android:text="A tiempo" android:gravity="center"/>
             <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/ddfrasd_tv_a_tiempo"/>
-            <TextView style="@style/iconoAcceso"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -75,7 +61,6 @@
             android:background="@color/colorPrimaryDark">
             <TextView style="@style/textoNoRetenidos" android:text="Retardos" android:gravity="center"/>
             <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/ddfrasd_tv_retardados"/>
-            <TextView style="@style/iconoAcceso"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -85,7 +70,6 @@
             android:background="@color/colorPrimaryDark">
             <TextView style="@style/textoNoRetenidos" android:text="Sin asistencia" android:gravity="center"/>
             <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/ddfrasd_tv_sin_asistencia"/>
-            <TextView style="@style/iconoAcceso"/>
         </LinearLayout>
     </LinearLayout>
 

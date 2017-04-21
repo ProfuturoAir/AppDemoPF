@@ -33,6 +33,7 @@ import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteAsistenciaDeta
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.EnviaMail;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
@@ -66,11 +67,13 @@ public class ReporteAsistenciaDetalles extends Fragment {
     private static final String ARG_PARAM1 = "numeroEmpleado";
     private static final String ARG_PARAM2 = "fechaIni";
     private static final String ARG_PARAM3 = "fechaFin";
+    private static final String ARG_PARAM4 = "nombreEmpleado";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-    private String mParam3;
+    private String mParam1 = "";
+    private String mParam2 = "";
+    private String mParam3 = "";
+    private String mParam4 = "";
 
     // TODO: View, sessionManager, datePickerDialog
     private View rootView;
@@ -122,12 +125,13 @@ public class ReporteAsistenciaDetalles extends Fragment {
      * @return A new instance of fragment ReporteAsistenciaDetalles.
      */
     // TODO: Rename and change types and number of parameters
-    public static ReporteAsistenciaDetalles newInstance(String param1, String param2, String param3, Context context) {
+    public static ReporteAsistenciaDetalles newInstance(String param1, String param2, String param3, String param4, Context context) {
         ReporteAsistenciaDetalles fragment = new ReporteAsistenciaDetalles();
         Bundle args = new Bundle();
-        args.putString("parametro1", param1);
-        args.putString("parametro2", param2);
-        args.putString("parametro3", param3);
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM3, param3);
+        args.putString(ARG_PARAM4, param4);
         fragment.setArguments(args);
         return fragment;
     }
@@ -139,6 +143,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
             mParam3 = getArguments().getString(ARG_PARAM3);
+            mParam4 = getArguments().getString(ARG_PARAM4);
             Log.d("-->>Detalles Datos", mParam1 + ", " + mParam2 + ", " + mParam3);
         }
     }
@@ -152,8 +157,9 @@ public class ReporteAsistenciaDetalles extends Fragment {
         tvFecha = (TextView) rootView.findViewById(R.id.ddfrasd_tv_fecha);
         tvLetra = (TextView) rootView.findViewById(R.id.ddfrasd_tv_letra);
         tvNombreAsesor = (TextView) rootView.findViewById(R.id.ddfrasd_tv_nombre_asesor);
+        tvNombreAsesor.setText("Nombre del Asesor: " + mParam4);
         tvNoEmpleado = (TextView) rootView.findViewById(R.id.ddfrasd_tv_numero_empleado_asesor);
-        tvRangoFechas = (TextView) rootView.findViewById(R.id.ddfrasd_tv_rango_fechas);
+        tvNoEmpleado.setText("Numero de empleado asesor: " + mParam1);
         tvAtiempo = (TextView) rootView.findViewById(R.id.ddfrasd_tv_a_tiempo);
         tvRetardo = (TextView) rootView.findViewById(R.id.ddfrasd_tv_retardados);
         tvSinAsistencia = (TextView) rootView.findViewById(R.id.ddfrasd_tv_sin_asistencia);
@@ -199,7 +205,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
                         Config.dialogoFechasVacias(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ReporteAsistenciaDetalles fragmento = ReporteAsistenciaDetalles.newInstance(mParam1, fechaIncial, fechaFinal, rootView.getContext());
+                        ReporteAsistenciaDetalles fragmento = ReporteAsistenciaDetalles.newInstance(mParam1, fechaIncial, fechaFinal, mParam4, rootView.getContext());
                         borrar.onDestroy();
                         ft.remove(borrar);
                         ft.replace(R.id.content_director, fragmento);
@@ -218,36 +224,85 @@ public class ReporteAsistenciaDetalles extends Fragment {
         tvResultados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 final Dialog dialog = new Dialog(getContext());
                 dialog.setContentView(R.layout.custom_layout);
 
                 Button btn = (Button) dialog.findViewById(R.id.dialog_btn_enviar);
-                Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
+                final Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
 
                 // TODO: Spinner
                 ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item_azul, Config.EMAIL);
                 adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinner.setAdapter(adapterSucursal);
 
-
-
                 btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
 
-                        Connected connected = new Connected();
-                        if(connected.estaConectado(getContext())){
-                            final String datoEditText = editText.getText().toString();
-                            //final String datoSpinner = spinner.getSelectedItem().toString();
-                            dialog.dismiss();
+                        final EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
 
-                            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-                            Config.msjTime(getContext(), "Mensaje datos", "Se está enviado los datos a " + datoEditText + "@profuturo.com", 8000);
+                        final String datoEditText = editText.getText().toString();
+                        final String datoSpinner = spinner.getSelectedItem().toString();
+                        Log.d("DATOS USER","SPINNER: "+datoEditText+" datosSpinner: "+ datoSpinner);
+                        if(datoEditText == "" || datoSpinner == "Seleciona un email"){
+                            Config.msj(getContext(), "Error", "Ingresa email valido");
                         }else{
-                            Config.msj(getContext(), "Error conexión", "Por favor, revisa tu conexión a internet");
-                            dialog.dismiss();
+                            String email = datoEditText+"@"+datoSpinner;
+                            Connected connected = new Connected();
+                            final InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Service.INPUT_METHOD_SERVICE);
+                            if(connected.estaConectado(getContext())){
+
+                                JSONObject obj = new JSONObject();
+
+                                try {
+                                    JSONObject rqt = new JSONObject();
+                                    rqt.put("correo", email);
+                                    rqt.put("detalle", true);
+                                    rqt.put("numeroEmpleado", mParam1);
+                                    JSONObject periodo = new JSONObject();
+                                    periodo.put("fechaFin", mParam3);
+                                    periodo.put("fechaInicio", mParam2);
+                                    rqt.put("periodo", periodo);
+                                    obj.put("rqt", rqt);
+                                    Log.d("-->>>>datos Email array", "REQUEST-->" + obj);
+                                } catch (JSONException e) {
+                                    Config.msj(getContext(), "Error", "Error al formar los datos");
+                                }
+                                EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_ASISTENCIA,getContext(),new EnviaMail.VolleyCallback() {
+
+                                    @Override
+                                    public void onSuccess(JSONObject result) {
+                                        int status;
+
+                                        try {
+                                            status = result.getInt("status");
+                                        }catch(JSONException error){
+                                            status = 400;
+                                        }
+
+                                        Log.d("EST","EE: "+status);
+                                        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                                        if(status == 200) {
+                                            Config.msj(getContext(), "Enviando", "Se ha enviado el mensaje al destino");
+                                            //Config.msjTime(getContext(), "Enviando", "Se ha enviado el mensaje al destino", 4000);
+                                            dialog.dismiss();
+                                        }else{
+                                            Config.msj(getContext(), "Error", "Ups algo salio mal =(");
+                                            dialog.dismiss();
+                                        }
+                                        //db.addUserCredits(fk_id_usuario,result);
+                                    }
+                                    @Override
+                                    public void onError(String result) {
+                                        Log.d("RESPUESTA ERROR", result);
+                                        Config.msj(getContext(), "Error en conexión", "Por favor, revisa tu conexión a internet ++");
+                                        //db.addUserCredits(fk_id_usuario, "ND");
+                                    }
+                                });
+                            }else{
+                                Config.msj(getContext(), "Error en conexión", "Por favor, revisa tu conexión a internet");
+                            }
                         }
 
 
@@ -481,7 +536,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
         tvAtiempo.setText("" + onTime);
         tvRetardo.setText("" + retardo);
         tvSinAsistencia.setText("" + inasistencia);
-        tvResultados.setText("" + totalFilas + " registros");
+        tvResultados.setText("" + totalFilas + " registros ");
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         adapter = new DirectorReporteAsistenciaDetalleAdapter(rootView.getContext(), getDatos1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -602,6 +657,8 @@ public class ReporteAsistenciaDetalles extends Fragment {
         final String smParam2 = fechaActual.get("fechaFin");
         if(getArguments() != null){
             tvFecha.setText(mParam2 + " - " + mParam3);
+            tvRangoFecha1.setText(mParam2);
+            tvRangoFecha2.setText(mParam3);
         }else{
             tvFecha.setText(smParam1);
         }

@@ -315,6 +315,25 @@ public class Director extends AppCompatActivity{
         ft.commit();
     }
 
+    public void switchAsistenciaDetalle(Fragment frag, String numeroEmpleado, String nombreEmpleado, String fechaIni,String fechaFin) {
+        Bundle bundle=new Bundle();
+        bundle.putString("numeroEmpleado",numeroEmpleado);
+        bundle.putString("nombreEmpleado", nombreEmpleado);
+        bundle.putString("fechaIni",fechaIni);
+        bundle.putString("fechaFin",fechaFin);
+        //bundle.putString("idGerencia",idGerencia);
+        //bundle.putString("idSucursal",idSucursal);
+        //bundle.putString("hora",hora);
+
+        Log.d("DIRECTOR", "ASITENCIA - #Empleado " + numeroEmpleado + " FIN: " + fechaFin + " ");
+
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_director, frag, frag.toString());
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
     public void switchSucursales(Fragment frag, int idGerencia, String fechaInicio, String fechaFin){
         Bundle bundle=new Bundle();
         bundle.putInt("idGerencia",idGerencia);
