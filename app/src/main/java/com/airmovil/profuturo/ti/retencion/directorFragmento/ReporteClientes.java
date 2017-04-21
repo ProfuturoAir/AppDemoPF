@@ -138,6 +138,8 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
     int spinCit = 0;
     int spinRet = 0;
 
+    int mP1;
+
     private ArrayList<String> sucursales;
     private ArrayList<String> id_sucursales;
 
@@ -313,6 +315,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                         etIngresarDato.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryDark1), PorterDuff.Mode.OVERLAY);
                         etIngresarDato.setFocusable(false);
+                        mP1 = 0;
                         break;
                     case 1:
                         etIngresarDato.setFocusableInTouchMode(true);
@@ -320,6 +323,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                         etIngresarDato.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
                         etIngresarDato.setInputType(InputType.TYPE_CLASS_PHONE);
+                        mP1 = 1;
                         break;
                     case 2:
                         etIngresarDato.setFocusableInTouchMode(true);
@@ -327,6 +331,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                         etIngresarDato.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
                         etIngresarDato.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+                        mP1 = 2;
                         break;
                     case 3:
                         etIngresarDato.setFocusableInTouchMode(true);
@@ -334,6 +339,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                         etIngresarDato.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
                         etIngresarDato.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+                        mP1 = 3;
                 }
                 etIngresarDato.setHint("Ingresa, " + adapterId.getItem(position));
 
@@ -382,7 +388,8 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
 
                 if(connect.estaConectado(getContext())){
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    mParam1 = spinnerId.getSelectedItemPosition(); // idFiltroBusquedaCliente -> int
+                    Log.d("SELECCION","EEEE: "+mP1);
+                    mParam1 = mP1; // idFiltroBusquedaCliente -> int
                     mParam2 = etIngresarDato.getText().toString(); // idBusquedaCliente -> String
                     mParam3 = spinnerGerencias.getSelectedItemPosition(); // idGerencia -> int
                     mParam4 = spinnerSucursal.getSelectedItemPosition(); // idSucursal -> int
@@ -483,7 +490,8 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                                 String smParam2 = fechaActual.get("fechaFin");
                                 try {
                                     if(getArguments() != null){
-                                        mParam1 = getArguments().getInt(ARG_PARAM1); // idFiltroBusquedaCliente
+                                        Log.d("SELECCION","EEEE: "+mP1);
+                                        mParam1 = mP1; // idFiltroBusquedaCliente -> int // idFiltroBusquedaCliente
                                         mParam2 = getArguments().getString(ARG_PARAM2); // idBusquedaCliente
                                         mParam4 = getArguments().getInt(ARG_PARAM4); // idSucursal
                                         mParam5 = getArguments().getString(ARG_PARAM5); // idAsesor
@@ -513,27 +521,29 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                                             filtroCliente.put("nss", "");
                                             filtroCliente.put("numeroCuenta", "");
                                         }
+                                        filtro.put("filtroCliente",filtroCliente);
                                         filtro.put("filtroRetenicion", mParam8);
                                         filtro.put("idSucursal", mParam4);
                                         filtro.put("numeroEmpleado", mParam5);
                                         rqt.put("filtro", filtro);
                                         rqt.put("numeroEmpleado", mParam5);
-                                        periodo.put("fechaInicio", mParam6);
-                                        periodo.put("fechaFin", mParam7);
+                                        periodo.put("fechaInicio", fechaIni);
+                                        periodo.put("fechaFin", fechaFin);
                                         rqt.put("periodo", periodo);
                                         obj.put("rqt", rqt);
                                     }else {
                                         boolean detalle = true;
                                         rqt.put("correo", email);
                                         rqt.put("detalle", detalle);
-                                        rqt.put("filtro", filtro);
                                             filtro.put("cita", 0);
                                                 filtroCliente.put("curp", "");
                                                 filtroCliente.put("nss", "");
                                                 filtroCliente.put("numeroCuenta", "");
+                                            filtro.put("filtroCliente",filtroCliente);
                                             filtro.put("filtroRetenicion", mParam8);
                                             filtro.put("idSucursal", mParam4);
                                             filtro.put("numeroEmpleado", mParam5);
+                                        rqt.put("filtro", filtro);
                                         rqt.put("numeroEmpleado", mParam5);
                                             rqt.put("periodo", periodo);
                                                 periodo.put("fechaInicio", mParam6);
@@ -1094,7 +1104,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                                 tvRangoFecha2.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
-                                fechaIni = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
+                                fechaFin = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
                             }
                         }, mYear, mMonth, mDay);
                 datePickerDialog.show();

@@ -25,7 +25,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.ReporteClientesDetalle;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientesDetalles;
@@ -142,8 +141,8 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
         Fragment fragmento = new ReporteClientesDetalles();
         if (view.getContext() == null)
             return;
-        if (view.getContext() instanceof Director) {
-            Director gerente = (Director) view.getContext();
+        if (view.getContext() instanceof Gerente) {
+            Gerente gerente = (Gerente) view.getContext();
 
             final Connected conected = new Connected();
             if(conected.estaConectado(view.getContext())) {
@@ -185,17 +184,17 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
         this.mOnLoadMoreListener = mOnLoadMoreListener;
     }
 
-
+/*
     public void fragmentoCambioClienteDetalles(int idSucursal, int idTramite, String numeroCuenta, String fechaInicio, String fechaFin, String usuario, View view) {
         Log.d("fragmentoCambio", " --> " + idSucursal + " -> " + idTramite + " -> " + numeroCuenta + " -> " + fechaInicio + " -> " + fechaFin + " -> " + usuario);
         Fragment fragmento = new ReporteClientesDetalles();
         if (view.getContext() == null)
             return;
         if (view.getContext() instanceof Gerente) {
-            Director gerente = (Director) view.getContext();
+            Gerente gerente = (Gerente) view.getContext();
             gerente.switchDetalleClientes(idSucursal, idTramite, numeroCuenta, fechaInicio, fechaFin, usuario, fragmento);
         }
-    }
+    }*/
 
     /**
      * Click listener for popup menu items
@@ -277,7 +276,7 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
 
                                         @Override
                                         public void onSuccess(JSONObject result) {
-                                            Log.d("RESPUESTA DIRECTOR", result.toString());
+                                            Log.d("RESPUESTA Gerente", result.toString());
                                             int status;
 
                                             try {
