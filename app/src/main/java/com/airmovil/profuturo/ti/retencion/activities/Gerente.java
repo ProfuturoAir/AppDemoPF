@@ -720,4 +720,21 @@ public class Gerente extends AppCompatActivity{
         //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();
     }
+
+    //lista.getNumeroCuenta(), lista.getCita(), lista.idTramite, fechaIni, fechaFin, Config.usuarioCusp(mContext), fragmento
+    public void switchDetalleCliente(String numeroCuenta, String cita, int idTramite, String fechaInicio, String fechaFin, String hora, String usuario, Fragment frag) {
+        Bundle bundle=new Bundle();
+        bundle.putString("numeroCuenta",numeroCuenta);
+        bundle.putString("cita",cita);
+        bundle.putString("hora",hora);
+        bundle.putInt("idTramite", idTramite);
+        bundle.putString("fechaInicio", fechaInicio);
+        bundle.putString("fechaFin", fechaFin);
+        bundle.putString("usuario", usuario);
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_gerente, frag);
+        ft.addToBackStack(null);
+        ft.commit();
+    }
 }

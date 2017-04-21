@@ -14,6 +14,15 @@ public class GerenteReporteClientesModel {
     public String retenido;
     public String curp;
     public String nss;
+    public String hora;
+
+    public String getHora() {
+        return hora;
+    }
+
+    public void setHora(String hora) {
+        this.hora = hora;
+    }
 
     public String getCita() {
         return cita;

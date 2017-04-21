@@ -32,6 +32,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteClientesAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
@@ -209,8 +210,6 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
             retenido = getArguments().getInt("retenido");
             estatus = getArguments().getInt("estatus");
 
-
-
             if(fechaIni!=null){
                 tvRangoFecha1.setText(fechaIni);
                 tvRangoFecha2.setText(fechaFin);
@@ -327,9 +326,10 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     mParam8 = spinnerCita.getSelectedItemPosition();
                     mParam9 = spinnerId.getSelectedItemPosition();
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    if(mParam1.isEmpty() || mParam2.isEmpty()){
-                        Config.dialogoFechasVacias(getContext());
+                    if(mParam1.isEmpty() || mParam2.isEmpty() || mParam3.isEmpty() || idSucursal == 0 || mParam6.isEmpty() || mParam7 == 0 || mParam8 == 0){
+                        Config.dialogoDatosVacios(getContext());
                     }else{
+                        Toast.makeText(getContext(), " idSucursal: " + idSucursal, Toast.LENGTH_SHORT).show();
                         Log.d("idS","SS: "+idSucursal + " ___ " +mParam3);
                         if(mParam3.isEmpty()){
                             mParam3 = "0";
@@ -337,23 +337,11 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                         if(mParam6.isEmpty()){
                             mParam6 = "0";
                         }
-
                         Log.d("HOLA", "Todos : " + mParam6);
                         Log.d("HOLA", "Todos : " + mParam3);
                         ReporteClientes fragmentoClientes = new ReporteClientes();
                         Gerente gerente = (Gerente) getContext();
                         gerente.switchClientesFCQ(fragmentoClientes,idSucursal,Integer.valueOf(mParam6),mParam1,mParam2,mParam9,Integer.valueOf(mParam3),mParam7,mParam8);
-                        /*ReporteClientes fragmento = ReporteClientes.newInstance(
-                                mParam1, mParam2, mParam3, mParam5, mParam6, mParam7, mParam8, mParam9,
-                                rootView.getContext()
-                        );
-                        borrar.onDestroy();
-                        ft.remove(borrar);
-                        ft.replace(R.id.content_gerente, fragmento);
-                        ft.addToBackStack(null);
-                        ft.commit();
-                        Config.teclado(getContext(),etIngresarDato);
-                        Config.teclado(getContext(),etIngresarAsesor);*/
                         Config.teclado(getContext(), etIngresarAsesor);
                         Config.teclado(getContext(), etIngresarDato);
                     }
@@ -415,6 +403,8 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                             Connected connected = new Connected();
                             final InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Service.INPUT_METHOD_SERVICE);
                             if(connected.estaConectado(getContext())){
+
+
                                 JSONObject obj = new JSONObject();
                                 JSONObject rqt = new JSONObject();
                                 JSONObject filtro = new JSONObject();
@@ -426,6 +416,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                                 if (idSucursal == 0){
                                     checa = false;
                                 }
+
 
                                 try {
                                     if(getArguments() != null){
@@ -450,13 +441,10 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                                             filtroCliente.put("nss", "");
                                             filtroCliente.put("numeroCuenta", "");
                                         }
-                                        filtro.put("filtroRetenicion", mParam8);
-                                        filtro.put("idSucursal", idSucursal);
-                                        filtro.put("numeroEmpleado", numeroEmpleado);
                                         rqt.put("filtro", filtro);
                                         rqt.put("numeroEmpleado", numeroEmpleado);
-                                        periodo.put("fechaInicio", fechaIni);
-                                        periodo.put("fechaFin", fechaFin);
+                                        periodo.put("fechaInicio", mParam1);
+                                        periodo.put("fechaFin", mParam2);
                                         rqt.put("periodo", periodo);
                                         obj.put("rqt", rqt);
                                     }else {
@@ -872,6 +860,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     getDatos2.setCita(json.getString("cita"));
                     getDatos2.setRetenido(json.getString("retenido"));
                     getDatos2.setIdSucursal(json.getInt("idSucursal"));
+                    getDatos2.setHora(json.getString("horaAtencion"));
                     //getDatos2.setCurp(json.getString("curp"));
                     //getDatos2.setNss(json.getString("nss"));
                 }catch (JSONException e){
@@ -940,6 +929,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     getDatos2.setCita(json.getString("cita"));
                     getDatos2.setRetenido(json.getString("retenido"));
                     getDatos2.setIdSucursal(json.getInt("idSucursal"));
+                    getDatos2.setHora(json.getString("horaAtencion"));
                     //getDatos2.setCurp(json.getString("curp"));
                     //getDatos2.setNss(json.getString("nss"));
                 }catch (JSONException e){

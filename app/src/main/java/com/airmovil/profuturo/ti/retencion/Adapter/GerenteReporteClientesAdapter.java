@@ -3,6 +3,7 @@ package com.airmovil.profuturo.ti.retencion.Adapter;
 import android.app.Dialog;
 import android.app.Service;
 import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,6 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Director;
+import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientesDetalles;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.Inicio;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
@@ -168,9 +171,21 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.sub_menu_reporte_clientes_detalles:
-                    AppCompatActivity ReporteClientesDetalles = (AppCompatActivity) mRecyclerView.getContext();
-                    com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientesDetalles fragmentoClienteDetalles = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientesDetalles();
-                    ReporteClientesDetalles.getSupportFragmentManager().beginTransaction().replace(R.id.content_gerente, fragmentoClienteDetalles).addToBackStack(null).commit();
+
+
+                    Toast.makeText(mContext, "ID SUCURSAL" + lista.getIdSucursal(), Toast.LENGTH_SHORT).show();
+
+                    Fragment fragmento = new ReporteClientesDetalles();
+                    if (mContext instanceof Gerente) {
+                        Gerente gerente = (Gerente) mContext;
+                        //Log.d("onMenuItemClick", list.getIdSucursal() + " -> " + list.getIdTramite() +  " -> " + list.getNumeroCuenta() + " -> " +  fechaInicio + " -> " + fechaFin + " -> " + Config.usuarioCusp(mContext) + " -> " + view);
+                        //director.switchDetalleClientes(list.getIdSucursal(), list.getIdTramite(), list.getNumeroCuenta(),  fechaInicio, fechaFin, Config.usuarioCusp(mContext), fragmento);
+                        gerente.switchDetalleCliente(lista.getNumeroCuenta(), lista.getCita(), lista.getIdTramite(), fechaIni, fechaFin, lista.getHora(), Config.usuarioCusp(mContext), fragmento);
+                    }
+                    
+                    //AppCompatActivity ReporteClientesDetalles = (AppCompatActivity) mRecyclerView.getContext();
+                    //com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientesDetalles fragmentoClienteDetalles = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientesDetalles();
+                    //ReporteClientesDetalles.getSupportFragmentManager().beginTransaction().replace(R.id.content_gerente, fragmentoClienteDetalles).addToBackStack(null).commit();
                     return true;
                 case R.id.sub_menu_reporte_clientes_email:
                     final Dialog dialog = new Dialog(mContext);
