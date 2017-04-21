@@ -388,4 +388,48 @@ public class Director extends AppCompatActivity{
         ft.addToBackStack(null);
         ft.commit();
     }
+
+    public void switchSucursalFRS(Fragment frag, int idSucursal, String fechaInicio, String fechaFin){
+        Bundle bundle=new Bundle();
+        bundle.putInt("idSucursal",idSucursal);
+        bundle.putString("fechaIni",fechaInicio);
+        bundle.putString("fechaFin",fechaFin);
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_director, frag, frag.toString());
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
+    public void switchClientesFS(Fragment frag, int idSucursal,String fechaIni,String fechaFin) {
+        Bundle bundle=new Bundle();
+        bundle.putInt("idSucursal",idSucursal);
+        bundle.putString("fechaIni",fechaIni);
+        bundle.putString("fechaFin",fechaFin);
+        //bundle.putString("hora",hora);
+
+        Log.d("DIRECTOR", "CLIENTES - #idSucursal " + idSucursal + " FIN: " + fechaFin);
+
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_director, frag, frag.toString());
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
+    public void switchAsistenciaFS(Fragment frag, int idSucursal,String fechaIni,String fechaFin) {
+        Bundle bundle=new Bundle();
+        bundle.putInt("idSucursal",idSucursal);
+        bundle.putString("fechaIni",fechaIni);
+        bundle.putString("fechaFin",fechaFin);
+        //bundle.putString("hora",hora);
+
+        Log.d("DIRECTOR", "CLIENTES - #Empleado " + idSucursal + " FIN: " + fechaFin);
+
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_director, frag, frag.toString());
+        ft.addToBackStack(null);
+        ft.commit();
+    }
 }

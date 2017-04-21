@@ -217,7 +217,7 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
                 }else {
                     ReporteSucursales fragmentoSucursales = new ReporteSucursales();
                     Director director = (Director) getContext();
-                    //director.switchSucursalFS(fragmentoSucursales, idSucursal,fechaIncial,fechaFinal);
+                    director.switchSucursalFRS(fragmentoSucursales, idSucursal,fechaIncial,fechaFinal);
                     /*ReporteSucursales fragmento = ReporteSucursales.newInstance(fechaIni, fechaFin, rootView.getContext());
                     borrar.onDestroy();
                     ft.remove(borrar);

@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsesores;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistencia;
@@ -176,16 +177,16 @@ public class DirectorReporteSucursalesAdapter extends RecyclerView.Adapter{
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.sub_menu_reporte_sucusal_nav_clientes:
-                    com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes fragmentoClientes = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes();
-                    Gerente gerente = (Gerente) mRecyclerView.getContext();
-                    gerente.switchClientesFS(fragmentoClientes, lista.getIdSucursal(),fechaIni,fechaFin);
+                    ReporteClientes fragmentoClientes = new ReporteClientes();
+                    Director director = (Director) mRecyclerView.getContext();
+                    director.switchClientesFS(fragmentoClientes, lista.getIdSucursal(),fechaIni,fechaFin);
                     //AppCompatActivity a2 = (AppCompatActivity) mRecyclerView.getContext();
                     //com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes f2 = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes();
                     //a2.getSupportFragmentManager().beginTransaction().replace(R.id.content_gerente, f2).addToBackStack(null).commit();
                     return true;
                 case R.id.sub_menu_reporte_sucusal_nav_asistencia:
-                    com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia fragmentoAsistencia = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia();
-                    Gerente dt = (Gerente) mRecyclerView.getContext();
+                    ReporteAsistencia fragmentoAsistencia = new ReporteAsistencia();
+                    Director dt = (Director) mRecyclerView.getContext();
                     dt.switchAsistenciaFS(fragmentoAsistencia, lista.getIdSucursal(),fechaIni,fechaFin);
                     //AppCompatActivity a3 = (AppCompatActivity) mRecyclerView.getContext();
                     //com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia f3 = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia();
