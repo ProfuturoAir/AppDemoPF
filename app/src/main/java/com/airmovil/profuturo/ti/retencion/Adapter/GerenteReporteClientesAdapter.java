@@ -215,8 +215,8 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
                     Fragment fragmento = new ReporteClientesDetalles();
                     if (view.getContext() instanceof Gerente) {
                         Gerente gerente = (Gerente) view.getContext();
-                        Log.d("onMenuItemClick", list.getIdSucursal() + " -> " + list.getIdTramite() +  " -> " + list.getNumeroCuenta() + " -> " +  fechaInicio + " -> " + fechaFin + " -> " + Config.usuarioCusp(mContext) + " -> " + view);
-                        gerente.switchDetalleClientes(list.getIdSucursal(), list.getIdTramite(), list.getNumeroCuenta(),  fechaInicio, fechaFin, Config.usuarioCusp(mContext), fragmento);
+                        //Log.d("onMenuItemClick", list.getIdSucursal() + " -> " + list.getIdTramite() +  " -> " + list.getNumeroCuenta() + " -> " +  fechaInicio + " -> " + fechaFin + " -> " + Config.usuarioCusp(mContext) + " -> " + view);
+                        gerente.switchDetalleClientes(list.getIdSucursal(), list.getIdTramite(), list.getNumeroCuenta(),  fechaInicio, fechaFin, Config.usuarioCusp(mContext),list.getNombreCliente(), list.getNombreAsesor(), fragmento);
                     }
                     return true;
                 case R.id.sub_menu_reporte_clientes_email:

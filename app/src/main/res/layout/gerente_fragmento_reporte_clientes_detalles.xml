@@ -1,73 +1,72 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientesDetalles">
 
-    <TextView style="@style/tituloProceso" android:text="Cliente " />
-
-    <LinearLayout style="@style/contenedorPrimeraLetraNombre">
-        <TextView android:id="@+id/ggfrasd_tv_letra"  style="@style/primeraLetra"/>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:layout_marginLeft="20dp">
-            <TextView
-                android:id="@+id/ggfrasd_tv_nombre_asesor"
-                android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView style="@style/tituloProceso" android:text="Cliente " />
+        <LinearLayout style="@style/contenedorPrimeraLetraNombre">
+            <TextView android:id="@+id/ggfrasd_tv_letra"  style="@style/primeraLetra"/>
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="18dp"
-                android:textStyle="bold"
-                android:text="Nombre del Asesor"/>
-            <TextView
-                android:id="@+id/ggfrasd_tv_numero_empleado_asesor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16dp"
-                android:layout_marginTop="5dp"
-                android:text="Numero de empleado asesor: "/>
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:layout_marginLeft="20dp">
+                <TextView
+                    android:id="@+id/ggfrasd_tv_nombre_asesor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18dp"
+                    android:textStyle="bold"
+                    android:text="Nombre del Asesor"/>
+                <TextView
+                    android:id="@+id/ggfrasd_tv_numero_empleado_asesor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dp"
+                    android:layout_marginTop="5dp"
+                    android:text="Numero de empleado asesor: "/>
+            </LinearLayout>
+        </LinearLayout>
+        <TextView android:id="@+id/ggfrasd_tv_fecha" style="@style/fecha"/>
+        <!-- TODO: Contenido general -->
+        <LinearLayout style="@style/contenedorGeneralVertical">
+            <!-- TODO: Contenedor de datos-->
+            <LinearLayout style="@style/contenedorDatos">
+                <!-- TODO: Nombre del asesor y dato a mostrar-->
+                <TextView style="@style/tituloDato"  android:text="@string/texto_nombre" />
+                <TextView style="@style/datoMuestra" android:id="@+id/gf_tv_clientes_detalle_nombre"/>
+                <!-- TODO: Numero de cuenta y dato a mostrar-->
+                <TextView style="@style/tituloDato" android:text="@string/texto_numero_cuenta" />
+                <TextView style="@style/datoMuestra" android:id="@+id/gf_tv_clientes_detalle_numero_cuenta"/>
+                <!-- TODO: NSS y dato a mostrar-->
+                <TextView style="@style/tituloDato" android:text="NSS" />
+                <TextView style="@style/datoMuestra" android:id="@+id/gf_tv_clientes_detalle_nss"/>
+                <!-- TODO: NSS y dato a mostrar-->
+                <TextView style="@style/tituloDato" android:text="CURP" />
+                <TextView style="@style/datoMuestra" android:id="@+id/gf_tv_clientes_detalle_curp"/>
+                <!-- TODO: CURP y dato a mostrar-->
+                <TextView style="@style/tituloDato" android:text="Estatus" />
+                <TextView style="@style/datoMuestra" android:id="@+id/gf_tv_clientes_detalle_estatus"/>
+                <!-- TODO: Fecha y dato a mostrar-->
+                <TextView style="@style/tituloDato" android:text="@string/texto_saldo" />
+                <TextView style="@style/datoMuestra" android:id="@+id/gf_tv_clientes_detalle_saldo" />
+                <!-- TODO: Saldo y dato a mostrar-->
+                <TextView style="@style/tituloDato" android:text="@string/texto_sucursal" />
+                <TextView style="@style/datoMuestra" android:id="@+id/gf_tv_clientes_detalle_sucursal"/>
+                <!-- TODO: Saldo y dato a mostrar-->
+                <TextView style="@style/tituloDato" android:text="@string/texto_horario" />
+                <TextView style="@style/datoMuestra" android:id="@+id/gf_tv_clientes_detalle_hora_atencion"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
-
-    <TextView android:id="@+id/ggfrasd_tv_fecha" style="@style/fecha"/>
-
-    <!-- TODO: Contenido general -->
-    <LinearLayout style="@style/contenedorGeneralVertical">
-        <!-- TODO: Contenedor de datos-->
-        <LinearLayout style="@style/contenedorDatos">
-            <!-- TODO: Nombre del asesor y dato a mostrar-->
-            <TextView style="@style/tituloDato"  android:text="@string/texto_nombre" />
-            <TextView style="@style/datoMuestra" android:id="@+id/gf_tv_clientes_detalle_nombre"/>
-            <!-- TODO: Numero de cuenta y dato a mostrar-->
-            <TextView style="@style/tituloDato" android:text="@string/texto_numero_cuenta" />
-            <TextView style="@style/datoMuestra" android:id="@+id/gf_tv_clientes_detalle_numero_cuenta"/>
-            <!-- TODO: NSS y dato a mostrar-->
-            <TextView style="@style/tituloDato" android:text="NSS" />
-            <TextView style="@style/datoMuestra" android:id="@+id/gf_tv_clientes_detalle_nss"/>
-            <!-- TODO: NSS y dato a mostrar-->
-            <TextView style="@style/tituloDato" android:text="CURP" />
-            <TextView style="@style/datoMuestra" android:id="@+id/gf_tv_clientes_detalle_curp"/>
-            <!-- TODO: CURP y dato a mostrar-->
-            <TextView style="@style/tituloDato" android:text="Estatus" />
-            <TextView style="@style/datoMuestra" android:id="@+id/gf_tv_clientes_detalle_estatus"/>
-            <!-- TODO: Fecha y dato a mostrar-->
-            <TextView style="@style/tituloDato" android:text="@string/texto_saldo" />
-            <TextView style="@style/datoMuestra" android:id="@+id/gf_tv_clientes_detalle_saldo" />
-            <!-- TODO: Saldo y dato a mostrar-->
-            <TextView style="@style/tituloDato" android:text="@string/texto_sucursal" />
-            <TextView style="@style/datoMuestra" android:id="@+id/gf_tv_clientes_detalle_sucursal"/>
-            <!-- TODO: Saldo y dato a mostrar-->
-            <TextView style="@style/tituloDato" android:text="@string/texto_horario" />
-            <TextView style="@style/datoMuestra" android:id="@+id/gf_tv_clientes_detalle_hora_atencion"/>
-        </LinearLayout>
-    </LinearLayout>
-
-
-</LinearLayout>
+</ScrollView>
 
 
 

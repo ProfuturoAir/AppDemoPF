@@ -417,13 +417,12 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                                     checa = false;
                                 }
 
-
                                 try {
                                     if(getArguments() != null){
                                         boolean detalle = true;
                                         rqt.put("correo", email);
                                         rqt.put("detalle", detalle);
-                                        filtro.put("cita", mParam9);
+                                        filtro.put("cita", mParam8);
                                         if(spinId == 1){
                                             filtroCliente.put("curp", "");
                                             filtroCliente.put("nss", "");

@@ -757,7 +757,7 @@ public class Gerente extends AppCompatActivity{
         ft.commit();
     }
 
-    public void switchDetalleClientes(int idSucursal, int idTramite, String numeroCuenta, String fechaInicio, String fechaFin, String usuario, Fragment frag){
+    public void switchDetalleClientes(int idSucursal, int idTramite, String numeroCuenta, String fechaInicio, String fechaFin, String usuario, String nombreCliente, String idAsesor, Fragment frag){
         Log.d("switchDetallesClie", " --> " + " --> " + idSucursal + " --> " + idTramite + " --> " + numeroCuenta + " --> " + fechaInicio + " --> " + fechaFin + " --> " + usuario);
         Bundle bundle=new Bundle();
         bundle.putInt("idSucursal", idSucursal);
@@ -766,6 +766,8 @@ public class Gerente extends AppCompatActivity{
         bundle.putString("fechaInicio", fechaInicio);
         bundle.putString("fechaFin", fechaFin);
         bundle.putString("usuario", usuario);
+        bundle.putString("nombreCliente", nombreCliente);
+        bundle.putString("idAsesor", idAsesor);
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_gerente, frag, frag.toString());
