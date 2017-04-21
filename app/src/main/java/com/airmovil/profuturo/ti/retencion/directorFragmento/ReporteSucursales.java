@@ -33,6 +33,7 @@ import com.airmovil.profuturo.ti.retencion.Adapter.CitasClientesAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteSucursalesAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteSucursalesAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.*;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
@@ -214,8 +215,8 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
                     Config.dialogoDatosVacios(getContext());
                 }else {
                     ReporteSucursales fragmentoSucursales = new ReporteSucursales();
-                    Gerente gerente = (Gerente) getContext();
-                    gerente.switchSucursalFS(fragmentoSucursales, idSucursal,fechaIncial,fechaFinal);
+                    Director director = (Director) getContext();
+                    //director.switchSucursalFS(fragmentoSucursales, idSucursal,fechaIncial,fechaFinal);
                     /*ReporteSucursales fragmento = ReporteSucursales.newInstance(fechaIni, fechaFin, rootView.getContext());
                     borrar.onDestroy();
                     ft.remove(borrar);

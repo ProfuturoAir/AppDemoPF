@@ -295,6 +295,21 @@ public class ReporteClientesDetalles extends Fragment {
 
     private void primerPaso(JSONObject obj){
         Log.d("response -> 1", "" + obj);
+        try{
+            JSONObject cliente = obj.getJSONObject("cliente");
+            String nombre = cliente.getString("nombre");
+            String numeroCuenta = cliente.getString("nombreSucursal");
+            String nss = cliente.getString("nss");
+            String curp = cliente.getString("curp");
+            boolean status = cliente.getBoolean("retenido");
+            int saldo = cliente.getInt("saldo");
+
+            tv1.setText("" + nombre);
+
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+
 
     }
 }
