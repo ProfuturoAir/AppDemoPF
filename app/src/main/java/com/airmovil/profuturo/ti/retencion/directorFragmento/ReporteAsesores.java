@@ -33,6 +33,7 @@ import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteAsesoresAdapte
 import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteSucursalesAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteAsesoresAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.EnviaMail;
@@ -112,7 +113,7 @@ public class ReporteAsesores extends Fragment {
     int filas;
     final Fragment borrar = this;
 
-    int numeroEmpleado;
+    int numeroEmpleado,idAsesor;
 
     private OnFragmentInteractionListener mListener;
 
@@ -179,6 +180,7 @@ public class ReporteAsesores extends Fragment {
         if(getArguments() != null) {
             Log.d("HOLA", "Todos : " + getArguments().toString());
             numeroEmpleado = getArguments().getInt("numeroEmpleado");
+            idAsesor = getArguments().getInt("idAsesor");
             fechaIni = getArguments().getString("fechaIni");
             fechaFin = getArguments().getString("fechaFin");
 
@@ -189,7 +191,7 @@ public class ReporteAsesores extends Fragment {
             }
 
             if(etAsesor!=null){
-               // etAsesor.setText(String.valueOf(numeroEmpleado));
+               etAsesor.setText(String.valueOf(idAsesor));
             }
 
         }
@@ -214,13 +216,16 @@ public class ReporteAsesores extends Fragment {
                     if(fechaIncial.isEmpty() || fechaFinal.isEmpty() || idAsesor.isEmpty()){
                         Config.dialogoDatosVacios(getContext());
                     }else{
-                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        ReporteAsesores fragmentoAsesores = new ReporteAsesores();
+                        Director director = (Director) getContext();
+                        director.switchAsesoresFA(fragmentoAsesores, Integer.valueOf(idAsesor),fechaIncial,fechaFinal);
+                        /*FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         ReporteAsesores fragmento = ReporteAsesores.newInstance(fechaIncial, fechaFinal, idAsesor, 0, 0, rootView.getContext());
                         borrar.onDestroy();
                         ft.remove(borrar);
                         ft.replace(R.id.content_director, fragmento);
                         ft.addToBackStack(null);
-                        ft.commit();
+                        ft.commit();*/
                     }
                     // TODO: ocultar teclado
                     imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
@@ -298,7 +303,7 @@ public class ReporteAsesores extends Fragment {
                                 } catch (JSONException e) {
                                     Config.msj(getContext(), "Error", "Error al formar los datos");
                                 }
-                                EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_SUCURSAL,getContext(),new EnviaMail.VolleyCallback() {
+                                EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_ASESOR,getContext(),new EnviaMail.VolleyCallback() {
 
                                     @Override
                                     public void onSuccess(JSONObject result) {
