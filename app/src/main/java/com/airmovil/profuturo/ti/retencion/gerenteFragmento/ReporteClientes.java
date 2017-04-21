@@ -135,6 +135,10 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
     int estatus ;
     int retenido;
 
+    int spinId = 0;
+    int spinCit = 0;
+    int spinRet = 0;
+
 
     public ReporteClientes() {
         // Required empty public constructor
@@ -218,23 +222,25 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
             }
 
             if(etIngresarDato!=null){
-                Log.d("HOLA", "Todos : " + numeroId);
+                Log.d("HOLA", "Todos YYYY: " + numeroId);
                 etIngresarDato.setText(String.valueOf(numeroId));
             }
 
             if(estatus!=0){
                 Log.d("HOLA", "Todos : " + estatus);
-                spinnerRetenido.setSelection(estatus);
+                spinCit = estatus;
             }
 
             if(retenido!=0){
                 Log.d("HOLA", "Todos : " + retenido);
-                spinnerRetenido.setSelection(retenido);
+                spinnerRetenido.setSelection(2);
+                spinRet = retenido;
             }
 
             if(tipoBuscar!=0){
                 Log.d("HOLA", "Todos : " + tipoBuscar);
-                spinnerId.setSelection(tipoBuscar);
+                spinnerId.setSelection(2);
+                spinId = tipoBuscar;
             }
         }
 
@@ -285,6 +291,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
             }
         });
         spinnerId.setAdapter(adapterId);
+        spinnerId.setSelection(spinId);
         // TODO: Spinner
         /*ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.SUCURSALES);
         adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
@@ -293,10 +300,12 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         ArrayAdapter<String> adapterRetenido = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.RETENIDO);
         adapterRetenido.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinnerRetenido.setAdapter(adapterRetenido);
+        spinnerRetenido.setSelection(spinRet);
         // TODO: Spinner
         ArrayAdapter<String> adapterCita = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.CITAS);
         adapterCita.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinnerCita.setAdapter(adapterCita);
+        spinnerCita.setSelection(spinCit);
 
         // TODO: Recycler
         getDatos1 = new ArrayList<>();
@@ -404,30 +413,73 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                             Connected connected = new Connected();
                             final InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Service.INPUT_METHOD_SERVICE);
                             if(connected.estaConectado(getContext())){
+                                JSONObject obj = new JSONObject();
+                                JSONObject rqt = new JSONObject();
+                                JSONObject filtro = new JSONObject();
+                                JSONObject filtroCliente = new JSONObject();
+                                JSONObject periodo = new JSONObject();
 
                                 Log.d("DATOS","+++++: "+idSucursal);
-                                JSONObject obj = new JSONObject();
                                 boolean checa = true;
                                 if (idSucursal == 0){
                                     checa = false;
                                 }
 
                                 try {
-                                    JSONObject rqt = new JSONObject();
-                                    rqt.put("correo", email);
-                                    rqt.put("detalle", checa);
-                                    rqt.put("idSucursal", idSucursal);
-                                    JSONObject periodo = new JSONObject();
-                                    periodo.put("fechaFin", fechaFin);
-                                    periodo.put("fechaInicio", fechaIni);
-                                    rqt.put("periodo", periodo);
-                                    rqt.put("usuario", Config.usuarioCusp(getContext()));
-                                    obj.put("rqt", rqt);
-                                    Log.d("datos", "REQUEST-->" + obj);
+                                    if(getArguments() != null){
+                                        boolean detalle = true;
+                                        rqt.put("correo", email);
+                                        rqt.put("detalle", detalle);
+                                        filtro.put("cita", mParam9);
+                                        if(spinId == 1){
+                                            filtroCliente.put("curp", "");
+                                            filtroCliente.put("nss", "");
+                                            filtroCliente.put("numeroCuenta", numeroId);
+                                        } else if(spinId == 2){
+                                            filtroCliente.put("curp", "");
+                                            filtroCliente.put("nss", numeroId);
+                                            filtroCliente.put("numeroCuenta", "");
+                                        }else if(spinId == 3){
+                                            filtroCliente.put("curp", numeroId);
+                                            filtroCliente.put("nss", "");
+                                            filtroCliente.put("numeroCuenta", "");
+                                        } else{
+                                            filtroCliente.put("curp", "");
+                                            filtroCliente.put("nss", "");
+                                            filtroCliente.put("numeroCuenta", "");
+                                        }
+                                        filtro.put("filtroRetenicion", mParam8);
+                                        filtro.put("idSucursal", idSucursal);
+                                        filtro.put("numeroEmpleado", numeroEmpleado);
+                                        rqt.put("filtro", filtro);
+                                        rqt.put("numeroEmpleado", numeroEmpleado);
+                                        periodo.put("fechaInicio", fechaIni);
+                                        periodo.put("fechaFin", fechaFin);
+                                        rqt.put("periodo", periodo);
+                                        obj.put("rqt", rqt);
+                                    }else {
+                                        boolean detalle = true;
+                                        rqt.put("correo", email);
+                                        rqt.put("detalle", detalle);
+                                        rqt.put("filtro", filtro);
+                                        filtro.put("cita", 0);
+                                        filtroCliente.put("curp", "");
+                                        filtroCliente.put("nss", "");
+                                        filtroCliente.put("numeroCuenta", "");
+                                        filtro.put("filtroRetenicion", mParam8);
+                                        filtro.put("idSucursal", idSucursal);
+                                        filtro.put("numeroEmpleado", numeroEmpleado);
+                                        rqt.put("numeroEmpleado", numeroEmpleado);
+                                        rqt.put("periodo", periodo);
+                                        periodo.put("fechaInicio", fechaIni);
+                                        periodo.put("fechaFin", fechaFin);
+                                        obj.put("rqt", rqt);
+                                    }
+                                    Log.d("sendJson", " REQUEST -->" + obj);
                                 } catch (JSONException e) {
                                     Config.msj(getContext(), "Error", "Error al formar los datos");
                                 }
-                                EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_SUCURSAL,getContext(),new EnviaMail.VolleyCallback() {
+                                EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_CLIENTE,getContext(),new EnviaMail.VolleyCallback() {
 
                                     @Override
                                     public void onSuccess(JSONObject result) {
