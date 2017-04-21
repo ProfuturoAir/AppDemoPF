@@ -327,7 +327,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     mParam9 = spinnerId.getSelectedItemPosition();
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                     if(mParam1.isEmpty() || mParam2.isEmpty()){
-                        Config.dialogoRequiereFirma(getContext());
+                        Config.dialogoFechasVacias(getContext());
                     }else{
                         Toast.makeText(getContext(), " idSucursal: " + idSucursal, Toast.LENGTH_SHORT).show();
                         Log.d("idS","SS: "+idSucursal + " ___ " +mParam3);

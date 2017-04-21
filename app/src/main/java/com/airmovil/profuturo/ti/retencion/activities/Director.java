@@ -66,6 +66,13 @@ public class Director extends AppCompatActivity{
 
     }
 
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        return;
+    }
+
+
     /**
      * Este metodo valida la sesion del usuario, manda a llamar a otros metodos
      * como(setToolbar, setDrawable, setToggle, setNavigationView, setInformacionDrawer),
