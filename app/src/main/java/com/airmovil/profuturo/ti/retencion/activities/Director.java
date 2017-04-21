@@ -401,10 +401,12 @@ public class Director extends AppCompatActivity{
         ft.commit();
     }
 
-    public void switchClientesFS(Fragment frag, int idSucursal,String fechaIni,String fechaFin) {
+    public void switchAsistenciaFS(Fragment frag,int idGerencia, int idSucursal,String numeroEmpleado,String fechaIni,String fechaFin) {
         Bundle bundle=new Bundle();
+        bundle.putInt("idGerencia",idGerencia);
         bundle.putInt("idSucursal",idSucursal);
-        bundle.putString("fechaIni",fechaIni);
+        bundle.putString("idAsesor",numeroEmpleado);
+        bundle.putString("fechaInicio",fechaIni);
         bundle.putString("fechaFin",fechaFin);
         //bundle.putString("hora",hora);
 
@@ -417,7 +419,7 @@ public class Director extends AppCompatActivity{
         ft.commit();
     }
 
-    public void switchAsistenciaFS(Fragment frag, int idSucursal,String fechaIni,String fechaFin) {
+    public void switchClientesFS(Fragment frag, int idSucursal,String fechaIni,String fechaFin) {
         Bundle bundle=new Bundle();
         bundle.putInt("idSucursal",idSucursal);
         bundle.putString("fechaIni",fechaIni);
