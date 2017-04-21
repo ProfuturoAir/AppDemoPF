@@ -178,7 +178,7 @@ public class EnviaJSON {
             rqt.put("encuesta", encuesta);
             rqt.put("observaciones", observaciones);
             rqt.put("estatusTramite", estatusTramite);
-            rqt.put("idTramite", idTramite);
+            rqt.put("idTramite", Integer.parseInt(idTramite));
             obj.put("rqt", rqt);
             Log.d(TAG, "REQUEST-->" + obj);
         } catch (JSONException e){
@@ -240,7 +240,7 @@ public class EnviaJSON {
             rqt.put("idEstatus", IdEstatus);
             rqt.put("idInstituto", idTitulo);
             rqt.put("idRegimentPensionario", idRegimentPensionario);
-            rqt.put("idDocumento", idDocumentacion);
+            rqt.put("idDocumentocion", idDocumentacion);
             rqt.put("telefono", telefono);
             rqt.put("email", email);
             rqt.put("estatusTramite", estatusTramite);
