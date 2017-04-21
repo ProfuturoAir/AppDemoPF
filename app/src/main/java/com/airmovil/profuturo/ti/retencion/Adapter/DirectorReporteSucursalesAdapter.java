@@ -187,7 +187,7 @@ public class DirectorReporteSucursalesAdapter extends RecyclerView.Adapter{
                 case R.id.sub_menu_reporte_sucusal_nav_asistencia:
                     ReporteAsistencia fragmentoAsistencia = new ReporteAsistencia();
                     Director dt = (Director) mRecyclerView.getContext();
-                    dt.switchAsistenciaFS(fragmentoAsistencia, lista.getIdSucursal(),fechaIni,fechaFin);
+                    dt.switchAsistenciaFS(fragmentoAsistencia,0, lista.getIdSucursal(),"",fechaIni,fechaFin);
                     //AppCompatActivity a3 = (AppCompatActivity) mRecyclerView.getContext();
                     //com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia f3 = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia();
                     //a3.getSupportFragmentManager().beginTransaction().replace(R.id.content_gerente, f3).addToBackStack(null).commit();
