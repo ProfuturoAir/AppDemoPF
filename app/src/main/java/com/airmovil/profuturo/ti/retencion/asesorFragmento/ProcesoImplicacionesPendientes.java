@@ -167,6 +167,9 @@ public class ProcesoImplicacionesPendientes extends Fragment {
         recyclerView.setAdapter(adapter);
 
 
+        if(getDatos1.size() < 1)
+            return;
+
         btnEnviarPendientes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

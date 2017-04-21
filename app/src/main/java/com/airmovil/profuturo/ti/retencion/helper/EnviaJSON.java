@@ -244,7 +244,7 @@ public class EnviaJSON {
             rqt.put("telefono", telefono);
             rqt.put("email", email);
             rqt.put("estatusTramite", estatusTramite);
-            rqt.put("idTramite", idTramite);
+            rqt.put("idTramite", Integer.parseInt(idTramite));
             obj.put("rqt", rqt);
             Log.d(TAG2, "REQUEST-->" + obj);
         } catch (JSONException e){
@@ -334,7 +334,7 @@ public class EnviaJSON {
             JSONObject rqt = new JSONObject();
             rqt.put("estatusTramite", estatusTramite);
             rqt.put("firmaCliente", firmaString);
-            rqt.put("idTramite", idTramite);
+            rqt.put("idTramite", Integer.parseInt(idTramite));
             JSONObject ubicacion = new JSONObject();
             ubicacion.put("latitud", latitud);
             ubicacion.put("longitud", longitud);
@@ -408,7 +408,7 @@ public class EnviaJSON {
             JSONObject rqt = new JSONObject();
             rqt.put("estatusTramite", estatusTramite);
             rqt.put("fechaHoraFina", fechaHoraFin);
-            rqt.put("idTramite", idTramite);
+            rqt.put("idTramite", Integer.parseInt(idTramite));
             rqt.put("numeroCuenta", numeroCuenta);
             JSONObject ubicacion = new JSONObject();
             ubicacion.put("latitud", latitud);
