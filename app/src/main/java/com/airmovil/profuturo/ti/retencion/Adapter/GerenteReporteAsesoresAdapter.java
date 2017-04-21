@@ -176,7 +176,7 @@ public class GerenteReporteAsesoresAdapter extends RecyclerView.Adapter{
                 case R.id.sub_menu_reporte_asesores_nav_clientes:
                     ReporteClientes fragmentoClientes = new ReporteClientes();
                     Gerente gerente = (Gerente) mRecyclerView.getContext();
-                    gerente.switchClientes(fragmentoClientes, lista.getNumeroEmpleado(),fechaIni,fechaFin);
+                    gerente.switchClientesFA(fragmentoClientes, lista.getNumeroEmpleado(),fechaIni,fechaFin);
                     //AppCompatActivity a1 = (AppCompatActivity) mRecyclerView.getContext();
                     //com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes f1 = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes();
                     //Create a bundle to pass data, add data, set the bundle to your fragment and:
@@ -185,7 +185,7 @@ public class GerenteReporteAsesoresAdapter extends RecyclerView.Adapter{
                 case R.id.sub_menu_reporte_asesores_nav_asistencia:
                     ReporteAsistencia fragmentoAsistencia = new ReporteAsistencia();
                     Gerente dt = (Gerente) mRecyclerView.getContext();
-                    dt.switchAsistencia(fragmentoAsistencia, lista.getNumeroEmpleado(),fechaIni,fechaFin);
+                    dt.switchAsistenciaFA(fragmentoAsistencia, lista.getNumeroEmpleado(),fechaIni,fechaFin);
                     //AppCompatActivity a2 = (AppCompatActivity) mRecyclerView.getContext();
                     //com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia f2 = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia();
                     //Create a bundle to pass data, add data, set the bundle to your fragment and:

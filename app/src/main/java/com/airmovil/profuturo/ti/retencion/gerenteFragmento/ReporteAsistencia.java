@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -33,6 +34,7 @@ import com.airmovil.profuturo.ti.retencion.Adapter.CitasClientesAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteAsistenciaAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteAsistenciaAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.*;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
@@ -65,7 +67,7 @@ import java.util.Map;
  * Use the {@link ReporteAsistencia#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ReporteAsistencia extends Fragment {
+public class ReporteAsistencia extends Fragment implements  Spinner.OnItemSelectedListener {
     // TODO: Rename parameter arguments, choose names that match
     private static final String ARG_PARAM1 = "parametro1";
     private static final String ARG_PARAM2 = "parametro2";
@@ -100,6 +102,8 @@ public class ReporteAsistencia extends Fragment {
     private TextView tvFecha;
     private TextView tvATiempo, tvRetardados, tvSinAsistencia;
     private Spinner spinnerSucursal;
+    private ArrayList<String> sucursales;
+    private ArrayList<String> id_sucursales;
     private EditText etAsesor;
     private TextView tvRangoFecha1, tvRangoFecha2;
     private Button btnFiltro;
@@ -115,8 +119,9 @@ public class ReporteAsistencia extends Fragment {
     private Connected connected;
 
     private OnFragmentInteractionListener mListener;
-    private int numeroEmpleado;
-    private int  idSucursal;
+
+    int idSucursal;
+    int numeroEmpleado;
 
     public ReporteAsistencia() {
         // Required empty public constructor
@@ -156,6 +161,10 @@ public class ReporteAsistencia extends Fragment {
         rootView = view;
 
         primeraPeticion();
+
+        sucursales = new ArrayList<String>();
+        id_sucursales = new ArrayList<String>();
+
         variables();
         fechas();
 
@@ -180,6 +189,10 @@ public class ReporteAsistencia extends Fragment {
                 tvRangoFecha1.setText(fechaIni);
                 tvRangoFecha2.setText(fechaFin);
                 tvFecha.setText(fechaIni + " - " + fechaFin);
+            }
+
+            if(etAsesor!=null){
+                etAsesor.setText(String.valueOf(numeroEmpleado));
             }
         }
 
@@ -210,14 +223,18 @@ public class ReporteAsistencia extends Fragment {
                     if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
                         Config.dialogoFechasVacias(getContext());
                     }else{
-                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        ReporteAsistencia fragmentoAsistenia = new ReporteAsistencia();
+                        Gerente gerente = (Gerente) getContext();
+                        gerente.switchAsistenciaFAT(fragmentoAsistenia, idSucursal,Integer.valueOf(idAsesor),fechaIncial,fechaFinal);
+
+                        /*FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         ReporteAsistencia fragmento = ReporteAsistencia.newInstance(fechaIncial, fechaFinal, idSucursal, idAsesor, rootView.getContext());
                         borrar.onDestroy();
                         ft.remove(borrar);
                         ft.replace(R.id.content_gerente, fragmento);
                         ft.addToBackStack(null);
                         ft.commit();
-                        Config.teclado(getContext(), etAsesor);
+                        Config.teclado(getContext(), etAsesor);*/
                     }
                 }else{
                     Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
@@ -344,6 +361,101 @@ public class ReporteAsistencia extends Fragment {
         tvRangoFecha2 = (TextView) rootView.findViewById(R.id.gfras_tv_fecha_rango2);
         btnFiltro = (Button) rootView.findViewById(R.id.gfras_btn_filtro);
         tvResultados = (TextView) rootView.findViewById(R.id.gfras_tv_registros);
+
+        spinnerSucursal.setOnItemSelectedListener(this);
+        getData();
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        switch (parent.getId())
+        {
+            case R.id.gfrs_spinner_sucursales:
+                String sim = id_sucursales.get(position);
+                Log.d("SELE","ESTA ->: "+sim);
+                idSucursal = Integer.valueOf(sim);
+                break;
+            default:
+                /*TextView text21 =(TextView) findViewById(R.id.textVialidad);
+                text21.setText("DEFAULT");*/
+                break;
+        }
+    }
+
+    //When no item is selected this method would execute
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        //Log.i("Message", "Nothing is selected");
+    }
+
+    private void getData(){
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_SUCURSALES,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        JSONArray j = null;
+                        try {
+                            //j = new JSONObject(response);
+                            j = response.getJSONArray("Sucursales");
+                            getSucursales(j);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("LLENA", "SPINNER: -> ERROR " + error);
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                String credentials = Config.USERNAME+":"+Config.PASSWORD;
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(),
+                        Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+
+                return headers;
+            }
+        };
+        MySingleton.getInstance(getContext()).addToRequestQueue(jsonArrayRequest);
+    }
+
+    private void getSucursales(JSONArray j){
+        sucursales.add("Selecciona una sucursal");
+        id_sucursales.add("0");
+        for(int i=0;i<j.length();i++){
+            try {
+                JSONObject json = j.getJSONObject(i);
+                sucursales.add(json.getString("nombre"));
+                id_sucursales.add(json.getString("idSucursal"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        int position=0;
+        if(idSucursal!=0){
+
+            int size = id_sucursales.size();
+            for(int i=0; i < id_sucursales.size(); i++) {
+                if(Integer.valueOf(id_sucursales.get(i)) == idSucursal){
+                    Log.d("SELE","SIZE ->: "+position);
+                    position = i;
+                    break;
+                }
+            }
+        }
+
+        //spinnerSucursales.setAdapter(new ArrayAdapter<String>(getActivity(), R.layout.spinner_item, sucursales));
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, sucursales);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinnerSucursal.setAdapter(adapter);
+        spinnerSucursal.setSelection(position);
     }
 
     private void fechas(){

@@ -135,10 +135,13 @@
 
         <LinearLayout style="@style/contenedorFiltros2">
             <LinearLayout style="@style/contenedorSpinnerLarge">
-                <Spinner android:id="@+id/dfrg_spinner_gerencias"
+
+                <Spinner
+                    android:id="@+id/dfrg_spinner_gerencias"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:backgroundTint="@color/colorWhite"/>
+                    android:backgroundTint="@color/colorWhite" />
+
                 <TextView style="@style/linea"/>
             </LinearLayout>
             <LinearLayout style="@style/linearLayoutHorizontal">
