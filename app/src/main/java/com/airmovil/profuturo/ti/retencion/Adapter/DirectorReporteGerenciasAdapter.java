@@ -215,16 +215,26 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
+
                 case R.id.nav_sucursales:
                     ReporteSucursales reporteSucursales = new ReporteSucursales();
                     Director director = (Director) mRecyclerView.getContext();
                     director.switchSucursales(reporteSucursales, list.idGerencia, mFechaInicio, mFechaFin);
                     return true;
+                case R.id.nav_asesor:
+                    //Log.d("IDDD","¨¨¨"+item.getItemId());
+                    ReporteAsesores reporteAsesores = new ReporteAsesores();
+                    Director dt = (Director) mRecyclerView.getContext();
+                    dt.switchAsesoresFG(reporteAsesores, list.idGerencia, mFechaInicio, mFechaFin);
+                    return true;
                 case R.id.nav_clientes:
-                    AppCompatActivity Clientes = (AppCompatActivity) mRecyclerView.getContext();
+                    ReporteClientes reporteClientes = new ReporteClientes();
+                    Director dtr = (Director) mRecyclerView.getContext();
+                    dtr.switchClientesFG(reporteClientes, list.idGerencia, mFechaInicio, mFechaFin);
+                    /*AppCompatActivity Clientes = (AppCompatActivity) mRecyclerView.getContext();
                     ReporteClientes fragmentoClientes = new ReporteClientes();
                     //Create a bundle to pass data, add data, set the bundle to your fragment and:
-                    Clientes.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoClientes).addToBackStack(null).commit();
+                    Clientes.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoClientes).addToBackStack(null).commit();*/
                     return true;
                 case R.id.nav_enviar_a_email:
                     final Dialog dialog = new Dialog(mContext);

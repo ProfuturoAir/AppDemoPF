@@ -112,6 +112,8 @@ public class ReporteAsesores extends Fragment {
     int filas;
     final Fragment borrar = this;
 
+    int numeroEmpleado;
+
     private OnFragmentInteractionListener mListener;
 
     public ReporteAsesores() {
@@ -173,6 +175,24 @@ public class ReporteAsesores extends Fragment {
         fechas();
         rangoInicial();
         rangoFinal();
+
+        if(getArguments() != null) {
+            Log.d("HOLA", "Todos : " + getArguments().toString());
+            numeroEmpleado = getArguments().getInt("numeroEmpleado");
+            fechaIni = getArguments().getString("fechaIni");
+            fechaFin = getArguments().getString("fechaFin");
+
+            if(fechaIni!=null){
+                tvRangoFecha1.setText(fechaIni);
+                tvRangoFecha2.setText(fechaFin);
+                tvFecha.setText(fechaIni + " - " + fechaFin);
+            }
+
+            if(etAsesor!=null){
+               // etAsesor.setText(String.valueOf(numeroEmpleado));
+            }
+
+        }
 
         // TODO: model
         getDatos1 = new ArrayList<>();
