@@ -637,7 +637,6 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
             status = obj.getString("status");
             statusText = obj.getString("statusText");
 
-            Connected connected = new Connected();
             if(connected.estaConectado(getContext())){
                 if(Integer.parseInt(status) == 200){
 
@@ -655,6 +654,20 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
                     });
                     dialog.create().show();
 
+                }else{
+                    android.app.AlertDialog.Builder dialog  = new android.app.AlertDialog.Builder(getContext());
+                    dialog.setTitle("Error general");
+                    dialog.setMessage("Lo sentimos ocurrio un error, favor de validar los datos.");
+                    dialog.setCancelable(true);
+                    dialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Fragment fragmentoGenerico = new ConCita();
+                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                        }
+                    });
+                    dialog.create().show();
                 }
             }else{
                 android.app.AlertDialog.Builder dialog  = new android.app.AlertDialog.Builder(getContext());

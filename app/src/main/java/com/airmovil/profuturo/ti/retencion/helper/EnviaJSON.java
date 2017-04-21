@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -32,7 +33,7 @@ public class EnviaJSON {
 
     private String retencion_encuesta;
     private int estatusTramite;
-    private Boolean pregunta1;
+    private boolean pregunta1;
     private Boolean pregunta2;
     private Boolean pregunta3;
     private String pregunta4;
@@ -66,7 +67,7 @@ public class EnviaJSON {
     private String retencion_documentacion;
     private String fechaHoraFin;
     private String ineIfe;
-    private int numeroCuenta;
+    private String numeroCuenta;
     private String usuario;
 
     private int statusRs;
@@ -75,6 +76,9 @@ public class EnviaJSON {
     public Boolean eTramite;
 
     public void sendPrevios(String idTramite,Context context){
+
+        //context = Config.context;
+
         db = new SQLiteHandler(context);
         //eTramite = false;
 
@@ -84,13 +88,13 @@ public class EnviaJSON {
         HashMap<String, String> documento = db.getdocumento(idTramite);
 
         if(!encuesta.isEmpty()){
-            Log.d("TIENE Datos: ", "-->Encuesta" );
             idTramite=encuesta.get(SQLiteHandler.FK_ID_TRAMITE);
             estatusTramite=Integer.parseInt(encuesta.get(SQLiteHandler.KEY_ESTATUS_TRAMITE));
-            pregunta1=Boolean.parseBoolean(encuesta.get(SQLiteHandler.KEY_PREGUNTA1));
-            pregunta2=Boolean.parseBoolean(encuesta.get(SQLiteHandler.KEY_PREGUNTA2));
-            pregunta3=Boolean.parseBoolean(encuesta.get(SQLiteHandler.KEY_PREGUNTA3));
+            pregunta1=(encuesta.get(SQLiteHandler.KEY_PREGUNTA1).equals("1")) ? true : false;
+            pregunta2=(encuesta.get(SQLiteHandler.KEY_PREGUNTA2).equals("1")) ? true : false;
+            pregunta3=(encuesta.get(SQLiteHandler.KEY_PREGUNTA3).equals("1")) ? true : false;
             observacion=encuesta.get(SQLiteHandler.KEY_OBSERVACION);
+
             sendJsonEncuesta(true,idTramite,observacion,pregunta1,pregunta2,pregunta3,estatusTramite,context);
 
         }
@@ -130,13 +134,15 @@ public class EnviaJSON {
             fechaHoraFin = documento.get(SQLiteHandler.KEY_FECHAHORAFIN);
             estatusTramite=Integer.parseInt(documento.get(SQLiteHandler.KEY_ESTATUS_TRAMITE));
             ineIfe = documento.get(SQLiteHandler.KEY_INEIFE);
-            numeroCuenta = Integer.parseInt(documento.get(SQLiteHandler.KEY_NUMERO_CUENTA));
+            numeroCuenta = documento.get(SQLiteHandler.KEY_NUMERO_CUENTA);
             usuario=documento.get(SQLiteHandler.KEY_USUARIO);
             latitud = Double.parseDouble(documento.get(SQLiteHandler.KEY_LATITUD));
             longitud = Double.parseDouble(documento.get(SQLiteHandler.KEY_LONGITUD));
 
             sendJsonDocumento(true,idTramite,fechaHoraFin,estatusTramite,ineIfe,numeroCuenta,usuario,latitud,longitud,context);
         }
+
+        Toast.makeText(context,"Se envia proceso en segundo plano.",Toast.LENGTH_LONG).show();
 
         Log.d("Se Eliminia","Elimina "+eTramite);
         /*if(eTramite){
@@ -148,11 +154,17 @@ public class EnviaJSON {
         }*/
     }
     private void sendJsonEncuesta(final boolean primerPeticion, final String idTramite, String observaciones, Boolean pregunta1, Boolean pregunta2, Boolean pregunta3, int estatusTramite, final Context context) {
+
+        Log.d("-->Se envia encuesta", pregunta1 + ", " + pregunta2 + ", " + pregunta3);
+
         final ProgressDialog loading;
+
+        /*/
         if (primerPeticion)
             loading = ProgressDialog.show(context, "Loading Data", "Please wait...", false, false);
         else
             loading = null;
+        */
 
         JSONObject obj = new JSONObject();
 
@@ -179,7 +191,7 @@ public class EnviaJSON {
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
-                            loading.dismiss();
+                            //loading.dismiss();
                             primerPaso(response,idTramite);
                         }
                     }
@@ -187,7 +199,7 @@ public class EnviaJSON {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        loading.dismiss();
+                        //loading.dismiss();
                         Config.msj(context,"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
                     }
                 }) {
@@ -211,10 +223,13 @@ public class EnviaJSON {
     public void sendJsonEncuesta2(final boolean primerPeticion,final String idTramite, int idGerencia, int idMotivo, int IdEstatus,
                           int idTitulo, int idRegimentPensionario, int idDocumentacion, String telefono, String email,int estatusTramite, final Context context) {
         final ProgressDialog loading;
+
+        /*
         if (primerPeticion)
             loading = ProgressDialog.show(context, "Loading Data", "Please wait...", false, false);
         else
             loading = null;
+        */
 
         JSONObject obj = new JSONObject();
         // TODO: Formacion del JSON request
@@ -242,7 +257,7 @@ public class EnviaJSON {
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
-                            loading.dismiss();
+                            //loading.dismiss();
                             Log.d(TAG, "RESPONSE: ->" + response);
                             try {
                                 statusRs = response.getInt("status");
@@ -262,7 +277,7 @@ public class EnviaJSON {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        loading.dismiss();
+                        //loading.dismiss();
                         Config.msj(context,"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
                     }
                 }) {
@@ -304,10 +319,13 @@ public class EnviaJSON {
 
     private void sendJsonFirma(final boolean primerPeticion,final String idTramite,int estatusTramite,String firmaString,Double latitud,Double longitud,final Context context) {
         final ProgressDialog loading;
+
+        /*
         if (primerPeticion)
             loading = ProgressDialog.show(context, "Loading Data", "Please wait...", false, false);
         else
             loading = null;
+        */
 
         JSONObject obj = new JSONObject();
 
@@ -333,7 +351,7 @@ public class EnviaJSON {
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
-                            loading.dismiss();
+                            //loading.dismiss();
                             Log.d(TAG, "RESPONSE: ->" + response);
                             try {
                                 statusRs = response.getInt("status");
@@ -352,7 +370,7 @@ public class EnviaJSON {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        loading.dismiss();
+                        //loading.dismiss();
                         Config.msj(context,"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
                     }
                 }) {
@@ -373,12 +391,15 @@ public class EnviaJSON {
     }
 
 
-    private void sendJsonDocumento(final boolean primerPeticion,final String idTramite,String fechaHoraFin,int estatusTramite,String ineIfe,int numeroCuenta,String usuario,Double latitud,Double longitud,final Context context) {
+    private void sendJsonDocumento(final boolean primerPeticion,final String idTramite,String fechaHoraFin,int estatusTramite,String ineIfe,String numeroCuenta,String usuario,Double latitud,Double longitud,final Context context) {
         final ProgressDialog loading;
+
+        /*
         if (primerPeticion)
             loading = ProgressDialog.show(context, "Loading Data", "Please wait...", false, false);
         else
             loading = null;
+        */
 
         JSONObject obj = new JSONObject();
 
@@ -406,7 +427,7 @@ public class EnviaJSON {
                     public void onResponse(JSONObject response) {
                         //Dismissing progress dialog
                         if (primerPeticion) {
-                            loading.dismiss();
+                            //loading.dismiss();
                             Log.d(TAG, "RESPONSE: ->" + response);
                             try {
                                 statusRs = response.getInt("status");
@@ -426,7 +447,7 @@ public class EnviaJSON {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        loading.dismiss();
+                        //loading.dismiss();
                         Config.msj(context,"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
                     }
                 }) {

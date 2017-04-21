@@ -97,8 +97,8 @@ public class SinCita extends Fragment {
     private String fechaFin = "";
     private int posicion;
 
-    private GerenteSinCitaAdapter adapter;
-    private List<GerenteSinCitaModel> getDatos1;
+    private SinCitaAdapter adapter;
+    private List<SinCitaModel> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private RecyclerView.Adapter recyclerViewAdapter;
@@ -155,21 +155,29 @@ public class SinCita extends Fragment {
         mDay   = fechaDatos.get("dia");
 
 
+        Map<String, String> fechas = Config.fechas(1);
+        fechaFin = fechas.get("fechaFin");
+        fechaIni = fechas.get("fechaIni");
+        fechaMostrar = fechaIni;
 
+        String llave = "";
+        String valor = "";
+        boolean procesa = false;
         if(getArguments() != null){
-            fechaIni = getArguments().getString(ARG_PARAM1);
-            fechaFin = getArguments().getString(ARG_PARAM2);
-            tvFecha.setText(fechaIni+" - "+fechaFin);
+            llave = getArguments().getString(ARG_PARAM1);
+            valor = getArguments().getString(ARG_PARAM2);
+            tvFecha.setText(fechaMostrar);
+            procesa = true;
         }else {
-            Map<String, String> fechas = Config.fechas(1);
-            fechaFin = fechas.get("fechaFin");
-            fechaIni = fechas.get("fechaIni");
-            fechaMostrar = fechaIni;
             tvFecha.setText(fechaMostrar);
         }
 
         etDatos.setFocusable(false);
         etDatos.setFocusableInTouchMode(false);
+
+        if(procesa)
+            sendJson(true, llave, valor);
+
 
         // TODO: Spinner
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, ESTADOS_CITAS);
@@ -253,16 +261,23 @@ public class SinCita extends Fragment {
                             }
                         }else{
                             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                            /*
                             SinCita clase = SinCita.newInstance(
                                     valores, rootView.getContext()
                             );
+                            */
+
+                            SinCita clase = SinCita.newInstance(
+                                    seleccion, valores
+                            );
+
                             Config.teclado(getContext(), etDatos);
                             borrar.onDestroy();
                             ft.remove(borrar);
                             ft.replace(R.id.content_asesor, clase);
                             ft.addToBackStack(null);
-                            sendJson(true, seleccion, valores);
-
+                            //sendJson(true, seleccion, valores);
+                            ft.commit();
                         }
                     }
                 }else{
@@ -479,7 +494,7 @@ public class SinCita extends Fragment {
             if(Integer.parseInt(status) == 200){
                 JSONArray array = obj.getJSONArray("clientes");
                 for (int x = 0; x < array.length(); x++){
-                    GerenteSinCitaModel getDatos2 = new GerenteSinCitaModel();
+                    SinCitaModel getDatos2 = new SinCitaModel();
                     JSONObject json = null;
                     try{
                         json = array.getJSONObject(x);
@@ -498,7 +513,7 @@ public class SinCita extends Fragment {
         }catch (JSONException e){
             e.printStackTrace();
         }
-        adapter = new GerenteSinCitaAdapter(rootView.getContext(), getDatos1, recyclerView);
+        adapter = new SinCitaAdapter(rootView.getContext(), getDatos1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
     }

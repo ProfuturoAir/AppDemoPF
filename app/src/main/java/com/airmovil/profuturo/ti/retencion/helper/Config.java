@@ -102,6 +102,8 @@ public class Config extends Activity {
     // TODO: formato para convertir (int) a valor monetario
     public static final NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.getDefault());
 
+    public static Context context;
+
 
     /**
      * @param ctx parametro 1,

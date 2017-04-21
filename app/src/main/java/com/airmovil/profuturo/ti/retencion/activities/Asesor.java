@@ -1,5 +1,7 @@
 package com.airmovil.profuturo.ti.retencion.activities;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,7 +22,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.Asistencia;
@@ -38,6 +39,7 @@ import com.airmovil.profuturo.ti.retencion.asesorFragmento.SinCita;
 import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
 import com.airmovil.profuturo.ti.retencion.fragmento.Calculadora;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.ServicioJSON;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
@@ -70,6 +72,14 @@ public class Asesor extends AppCompatActivity{
         sessionManager = new SessionManager(getApplicationContext());
         // TODO: Validacion de la sesion del usuario
         validateSession();
+
+        Config.context = getApplicationContext();
+        try {
+            startService(new Intent(this, ServicioJSON.class));
+        }catch (Exception e){
+            Log.d("-->Error en servicio:", e.toString());
+        }
+
     }
 
     /**

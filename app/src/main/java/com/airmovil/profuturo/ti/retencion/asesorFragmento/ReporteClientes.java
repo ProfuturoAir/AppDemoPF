@@ -193,9 +193,13 @@ public class ReporteClientes extends Fragment {
                 sParam3 = tvRangoFecha1.getText().toString();
                 sParam4 = tvRangoFecha2.getText().toString();
                 sParam5 = spinnerEmitidos.getSelectedItemPosition();
-                if (sParam1 == 0 || sParam2.isEmpty() || sParam3.isEmpty() || sParam4.isEmpty() ) {
+                if (sParam1 == 0 || sParam2.isEmpty() || sParam5 == 0) {
+                    Config.dialogoDatosVacios(getContext());
+                }
+                else if(sParam3.isEmpty() || sParam4.isEmpty()){
                     Config.dialogoFechasVacias(getContext());
-                } else {
+                }
+                else {
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                     ReporteClientes procesoDatosFiltroInicio = ReporteClientes.newInstance(sParam1, sParam2, sParam3, sParam4, sParam5,rootView.getContext());
                     borrar.onDestroy();

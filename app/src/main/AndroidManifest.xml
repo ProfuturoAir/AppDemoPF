@@ -53,6 +53,9 @@
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".activities.Test"></activity>
+
+        <service android:name=".helper.ServicioJSON" ></service>
+
     </application>
 
 </manifest>

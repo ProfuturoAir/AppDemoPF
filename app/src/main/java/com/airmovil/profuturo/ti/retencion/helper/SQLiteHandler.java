@@ -194,6 +194,8 @@ public class SQLiteHandler extends SQLiteOpenHelper{
         values.put(KEY_PREGUNTA5,pregunta5);
         values.put(KEY_PREGUNTA6,pregunta6);*/
         // Inserting Row
+
+        Log.d("-->Preguntas:", pregunta1 + ", " + pregunta2 + ", " + pregunta3);
         long id =(int) db.insertWithOnConflict(TABLE_RETENCION_ENCUESTA, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         if (id == -1) {
             db.update(TABLE_RETENCION_ENCUESTA,values, FK_ID_TRAMITE+"=?", new String[] {idTramite});  // number 1 is the _id here, update to variable for your code
