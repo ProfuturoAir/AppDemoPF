@@ -617,10 +617,10 @@ public class Gerente extends AppCompatActivity{
         ft.commit();
     }
 
-    public void switchAsistenciaFAT(Fragment frag,int idSucursal, int numeroEmpleado,String fechaIni,String fechaFin) {
+    public void switchAsistenciaFAT(Fragment frag,int idSucursal, String numeroEmpleado,String fechaIni,String fechaFin) {
         Bundle bundle=new Bundle();
         bundle.putInt("idSucursal",idSucursal);
-        bundle.putInt("numeroEmpleado",numeroEmpleado);
+        bundle.putString("numeroEmpleado",numeroEmpleado);
         bundle.putString("fechaIni",fechaIni);
         bundle.putString("fechaFin",fechaFin);
         //bundle.putString("idGerencia",idGerencia);

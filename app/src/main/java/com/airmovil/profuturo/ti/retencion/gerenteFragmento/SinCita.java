@@ -96,6 +96,7 @@ public class SinCita extends Fragment {
     private String fechaMostrar = "";
     private String fechaFin = "";
     private int posicion;
+    private int pagina = 1;
 
     private GerenteSinCitaAdapter adapter;
     private List<GerenteSinCitaModel> getDatos1;
@@ -439,12 +440,8 @@ public class SinCita extends Fragment {
                     break;
             }
             rqt.put("filtro", filtros);
-            rqt.put("pagina", "1");
-            SessionManager sessionManager = new SessionManager(getActivity().getApplicationContext());
-            HashMap<String, String> usuario = sessionManager.getUserDetails();
-            String idUsuario = usuario.get(SessionManager.USER_ID);
-
-            rqt.put("usuario", idUsuario);
+            rqt.put("pagina", pagina);
+            rqt.put("usuario", Config.usuarioCusp(getContext()));
             obj.put("rqt", rqt);
             Log.d(TAG, "PETICION VACIA-->" + obj);
         } catch (JSONException e) {

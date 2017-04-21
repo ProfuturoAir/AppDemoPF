@@ -74,7 +74,6 @@
                     android:background="#f6f6f6"
                     android:gravity="center_vertical"
                     android:drawableTop="@drawable/icono_menu_vertical"/>
-
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

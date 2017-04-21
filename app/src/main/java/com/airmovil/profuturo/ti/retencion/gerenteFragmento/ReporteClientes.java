@@ -354,6 +354,8 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                         ft.commit();
                         Config.teclado(getContext(),etIngresarDato);
                         Config.teclado(getContext(),etIngresarAsesor);*/
+                        Config.teclado(getContext(), etIngresarAsesor);
+                        Config.teclado(getContext(), etIngresarDato);
                     }
                 }else{
                     Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
@@ -731,7 +733,6 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                 mParam7 = getArguments().getInt(ARG_PARAM7);
                 mParam8 = getArguments().getInt(ARG_PARAM8);
                 mParam9 = getArguments().getInt(ARG_PARAM9);
-
                 rqt.put("cita", mParam8);
                 if(mParam9 == 1){
                     filtroCliente.put("curp", "");
@@ -750,8 +751,8 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     filtroCliente.put("nss", "");
                     filtroCliente.put("numeroCuenta", "");
                 }
-
                 rqt.put("filtroCliente", filtroCliente);
+                rqt.put("idGerencia", 0);
                 rqt.put("idSucursal", mParam5);
                 rqt.put("pagina", pagina);
                 periodo.put("fechaFin", mParam1);
@@ -769,6 +770,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                 filtroCliente.put("nss", "");
                 filtroCliente.put("numeroCuenta", "");
                 rqt.put("filtroCliente", filtroCliente);
+                rqt.put("idGerencia", 0);
                 rqt.put("idSucursal", 0);
                 rqt.put("pagina", pagina);
                 periodo.put("fechaFin", smParam2);
@@ -778,7 +780,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                 rqt.put("usuario", Config.usuarioCusp(getContext()));
                 json.put("rqt", rqt);
             }
-            Log.d("sendJson", " REQUEST -->" + json);
+            Log.d("ReporteClientes", " REQUEST -->" + json);
         } catch (JSONException e){
             Config.msj(getContext(),"Error","Existe un right_in al formar la peticion");
         }

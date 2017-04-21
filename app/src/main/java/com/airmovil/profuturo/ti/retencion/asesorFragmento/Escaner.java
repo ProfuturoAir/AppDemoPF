@@ -586,18 +586,21 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
 
         // TODO: Formacion del JSON request
         try{
-            JSONObject rqt = new JSONObject();
-            rqt.put("estatusTramite", 1138);
-            rqt.put("fechaHoraFin", fechaN);
-            rqt.put("idTramite", Integer.parseInt(idTramite));
-            rqt.put("numeroCuenta", idUsuario);
-            JSONObject ubicacion = new JSONObject();
-            ubicacion.put("latitud", z);
-            ubicacion.put("longitud", w);
-            rqt.put("ubicacion", ubicacion);
-            rqt.put("usuario", idUsuario);
-            rqt.put("ineIfe", base64);
-            obj.put("rqt", rqt);
+            if(getArguments() != null){
+                numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+                JSONObject rqt = new JSONObject();
+                rqt.put("estatusTramite", 1138);
+                rqt.put("fechaHoraFin", fechaN);
+                rqt.put("idTramite", Integer.parseInt(idTramite));
+                rqt.put("numeroCuenta", numeroDeCuenta);
+                JSONObject ubicacion = new JSONObject();
+                ubicacion.put("latitud", z);
+                ubicacion.put("longitud", w);
+                rqt.put("ubicacion", ubicacion);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
+                rqt.put("ineIfe", base64);
+                obj.put("rqt", rqt);
+            }
             Log.d("datos", "REQUEST-->" + obj);
         } catch (JSONException e){
             Config.msj(getContext(), "Error", "Error al formar los datos");

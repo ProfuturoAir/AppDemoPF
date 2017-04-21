@@ -37,6 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -109,7 +110,8 @@ public class GerenteReporteSucursalesAdapter extends RecyclerView.Adapter{
             myholder.campoEmitidas.setText(" " + lista.getEmitido());
             myholder.campoNoEmitidas.setText( lista.getNoEmitido() + " ");
             myholder.campoSaldoEmitido.setText(" " + lista.getSaldoEmitido());
-            //myholder.campoSaldoNoEmitido.setText(lista.getSaldoNoEmetido());
+            myholder.campoPorcentaje.setText(Config.df.format((float)(lista.getEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido())) +"% "
+                    + Config.df.format((float)(lista.getNoEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido()))+"%");
 
             int var = lista.getIdSucursal();
             String intToString = String.valueOf(var);
@@ -206,8 +208,8 @@ public class GerenteReporteSucursalesAdapter extends RecyclerView.Adapter{
                         public void onClick(View v) {
                             final EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
 
-                            final String datoEditText = editText.getText().toString();
-                            final String datoSpinner = spinner.getSelectedItem().toString();
+                            final String datoEditText = editText.getText().toString().trim();
+                            final String datoSpinner = spinner.getSelectedItem().toString().trim();
 
                             Log.d("DATOS USER","SPINNER: "+datoEditText+" datosSpinner: "+ datoSpinner);
                             if(datoEditText == "" || datoSpinner == "Seleciona un email"){
@@ -294,7 +296,7 @@ public class GerenteReporteSucursalesAdapter extends RecyclerView.Adapter{
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        public TextView campoLetra, campoIdSucursal, campoConCita, campoSinCita, campoEmitidas, campoNoEmitidas, campoSaldoEmitido, campoSaldoNoEmitido;
+        public TextView campoLetra, campoIdSucursal, campoConCita, campoSinCita, campoEmitidas, campoNoEmitidas, campoSaldoEmitido, campoSaldoNoEmitido, campoPorcentaje;
         public TextView btn;
         public CardView cardView;
         public MyViewHolder(View view){
@@ -307,6 +309,7 @@ public class GerenteReporteSucursalesAdapter extends RecyclerView.Adapter{
             campoNoEmitidas = (TextView) view.findViewById(R.id.gfrsl_tv_no_emitidas);
             campoSaldoEmitido = (TextView) view.findViewById(R.id.gfrsl_tv_saldos_emitido);
             campoSaldoNoEmitido = (TextView) view.findViewById(R.id.gfrsl_tv_saldos_no_emitido);
+            campoPorcentaje = (TextView) view.findViewById(R.id.gfrsl_tv_procentaje);
             btn = (TextView) view.findViewById(R.id.gfrsl_tv_menu);
             cardView = (CardView) view.findViewById(R.id.gfrsl_cv);
         }

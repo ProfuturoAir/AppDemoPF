@@ -246,8 +246,8 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
                     public void onClick(View v) {
                         final EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
 
-                        final String datoEditText = editText.getText().toString();
-                        final String datoSpinner = spinner.getSelectedItem().toString();
+                        final String datoEditText = editText.getText().toString().trim();
+                        final String datoSpinner = spinner.getSelectedItem().toString().trim();
 
                         Log.d("DATOS USER","SPINNER: "+datoEditText+" datosSpinner: "+ datoSpinner);
                         if(datoEditText == "" || datoSpinner == "Seleciona un email"){
@@ -271,17 +271,34 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
                                     checa = false;
                                 }
 
+                                Map<String, String> fechaActual = Config.fechas(1);
+                                String smParam1 = fechaActual.get("fechaIni");
+                                String smParam2 = fechaActual.get("fechaFin");
+
                                 try {
-                                    JSONObject rqt = new JSONObject();
-                                    rqt.put("correo", email);
-                                    rqt.put("detalle", checa);
-                                    rqt.put("idSucursal", idSucursal);
-                                    JSONObject periodo = new JSONObject();
-                                    periodo.put("fechaFin", fechaFin);
-                                    periodo.put("fechaInicio", fechaIni);
-                                    rqt.put("periodo", periodo);
-                                    rqt.put("usuario", Config.usuarioCusp(getContext()));
-                                    obj.put("rqt", rqt);
+                                    if(getArguments() != null){
+                                        JSONObject rqt = new JSONObject();
+                                        rqt.put("correo", email);
+                                        rqt.put("detalle", checa);
+                                        rqt.put("idSucursal", idSucursal);
+                                        JSONObject periodo = new JSONObject();
+                                        periodo.put("fechaFin", fechaFin);
+                                        periodo.put("fechaInicio", fechaIni);
+                                        rqt.put("periodo", periodo);
+                                        rqt.put("usuario", Config.usuarioCusp(getContext()));
+                                        obj.put("rqt", rqt);
+                                    }else{
+                                        JSONObject rqt = new JSONObject();
+                                        rqt.put("correo", email);
+                                        rqt.put("detalle", checa);
+                                        rqt.put("idSucursal", 0);
+                                        JSONObject periodo = new JSONObject();
+                                        periodo.put("fechaFin", smParam2);
+                                        periodo.put("fechaInicio", smParam1);
+                                        rqt.put("periodo", periodo);
+                                        rqt.put("usuario", Config.usuarioCusp(getContext()));
+                                        obj.put("rqt", rqt);
+                                    }
                                     Log.d("datos", "REQUEST-->" + obj);
                                 } catch (JSONException e) {
                                     Config.msj(getContext(), "Error", "Error al formar los datos");
@@ -548,18 +565,37 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
         JSONObject obj = new JSONObject();
+        JSONObject rqt = new JSONObject();
+        JSONObject periodo = new JSONObject();
+        Map<String, String> fecha = Config.fechas(1);
+        String param1 = fecha.get("fechaIni");
+        String param2 = fecha.get("fechaFin");
         try {
-            // TODO: Formacion del JSON request
-            JSONObject rqt = new JSONObject();
-            rqt.put("idSucursal", idSucursal);
-            rqt.put("pagina", pagina);
-            rqt.put("usuario", numeroEmpleado);
-            JSONObject periodo = new JSONObject();
-            rqt.put("periodo", periodo);
-            periodo.put("fechaInicio", fechaIni);
-            periodo.put("fechaFin", fechaFin);
-            rqt.put("usuario", Config.usuarioCusp(getContext()));
-            obj.put("rqt", rqt);
+            if(getArguments() != null){
+                numeroEmpleado = getArguments().getInt("numeroEmpleado");
+                rqt.put("idGerencia", 0);
+                rqt.put("idSucursal", idSucursal);
+                String numEmpleado;
+                numEmpleado = (numeroEmpleado == 0) ? "" : String.valueOf(numeroEmpleado);
+                rqt.put("numeroEmpleado", numEmpleado);
+                rqt.put("pagina", pagina);
+                rqt.put("periodo", periodo);
+                periodo.put("fechaInicio", fechaIni);
+                periodo.put("fechaFin", fechaFin);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
+                obj.put("rqt", rqt);
+            }else{
+                rqt.put("idGerencia", 0);
+                rqt.put("idSucursal", 0);
+                rqt.put("numeroEmpleado", "");
+                rqt.put("pagina", pagina);
+                rqt.put("usuario", "");
+                rqt.put("periodo", periodo);
+                periodo.put("fechaInicio", param1);
+                periodo.put("fechaFin", param2);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
+                obj.put("rqt", rqt);
+            }
             Log.d("ReporteSucursales ", "RQT --> " + obj);
         } catch (JSONException e) {
             Config.msj(getContext(),"Error json","Lo sentimos ocurrio un right_in al formar los datos.");

@@ -11,14 +11,14 @@
 
 
     <LinearLayout style="@style/contenedorFiltros2">
-        <Button android:id="@+id/afcc_btn_enviar_pendientes" style="@style/btnEnviarPendientes"/>
+        <Button android:id="@+id/gfcc_btn_enviar_pendientes" style="@style/btnEnviarPendientes"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerview_pendientes_envio"
+            android:id="@+id/grecyclerview_pendientes_envio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

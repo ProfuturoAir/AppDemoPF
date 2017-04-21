@@ -66,7 +66,7 @@
 
         <LinearLayout style="@style/cabeceraLista">
             <TextView style="@style/tituloLista" android:text="@string/texto_clientes"/>
-            <TextView android:id="@+id/afrc_tv_registros" style="@style/campoCantidadesMail"/>
+            <TextView android:id="@+id/afrc_tv_registros" style="@style/campoCantidades"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -79,7 +79,6 @@
             android:id="@+id/afrc_rv_lista"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:divider="@null"
             android:dividerHeight="0dp"
             android:text="hello_world" />

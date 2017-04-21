@@ -16,12 +16,12 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:padding="10dp"
-            android:text="Escanes de documentación"
+            android:text="Escaner de documentación"
             android:textSize="20dp"
             android:id="@+id/textView2" />
 
         <Button
-            android:id="@+id/gbtn_documento"
+            android:id="@+id/gf_btn_documento"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="3dp"
@@ -37,7 +37,7 @@
             android:textStyle="bold" />
 
         <ImageView
-            android:id="@+id/gscannedImage"
+            android:id="@+id/gf_scannedImage"
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:layout_centerInParent="true" />

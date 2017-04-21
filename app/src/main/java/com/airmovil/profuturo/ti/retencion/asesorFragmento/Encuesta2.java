@@ -197,7 +197,7 @@ public class Encuesta2 extends Fragment {
                             dialogo.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    db.addObservaciones(idTramite,iParam1IdGerencia,iParam2IdMotivos,iParam3IdEstatus,iParam4IdTitulo,iParam5IdRegimentPensionario,iParam6IdDocumentacion,iParam7Telefono,iParam8Email,123);
+                                    db.addObservaciones(idTramite,iParam1IdGerencia,iParam2IdMotivos,iParam3IdEstatus,iParam4IdTitulo,iParam5IdRegimentPensionario,iParam6IdDocumentacion,iParam7Telefono,iParam8Email,1135);
                                     db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
                                     Config.teclado(getContext(), etEmail);
                                     Config.teclado(getContext(), etTelefono);

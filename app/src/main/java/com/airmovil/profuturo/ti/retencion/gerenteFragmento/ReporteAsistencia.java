@@ -70,8 +70,8 @@ import java.util.Map;
  */
 public class ReporteAsistencia extends Fragment implements  Spinner.OnItemSelectedListener {
     // TODO: Rename parameter arguments, choose names that match
-    private static final String ARG_PARAM1 = "parametro1";
-    private static final String ARG_PARAM2 = "parametro2";
+    private static final String ARG_PARAM1 = "fechaInicio";
+    private static final String ARG_PARAM2 = "fechaFin";
     private static final String ARG_PARAM3 = "parametro3IdGerencia";
     private static final String ARG_PARAM4 = "parametro4IdSucursal";
     private static final String ARG_PARAM5 = "parametro5IdAsesor";
@@ -118,6 +118,8 @@ public class ReporteAsistencia extends Fragment implements  Spinner.OnItemSelect
     private String fechaFin = "";
     private String fechaMostrar = "";
     private Connected connected;
+
+    private String t1;
 
     private OnFragmentInteractionListener mListener;
 
@@ -171,6 +173,8 @@ public class ReporteAsistencia extends Fragment implements  Spinner.OnItemSelect
 
         connected = new Connected();
 
+        t1 = etAsesor.getText().toString();
+
         // TODO: Spinner
         ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.SUCURSALES);
         adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
@@ -193,7 +197,7 @@ public class ReporteAsistencia extends Fragment implements  Spinner.OnItemSelect
             }
 
             if(etAsesor!=null){
-                etAsesor.setText(String.valueOf(numeroEmpleado));
+                etAsesor.setText(t1);
             }
         }
 
@@ -216,26 +220,24 @@ public class ReporteAsistencia extends Fragment implements  Spinner.OnItemSelect
             @Override
             public void onClick(View v) {
                 if(connected.estaConectado(getContext())){
-                    final String fechaIncial = tvRangoFecha1.getText().toString();
-                    final String fechaFinal = tvRangoFecha2.getText().toString();
+                    mParam1 = tvRangoFecha1.getText().toString();
+                    mParam2 = tvRangoFecha2.getText().toString();
                     final int idSucursal = spinnerSucursal.getSelectedItemPosition();
-                    final String idAsesor = etAsesor.getText().toString();
+                    mParam5 = etAsesor.getText().toString();
+                    final String idAsesorEditText = etAsesor.getText().toString();
 
-                    if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
+                    //mParam1 fechaInicial
+                    //mParam2 fechaFinal
+                    //idSucursal idGerencia
+                    //mParam4 idSucursal
+                    //mParam5 idAsesor
+
+                    if(mParam1.isEmpty() || mParam2.isEmpty()){
                         Config.dialogoFechasVacias(getContext());
                     }else{
                         ReporteAsistencia fragmentoAsistenia = new ReporteAsistencia();
                         Gerente gerente = (Gerente) getContext();
-                        gerente.switchAsistenciaFAT(fragmentoAsistenia, idSucursal,Integer.valueOf(idAsesor),fechaIncial,fechaFinal);
-
-                        /*FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ReporteAsistencia fragmento = ReporteAsistencia.newInstance(fechaIncial, fechaFinal, idSucursal, idAsesor, rootView.getContext());
-                        borrar.onDestroy();
-                        ft.remove(borrar);
-                        ft.replace(R.id.content_gerente, fragmento);
-                        ft.addToBackStack(null);
-                        ft.commit();
-                        Config.teclado(getContext(), etAsesor);*/
+                        gerente.switchAsistenciaFAT(fragmentoAsistenia, idSucursal,idAsesorEditText,mParam1,mParam2);
                     }
                 }else{
                     Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
@@ -434,8 +436,6 @@ public class ReporteAsistencia extends Fragment implements  Spinner.OnItemSelect
                 idSucursal = Integer.valueOf(sim);
                 break;
             default:
-                /*TextView text21 =(TextView) findViewById(R.id.textVialidad);
-                text21.setText("DEFAULT");*/
                 break;
         }
     }
@@ -469,15 +469,7 @@ public class ReporteAsistencia extends Fragment implements  Spinner.OnItemSelect
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+                return Config.credenciales(getContext());
             }
         };
         MySingleton.getInstance(getContext()).addToRequestQueue(jsonArrayRequest);
@@ -550,7 +542,8 @@ public class ReporteAsistencia extends Fragment implements  Spinner.OnItemSelect
                 mParam2 = getArguments().getString(ARG_PARAM2);
                 mParam4 = getArguments().getInt(ARG_PARAM4);
                 mParam5 = getArguments().getString(ARG_PARAM5);
-                rqt.put("idSucursal", mParam4);
+                rqt.put("idGerencia", 0);
+                rqt.put("idSucursal", idSucursal);
                 rqt.put("numeroEmpleado", mParam5);
                 rqt.put("pagina", pagina);
                 periodo.put("fechaFin", mParam2);
@@ -561,6 +554,7 @@ public class ReporteAsistencia extends Fragment implements  Spinner.OnItemSelect
                 Map<String, String> fecha = Config.fechas(1);
                 String param1 = fecha.get("fechaIni");
                 String param2 = fecha.get("fechaFin");
+                rqt.put("idGerencia", 0);
                 rqt.put("idSucursal", 0);
                 rqt.put("numeroEmpleado", numeroEmpleado);
                 rqt.put("pagina", pagina);
@@ -569,7 +563,7 @@ public class ReporteAsistencia extends Fragment implements  Spinner.OnItemSelect
                 rqt.put("perido", periodo);
                 obj.put("rqt", rqt);
             }
-            Log.d("Rqt", "" + obj);
+            Log.d("Rqt Reporte Asistencia", "" + obj);
         } catch (JSONException e) {
             Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
         }
@@ -721,7 +715,6 @@ public class ReporteAsistencia extends Fragment implements  Spinner.OnItemSelect
 
     private void segundoPaso(JSONObject obj) {
         try{
-            JSONObject asistencia = obj.getJSONObject("Asistencia");
             JSONArray empleado = obj.getJSONArray("Empleado");
             filas = obj.getInt("filasTotal");
             for(int i = 0; i < empleado.length(); i++){

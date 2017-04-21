@@ -197,7 +197,7 @@ public class Encuesta2 extends Fragment {
                             dialogo.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    db.addObservaciones(idTramite,iParam1IdGerencia,iParam2IdMotivos,iParam3IdEstatus,iParam4IdTitulo,iParam5IdRegimentPensionario,iParam6IdDocumentacion,iParam7Telefono,iParam8Email,123);
+                                    db.addObservaciones(idTramite,iParam1IdGerencia,iParam2IdMotivos,iParam3IdEstatus,iParam4IdTitulo,iParam5IdRegimentPensionario,iParam6IdDocumentacion,iParam7Telefono,iParam8Email,1135);
                                     db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
                                     Config.teclado(getContext(), etEmail);
                                     Config.teclado(getContext(), etTelefono);
@@ -380,11 +380,11 @@ public class Encuesta2 extends Fragment {
             rqt.put("idMotivo", idMotivo);
             rqt.put("idEstatus", IdEstatus);
             rqt.put("idInstituto", idTitulo);
-            rqt.put("idRegimentPensionario", idRegimentPensionario);
+            rqt.put("idRegimenPensionario", idRegimentPensionario);
             rqt.put("idDocumentacion", idDocumentacion);
             rqt.put("telefono", telefono);
             rqt.put("email", email);
-            rqt.put("estatusTramite", 1133);
+            rqt.put("estatusTramite", 1135);
             rqt.put("idTramite", Integer.parseInt(idTramite));
             obj.put("rqt", rqt);
             Log.d(TAG, "REQUEST-->" + obj);

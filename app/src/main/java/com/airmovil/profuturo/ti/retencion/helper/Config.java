@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import java.net.ConnectException;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -104,7 +105,7 @@ public class Config extends Activity {
 
     // TODO: formato para convertir (int) a valor monetario
     public static final NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.getDefault());
-
+    public static final DecimalFormat df = new DecimalFormat("0.00");
     public static Context context;
 
 

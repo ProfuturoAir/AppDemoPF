@@ -14,7 +14,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
 
+//import com.airmovil.profuturo.ti.retencion.Adapter.CitasClientesAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.EnviarPendientesAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
@@ -24,8 +27,6 @@ import com.airmovil.profuturo.ti.retencion.model.EnviosPendientesModel;
 
 import java.util.ArrayList;
 import java.util.List;
-
-//import com.airmovil.profuturo.ti.retencion.Adapter.CitasClientesAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -98,13 +99,13 @@ public class ProcesoImplicacionesPendientes extends Fragment {
         rootView = view;
 
 
-        btnEnviarPendientes = (Button) rootView.findViewById(R.id.afcc_btn_enviar_pendientes);
+        btnEnviarPendientes = (Button) rootView.findViewById(R.id.gfcc_btn_enviar_pendientes);
 
         // TODO: modelos
         Cursor todos = db.getAllPending();
         Log.d("HOLA","TODOS: "+todos);
-        // TODO: Recycler
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_pendientes_envio);
+        // TODO: Recyc  ler
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.grecyclerview_pendientes_envio);
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
@@ -138,44 +139,42 @@ public class ProcesoImplicacionesPendientes extends Fragment {
                 R.id.personName
         };*/
 
+        Connected connected = new Connected();
+        final EnviaJSON enviaPrevio = new EnviaJSON();
+        /*
+        if(connected.estaConectado(getContext())){
+            Cursor pendientes = db.getAllPending();
+                            try {
+                                while (pendientes.moveToNext()) {
+                                    //EnviosPendientesModel getDatos2 = new EnviosPendientesModel();
+
+                                    Log.d("HOLA","EL ID : "+pendientes.getString(0));
+                                    //if(){
+                                        Log.d("Eliminado","Exitoso");
+                                        //getDatos1.remove(pendientes.getString(0));
+                                    enviaPrevio.sendPrevios(pendientes.getString(0), getContext());
+                                    //Log.d("Respuesta","AQUI: "+enviaPrevio.sendPrevios(pendientes.getString(0), getContext()));
+                                }
+                            } finally {
+                                pendientes.close();
+                            }
+        }
+        */
 
 
         adapter = new EnviarPendientesAdapter(rootView.getContext(), getDatos1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
-        final EnviaJSON enviaPrevio = new EnviaJSON();
-        Cursor pendientes = db.getAllPending();
-                            try {
 
-                                for(int i=0;i<getDatos1.size();i++)
-                                {
-                                    String iT = String.valueOf(getDatos1.get(i).getId_tramite());
-                                    Log.d("HOLA","EL ID : "+ iT);
-                                    enviaPrevio.sendPrevios(iT, getContext());
-                                    getDatos1.remove(i);
-                                    adapter.notifyDataSetChanged();
-                                }
-
-                                //while (pendientes.moveToNext()) {
-                                    //EnviosPendientesModel getDatos2 = new EnviosPendientesModel();
-
-                                    //Log.d("HOLA","EL ID : "+pendientes.getString(0));
-                                    //if(){
-                                    //    Log.d("Eliminado","Exitoso");
-                                    //    getDatos1.remove(pendientes.getString(0));
-                                    //enviaPrevio.sendPrevios(pendientes.getString(0), getContext());
-                                    //Log.d("Respuesta","AQUI: "+enviaPrevio.sendPrevios(pendientes.getString(0), getContext()));
-                                //}
-                            } finally {
-                                pendientes.close();
-                            }
+        if(getDatos1.size() < 1)
+            return;
 
         btnEnviarPendientes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-            Connected connected = new Connected();
+                Connected connected = new Connected();
                 if(connected.estaConectado(getContext())){
                     android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
                     dlgAlert.setTitle("Enviar pendientes");

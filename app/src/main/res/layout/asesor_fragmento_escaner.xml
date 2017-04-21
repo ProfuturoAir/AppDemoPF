@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:padding="10dp"
-            android:text="Escanes de documentación"
+            android:text="Escaner de documentación"
             android:textSize="20dp"
             android:id="@+id/textView2" />
 

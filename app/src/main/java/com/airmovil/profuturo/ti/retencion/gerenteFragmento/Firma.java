@@ -544,14 +544,23 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
         String lonngitud = lblLongitud.getText().toString();
         idTramite = getArguments().getString("idTramite");
 
+        double w, z;
+        try {
+            z = new Double(lblLatitud.getText().toString());
+            w = new Double(lblLongitud.getText().toString());
+        } catch (NumberFormatException e) {
+            z = 0;
+            w = 0;
+        }
+
         // TODO: Formacion del JSON request
         try{
             JSONObject rqt = new JSONObject();
             rqt.put("estatusTramite", 1137);
             rqt.put("idTramite", Integer.parseInt(idTramite));
             JSONObject ubicacion = new JSONObject();
-            ubicacion.put("latitud", latitud);
-            ubicacion.put("longitud", lonngitud);
+            ubicacion.put("latitud", z);
+            ubicacion.put("longitud", w);
             rqt.put("ubicacion", ubicacion);
             rqt.put("firmaCliente", firmaIMG);
             obj.put("rqt", rqt);

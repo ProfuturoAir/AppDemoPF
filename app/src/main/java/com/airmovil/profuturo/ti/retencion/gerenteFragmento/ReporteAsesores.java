@@ -425,21 +425,38 @@ public class ReporteAsesores extends Fragment {
 
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
+        Map<String, String> fechaActual = Config.fechas(1);
+        String smParam1 = fechaActual.get("fechaIni");
+        String smParam2 = fechaActual.get("fechaFin");
 
         JSONObject obj = new JSONObject();
         try {
             // TODO: Formacion del JSON request
-            JSONObject rqt = new JSONObject();
-            rqt.put("idGerencia", 1);
-            rqt.put("idSucursal", 1);
-            rqt.put("pagina", pagina);
-            rqt.put("numeroEmpleadoAsesor", numeroEmpleado);
-            JSONObject periodo = new JSONObject();
-            rqt.put("periodo", periodo);
-            periodo.put("fechaInicio", fechaIni);
-            periodo.put("fechaFin", fechaFin);
-            rqt.put("usuario", Config.usuarioCusp(getContext()));
-            obj.put("rqt", rqt);
+            if(getArguments() != null){
+                JSONObject rqt = new JSONObject();
+                rqt.put("idGerencia", 1);
+                rqt.put("idSucursal", 1);
+                rqt.put("pagina", pagina);
+                rqt.put("numeroEmpleadoAsesor", String.valueOf(numeroEmpleado));
+                JSONObject periodo = new JSONObject();
+                rqt.put("periodo", periodo);
+                periodo.put("fechaInicio", fechaIni);
+                periodo.put("fechaFin", fechaFin);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
+                obj.put("rqt", rqt);
+            }else{
+                JSONObject rqt = new JSONObject();
+                rqt.put("idGerencia", 0);
+                rqt.put("idSucursal", 0);
+                rqt.put("pagina", pagina);
+                rqt.put("numeroEmpleadoAsesor", "");
+                JSONObject periodo = new JSONObject();
+                rqt.put("periodo", periodo);
+                periodo.put("fechaInicio", smParam1);
+                periodo.put("fechaFin", smParam2);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
+                obj.put("rqt", rqt);
+            }
             Log.d("ReporteSucursales ", "RQT --> " + obj);
         } catch (JSONException e) {
             Config.msj(getContext(),"Error json","Lo sentimos ocurrio un right_in al formar los datos.");
