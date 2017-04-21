@@ -82,10 +82,10 @@ public class DirectorReporteAsistenciaDetalleAdapter extends RecyclerView.Adapte
 
             myholder.campoFechaDetalle.setText(lista.getFechaAsistencia());
             myholder.campoEntradasHoraDetalle.setText(lista.getEntradaHora());
-            myholder.campoEntradasCoordenadasDetalle.setText("Coordenadas: " + lista.getEntradaLatitud() + ", " + lista.entradaLongitud);
+            myholder.campoEntradasCoordenadasDetalle.setText("Coordenadas: " + lista.getEntradaLatitud() + ", " + lista.getEntradaLongitud());
 
-            myholder.campoHoraComidasDetalle.setText(lista.getComidaHora());
-            myholder.campoComidasCoordenadasDetalle.setText("Coordenadas: " + lista.getComidaLatitud() + ", " + lista.comidaLatitud);
+            myholder.campoHoraComidasDetalle.setText(lista.getComidaHora() + " - " + lista.getComidaSalida());
+            myholder.campoComidasCoordenadasDetalle.setText("Coordenadas: " + lista.getComidaLatitud() + ", " + lista.getComidaLongitud());
 
             myholder.campoHoraSalidasDetalle.setText(lista.getSalidaHora());
             myholder.campoSalidasCoordenadasDetalle.setText("Coordenadas: " + lista.getSalidaLatitud() + ", " + lista.getSalidaLongitud());

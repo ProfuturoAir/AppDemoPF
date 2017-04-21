@@ -216,7 +216,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                     mParam4 = tvRangoFecha1.getText().toString().trim();
                     mParam5 = tvRangoFecha2.getText().toString().trim();
 
-                    Toast.makeText(getContext(), "Id gerencia: " + idGerencia, Toast.LENGTH_SHORT).show();
                     Log.d("-->>Gerencia: " , idGerencia + ", Sucursales: " + idSucursal);
                     Log.d("-->>Asesor: " , mParam3 +", fI: " + mParam4 + ", fFIN" + mParam5);
                     if(mParam4.isEmpty() || mParam5.isEmpty()){
@@ -289,8 +288,8 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                                     rqt.put("idGerencia", mParam1);
                                     rqt.put("numeroEmpleado", mParam3);
                                     JSONObject periodo = new JSONObject();
-                                    periodo.put("fechaFin", mParam4);
-                                    periodo.put("fechaInicio", mParam5);
+                                    periodo.put("fechaFin", mParam5);
+                                    periodo.put("fechaInicio", mParam4);
                                     rqt.put("periodo", periodo);
                                     rqt.put("usuario", Config.usuarioCusp(getContext()));
                                     obj.put("rqt", rqt);
@@ -585,6 +584,9 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
             mParam4 = getArguments().getString(ARG_PARAM4);
             mParam5= getArguments().getString(ARG_PARAM5);
             tvFecha.setText(mParam4 + " - " + mParam5);
+
+            tvRangoFecha1.setText(mParam4);
+            tvRangoFecha2.setText(mParam5);
         }else{
             tvFecha.setText(smParam1 + " - " + smParam2);
         }
