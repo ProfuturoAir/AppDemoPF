@@ -700,7 +700,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                 this.fechaIni = fechaInicio1;
                 this.fechaFin = fechafin1;
                 String datosCliente1 = getArguments().getString("IngresarDatoCliente");
-                this.datosCliente1 = datosCliente1;
+                //this.datosCliente1 = datosCliente1;
                 int idSucursal1 = getArguments().getInt("idSucursales");
                 String idAsesor1 = getArguments().getString("idAsesor");
                 int idRetenido1 = getArguments().getInt("idRetenido");

@@ -178,12 +178,12 @@ public class GerenteReporteAsesoresAdapter extends RecyclerView.Adapter{
                 case R.id.sub_menu_reporte_asesores_nav_clientes:
                     ReporteClientes fragmentoClientes = new ReporteClientes();
                     Gerente gerente = (Gerente) mRecyclerView.getContext();
-                    gerente.switchClientesFA(fragmentoClientes, lista.getNumeroEmpleado(),fechaIni,fechaFin);
+                    gerente.switchClientesFA(fragmentoClientes, String.valueOf(lista.getNumeroEmpleado()),fechaIni,fechaFin);
                     return true;
                 case R.id.sub_menu_reporte_asesores_nav_asistencia:
                     ReporteAsistencia fragmentoAsistencia = new ReporteAsistencia();
                     Gerente dt = (Gerente) mRecyclerView.getContext();
-                    dt.switchAsistenciaFA(fragmentoAsistencia, lista.getNumeroEmpleado(),fechaIni,fechaFin);
+                    dt.switchAsistenciaFA(fragmentoAsistencia, String.valueOf(lista.getNumeroEmpleado()),fechaIni,fechaFin);
                     return true;
                 case R.id.sub_menu_reporte_asesores_email:
                     final Dialog dialog = new Dialog(mContext);

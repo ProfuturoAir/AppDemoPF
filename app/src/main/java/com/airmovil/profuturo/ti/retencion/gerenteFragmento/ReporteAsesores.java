@@ -408,15 +408,17 @@ public class ReporteAsesores extends Fragment {
         String smParam2 = fechaActual.get("fechaFin");
 
         JSONObject obj = new JSONObject();
+
         try {
             // TODO: Formacion del JSON request
             if(getArguments() != null){
+                String numEmpleado = getArguments().getString("numeroEmpleado");
                 JSONObject rqt = new JSONObject();
                 rqt.put("idGerencia", 0);
                 int idSucursal = getArguments().getInt("idSucursal");
                 rqt.put("idSucursal", idSucursal);
                 rqt.put("pagina", pagina);
-                rqt.put("numeroEmpleadoAsesor", String.valueOf(numeroEmpleado));
+                rqt.put("numeroEmpleadoAsesor", numEmpleado);
                 JSONObject periodo = new JSONObject();
                 rqt.put("periodo", periodo);
                 periodo.put("fechaInicio", fechaIni);

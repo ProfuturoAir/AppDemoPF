@@ -149,8 +149,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         return fragment;
     }
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -166,12 +164,9 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
-
         primeraPeticion();
         variables();
         fechas();
-
-
         connected = new Connected();
         sucursales = new ArrayList<String>();
         id_sucursales = new ArrayList<String>();
@@ -222,7 +217,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                         Config.dialogoFechasVacias(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ReporteAsistencia fragmento = ReporteAsistencia.newInstance(mParam1, mParam2, mParam3, mParam4, mParam5, rootView.getContext());
+                        ReporteAsistencia fragmento = ReporteAsistencia.newInstance(mParam1, idSucursal, mParam3, mParam4, mParam5, rootView.getContext());
                         borrar.onDestroy();
                         ft.remove(borrar);
                         ft.replace(R.id.content_gerente, fragmento);
@@ -528,9 +523,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         JSONObject obj = new JSONObject();
         JSONObject rqt = new JSONObject();
         JSONObject periodo = new JSONObject();
-        SessionManager sessionManager = new SessionManager(getContext());
-        HashMap<String, String> usuario = sessionManager.getUserDetails();
-        String numeroEmpleado = usuario.get(SessionManager.ID);
         try {
             // TODO: Formacion del JSON request
             if(getArguments() != null) {
@@ -539,36 +531,34 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                 mParam3 = getArguments().getString(ARG_PARAM3);
                 mParam4 = getArguments().getString(ARG_PARAM4);
                 mParam5 = getArguments().getString(ARG_PARAM5);
-                rqt.put("idSucursal", mParam1);
-                rqt.put("idGerencia", mParam2);
+                rqt.put("idSucursal", mParam2);
+                rqt.put("idGerencia", mParam1);
                 rqt.put("numeroEmpleado", mParam3);
                 rqt.put("pagina", pagina);
-                periodo.put("fechaIni", mParam4);
+                periodo.put("fechaInicio", mParam4);
                 periodo.put("fechaFin", mParam5);
                 rqt.put("perido", periodo);
                 rqt.put("asesor",Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }else{
                 Map<String, String> fecha = Config.fechas(1);
-                String param1 = fecha.get("fechaIni");
-                String param2 = fecha.get("fechaFin");
+                String param11 = fecha.get("fechaIni");
+                String param22 = fecha.get("fechaFin");
                 mParam1 = 0;
                 mParam2 = 0;
                 mParam3 = "";
-                mParam4 = param1;
-                mParam5 = param2;
 
                 rqt.put("idSucursal", 0);
                 rqt.put("idGerencia", 0);
                 rqt.put("numeroEmpleado","");
                 rqt.put("pagina", pagina);
-                periodo.put("fechaIni", param1);
-                periodo.put("fechaFin", param2);
+                periodo.put("fechaInicio", param11);
+                periodo.put("fechaFin", param22);
                 rqt.put("perido", periodo);
                 rqt.put("asesor",Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }
-            Log.d("Rqt", "" + obj);
+            Log.d("Rqt priemra peticion", "" + obj);
         } catch (JSONException e) {
             Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
         }
@@ -680,7 +670,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         String PtvFecha = tvFecha.getText().toString();
         String[] separated = PtvFecha.split(" - ");
-        if(!mParam3.isEmpty())
+        if(!mParam3.equals(""))
             etAsesor.setText(mParam3);
 
         adapter = new GerenteReporteAsistenciaAdapter(rootView.getContext(), getDatos1, recyclerView, mParam4, mParam5);

@@ -1,6 +1,8 @@
 package com.airmovil.profuturo.ti.retencion.gerenteFragmento;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
@@ -14,12 +16,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteClientesAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.EnviaMail;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.GerenteReporteClientesModel;
@@ -70,9 +79,10 @@ public class ReporteClientesDetalles extends Fragment {
     private String mParam9; // nombreCliente
     private String mParam10; // idAsesor
     private int pagina = 1;
+    private String numeroCuenta;
 
     private TextView tv_nombre, tv_numero_cuenta, tv_nss, tv_curp, tv_estatus, tv_saldo, tv_sucursal, tv_hora_atencion;
-    private TextView tv_nombre_asesor, tv_numero_empleado, tv_inicial, tv_fechas;
+    private TextView tv_nombre_asesor, tv_numero_empleado, tv_inicial, tv_fechas, tvEmail;
 
     private OnFragmentInteractionListener mListener;
 
@@ -145,19 +155,8 @@ public class ReporteClientesDetalles extends Fragment {
         tv_numero_empleado = (TextView) view.findViewById(R.id.ggfrasd_tv_numero_empleado_asesor);
         tv_inicial = (TextView) view.findViewById(R.id.ggfrasd_tv_letra);
         tv_fechas = (TextView) view.findViewById(R.id.ggfrasd_tv_fecha);
-
-        //tv_nombre.setText("123123123");
-
-/*
-        bundle.putInt("idSucursal", idSucursal);
-        bundle.putInt("idTramite", idTramite);
-        bundle.putString("numeroCuenta", numeroCuenta);
-        bundle.putString("fechaInicio", fechaInicio);
-        bundle.putString("fechaFin", fechaFin);
-        bundle.putString("usuario", usuario);
-        bundle.putString("nombreCliente", nombreCliente);
-        bundle.putString("idAsesor", idAsesor);*/
-
+        tvEmail = (TextView) view.findViewById(R.id.gfrcd_tv_registros);
+        numeroCuenta =  getArguments().getString("numeroCuenta");
         String fechaInicio = getArguments().getString("fechaInicio");
         String fechaFin = getArguments().getString("fechaFin");
         String numeroCuenta = getArguments().getString("numeroCuenta");
@@ -165,8 +164,95 @@ public class ReporteClientesDetalles extends Fragment {
         tv_numero_empleado.setText(nombreCliente);
         tv_nombre_asesor.setText(numeroCuenta);
         tv_fechas.setText(fechaInicio + " - "+ fechaFin);
-
         sendJson(true);
+
+        tvEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Dialog dialog = new Dialog(getContext());
+                dialog.setContentView(R.layout.custom_layout);
+
+                Button btn = (Button) dialog.findViewById(R.id.dialog_btn_enviar);
+                final Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
+
+                // TODO: Spinner
+                ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item_azul, Config.EMAIL);
+                adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                spinner.setAdapter(adapterSucursal);
+
+                btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
+
+                        final String datoEditText = editText.getText().toString();
+                        final String datoSpinner = spinner.getSelectedItem().toString();
+
+                        Log.d("DATOS USER","SPINNER: "+datoEditText+" datosSpinner: "+ datoSpinner);
+                        if(datoEditText == "" || datoSpinner == "Seleciona un email"){
+                            Config.msj(getContext(), "Error", "Ingresa email valido");
+                        }else{
+                            String email = datoEditText+"@"+datoSpinner;
+                            Connected connected = new Connected();
+                            final InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Service.INPUT_METHOD_SERVICE);
+                            if(connected.estaConectado(getContext())){
+                                JSONObject obj = new JSONObject();
+                                JSONObject rqt = new JSONObject();
+                                try {
+                                    String numeroCuenta = tv_numero_cuenta.getText().toString();
+                                    int iDTramite =  getArguments().getInt("idTramite");
+                                    if(getArguments() != null){
+                                        rqt.put("correo", email);
+                                        rqt.put("numeroCuenta", numeroCuenta);
+                                        rqt.put("idTramite", iDTramite);
+                                        obj.put("rqt", rqt);
+                                    }
+                                    Log.d("sendJson", " REQUEST -->" + obj);
+                                } catch (JSONException e) {
+                                    Config.msj(getContext(), "Error", "Error al formar los datos");
+                                }
+                                EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_CLIENTE,getContext(),new EnviaMail.VolleyCallback() {
+
+                                    @Override
+                                    public void onSuccess(JSONObject result) {
+                                        Log.d("RESPUESTA SUCURSAL", result.toString());
+                                        int status;
+
+                                        try {
+                                            status = result.getInt("status");
+                                        }catch(JSONException error){
+                                            status = 400;
+                                        }
+
+                                        Log.d("EST","EE: "+status);
+                                        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                                        if(status == 200) {
+                                            Config.msj(getContext(), "Enviando", "Se ha enviado el mensaje al destino");
+                                            //Config.msjTime(getContext(), "Enviando", "Se ha enviado el mensaje al destino", 4000);
+                                            dialog.dismiss();
+                                        }else{
+                                            Config.msj(getContext(), "Error", "Ups algo salio mal =(");
+                                            dialog.dismiss();
+                                        }
+                                        //db.addUserCredits(fk_id_usuario,result);
+                                    }
+                                    @Override
+                                    public void onError(String result) {
+                                        Log.d("RESPUESTA ERROR", result);
+                                        Config.msj(getContext(), "Error en conexión", "Por favor, revisa tu conexión a internet ++");
+                                        //db.addUserCredits(fk_id_usuario, "ND");
+                                    }
+                                });
+                            }else{
+                                Config.msj(getContext(), "Error en conexión", "Por favor, revisa tu conexión a internet");
+                            }
+                        }
+
+                    }
+                });
+                dialog.show();
+            }
+        });
     }
 
     @Override
@@ -221,13 +307,15 @@ public class ReporteClientesDetalles extends Fragment {
         JSONObject rqt = new JSONObject();
         JSONObject filtro = new JSONObject();
         JSONObject periodo = new JSONObject();
+        String nCuenta = getArguments().getString("numeroCuenta");
+        int iDTramite =  getArguments().getInt("idTramite");
         try{
             if(getArguments() != null){
                 rqt.put("filtro", filtro);
-                    filtro.put("curp", mParam1);
-                    filtro.put("nss", mParam2);
-                    filtro.put("numeroCuenta", mParam3);
-                rqt.put("idTramite", mParam4);
+                    filtro.put("curp", "");
+                    filtro.put("nss", "");
+                    filtro.put("numeroCuenta", nCuenta);
+                rqt.put("idTramite", iDTramite);
                 rqt.put("idSucursal", 0);
                 rqt.put("pagina", pagina);
                 rqt.put("periodo", periodo);

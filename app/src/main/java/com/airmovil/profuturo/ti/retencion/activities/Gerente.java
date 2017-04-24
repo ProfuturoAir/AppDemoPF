@@ -561,9 +561,11 @@ public class Gerente extends AppCompatActivity{
         //fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).remove(borrar).commit();
     }
 
-    public void switchClientesFA(Fragment frag, int numeroEmpleado,String fechaIni,String fechaFin) {
+    public void switchClientesFA(Fragment frag, String numeroEmpleado,String fechaIni,String fechaFin) {
         Bundle bundle=new Bundle();
-        bundle.putInt("numeroEmpleado",numeroEmpleado);
+
+        bundle.putString("IngresarDatoCliente","");
+        bundle.putString("idAsesor",numeroEmpleado);
         bundle.putString("fechaInicio",fechaIni);
         bundle.putString("fechaFin",fechaFin);
         //bundle.putString("hora",hora);
@@ -578,9 +580,10 @@ public class Gerente extends AppCompatActivity{
 
     public void switchClientesFS(Fragment frag, int idSucursal,String fechaIni,String fechaFin) {
         Bundle bundle=new Bundle();
-        bundle.putInt("idSucursales",idSucursal);
+        bundle.putInt("idSucursal",idSucursal);
         bundle.putString("fechaInicio",fechaIni);
         bundle.putString("fechaFin",fechaFin);
+        bundle.putString("IngresarDatoCliente", "");
         //bundle.putString("hora",hora);
 
         Log.d("GERENTE", "CLIENTES - #idSucursal " + idSucursal + " FIN: " + fechaFin);
@@ -635,9 +638,9 @@ public class Gerente extends AppCompatActivity{
         ft.addToBackStack(null);
         ft.commit();
     }
-    public void switchAsistenciaFA(Fragment frag, int numeroEmpleado,String fechaIni,String fechaFin) {
+    public void switchAsistenciaFA(Fragment frag, String numeroEmpleado,String fechaIni,String fechaFin) {
         Bundle bundle=new Bundle();
-        bundle.putInt("numeroEmpleado",numeroEmpleado);
+        bundle.putString("idAsesor",numeroEmpleado);
         bundle.putString("fechaIni",fechaIni);
         bundle.putString("fechaFin",fechaFin);
         //bundle.putString("idGerencia",idGerencia);
@@ -796,14 +799,20 @@ public class Gerente extends AppCompatActivity{
     public void switchDetalleClientes(int idSucursal, int idTramite, String numeroCuenta, String fechaInicio, String fechaFin, String usuario, String nombreCliente, String idAsesor, Fragment frag){
         Log.d("switchDetallesClie", " --> " + " --> " + idSucursal + " --> " + idTramite + " --> " + numeroCuenta + " --> " + fechaInicio + " --> " + fechaFin + " --> " + usuario);
         Bundle bundle=new Bundle();
-        bundle.putInt("idSucursal", idSucursal);
-        bundle.putInt("idTramite", idTramite);
-        bundle.putString("numeroCuenta", numeroCuenta);
         bundle.putString("fechaInicio", fechaInicio);
         bundle.putString("fechaFin", fechaFin);
-        bundle.putString("usuario", usuario);
-        bundle.putString("nombreCliente", nombreCliente);
+        bundle.putString("IngresarDatoCliente", "");
+        bundle.putInt("idSucursales", idSucursal);
+        bundle.putInt("idTramite", idTramite);
         bundle.putString("idAsesor", idAsesor);
+        bundle.putInt("idRetenido", 0);
+        bundle.putInt("idCita", 0);
+        bundle.putInt("selectCliente", 0);
+
+        /*
+         idCita1 = getArguments().getInt("idCita");
+         selectID = getArguments().getInt("selectCliente");
+         */
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_gerente, frag, frag.toString());

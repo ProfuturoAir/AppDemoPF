@@ -16,6 +16,15 @@ public class GerenteReporteClientesModel {
     public String nss;
     public String hora;
     public String nombreAsesor;
+    public int tramite;
+
+    public int getTramite() {
+        return tramite;
+    }
+
+    public void setTramite(int tramite) {
+        this.tramite = tramite;
+    }
 
     public String getHora() {
         return hora;
