@@ -153,6 +153,7 @@ public class ReporteAsesores extends Fragment {
             Log.d("HOLA", "Todos : " + getArguments().toString());
             numeroEmpleado = getArguments().getInt("numeroEmpleado");
             idAsesor = getArguments().getInt("idAsesor");
+            String idAsesor = getArguments().getString("idAsesor");
             fechaIni = getArguments().getString("fechaIni");
             fechaFin = getArguments().getString("fechaFin");
 
@@ -163,7 +164,7 @@ public class ReporteAsesores extends Fragment {
             }
 
             if(etAsesor!=null){
-               etAsesor.setText(String.valueOf(idAsesor));
+               etAsesor.setText(idAsesor);
             }
 
         }
@@ -185,12 +186,12 @@ public class ReporteAsesores extends Fragment {
                     final String fechaFinal = tvRangoFecha2.getText().toString();
                     final String idAsesor = etAsesor.getText().toString();
 
-                    if(fechaIncial.isEmpty() || fechaFinal.isEmpty() || idAsesor.isEmpty()){
+                    if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
                         Config.dialogoFechasVacias(getContext());
                     }else{
                         ReporteAsesores fragmentoAsesores = new ReporteAsesores();
                         Director director = (Director) getContext();
-                        director.switchAsesoresFA(fragmentoAsesores, Integer.valueOf(idAsesor),fechaIncial,fechaFinal);
+                        director.switchAsesoresFA(fragmentoAsesores, idAsesor,fechaIncial,fechaFinal);
                     }
                     // TODO: ocultar teclado
                     Config.teclado(getContext(), etAsesor);

@@ -32,17 +32,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ReporteClientesDetalles.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ReporteClientesDetalles#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ReporteClientesDetalles extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "numeroCuenta"; // curp
     private static final String ARG_PARAM2 = "cita"; // nss
     private static final String ARG_PARAM4 = "idTramite"; // idTramite
@@ -74,19 +65,19 @@ public class ReporteClientesDetalles extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     public ReporteClientesDetalles() {
-        // Required empty public constructor
+        // se requiere un constructor vacio
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * Utilice este método de fábrica para crear una nueva instancia de
+     * Este fragmento utilizando los parámetros proporcionados.
      *
      * @param param1 parametro 1 idsucursal.
      * @param param2 parametro 2 idTramite.
      * @param param4 parametro 4 fechaInicio.
      * @param param5 parametro 5 fechaFin.
      * @param param6 parametro 6 usuario.
-     * @return A new instance of fragment ReporteClientesDetalles.
+     * @return una nueva instancia del frgmento ReporteClientesDetalles.
      */
     // TODO: Rename and change types and number of parameters
     public static ReporteClientesDetalles newInstance(String param1, String param2,int param4, String param5, String param6, String param7, String param8,String param9,String param10) {
@@ -102,9 +93,14 @@ public class ReporteClientesDetalles extends Fragment {
         args.putString(ARG_PARAM9, param9);
         args.putString(ARG_PARAM10, param10);
         fragment.setArguments(args);
-        return fragment;
+          return fragment;
     }
 
+    /**
+     * El sistema lo llama cuando crea el fragmento. En tu implementación, debes inicializar componentes esenciales
+     * del fragmento que quieres conservar cuando el fragmento se pause o se detenga y luego se reanude.
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,6 +118,11 @@ public class ReporteClientesDetalles extends Fragment {
         }
     }
 
+    /**
+     * El sistema lo llama cuando el fragmento debe diseñar su interfaz de usuario por primera vez
+     * @param view accede a la vista del XML
+     * @param savedInstanceState fuarda el estado de la instancia
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         tv_nombre = (TextView) view.findViewById(R.id.ddd_tv_clientes_nombre);
@@ -136,16 +137,23 @@ public class ReporteClientesDetalles extends Fragment {
         tv_numero_empleado = (TextView) view.findViewById(R.id.ddfrasd_tv_numero_empleado_asesor);
         tv_inicial = (TextView) view.findViewById(R.id.ddfrasd_tv_letra);
         tv_fechas = (TextView) view.findViewById(R.id.ddfrasd_tv_fecha);
-
-        //tv_nombre.setText("123123123");
-        tv_numero_empleado.setText(mParam9);
-        tv_nombre_asesor.setText(mParam10);
-        tv_fechas.setText(mParam6 + " - "+mParam7);
-
-
+        String nombreAsesor = getArguments().getString("nombreAsesor");
+        String numeroEmpleado = getArguments().getString("numeroEmpleado");
+        String fechaInicio = getArguments().getString("fechaInicio");
+        String fechaFin = getArguments().getString("fechaFin");
+        tv_numero_empleado.setText("Numero del empleado: " + numeroEmpleado);
+        tv_nombre_asesor.setText("nombre del Asesor:" +nombreAsesor);
+        tv_fechas.setText(fechaInicio + " - "+ fechaFin);
         sendJson(true);
     }
 
+    /**
+     * El sistema lo llama cuando el fragmento debe diseñar su interfaz de usuario por primera vez
+     * @param inflater infla la vista xml
+     * @param container contiene los elementos
+     * @param savedInstanceState guarda los parametros procesado
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment

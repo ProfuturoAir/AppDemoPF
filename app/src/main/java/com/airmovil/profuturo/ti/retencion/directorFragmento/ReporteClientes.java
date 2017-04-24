@@ -32,7 +32,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteClientesAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
@@ -59,14 +58,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ReporteClientes.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ReporteClientes#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ReporteClientes extends Fragment implements  Spinner.OnItemSelectedListener{
     // TODO: Rename parameter arguments, choose names that match
     private static final String ARG_PARAM1 = "parametro1FechaIni";
@@ -144,8 +135,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
      * @return A new instance of fragment ReporteClientes.
      */
     // TODO: Rename and change types and number of parameters
-    public static ReporteClientes newInstance(String param1, String param2, String param3,
-                                              int param5, String param6, int param7, int param8, int param9, Context context) {
+    public static ReporteClientes newInstance(String param1, String param2, String param3, int param5, String param6, int param7, int param8, int param9, Context context) {
         ReporteClientes fragment = new ReporteClientes();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
@@ -160,6 +150,10 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         return fragment;
     }
 
+    /**
+     * El sistema lo llama cuando el fragmento debe diseñar su interfaz de usuario por primera vez.
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -179,10 +173,8 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         id_sucursales = new ArrayList<String>();
         gerencias = new ArrayList<String>();
         id_gerencias = new ArrayList<String>();
-
         idSucursal = 0;
         numeroEmpleado = 0;
-
         variables();
         fechasyArgumentos();
 
@@ -260,10 +252,9 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     mParam8 = spinnerCita.getSelectedItemPosition();
                     mParam9 = spinnerId.getSelectedItemPosition();
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    if(mParam1.isEmpty() || mParam2.isEmpty()){
-                        Config.dialogoFechasVacias(getContext());
+                    if(mParam1.isEmpty() || mParam2.isEmpty() || mParam8 == 0 || mParam7 == 0){
+                        Config.dialogoDatosVacios1(getContext(), "Se requieren los campos de fechas, tipo de estatus de retenidos y tipo de estatus de citas");
                     }else{
-                        Toast.makeText(getContext(), " idSucursal: " + idSucursal, Toast.LENGTH_SHORT).show();
                         Log.d("idS","SS: "+idSucursal + " ___ " +mParam3);
                         if(mParam3.isEmpty()){
                             mParam3 = "0";
@@ -279,6 +270,9 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                         Config.teclado(getContext(), etIngresarAsesor);
                         Config.teclado(getContext(), etIngresarDato);
                     }
+
+                    Config.teclado(getContext(), etIngresarDato);
+                    Config.teclado(getContext(), etIngresarAsesor);
                 }else{
                     Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                 }
@@ -726,9 +720,9 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                 tvFecha.setText(fechaIni + " - " + fechaFin);
             }
 
-            if(etIngresarAsesor!=null){
-                etIngresarAsesor.setText(String.valueOf(numeroEmpleado));
-            }
+
+
+
 
             if(etIngresarDato!=null){
                 Log.d("HOLA", "Todos YYYY: " + numeroId);
@@ -910,8 +904,6 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     getDatos2.setRetenido(json.getString("retenido"));
                     getDatos2.setIdSucursal(json.getInt("idSucursal"));
                     getDatos2.setHora(json.getString("horaAtencion"));
-                    //getDatos2.setCurp(json.getString("curp"));
-                    //getDatos2.setNss(json.getString("nss"));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }

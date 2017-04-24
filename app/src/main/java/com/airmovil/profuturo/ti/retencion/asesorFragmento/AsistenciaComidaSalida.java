@@ -368,10 +368,8 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
         Map<String, String> usuarioDatos = Config.datosUsuario(getContext());
         Map<String, String> fechaActual = Config.fechas(1);
         String fecha = fechaActual.get("fechaIni");
-        String idUsuario = usuarioDatos.get(SessionManager.USER_ID);
         String longitud = tvLongitud.getText().toString();
         String latitud = tvLatitud.getText().toString();
-
         double w, z;
 
         try {
@@ -408,7 +406,7 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
             ubicacion.put("latitud", z);
             ubicacion.put("longitud", w);
             rqt.put("ubicacion", ubicacion);
-            rqt.put("usuario", idUsuario);
+            rqt.put("usuario", Config.usuarioCusp(getContext()));
             json.put("rqt", rqt);
             Log.d("TAG", "REQUEST -->" + json);
         } catch (JSONException e){

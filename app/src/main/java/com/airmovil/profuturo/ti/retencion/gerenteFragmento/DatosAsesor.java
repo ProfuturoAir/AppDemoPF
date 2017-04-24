@@ -137,7 +137,7 @@ public class DatosAsesor extends Fragment {
                     final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
                     progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
                     progressDialog.setTitle(getResources().getString(R.string.error_conexion));
-                    progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion));
+                    progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion_sin_proceso));
                     progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
                             new DialogInterface.OnClickListener() {
                                 @Override

@@ -116,7 +116,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
      * @param param3 parametro 3 id asesor
      * @param param4 parametro 4 id fecha inicio
      * @param param5 parametro 5 id fecha fin
-     * @return A new instance of fragment ReporteAsistencia.
+     * @return una nueva insrancia del fragmento ReporteAsistencia.
      */
     // TODO: Rename and change types and number of parameters
     public static ReporteAsistencia newInstance(int param1, int param2, String param3, String param4, String param5, Context context) {
@@ -336,7 +336,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // infla el layout del XML
         return inflater.inflate(R.layout.director_fragmento_reporte_asistencia, container, false);
     }
 
@@ -365,16 +365,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
@@ -427,18 +417,15 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
      */
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Log.d("-->posicion:", ""+ position);
         switch (parent.getId()) {
             case R.id.ddfras_spinner_sucursal:
                 String sim1 = id_sucursales.get(position);
                 idSucursal = Integer.valueOf(sim1);
                 idSucursal123 = Integer.valueOf(sim1);
-                Log.d("-->Sucursal","ESTA ->: "+idSucursal);
                 break;
             case R.id.ddfras_spinner_gerencia:
                 String sim2 = id_gerencias.get(position);
                 idGerencia = Integer.valueOf(sim2);
-                Log.d("-->Gerencia","ESTA ->: "+idGerencia);
                 break;
             default:
                 break;
@@ -458,11 +445,9 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("LLENA", "SPINNER: ->" + response);
                         JSONArray j = null;
                         try {
                             j = response.getJSONArray("Sucursales");
-                            Log.d("LLENA", "EL ARRAY: ->" + j);
                             getSucursales(j);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -472,7 +457,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("LLENA", "SPINNER: -> ERROR " + error);
                     }
                 }) {
             @Override
@@ -487,11 +471,9 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("LLENA", "SPINNER: ->" + response);
                         JSONArray j = null;
                         try {
                             j = response.getJSONArray("Gerencias");
-                            Log.d("LLENA", "EL ARRAY: ->" + j);
                             getGerencias(j);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -501,7 +483,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("LLENA", "SPINNER: -> ERROR " + error);
                     }
                 }) {
             @Override

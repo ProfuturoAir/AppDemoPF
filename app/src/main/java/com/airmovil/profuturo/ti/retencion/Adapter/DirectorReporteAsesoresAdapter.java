@@ -179,15 +179,9 @@ public class DirectorReporteAsesoresAdapter extends RecyclerView.Adapter{
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.sub_menu_reporte_asesores_nav_clientes:
-                    //AppCompatActivity clientes = (AppCompatActivity) mRecyclerView.getContext();
                     ReporteClientes fragmentoClientes = new ReporteClientes();
-                    //Log.d("DATOS","AQUI: "+lista.getNumeroEmpleado());
-                    //Log.d("DATOS","INI: "+fechaIni);
-                    //Log.d("DATOS","FIN: "+fechaFin);
                     Director director = (Director) mRecyclerView.getContext();
                     director.switchClientes(fragmentoClientes, lista.getNumeroEmpleado(),fechaIni,fechaFin);
-                    //Create a bundle to pass data, add data, set the bundle to your fragment and:
-                    //clientes.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoClientes).addToBackStack(null).commit();
                     return true;
                 case R.id.sub_menu_reporte_asesores_nav_asistencia:
                     //AppCompatActivity Asistencia = (AppCompatActivity) mRecyclerView.getContext();

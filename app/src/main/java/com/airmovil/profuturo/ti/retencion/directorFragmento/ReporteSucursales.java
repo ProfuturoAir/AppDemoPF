@@ -125,7 +125,7 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
     int numeroEmpleado;
 
     public ReporteSucursales() {
-        // Required empty public constructor
+        // Se requiere un constructor vacio
     }
 
 
@@ -162,11 +162,6 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         variables();
         fechas();
         // TODO: Spinner
-        //Initializing the ArrayList
-
-        /*ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.SUCURSALES);
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerSucursales.setAdapter(adapter);*/
 
         sessionManager = new SessionManager(getContext());
         connected = new Connected();
@@ -188,13 +183,7 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
             if(idSucursal!=0){
                 Log.d("SELE","SIZE ->: "+id_sucursales);
                 int size = id_sucursales.size();
-                /*for(int i=0; i < id_sucursales.size(); i++) {
-                    if (id_sucursales[i].contains("#abc"))
-                        aPosition = i;
-                }*/
-                //String sim = id_sucursales;
                 Log.d("SELE","SIZE ->: "+size);
-                //idSucursal = Integer.valueOf(sim);
             }
         }
         // TODO: model
@@ -212,18 +201,12 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
 
                 final String fechaIncial = tvRangoFecha1.getText().toString();
                 final String fechaFinal = tvRangoFecha2.getText().toString();
-                if(fechaIncial.equals("") || fechaFinal.equals("") || idSucursal == 0){
-                    Config.dialogoDatosVacios(getContext());
+                if(fechaIncial.equals("") || fechaFinal.equals("")){
+                    Config.dialogoFechasVacias(getContext());
                 }else {
                     ReporteSucursales fragmentoSucursales = new ReporteSucursales();
                     Director director = (Director) getContext();
                     director.switchSucursalFRS(fragmentoSucursales, idSucursal,fechaIncial,fechaFinal);
-                    /*ReporteSucursales fragmento = ReporteSucursales.newInstance(fechaIni, fechaFin, rootView.getContext());
-                    borrar.onDestroy();
-                    ft.remove(borrar);
-                    ft.replace(R.id.content_gerente, fragmento);
-                    ft.addToBackStack(null);
-                    ft.commit();*/
                 }
             }
         });
@@ -259,12 +242,6 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
                             Connected connected = new Connected();
                             final InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Service.INPUT_METHOD_SERVICE);
                             if(connected.estaConectado(getContext())){
-                                //final EnviaMail envia = new EnviaMail();
-                                //String respuesta = envia.sendMail("1","correo",true,"1","12","12",Config.URL_SEND_MAIL,getContext());
-                                /*imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-                                Config.msjTime(getContext(), "Enviando", "Se ha enviado el mensaje al destino", 4000);
-                                dialog.dismiss();*/
-                                //final String idSucursal = spinnerSucursales.getSelectedItem().toString();
 
                                 Log.d("DATOS","+++++: "+idSucursal);
                                 JSONObject obj = new JSONObject();
@@ -305,13 +282,11 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
                                         imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
                                         if(status == 200) {
                                             Config.msj(getContext(), "Enviando", "Se ha enviado el mensaje al destino");
-                                            //Config.msjTime(getContext(), "Enviando", "Se ha enviado el mensaje al destino", 4000);
                                             dialog.dismiss();
                                         }else{
                                             Config.msj(getContext(), "Error", "Ups algo salio mal =(");
                                             dialog.dismiss();
                                         }
-                                        //db.addUserCredits(fk_id_usuario,result);
                                     }
                                     @Override
                                     public void onError(String result) {
@@ -324,20 +299,6 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
                                 Config.msj(getContext(), "Error en conexión", "Por favor, revisa tu conexión a internet");
                             }
                         }
-
-
-                        //final String datoSpinner = spinner.getSelectedItem().toString();
-                        /*
-                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
-                        Connected connected = new Connected();
-                        if(connected.estaConectado(getContext())){
-                            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-                            Config.msjTime(getContext(), "Mensaje datos1", "Se está enviado los datos a " + datoEditText + "@profuturo.com", 8000);
-                            dialog.dismiss();
-                        }else{
-                            Config.msj(getContext(), "Error conexión", "Por favor, revisa tu conexión a internet");
-                            dialog.dismiss();
-                        }*/
                     }
                 });
                 dialog.show();
@@ -374,18 +335,7 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
@@ -405,9 +355,10 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
                 }, Config.TIME_HANDLER);
     }
 
+    /**
+     * Setea los elementos del XML
+     */
     public void variables(){
-
-
         tvFecha = (TextView) rootView.findViewById(R.id.gfrs_tv_fecha);
         tvEmitidas = (TextView) rootView.findViewById(R.id.gfrs_tv_emitidas);
         tvNoEmitidas = (TextView) rootView.findViewById(R.id.gfrs_tv_no_emitidas);
@@ -418,40 +369,23 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         spinnerSucursales = (Spinner) rootView.findViewById(R.id.gfrs_spinner_sucursales);
         btnBuscar = (Button) rootView.findViewById(R.id.gfrs_btn_buscar);
         tvResultados = (TextView) rootView.findViewById(R.id.gfrs_tv_registros);
-
         spinnerSucursales.setOnItemSelectedListener(this);
         getData();
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        switch (parent.getId())
-        {
-          /*  case R.id.spinnerTurno:
-                 getTurnos();
-                 TextView text23 =(TextView) findViewById(R.id.textVialidad);
-                 text23.setText(""+position);
-                break;*/
+        switch (parent.getId()) {
             case R.id.gfrs_spinner_sucursales:
                 String sim = id_sucursales.get(position);
-                Log.d("SELE","ESTA ->: "+sim);
                 idSucursal = Integer.valueOf(sim);
-                //id_sucursales.clear();
-                //sucursales.clear();
-                //spinnerSucursales.setAdapter(null);
-                //tramo.clear();
-                //TextView tramedit =(TextView)findViewById(R.id.tramo);
-                //tramedit.setText("");
-                //getDataTramo(sim);
                 break;
             default:
-                /*TextView text21 =(TextView) findViewById(R.id.textVialidad);
-                text21.setText("DEFAULT");*/
                 break;
         }
     }
 
-    //When no item is selected this method would execute
+    // When no item is selected this method would execute
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
         //Log.i("Message", "Nothing is selected");

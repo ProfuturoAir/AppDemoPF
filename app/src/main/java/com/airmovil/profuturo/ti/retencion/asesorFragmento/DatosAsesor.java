@@ -117,17 +117,11 @@ public class DatosAsesor extends Fragment {
         final Fragment fragmentoDatosCliente = new DatosCliente();
         final FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 
-        // TODO: obteniendo el numero del usuario
-        HashMap<String, String> hashMap = sessionManager.getUserDetails();
-        String numeroUsuario = hashMap.get(SessionManager.ID);
-
-
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Connected connected = new Connected();
                 if(connected.estaConectado(getContext())){
-                    //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoDatosCliente).commit();
                     Fragment fragmentoGenerico = new DatosCliente();
                     Asesor asesor = (Asesor) getContext();
                     asesor.switchDatosCliente(fragmentoGenerico,nombre,numeroDeCuenta,hora);
@@ -136,7 +130,7 @@ public class DatosAsesor extends Fragment {
                     final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
                     progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
                     progressDialog.setTitle(getResources().getString(R.string.error_conexion));
-                    progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion));
+                    progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion_sin_proceso));
                     progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
                             new DialogInterface.OnClickListener() {
                                 @Override
@@ -152,32 +146,6 @@ public class DatosAsesor extends Fragment {
                                 }
                             });
                     progressDialog.show();
-
-                    /*android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                    dlgAlert.setTitle("Error de conexión");
-                    dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
-                    dlgAlert.setCancelable(true);
-                    dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            //Fragment fragmentoGenerico = new DatosCliente();
-                            //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                            //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
-                            Fragment fragmentoGenerico = new DatosCliente();
-                            Asesor asesor = (Asesor) getContext();
-                            asesor.switchDatosCliente(fragmentoGenerico,nombre,numeroDeCuenta,hora);
-                        }
-                    });
-                    dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-                    dlgAlert.create().show();*/
-
-
-
                 }
             }
         });

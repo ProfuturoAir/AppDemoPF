@@ -185,36 +185,23 @@ public class ReporteAsesores extends Fragment {
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btnBuscar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if(connected.estaConectado(getContext())){
-                            final String fechaIncial = tvRangoFecha1.getText().toString();
-                            final String fechaFinal = tvRangoFecha2.getText().toString();
-                            final String idAsesor = etAsesor.getText().toString();
+                if(connected.estaConectado(getContext())){
+                    final String fechaIncial = tvRangoFecha1.getText().toString();
+                    final String fechaFinal = tvRangoFecha2.getText().toString();
+                    final String idAsesor = etAsesor.getText().toString();
 
-                            if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
-                                Config.dialogoFechasVacias(getContext());
-                            }else{
-                                ReporteAsesores fragmentoAsesores = new ReporteAsesores();
-                                Gerente gerente = (Gerente) getContext();
-                                gerente.switchAsesoresFA(fragmentoAsesores, Integer.valueOf(idAsesor),fechaIncial,fechaFinal);
-                                /*ReporteSucursales fragmento = ReporteSucursales.newInstance(fechaIni, fechaFin, rootView.getContext());
-                                /*FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                                ReporteAsesores fragmento = ReporteAsesores.newInstance(fechaIncial, fechaFinal, idAsesor, rootView.getContext());
-                                borrar.onDestroy();
-                                ft.remove(borrar);
-                                ft.replace(R.id.content_gerente, fragmento);
-                                ft.addToBackStack(null);
-                                ft.commit();*/
-                            }
-                            // TODO: ocultar teclado
-                            imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-                        }else{
-                            Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
-                        }
+                    if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
+                        Config.dialogoFechasVacias(getContext());
+                    }else{
+                        ReporteAsesores fragmentoAsesores = new ReporteAsesores();
+                        Gerente gerente = (Gerente) getContext();
+                        gerente.switchAsesoresFA(fragmentoAsesores, Integer.valueOf(idAsesor),fechaIncial,fechaFinal);
                     }
-                });
+                    // TODO: ocultar teclado
+                    Config.teclado(getContext(), etAsesor);
+                }else{
+                    Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
+                }
             }
         });
 

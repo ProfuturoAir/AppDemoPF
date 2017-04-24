@@ -162,6 +162,26 @@ public class Config extends Activity {
         progressDialog.show();
     }
 
+
+    /**
+     * Muestra mensaje de datos vacios
+     * @param context
+     */
+    public static final void dialogoDatosVacios1(Context context, String mensaje){
+        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_peligro));
+        progressDialog.setTitle(context.getResources().getString(R.string.error_datos_vacios));
+        progressDialog.setMessage(mensaje);
+        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog.dismiss();
+                    }
+                });
+        progressDialog.show();
+    }
+
     /**
      * Muestra mensaje de error, en el documento no existente (INE o IFE)
      * @param context

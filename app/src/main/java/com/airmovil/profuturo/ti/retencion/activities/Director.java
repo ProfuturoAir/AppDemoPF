@@ -375,6 +375,7 @@ public class Director extends AppCompatActivity{
         ft.commit();
     }
 
+    // list.getNumeroEmpleado(),list.getNombreAsesor(),list.getNumeroCuenta(), list.getCita(), list.getIdTramite(), fechaInicio, fechaFin, list.getHora(), Config.usuarioCusp(mContext), fragmento);
    public void switchDetalleClientes(String numeroEmpleado, String nombreAsesor,String numeroCuenta, String cita, int idTramite, String fechaInicio, String fechaFin, String hora, String usuario, Fragment frag) {
        Bundle bundle=new Bundle();
        bundle.putString("numeroEmpleado",numeroEmpleado);
@@ -450,9 +451,9 @@ public class Director extends AppCompatActivity{
         ft.commit();
     }
 
-    public void switchAsesoresFA(Fragment frag, int idAsesor, String fechaInicio, String fechaFin){
+    public void switchAsesoresFA(Fragment frag, String idAsesor, String fechaInicio, String fechaFin){
         Bundle bundle=new Bundle();
-        bundle.putInt("idAsesor",idAsesor);
+        bundle.putString("idAsesor",idAsesor);
         bundle.putString("fechaIni",fechaInicio);
         bundle.putString("fechaFin",fechaFin);
         frag.setArguments(bundle);

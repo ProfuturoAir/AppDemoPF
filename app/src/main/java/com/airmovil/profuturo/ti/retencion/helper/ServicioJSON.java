@@ -94,10 +94,10 @@ public class ServicioJSON extends Service{
                 }
 
 
-                handler.postDelayed(this, 10000);
+                handler.postDelayed(this, 50000);
             }
         };
-        handler.postDelayed(r, 10000);
+        handler.postDelayed(r, 50000);
     }
 
     @Override

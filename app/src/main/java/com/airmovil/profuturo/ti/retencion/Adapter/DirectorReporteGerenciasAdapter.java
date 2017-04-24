@@ -130,9 +130,9 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
             myViewHolder.sinCita.setText("" + lista.getSinCita() + "");
             myViewHolder.retenido.setText("" + lista.getEmitidas());
             myViewHolder.noRetenido.setText("" + lista.getNoEmitidas());
-            myViewHolder.saldoRetenido.setText("" + lista.getdSaldoRetenido() + "");
-            myViewHolder.saldoNoRetenido.setText("" +lista.getdSaldoNoRetenido() + "");
-            myViewHolder.porcentaje.setText(Config.df.format((float)(lista.getEmitidas()*100)/(lista.getEmitidas()+lista.getNoEmitidas())) +"% "
+            myViewHolder.saldoRetenido.setText(": " + lista.getdSaldoRetenido() + "");
+            myViewHolder.saldoNoRetenido.setText("" +lista.getdSaldoNoRetenido() + " ");
+            myViewHolder.porcentaje.setText(" " + Config.df.format((float)(lista.getEmitidas()*100)/(lista.getEmitidas()+lista.getNoEmitidas())) +"% "
                     + Config.df.format((float)(lista.getNoEmitidas()*100)/(lista.getEmitidas()+lista.getNoEmitidas()))+"%");
 
             myViewHolder.tvClick.setOnClickListener(new View.OnClickListener() {
@@ -144,7 +144,9 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
             myViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    fragmentJumpDatosUsuario("", v);
+                    ReporteSucursales reporteSucursales = new ReporteSucursales();
+                    Director director = (Director) mRecyclerView.getContext();
+                    director.switchSucursales(reporteSucursales, lista.idGerencia, mFechaInicio, mFechaFin);
                 }
             });
         }else{

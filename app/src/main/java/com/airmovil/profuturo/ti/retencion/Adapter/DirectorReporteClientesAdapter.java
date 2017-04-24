@@ -128,6 +128,12 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
                 @Override
                 public void onClick(View v) {
                     fragmentJumpDatosUsuario("", v);
+                    Fragment fragmento = new ReporteClientesDetalles();
+                    if (v.getContext() instanceof Director) {
+                        Director director = (Director) v.getContext();
+                        director.switchDetalleClientes(lista.getNumeroEmpleado(),lista.getNombreAsesor(),lista.getNumeroCuenta(), lista.getCita(), lista.getIdTramite(), fechaInicio, fechaFin, lista.getHora(), Config.usuarioCusp(mContext), fragmento);
+
+                    }
                 }
             });
         } else{
@@ -182,17 +188,6 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
         this.mOnLoadMoreListener = mOnLoadMoreListener;
     }
 
-/*
-    public void fragmentoCambioClienteDetalles(int idSucursal, int idTramite, String numeroCuenta, String fechaInicio, String fechaFin, String usuario, View view) {
-        Log.d("fragmentoCambio", " --> " + idSucursal + " -> " + idTramite + " -> " + numeroCuenta + " -> " + fechaInicio + " -> " + fechaFin + " -> " + usuario);
-        Fragment fragmento = new ReporteClientesDetalles();
-        if (view.getContext() == null)
-            return;
-        if (view.getContext() instanceof Gerente) {
-            Director director = (Director) view.getContext();
-            director.switchDetalleClientes(idSucursal, idTramite, numeroCuenta, fechaInicio, fechaFin, usuario, fragmento);
-        }
-    }*/
 
     /**
      * Click listener for popup menu items

@@ -1,6 +1,5 @@
 package com.airmovil.profuturo.ti.retencion.directorFragmento;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -16,7 +15,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,44 +51,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ReporteAsistenciaDetalles.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ReporteAsistenciaDetalles#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ReporteAsistenciaDetalles extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "numeroEmpleado";
     private static final String ARG_PARAM2 = "fechaIni";
     private static final String ARG_PARAM3 = "fechaFin";
     private static final String ARG_PARAM4 = "nombreEmpleado";
-
-    // TODO: Rename and change types of parameters
     private String mParam1 = "";
     private String mParam2 = "";
     private String mParam3 = "";
     private String mParam4 = "";
-
-    // TODO: View, sessionManager, datePickerDialog
     private View rootView;
     private SessionManager sessionManager;
     private DatePickerDialog datePickerDialog;
     private Connected connected;
-
-    // TODO: XML
-    private TextView tvFecha;
-    private TextView tvLetra;
-    private TextView tvNombreAsesor, tvNoEmpleado, tvRangoFechas;
-    private TextView tvAtiempo, tvRetardo, tvSinAsistencia;
-    private TextView tvRangoFecha1, tvRangoFecha2;
+    private TextView tvFecha, tvLetra, tvNombreAsesor, tvNoEmpleado, tvRangoFechas;
+    private TextView tvAtiempo, tvRetardo, tvSinAsistencia, tvRangoFecha1, tvRangoFecha2;
     private Button btnBuscar;
     private TextView tvResultados;
-
-    // TODO: variable
     private int mYear;
     private int mMonth;
     private int mDay;
@@ -98,14 +75,11 @@ public class ReporteAsistenciaDetalles extends Fragment {
     private String fechaFin = "";
     private String fechaMostrar = "";
     private String numeroUsuario;
-
-    // TODO: list
     private List<DirectorReporteAsistenciaDetalleModel> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private RecyclerView.Adapter recyclerViewAdapter;
     private DirectorReporteAsistenciaDetalleAdapter adapter;
-
     private int filas;
     private int pagina = 1;
     private int numeroMaximoPaginas = 0;
@@ -113,18 +87,17 @@ public class ReporteAsistenciaDetalles extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     public ReporteAsistenciaDetalles() {
-        // Required empty public constructor
+        // se requiere un constructor
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * Utilice este método de fábrica para crear una nueva instancia de
+     * Este fragmento utilizando los parámetros proporcionados.
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ReporteAsistenciaDetalles.
+     * @returnuna nueva instancia del fragmento ReporteAsistenciaDetalles.
      */
-    // TODO: Rename and change types and number of parameters
     public static ReporteAsistenciaDetalles newInstance(String param1, String param2, String param3, String param4, Context context) {
         ReporteAsistenciaDetalles fragment = new ReporteAsistenciaDetalles();
         Bundle args = new Bundle();
@@ -136,6 +109,11 @@ public class ReporteAsistenciaDetalles extends Fragment {
         return fragment;
     }
 
+    /**
+     *El sistema lo llama cuando crea el fragmento. En tu implementación, debes inicializar componentes
+     * esenciales del fragmento que quieres conservar cuando el fragmento se pause o se detenga y luego se reanude.
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -144,43 +122,23 @@ public class ReporteAsistenciaDetalles extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
             mParam3 = getArguments().getString(ARG_PARAM3);
             mParam4 = getArguments().getString(ARG_PARAM4);
-            Log.d("-->>Detalles Datos", mParam1 + ", " + mParam2 + ", " + mParam3);
         }
     }
 
+    /**
+     * Se llama inmediatamente después de que onCreateView(LayoutInflater, ViewGroup, Bundle) ha onCreateView(LayoutInflater, ViewGroup, Bundle)
+     * pero antes de que se haya onCreateView(LayoutInflater, ViewGroup, Bundle) estado guardado en la vista.
+     * @param view vista de acceso para el xml
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
 
         primeraPeticion();
-        // TODO: Casteo
-        tvFecha = (TextView) rootView.findViewById(R.id.ddfrasd_tv_fecha);
-        tvLetra = (TextView) rootView.findViewById(R.id.ddfrasd_tv_letra);
-        tvNombreAsesor = (TextView) rootView.findViewById(R.id.ddfrasd_tv_nombre_asesor);
-        tvNombreAsesor.setText("Nombre del Asesor: " + mParam4);
-        tvNoEmpleado = (TextView) rootView.findViewById(R.id.ddfrasd_tv_numero_empleado_asesor);
-        tvNoEmpleado.setText("Numero de empleado asesor: " + mParam1);
-        tvAtiempo = (TextView) rootView.findViewById(R.id.ddfrasd_tv_a_tiempo);
-        tvRetardo = (TextView) rootView.findViewById(R.id.ddfrasd_tv_retardados);
-        tvSinAsistencia = (TextView) rootView.findViewById(R.id.ddfrasd_tv_sin_asistencia);
-        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.ddfrasd_tv_fecha_rango1);
-        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.ddfrasd_tv_fecha_rango2);
-        btnBuscar = (Button) rootView.findViewById(R.id.ddfrasd_btn_buscar);
-        tvResultados = (TextView) rootView.findViewById(R.id.ddfrasd_tv_resultados);
-
-        // TODO: fecha
-        Map<String, Integer> fechaDatos = Config.dias();
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
-
+        variables();
         connected = new Connected();
-
         fechas();
-
-        // TODO: fechas dialog
-        rangoInicial();
-        rangoFinal();
 
         // TODO: model
         getDatos1 = new ArrayList<>();
@@ -189,9 +147,6 @@ public class ReporteAsistenciaDetalles extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-
-        // TODO: webservice
-        //sendJson(true);
 
         final Fragment borrar = this;
         btnBuscar.setOnClickListener(new View.OnClickListener() {
@@ -321,13 +276,17 @@ public class ReporteAsistenciaDetalles extends Fragment {
         return inflater.inflate(R.layout.director_fragmento_reporte_asistencia_detalles, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
+    // TODO: Renombrar método, actualizar argumento y método de gancho en evento de IU
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
 
+    /**
+     * Reciba una llamada cuando se asocia el fragmento con la actividad
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -336,6 +295,9 @@ public class ReporteAsistenciaDetalles extends Fragment {
         }
     }
 
+    /**
+     * Se lo llama cuando se desasocia el fragmento de la actividad.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -343,15 +305,24 @@ public class ReporteAsistenciaDetalles extends Fragment {
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * Casteo de variables
      */
+    private void variables(){
+        tvFecha = (TextView) rootView.findViewById(R.id.ddfrasd_tv_fecha);
+        tvLetra = (TextView) rootView.findViewById(R.id.ddfrasd_tv_letra);
+        tvNombreAsesor = (TextView) rootView.findViewById(R.id.ddfrasd_tv_nombre_asesor);
+        tvNombreAsesor.setText("Nombre del Asesor: " + mParam4);
+        tvNoEmpleado = (TextView) rootView.findViewById(R.id.ddfrasd_tv_numero_empleado_asesor);
+        tvNoEmpleado.setText("Numero de empleado asesor: " + mParam1);
+        tvAtiempo = (TextView) rootView.findViewById(R.id.ddfrasd_tv_a_tiempo);
+        tvRetardo = (TextView) rootView.findViewById(R.id.ddfrasd_tv_retardados);
+        tvSinAsistencia = (TextView) rootView.findViewById(R.id.ddfrasd_tv_sin_asistencia);
+        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.ddfrasd_tv_fecha_rango1);
+        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.ddfrasd_tv_fecha_rango2);
+        btnBuscar = (Button) rootView.findViewById(R.id.ddfrasd_btn_buscar);
+        tvResultados = (TextView) rootView.findViewById(R.id.ddfrasd_tv_resultados);
+    }
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
@@ -651,7 +622,6 @@ public class ReporteAsistenciaDetalles extends Fragment {
 
     private void fechas(){
         // TODO: fecha
-        //<editor-fold desc="Fechas">
         Map<String, String> fechaActual = Config.fechas(1);
         final String smParam1 = fechaActual.get("fechaIni");
         final String smParam2 = fechaActual.get("fechaFin");
@@ -662,5 +632,12 @@ public class ReporteAsistenciaDetalles extends Fragment {
         }else{
             tvFecha.setText(smParam1);
         }
+
+        Map<String, Integer> fechaDatos = Config.dias();
+        mYear  = fechaDatos.get("anio");
+        mMonth = fechaDatos.get("mes");
+        mDay   = fechaDatos.get("dia");
+        rangoInicial();
+        rangoFinal();
     }
 }

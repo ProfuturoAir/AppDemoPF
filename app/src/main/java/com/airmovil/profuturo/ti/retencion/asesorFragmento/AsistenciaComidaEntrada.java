@@ -384,7 +384,7 @@ public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient
             ubicacion.put("latitud", z);
             ubicacion.put("longitud", w);
             rqt.put("ubicacion", ubicacion);
-            rqt.put("usuario", "3333");
+            rqt.put("usuario", Config.usuario(getContext()));
             json.put("rqt", rqt);
             Log.d("TAG", "REQUEST -->" + json);
         } catch (JSONException e){

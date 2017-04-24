@@ -146,13 +146,6 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
             mParam2 = getArguments().getString(ARG_PARAM2);
             idGerencia = getArguments().getInt(ARG_PARAM3);
 
-
-            Log.d("HOLA", "Todos  hola: " + mParam2 +" : "+idGerencia +" : "+ mParam2 );
-            /*if(!mParam1.isEmpty()){
-                tvRangoFecha1.setText(mParam1);
-                tvRangoFecha2.setText(mParam2);
-                tvFecha.setText(mParam1 + " - " + mParam2);
-            }*/
         }
     }
 
@@ -182,22 +175,13 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         rangoFinal();
         fechas();
 
-        // TODO: Spinner
-        //ArrayAdapter<String> adapterGerencias = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.GERENCIAS);
-        //adapterGerencias.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        //spinnerGerencias.setAdapter(adapterGerencias);
-
-
         primeraPeticion();
-        //<editor-fold desc="RecyclerView">
         getDato1 = new ArrayList<>();
         recyclerView = (RecyclerView) rootView.findViewById(R.id.dfrg_rv_gerencias);
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-        //</editor-fold>
 
-        //<editor-fold desc="Boton buscar contenido">
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -205,10 +189,8 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
                 if(connected.estaConectado(getContext())){
                     final String fechaIncial = tvRangoFecha1.getText().toString();
                     final String fechaFinal = tvRangoFecha2.getText().toString();
-                    //int idgerencia = spinnerGerencias.getSelectedItemPosition();
-                    Log.d("spinner", "selccion del spinner: " + idGerencia);
-                    if(fechaIncial.isEmpty() || fechaFinal.isEmpty() || idGerencia == 0){
-                        Config.dialogoDatosVacios(getContext());
+                    if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
+                        Config.dialogoFechasVacias(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         ReporteGerencias fragmento = ReporteGerencias.newInstance(fechaIncial,fechaFinal, idGerencia, rootView.getContext());
@@ -223,7 +205,6 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
                 }
             }
         });
-        //</editor-fold>
 
         //<editor-fold desc="TextView Resultados de filas">
         tvResultados.setOnClickListener(new View.OnClickListener() {

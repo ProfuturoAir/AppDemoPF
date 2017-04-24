@@ -119,19 +119,6 @@ public class DatosCliente extends Fragment {
         hora = getArguments().getString("hora");
 
         Log.d("NOMBRES CLI ", "1 " + nombre + " numero " + numeroDeCuenta);
-
-        /*
-
-        9883074665
-
-        if(getArguments() != null){
-            mParam1 = getArguments().getString(ARG_PARAM1).trim();
-            mParam2 = getArguments().getString(ARG_PARAM2).trim();
-            Log.d("Datostos", "paramentro 1" + mParam1 + " parametro 2" + mParam2);
-        }else{
-            Log.d("NADA", "nada");
-        }*/
-
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,8 +128,6 @@ public class DatosCliente extends Fragment {
                     //sendJson(true);
                     if(idTramite!=null){
                         Fragment fragmentoGenerico = new Encuesta1();
-                        /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
                         Asesor asesor = (Asesor) getContext();
                         asesor.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
                     }
@@ -154,11 +139,8 @@ public class DatosCliente extends Fragment {
                     dialogo.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            //sendJson(true);
                             if(idTramite!=null){
                                 Fragment fragmentoGenerico = new Encuesta1();
-                                        /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                                        fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
                                 Asesor asesor = (Asesor) getContext();
 
 
@@ -173,22 +155,7 @@ public class DatosCliente extends Fragment {
                         }
                     });
                     dialogo.show();
-
                 }
-
-                //if(conected.estaConectado(v.getContext())) {
-                    //
-                //}else{
-                //    Config.msj(v.getContext(),"Error en conexión", "Sin Conexion por el momento.Datos Cliente P-1.1.3.3");
-                //}
-
-                //if(idTramite!=null){
-                    //Fragment fragmentoGenerico = new Encuesta1();
-                    /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
-                    //Asesor asesor = (Asesor) getContext();
-                    //asesor.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
-                //}
             }
         });
 

@@ -390,7 +390,7 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
             ubicacion.put("latitud", z);
             ubicacion.put("longitud", w);
             rqt.put("ubicacion", ubicacion);
-            rqt.put("usuario", idUsuario);
+            rqt.put("usuario", Config.usuarioCusp(getContext()));
             json.put("rqt", rqt);
             Log.d("TAG", "REQUEST -->" + json);
         } catch (JSONException e){
