@@ -119,7 +119,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
     private int totalF;
     final Fragment borrar = this;
     private OnFragmentInteractionListener mListener;
-    int numeroEmpleado;
+    String numeroEmpleado;
     int idSucursal;
     int tipoBuscar;
     int numeroId ;
@@ -183,7 +183,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         sucursales = new ArrayList<String>();
         id_sucursales = new ArrayList<String>();
         idSucursal = 0;
-        numeroEmpleado = 0;
+        numeroEmpleado = "";
         variables();
         fechas();
         connected = new Connected();
@@ -191,6 +191,8 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
 
         if(getArguments() != null) {
+
+            Log.d("-->>>SI ENTRA", getArguments().toString());
 
             fechaInicio1 = getArguments().getString("fechaInicio");
             fechafin1 = getArguments().getString("fechaFin");
@@ -218,7 +220,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
 
             tvFecha.setText(fechaInicio1 + " - " + fechafin1);
 
-            if(tipoBuscar!=0){
+            if(selectID!=0){
                 Log.d("HOLA", "Todos : " + tipoBuscar);
                 spinnerId.setSelection(selectID);
                 spinId = tipoBuscar;
@@ -226,8 +228,11 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
 
             if(etIngresarAsesor!=null)
                 etIngresarAsesor.setText(idAsesor1);
-            if(etIngresarDato!=null)
-                etIngresarDato.setText(" 1" + idAsesor1);
+
+            Log.d("ENTRA datosnte---->", datosCliente1);
+            if(!datosCliente1.isEmpty()){
+                etIngresarDato.setText(datosCliente1);
+            }
 
         }
 
@@ -237,7 +242,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         spinnerId.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                etIngresarDato.setText("");
+                //etIngresarDato.setText("");
                 switch (position){
                     case 0:
                         etIngresarDato.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -293,6 +298,9 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Log.d("------>>>>>datos:", etIngresarDato.getText().toString());
+
                 if(connected.estaConectado(getContext())){
                     mParam1 = tvRangoFecha1.getText().toString();
                     mParam2 = tvRangoFecha2.getText().toString();
@@ -306,7 +314,6 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     if(mParam1.isEmpty() || mParam2.isEmpty()){
                         Config.dialogoFechasVacias(getContext());
                     }else{
-                        Toast.makeText(getContext(), " idSucursal: " + idSucursal, Toast.LENGTH_SHORT).show();
                         Log.d("idS","SS: "+idSucursal + " ___ " +mParam3);
                         if(mParam3.isEmpty()){
                             mParam3 = "";
@@ -403,23 +410,24 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                                     checa = false;
                                 }
                                 try {
+                                    Log.d("----->><<filtro c:", tipoBuscar +"");
                                     if(getArguments() != null){
-                                        boolean detalle = false;
+                                        boolean detalle = true;
                                         rqt.put("correo", email);
                                         rqt.put("detalle", detalle);
                                         rqt.put("filtro", filtro);
-                                            filtro.put("cita", mParam8);
+                                            filtro.put("cita", idCita1);
                                             filtro.put("filtroCliente", filtroCliente);
-                                            if(spinId == 1){
+                                            if(tipoBuscar == 1){
                                                 filtroCliente.put("curp", "");
                                                 filtroCliente.put("nss", "");
-                                                filtroCliente.put("numeroCuenta", numeroId);
-                                            } else if(spinId == 2){
+                                                filtroCliente.put("numeroCuenta", datosCliente1);
+                                            } else if(tipoBuscar == 2){
                                                 filtroCliente.put("curp", "");
-                                                filtroCliente.put("nss", numeroId);
+                                                filtroCliente.put("nss", datosCliente1);
                                                 filtroCliente.put("numeroCuenta", "");
-                                            }else if(spinId == 3){
-                                                filtroCliente.put("curp", numeroId);
+                                            }else if(tipoBuscar == 3){
+                                                filtroCliente.put("curp", datosCliente1);
                                                 filtroCliente.put("nss", "");
                                                 filtroCliente.put("numeroCuenta", "");
                                             } else{
@@ -429,10 +437,12 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                                             }
                                             filtro.put("filtroRetencion", retenido);
                                             filtro.put("idSucursal", idSucursal);
+                                        filtro.put("idGerencia", 0);
                                             filtro.put("numeroEmpleado", numeroEmpleado);
                                         periodo.put("fechaInicio", fechaIni);
                                         periodo.put("fechaFin", fechaFin);
                                         rqt.put("periodo", periodo);
+                                        rqt.put("numeroEmpleado", numeroEmpleado);
                                         obj.put("rqt", rqt);
                                     }else {
                                         Map<String, String> fechaActual = Config.fechas(1);
@@ -453,6 +463,8 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                                         periodo.put("fechaInicio", smParam1);
                                         periodo.put("fechaFin", smParam2);
                                         rqt.put("periodo", periodo);
+                                        filtro.put("idGerencia", 0);
+                                        rqt.put("numeroEmpleado", "");
                                         obj.put("rqt", rqt);
                                     }
                                     Log.d("sendJson", " REQUEST -->" + obj);
@@ -567,10 +579,8 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         etIngresarAsesor = (EditText) rootView.findViewById(R.id.gfrc_et_asesor);
         spinnerSucursales.setOnItemSelectedListener(this);
         spinnerSucursales.setSelection(idSucursal1);
+
         getData();
-
-
-
     }
 
 
@@ -640,10 +650,10 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         }
 
         int position=0;
-        if(idSucursal!=0){
+        if(idSucursal1!=0){
 
             for(int i=0; i < id_sucursales.size(); i++) {
-                if(Integer.valueOf(id_sucursales.get(i)) == idSucursal){
+                if(Integer.valueOf(id_sucursales.get(i)) == idSucursal1){
                     Log.d("SELE","SIZE ->: "+position);
                     position = i;
                     break;
@@ -684,15 +694,22 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         JSONObject periodo = new JSONObject();
         try{
             if(getArguments() != null){
+                Log.d("---->>>>SI ENTRA:" , getArguments().toString());
                 String fechaInicio1 = getArguments().getString("fechaInicio");
                 String fechafin1 = getArguments().getString("fechaFin");
+                this.fechaIni = fechaInicio1;
+                this.fechaFin = fechafin1;
                 String datosCliente1 = getArguments().getString("IngresarDatoCliente");
+                this.datosCliente1 = datosCliente1;
                 int idSucursal1 = getArguments().getInt("idSucursales");
                 String idAsesor1 = getArguments().getString("idAsesor");
                 int idRetenido1 = getArguments().getInt("idRetenido");
-                int idCita1 = getArguments().getInt("idCita");
+                idCita1 = getArguments().getInt("idCita");
                 int selectID = getArguments().getInt("selectCliente");
+                this.tipoBuscar = selectID;
                 rqt.put("cita", idCita1);
+                this.numeroEmpleado = idAsesor1;
+                this.retenido = idRetenido1;
                 if(selectID == 1){
                     filtroCliente.put("curp", "");
                     filtroCliente.put("nss", "");
@@ -710,6 +727,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     filtroCliente.put("nss", "");
                     filtroCliente.put("numeroCuenta", "");
                 }
+                rqt.put("numeroEmpleado", idAsesor1);
                 rqt.put("filtroCliente", filtroCliente);
                 rqt.put("idGerencia", 0);
                 rqt.put("idSucursal", idSucursal1);
@@ -732,6 +750,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                 rqt.put("idGerencia", 0);
                 rqt.put("idSucursal", 0);
                 rqt.put("pagina", pagina);
+                rqt.put("numeroEmpleado", "");
                 periodo.put("fechaFin", smParam2);
                 periodo.put("fechaInicio", smParam1);
                 rqt.put("periodo", periodo);
@@ -833,6 +852,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     getDatos2.setRetenido(json.getString("retenido"));
                     getDatos2.setIdSucursal(json.getInt("idSucursal"));
                     getDatos2.setHora(json.getString("horaAtencion"));
+                    //CESARgetDatos2.setTramite(json.getInt("idTramite"));
                     //getDatos2.setCurp(json.getString("curp"));
                     //getDatos2.setNss(json.getString("nss"));
                 }catch (JSONException e){
@@ -848,7 +868,6 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         String PtvFecha = tvFecha.getText().toString();
         String[] separated = PtvFecha.split(" - ");
-
 
         adapter = new GerenteReporteClientesAdapter(rootView.getContext(), getDatos1, recyclerView,separated[0].trim(),separated[1].trim());
         recyclerView.setItemAnimator(new DefaultItemAnimator());
