@@ -90,8 +90,8 @@ public class Encuesta2 extends Fragment {
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * Utilice este método de fábrica para crear una nueva instancia de
+     * Este fragmento utilizando los parámetros proporcionados.
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
@@ -185,7 +185,7 @@ public class Encuesta2 extends Fragment {
                             Config.teclado(getContext(), etTelefono);
                             Config.teclado(getContext(), etEmail);
                             sendJson(true, iParam1IdGerencia, iParam2IdMotivos, iParam3IdEstatus, iParam4IdTitulo, iParam5IdRegimentPensionario, iParam6IdDocumentacion, iParam7Telefono, iParam8Email);
-                            enviaPrevio.sendPrevios(idTramite,getContext());
+                            //enviaPrevio.sendPrevios(idTramite,getContext());
                             Fragment fragmentoGenerico = new Firma();
                             Asesor asesor = (Asesor) getContext();
                             asesor.switchFirma(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
@@ -215,21 +215,7 @@ public class Encuesta2 extends Fragment {
                                 }
                             });
                             dialogo.show();
-
-                            // *db.addObservaciones(idTramite,iParam1IdGerencia,iParam2IdMotivos,iParam3IdEstatus,iParam4IdTitulo,iParam5IdRegimentPensionario,iParam6IdDocumentacion,iParam7Telefono,iParam8Email,123);
-                            // *db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
-
-                            //Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
-                            // * Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
-                            //Fragment fragmentoGenerico = new Firma();
-                            //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                            //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                         }
-                        // * Fragment fragmentoGenerico = new Firma();
-                        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
-                        // * Asesor asesor = (Asesor) getContext();
-                        // * asesor.switchFirma(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
                     }else{
                         Config.msj(getContext(), getResources().getString(R.string.error_email_incorrecto), getResources().getString(R.string.msj_error_email));
                     }
@@ -384,7 +370,7 @@ public class Encuesta2 extends Fragment {
             rqt.put("idDocumentacion", idDocumentacion);
             rqt.put("telefono", telefono);
             rqt.put("email", email);
-            rqt.put("estatusTramite", 1133);
+            rqt.put("estatusTramite", 1135);
             rqt.put("idTramite", Integer.parseInt(idTramite));
             obj.put("rqt", rqt);
             Log.d(TAG, "REQUEST-->" + obj);

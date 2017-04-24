@@ -125,17 +125,16 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
             final String letra = Character.toString(dato);
 
             myViewHolder.letra.setText(letra);
-            myViewHolder.idGerencia.setText("Gerencia " + lista.getIdGerencia());
-            myViewHolder.conCita.setText(" " + lista.getConCita() + " ");
-            myViewHolder.sinCita.setText(" " + lista.getSinCita() + " ");
-            myViewHolder.retenido.setText(" " + lista.getEmitidas());
-            myViewHolder.noRetenido.setText(" " + lista.getNoEmitidas());
-            myViewHolder.saldoRetenido.setText(" " + lista.getdSaldoRetenido() + " ");
-            myViewHolder.saldoNoRetenido.setText(" " +lista.getdSaldoNoRetenido() + " ");
-            int x = Integer.parseInt(String.valueOf(lista.getConCita()));
-            int y = Integer.parseInt(String.valueOf(lista.getSinCita()));
-            Float num = (float) (100 / y * x);
-            myViewHolder.porcentaje.setText(" % " + num);
+            myViewHolder.idGerencia.setText("Gerencia:" + lista.getIdGerencia());
+            myViewHolder.conCita.setText("" + lista.getConCita() + "");
+            myViewHolder.sinCita.setText("" + lista.getSinCita() + "");
+            myViewHolder.retenido.setText("" + lista.getEmitidas());
+            myViewHolder.noRetenido.setText("" + lista.getNoEmitidas());
+            myViewHolder.saldoRetenido.setText("" + lista.getdSaldoRetenido() + "");
+            myViewHolder.saldoNoRetenido.setText("" +lista.getdSaldoNoRetenido() + "");
+            myViewHolder.porcentaje.setText(Config.df.format((float)(lista.getEmitidas()*100)/(lista.getEmitidas()+lista.getNoEmitidas())) +"% "
+                    + Config.df.format((float)(lista.getNoEmitidas()*100)/(lista.getEmitidas()+lista.getNoEmitidas()))+"%");
+
             myViewHolder.tvClick.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

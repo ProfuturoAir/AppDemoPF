@@ -35,14 +35,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link Inicio.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link Inicio#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class Inicio extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -81,12 +73,12 @@ public class Inicio extends Fragment {
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * Utilice este método de fábrica para crear una nueva instancia de
+     * Este fragmento utilizando los parámetros proporcionados.
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment Inicio.
+     * @return una nueva instancia del fragmento Inicio.
      */
     // TODO: Rename and change types and number of parameters
     public static Inicio newInstance(String param1, String param2, Context context) {
@@ -281,9 +273,6 @@ public class Inicio extends Fragment {
     }
 
     private void sendJson(final boolean primeraPeticion){
-        SessionManager sessionManager = new SessionManager(getContext());
-        HashMap<String, String> datosUsuario = sessionManager.getUserDetails();
-        String idEmpleado = datosUsuario.get(SessionManager.USER_ID);
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
         try{
@@ -294,7 +283,7 @@ public class Inicio extends Fragment {
                 rqt.put("periodo", periodo);
                 periodo.put("fechaInicio", mParam1);
                 periodo.put("fechaFin", mParam2);
-                rqt.put("usuario", idEmpleado);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
                 json.put("rqt", rqt);
             }else{
                 Map<String, String> fecha = Config.fechas(1);
@@ -304,7 +293,7 @@ public class Inicio extends Fragment {
                 rqt.put("periodo", periodo);
                 periodo.put("fechaInicio", param1);
                 periodo.put("fechaFin", param2);
-                rqt.put("usuario", idEmpleado);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
                 json.put("rqt", rqt);
             }
             Log.d(TAG, "REQUEST -->" + json);

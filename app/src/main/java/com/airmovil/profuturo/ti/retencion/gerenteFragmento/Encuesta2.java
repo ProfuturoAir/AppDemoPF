@@ -215,21 +215,7 @@ public class Encuesta2 extends Fragment {
                                 }
                             });
                             dialogo.show();
-
-                            // *db.addObservaciones(idTramite,iParam1IdGerencia,iParam2IdMotivos,iParam3IdEstatus,iParam4IdTitulo,iParam5IdRegimentPensionario,iParam6IdDocumentacion,iParam7Telefono,iParam8Email,123);
-                            // *db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
-
-                            //Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
-                            // * Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
-                            //Fragment fragmentoGenerico = new Firma();
-                            //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                            //fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
                         }
-                        // * Fragment fragmentoGenerico = new Firma();
-                        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        //fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).remove(borrar).commit();*/
-                        // * Gerente gerente = (Gerente) getContext();
-                        // * gerente.switchFirma(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
                     }else{
                         Config.msj(getContext(), getResources().getString(R.string.error_email_incorrecto), getResources().getString(R.string.msj_error_email));
                     }

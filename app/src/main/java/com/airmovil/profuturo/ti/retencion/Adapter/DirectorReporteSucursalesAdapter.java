@@ -114,6 +114,9 @@ public class DirectorReporteSucursalesAdapter extends RecyclerView.Adapter{
             myholder.campoNoEmitidas.setText( lista.getNoEmitido() + " ");
             myholder.campoSaldoEmitido.setText(" " + lista.getSaldoEmitido());
             myholder.campoSaldoNoEmitido.setText(" " + lista.getSaldoNoEmetido());
+            myholder.campoPorcentaje.setText(Config.df.format((float)(lista.getEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido())) +"% "
+                    + Config.df.format((float)(lista.getNoEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido()))+"%");
+
 
             int var = lista.getIdSucursal();
             String intToString = String.valueOf(var);
@@ -179,19 +182,11 @@ public class DirectorReporteSucursalesAdapter extends RecyclerView.Adapter{
                 case R.id.sub_menu_reporte_sucusal_nav_clientes:
                     ReporteClientes fragmentoClientes = new ReporteClientes();
                     Director director = (Director) mRecyclerView.getContext();
-                    director.switchClientesFS(fragmentoClientes, lista.getIdSucursal(),fechaIni,fechaFin);
-                    //AppCompatActivity a2 = (AppCompatActivity) mRecyclerView.getContext();
-                    //com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes f2 = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes();
-                    //a2.getSupportFragmentManager().beginTransaction().replace(R.id.content_gerente, f2).addToBackStack(null).commit();
-                    return true;
+                    director.switchClientesFS(fragmentoClientes, lista.getIdSucursal(),fechaIni,fechaFin);return true;
                 case R.id.sub_menu_reporte_sucusal_nav_asistencia:
                     ReporteAsistencia fragmentoAsistencia = new ReporteAsistencia();
                     Director dt = (Director) mRecyclerView.getContext();
-                    dt.switchAsistenciaFS(fragmentoAsistencia,0, lista.getIdSucursal(),"",fechaIni,fechaFin);
-                    //AppCompatActivity a3 = (AppCompatActivity) mRecyclerView.getContext();
-                    //com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia f3 = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia();
-                    //a3.getSupportFragmentManager().beginTransaction().replace(R.id.content_gerente, f3).addToBackStack(null).commit();
-                    return true;
+                    dt.switchAsistenciaFS(fragmentoAsistencia,0, lista.getIdSucursal(),"",fechaIni,fechaFin);return true;
                 case R.id.sub_menu_reporte_sucusal_email:
                     final Dialog dialog = new Dialog(mContext);
                     dialog.setContentView(R.layout.custom_layout);
@@ -297,7 +292,7 @@ public class DirectorReporteSucursalesAdapter extends RecyclerView.Adapter{
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        public TextView campoLetra, campoIdSucursal, campoConCita, campoSinCita, campoEmitidas, campoNoEmitidas, campoSaldoEmitido, campoSaldoNoEmitido;
+        public TextView campoLetra, campoIdSucursal, campoConCita, campoSinCita, campoEmitidas, campoNoEmitidas, campoSaldoEmitido, campoSaldoNoEmitido, campoPorcentaje;
         public TextView subMenu;
         public CardView cardView;
         public MyViewHolder(View view){
@@ -310,6 +305,7 @@ public class DirectorReporteSucursalesAdapter extends RecyclerView.Adapter{
             campoNoEmitidas = (TextView) view.findViewById(R.id.dfrsl_tv_no_emitidas);
             campoSaldoEmitido = (TextView) view.findViewById(R.id.dfrsl_tv_saldos_emitido);
             campoSaldoNoEmitido = (TextView) view.findViewById(R.id.dfrsl_tv_saldos_no_emitido);
+            campoPorcentaje = (TextView) view.findViewById(R.id.dfrsl_tv_procentaje);
             subMenu = (TextView) view.findViewById(R.id.dfrsl_tv_menu);
             cardView = (CardView) view.findViewById(R.id.dfrsl_cv);
         }

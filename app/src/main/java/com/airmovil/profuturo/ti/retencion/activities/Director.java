@@ -1,5 +1,6 @@
 package com.airmovil.profuturo.ti.retencion.activities;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -19,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.Inicio;
@@ -69,7 +71,18 @@ public class Director extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
+        final ProgressDialog progressDialog = new ProgressDialog(this, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_menu));
+        progressDialog.setTitle(getResources().getString(R.string.msj_titulo_menu));
+        progressDialog.setMessage(getResources().getString(R.string.msj_contenido_menu));
+        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog.dismiss();
+                    }
+                });
+        progressDialog.show();
         return;
     }
 
@@ -381,15 +394,15 @@ public class Director extends AppCompatActivity{
        ft.commit();
     }
 
-    public void switchClientesFCQ(Fragment frag,int idSucursal,int idGerencia, int numeroEmpleado,String fechaIni,String fechaFin,int tipoBuscar,int numeroId,int retenido,int estatus) {
+    public void switchClientesFCQ(Fragment frag, int idSucursal, int idGerencia, int numeroEmpleado, String fechaIni, String fechaFin, String tipoBuscar, String numeroId, int retenido, int estatus) {
         Bundle bundle=new Bundle();
         bundle.putInt("idSucursal",idSucursal);
         bundle.putInt("idGerencia",idGerencia);
         bundle.putInt("numeroEmpleado",numeroEmpleado);
         bundle.putString("fechaIni",fechaIni);
         bundle.putString("fechaFin",fechaFin);
-        bundle.putInt("tipoBuscar",tipoBuscar);
-        bundle.putInt("numeroId",numeroId);
+        bundle.putString("tipoBuscar",tipoBuscar);
+        bundle.putString("numeroId",numeroId);
         bundle.putInt("retenido",retenido);
         bundle.putInt("estatus",estatus);
         frag.setArguments(bundle);
@@ -442,6 +455,27 @@ public class Director extends AppCompatActivity{
         bundle.putInt("idAsesor",idAsesor);
         bundle.putString("fechaIni",fechaInicio);
         bundle.putString("fechaFin",fechaFin);
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_director, frag, frag.toString());
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
+    public void switchClientesFCQ1(Fragment frag, int idSucursal, String numeroEmpleado, String fechaIni, String fechaFin, int tipoBuscar, String numeroId, int retenido, int estatus) {
+        Bundle bundle=new Bundle();
+        bundle.putInt("idSucursal",idSucursal);
+        bundle.putString("numeroEmpleado",numeroEmpleado);
+        bundle.putString("fechaIni",fechaIni);
+        bundle.putString("fechaFin",fechaFin);
+        bundle.putInt("tipoBuscar",tipoBuscar);
+        bundle.putString("numeroId",numeroId);
+        bundle.putInt("retenido",retenido);
+        bundle.putInt("estatus",estatus);
+        //bundle.putString("hora",hora);
+
+        Log.d("GERENTE", "CLIENTES - #idSucursal " + numeroEmpleado + " FIN: " + fechaFin);
+
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_director, frag, frag.toString());

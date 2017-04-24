@@ -147,20 +147,34 @@ public class ReporteClientesDetalles extends Fragment {
         tv_fechas = (TextView) view.findViewById(R.id.ggfrasd_tv_fecha);
 
         //tv_nombre.setText("123123123");
-        tv_numero_empleado.setText("-------");
-        tv_nombre_asesor.setText(mParam10);
-        tv_fechas.setText(mParam5 + " - "+ mParam6);
+
+/*
+        bundle.putInt("idSucursal", idSucursal);
+        bundle.putInt("idTramite", idTramite);
+        bundle.putString("numeroCuenta", numeroCuenta);
+        bundle.putString("fechaInicio", fechaInicio);
+        bundle.putString("fechaFin", fechaFin);
+        bundle.putString("usuario", usuario);
+        bundle.putString("nombreCliente", nombreCliente);
+        bundle.putString("idAsesor", idAsesor);*/
+
+        String fechaInicio = getArguments().getString("fechaInicio");
+        String fechaFin = getArguments().getString("fechaFin");
+        String numeroCuenta = getArguments().getString("numeroCuenta");
+        String nombreCliente = getArguments().getString("nombreCliente");
+        tv_numero_empleado.setText(nombreCliente);
+        tv_nombre_asesor.setText(numeroCuenta);
+        tv_fechas.setText(fechaInicio + " - "+ fechaFin);
 
         sendJson(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // infla el layout para este fragmento
         return inflater.inflate(R.layout.gerente_fragmento_reporte_clientes_detalles, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -225,7 +239,7 @@ public class ReporteClientesDetalles extends Fragment {
             }
             Log.d("sendJson", " REQUEST -->" + obj);
         } catch (JSONException e){
-            Config.msj(getContext(),"Error","Existe un right_in al formar la peticion");
+            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
         }
 
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_CLIENTE_DETALLE, obj,
@@ -325,9 +339,7 @@ public class ReporteClientesDetalles extends Fragment {
         }catch (JSONException e){
             e.printStackTrace();
         }
-
         String retencion = "No Retenido";;
-
         if(retenido){
             retencion = "Retenido";
         }

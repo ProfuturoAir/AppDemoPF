@@ -94,6 +94,8 @@
     <string name="msj_titulo_seleccion_spinner">Sin selección de ID</string>
     <string name="msj_titulo_espera">Cargando datos...</string>
     <string name="msj_titulo_limpiar">Contenido limpio</string>
+    <string name="msj_titulo_menu">Uso de menu</string>
+    <string name="msj_contenido_menu">Por favor, utiliza el menú para poder cambiar de sección</string>
     <string name="msj_titulo_firma">Firma vacia</string>
     <string name="msj_titulo_sin_coordenadas">Error en coordenadas</string>
     <string name="msj_titulo_confirmacion">Confirmación</string>

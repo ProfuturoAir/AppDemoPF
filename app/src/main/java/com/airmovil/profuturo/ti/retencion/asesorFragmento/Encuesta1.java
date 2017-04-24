@@ -39,14 +39,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link Encuesta1.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link Encuesta1#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class Encuesta1 extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -79,14 +71,13 @@ public class Encuesta1 extends Fragment {
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * Utilice este método de fábrica para crear una nueva instancia de
+     * Este fragmento utilizando los parámetros proporcionados.
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment Encuesta1.
+     * @return un nuevo fragmento de Encuesta1.
      */
-    // TODO: Rename and change types and number of parameters
     public static Encuesta1 newInstance(String param1, String param2) {
         Encuesta1 fragment = new Encuesta1();
         Bundle args = new Bundle();
@@ -221,18 +212,7 @@ public class Encuesta1 extends Fragment {
                             }
                         });
                         dialogo.show();
-
-
-                        //Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
-                        //Fragment fragmentoGenerico = new Encuesta2();
-                        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                     }
-                    //Fragment fragmentoGenerico = new Encuesta2();
-                    //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();*/
-                    //Asesor asesor = (Asesor) getContext();
-                    //asesor.switchEncuesta2(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
 
                 }
             }
@@ -267,11 +247,10 @@ public class Encuesta1 extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // infla la vista del fragmento
         return inflater.inflate(R.layout.asesor_fragmento_encuesta1, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -330,17 +309,6 @@ public class Encuesta1 extends Fragment {
             }
         });
     }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

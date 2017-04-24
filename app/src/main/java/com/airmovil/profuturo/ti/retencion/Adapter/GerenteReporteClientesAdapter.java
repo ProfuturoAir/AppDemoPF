@@ -129,7 +129,7 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
             myholder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    fragmentJumpDatosUsuario("", v);
+                    fragmentJumpDatosUsuario(lista.getIdSucursal(), lista.getIdTramite(), lista.getNumeroCuenta(),  fechaInicio, fechaFin, Config.usuarioCusp(mContext),lista.getNombreCliente(), lista.getNombreAsesor(), v);
                 }
             });
         } else{
@@ -137,7 +137,7 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
         }
     }
 
-    public void fragmentJumpDatosUsuario(String idClienteCuenta, View view) {
+    public void fragmentJumpDatosUsuario(int idSucursal, int idTramite, String numeroCuenta, String fechaInicio,String fechaFin, String usuario,String nombreCliente, String nombreAsesor, View view) {
         Fragment fragmento = new ReporteClientesDetalles();
         if (view.getContext() == null)
             return;
@@ -150,7 +150,8 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
             }else{
                 Config.msj(view.getContext(),"Error conexión", "Sin Conexion por el momento.Cliente P-1.1.3");
             }
-            gerente.switchContent(fragmento, idClienteCuenta);
+            gerente.switchDetalleClientes(idSucursal, idTramite, numeroCuenta,  fechaInicio, fechaFin, usuario,  nombreCliente, nombreAsesor,  fragmento);
+
         }
     }
 
@@ -183,18 +184,6 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
     public void setOnLoadMoreListener(OnLoadMoreListener mOnLoadMoreListener) {
         this.mOnLoadMoreListener = mOnLoadMoreListener;
     }
-
-/*
-    public void fragmentoCambioClienteDetalles(int idSucursal, int idTramite, String numeroCuenta, String fechaInicio, String fechaFin, String usuario, View view) {
-        Log.d("fragmentoCambio", " --> " + idSucursal + " -> " + idTramite + " -> " + numeroCuenta + " -> " + fechaInicio + " -> " + fechaFin + " -> " + usuario);
-        Fragment fragmento = new ReporteClientesDetalles();
-        if (view.getContext() == null)
-            return;
-        if (view.getContext() instanceof Gerente) {
-            Gerente gerente = (Gerente) view.getContext();
-            gerente.switchDetalleClientes(idSucursal, idTramite, numeroCuenta, fechaInicio, fechaFin, usuario, fragmento);
-        }
-    }*/
 
     /**
      * Click listener for popup menu items

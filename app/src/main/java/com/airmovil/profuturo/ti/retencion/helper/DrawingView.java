@@ -18,40 +18,43 @@ import android.view.MotionEvent;
 import android.view.View;
 
 /**
- * Created by mHernandez on 31/01/17.
+ * Created by tecnicoairmovil on 13/03/17.
  */
 
 public class DrawingView extends View {
 
-    //drawing path
+    // drawing path
     private Path drawPath;
-    //drawing and canvas paint
+    // drawing and canvas paint
     private Paint drawPaint, canvasPaint;
-    //initial color
+    // inicializa color
     private int paintColor = 0xFFFFFFFF, paintAlpha = 255;
-    //canvas
+    // canvas
     private Canvas drawCanvas;
-    //canvas bitmap
+    // canvas bitmap
     private Bitmap canvasBitmap;
-    //brush sizes
+    // pincel tamaño
     private float brushSize, lastBrushSize;
-    //erase flag
+    // borrador de la bandera
     private boolean erase=false;
-
     private boolean started = false;
-
     public static boolean action = true;
 
+    /**
+     * Inicia el constructor de DrawingView
+     * @param context
+     * @param attrs
+     */
     public DrawingView(Context context, AttributeSet attrs){
         super(context, attrs);
         setupDrawing();
     }
 
-    //setup drawing
+    /**
+     * Prepararse para dibujar y configurar las propiedades de la pintura
+     */
     private void setupDrawing(){
-
-        //prepare for drawing and setup paint stroke properties
-        brushSize = 1; //getResources().getInteger(R.integer.medium_size);
+        brushSize = 1;
         lastBrushSize = brushSize;
         drawPath = new Path();
         drawPaint = new Paint();
@@ -64,7 +67,13 @@ public class DrawingView extends View {
         canvasPaint = new Paint(Paint.DITHER_FLAG);
     }
 
-    //size assigned to view
+    /**
+     * Tamaño asignado para ver el cambio de drawing
+     * @param w
+     * @param h
+     * @param oldw
+     * @param oldh
+     */
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -72,7 +81,10 @@ public class DrawingView extends View {
         drawCanvas = new Canvas(canvasBitmap);
     }
 
-    //draw the view - will be called after touch event
+    /**
+     * Dibujar la vista - se llamará después del evento táctil
+     * @param canvas
+     */
     @Override
     protected void onDraw(Canvas canvas) {
         action = true;
@@ -80,18 +92,24 @@ public class DrawingView extends View {
         canvas.drawPath(drawPath, drawPaint);
     }
 
+    /**
+     *
+     * @return activo si se ha llamado i detenido el drawingView
+     */
     public boolean isActive(){
         return started;
     }
 
-    //register user touches as drawing action
+    /**
+     *
+     * @param event
+     * @return Registrar toques de usuario como acción de dibujo
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
-        //Log.d("----", "event");
         float touchX = event.getX();
         float touchY = event.getY();
-        //respond to down, move and up events
+        // Responder a eventos hacia abajo, mover y subir
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 drawPath.moveTo(touchX, touchY);
@@ -113,43 +131,48 @@ public class DrawingView extends View {
             default:
                 return false;
         }
-        //redraw
         invalidate();
         return true;
 
     }
 
-    //update color
+    /**
+     * coloca el color a pintar sobre el marco
+     * @param newColor
+     */
     public void setColor(String newColor){
         invalidate();
-        //check whether color value or pattern name
+        // Comprobar si el valor del color o el nombre del patrón
         if(newColor.startsWith("#")){
             paintColor = Color.parseColor(newColor);
             drawPaint.setColor(paintColor);
             drawPaint.setShader(null);
         }
         else{
-            //pattern
             int patternID = getResources().getIdentifier(newColor, "drawable", "com.example.drawingfun");
-            //decode
+            // decodifica los colores
             Bitmap patternBMP = BitmapFactory.decodeResource(getResources(), patternID);
-            //create shader
             BitmapShader patternBMPshader = new BitmapShader(patternBMP,
                     Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
-            //color and shader
             drawPaint.setColor(0xFFFFFFFF);
             drawPaint.setShader(patternBMPshader);
         }
     }
 
-    //set brush size
+    /**
+     * establecer el tamaño del pincel
+     * @param newSize
+     */
     public void setBrushSize(float newSize){
         float pixelAmount = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, newSize, getResources().getDisplayMetrics());
         brushSize=pixelAmount;
         drawPaint.setStrokeWidth(brushSize);
     }
 
-    //get and set last brush size
+    /**
+     * Obtener y configurar el último tamaño del pincel
+     * @param lastSize
+     */
     public void setLastBrushSize(float lastSize){
         lastBrushSize=lastSize;
     }
@@ -157,29 +180,38 @@ public class DrawingView extends View {
         return lastBrushSize;
     }
 
-    //set erase true or false
+    /**
+     * Establecer borrar true o false
+     * @param isErase
+     */
     public void setErase(boolean isErase){
         erase=isErase;
         if(erase) drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         else drawPaint.setXfermode(null);
     }
 
-    //start new drawing
+    /**
+     * Empezar un nuevo dibujo
+     */
     public void startNew(){
-        //Log.d("++++","123");
         action = true;
-        //Log.d("Action", "" + action);
         started = false;
         drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
         invalidate();
     }
 
-    //return current alpha
+    /**
+     * Alfa corriente de retorno
+     * @return
+     */
     public int getPaintAlpha(){
         return Math.round((float)paintAlpha/255*100);
     }
 
-    //set alpha
+    /**
+     * Establecer alfa, para el color
+     * @param newAlpha
+     */
     public void setPaintAlpha(int newAlpha){
         paintAlpha=Math.round((float)newAlpha/100*255);
         drawPaint.setColor(paintColor);

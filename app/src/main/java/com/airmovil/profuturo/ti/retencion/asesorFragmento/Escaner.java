@@ -65,7 +65,8 @@ import java.util.TimeZone;
  * Use the {@link Escaner#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
+public class
+Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -258,7 +259,7 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
                                 //Config.msj(getContext(), "Mensaje ", "Se ha finalizado el proceso con exito");
                                 sendJson(true, base64);
                                 final EnviaJSON enviaPrevio = new EnviaJSON();
-                                enviaPrevio.sendPrevios(idTramite, getContext());
+                                //enviaPrevio.sendPrevios(idTramite, getContext());
                             }else {
                                 AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
                                 dialogo.setTitle(getResources().getString(R.string.error_conexion));

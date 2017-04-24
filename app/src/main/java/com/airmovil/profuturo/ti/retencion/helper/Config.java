@@ -35,11 +35,15 @@ import com.airmovil.profuturo.ti.retencion.directorFragmento.Inicio;
  */
 
 public class Config extends Activity {
-    // TODO: URL's
+    // TODO: URL direccion hacia la web de profuturo para consumir la calculadora de retencion
     public static final String URL_CALCULA_RETIRO_AFORE = "https://asesorprofuturo.mx/content/wps/portal/Calcula-tu-pension-de-retiro";
+    // TODO: URL general para el consumo de servicios IP
     public static final String URL_GENERAL = "http://52.38.211.22:90/";
+    // TODO: URL webservice para consumir el servio de autentificacion
     public static final String URL_AUTENTIFICACION = URL_GENERAL + "mb/cusp/rest/autenticacionUsuario";
+    // TODO: URL webservice para el consumo de informacion de usuario
     public static final String URL_CONSULTA_INFORMACION_USUARIO = URL_GENERAL + "mb/cusp/rest/consultaInformacionUsuario";
+    // TODO: URL webservice para el consumo de clientes con cita
     public static final String URL_CONSULTAR_RESUMEN_RETENCIONES = URL_GENERAL + "mb/premium/rest/consultarResumenRetenciones";
     public static final String URL_CONSULTAR_RESUMEN_CITAS = URL_GENERAL + "mb/premium/rest/consultarResumenCitas";
     public static final String URL_CONSULTAR_CLIENTE_SIN_CITA = URL_GENERAL + "mb/premium/rest/consultarClienteSinCita";
@@ -52,14 +56,6 @@ public class Config extends Activity {
     public static final String URL_ENVIAR_FIRMA = URL_GENERAL + "mb/premium/rest/guardarFirmaCliente";
     public static final String URL_ENVIAR_DOCUMENTO_IFE_INE = URL_GENERAL + "mb/premium/rest/guardarDocumentacionCliente";
     public static final String URL_REGISTRAR_ASISTENCIA = URL_GENERAL + "mb/premium/rest/registrarAsistencia";
-    // TODO: Enviar por email
-    public static final String URL_SEND_MAIL_REPORTE_GERENCIA = URL_GENERAL + "mb/premium/rest/enviarEmailReporteGerencia";
-    public static final String URL_SEND_MAIL_REPORTE_ASESOR = URL_GENERAL + "mb/premium/rest/enviarEmailReporteAsesor";
-    public static final String URL_SEND_MAIL_REPORTE_ASISTENCIA = URL_GENERAL + "mb/premium/rest/enviarEmailReporteAsistencia";
-    public static final String URL_SEND_MAIL_REPORTE_CLIENTE = URL_GENERAL + "mb/premium/rest/enviarEmailReporteCliente";
-    public static final String URL_SEND_MAIL_REPORTE_SUCURSAL = URL_GENERAL + "mb/premium/rest/enviarEmailReporteSucursal";
-    public static final String URL_SEND_MAIL_REPORTE_ASISTENCIA_DETALLE = URL_GENERAL + "mb/premium/rest/enviarEmailReporteAsistenciaDetalle";
-
     // TODO: LISTO DIRECTOR
     public static final String URL_CONSULTAR_REPORTE_RETENCION_GERENCIAS = URL_GENERAL + "mb/premium/rest/consultarReporteRetencionesGerencia";
     public static final String URL_CONSULTAR_REPORTE_RETENCION_SUCURSALES = URL_GENERAL + "mb/premium/rest/consultarReporteRetencionesSucursal";
@@ -68,10 +64,17 @@ public class Config extends Activity {
     public static final String URL_CONSULTAR_REPORTE_RETENCION_CLIENTE_DETALLE = URL_GENERAL + "mb/premium/rest/generarReporteCliente";
     public static final String URL_CONSULTAR_REPORTE_ASISTENCIA = URL_GENERAL + "mb/premium/rest/consultarReporteAsistencia";
     public static final String URL_CONSULTAR_REPORTE_ASISTENCIA_DETALLE = URL_GENERAL + "mb/premium/rest/consultarReporteProductividadAsistencia";
+    // TODO: Enviar por email
+    public static final String URL_SEND_MAIL_REPORTE_GERENCIA = URL_GENERAL + "mb/premium/rest/enviarEmailReporteGerencia";
+    public static final String URL_SEND_MAIL_REPORTE_ASESOR = URL_GENERAL + "mb/premium/rest/enviarEmailReporteAsesor";
+    public static final String URL_SEND_MAIL_REPORTE_ASISTENCIA = URL_GENERAL + "mb/premium/rest/enviarEmailReporteAsistencia";
+    public static final String URL_SEND_MAIL_REPORTE_CLIENTE = URL_GENERAL + "mb/premium/rest/enviarEmailReporteCliente";
+    public static final String URL_SEND_MAIL_REPORTE_SUCURSAL = URL_GENERAL + "mb/premium/rest/enviarEmailReporteSucursal";
+    public static final String URL_SEND_MAIL_REPORTE_ASISTENCIA_DETALLE = URL_GENERAL + "mb/premium/rest/enviarEmailReporteAsistenciaDetalle";
     // TODO: SUCURSALES LISTA
     public static final String URL_SUCURSALES = URL_GENERAL + "mb/premium/rest/seleccionSucursales";
     public static final String URL_GERENCIAS = URL_GENERAL + "mb/premium/rest/seleccionGerencias";
-    // TODO: String
+    // TODO: definicion de campos fijos para el envio de datos de encuestas
     public static final String[] MOTIVOS = new String[]{"Selecciona el motivo", "Por mal servicio","Por falta de seguimiento ventas", "Promesas incumplidas", "Rendimiento", "Llevarse sus cuentas a la misma institución", "no da explicación", "familiares o amigos en afore de la competencia"};
     public static final String[] AFORES = new String[]{"Selecciona una AFORE","Azteca", "Banamex", "Coppel", "Inbursa", "Invercap", "Metlife", "PensionISSSTE", "Principal", "Profuturo", "SURA", "XXI-Banorte"};
     public static final String[] ESTATUS = new String[]{"Selecciona un estatus", "Activo", "Inactivo"};
@@ -83,20 +86,21 @@ public class Config extends Activity {
     public static final String[] RETENIDO = new String[]{"Selecciona el tipo de estatus de retenidos ", "Retenido", "No Retenido"};
     public static final String[] CITAS = new String[]{"Seleciona el tipo de estatus de citas", "Con Cita", "Sin Cita"};
     public static final String[] EMAIL = new String[]{"Seleciona un email","profuturo.com.mx", "profuturo.com", "profuturo.mx"};
-
     // TODO: Variables
-    public static final String USERNAME = "profuturo";
-    public static final String PASSWORD = "123123";
+    public static final String USERNAME = "profuturo"; // USUARIO, para el acceso al basic authentication
+    public static final String PASSWORD = "123123"; // Contraseña, para el acceso al basic authentication
+    // TODO: Variables long fijas aplicadas en la actividad splash y el el handler de la primera peticion REST
     public static final long SPLASH_SCREEN_DELEY = 3500;
     public static final long TIME_HANDLER = 2000;
+    // TODO: Creacion de una nueva instancia a usar para el timer, aplicado en la actividad splash
     private static Timer mTimer = new Timer();
     private static ProgressDialog dialog;
     public static final int numVistaPagina = 10;
 
     // TODO: formato para convertir (int) a valor monetario
-    public static final NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.getDefault());
-    public static final DecimalFormat df = new DecimalFormat("0.00");
-    public static Context context;
+    public static final NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.getDefault()); // formato para convertir variables int a formato pesos
+    public static final DecimalFormat df = new DecimalFormat("0.00"); // formato para implimer solo dos decimales en variable double de mas de 3 decimales
+    public static Context context; // Context
 
 
     /**
@@ -119,27 +123,6 @@ public class Config extends Activity {
         dialog.create().show();
     }
 
-    public static final void msj1(Context ctx, String titulo, String msj){
-        AlertDialog.Builder dialog  = new AlertDialog.Builder(ctx);
-        dialog.setTitle(titulo);
-        dialog.setMessage(msj);
-        dialog.setCancelable(true);
-        dialog.create().show();
-    }
-
-    public static final void msjDatosVacios(Context ctx){
-        final ProgressDialog progressDialog = new ProgressDialog(ctx, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIndeterminateDrawable(ctx.getResources().getDrawable(R.drawable.icono_peligro));
-        progressDialog.setTitle(ctx.getResources().getString(R.string.error_datos_vacios));
-        progressDialog.setMessage(ctx.getResources().getString(R.string.msj_error_datos_vacios));
-        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Aceptar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        progressDialog.show();
-    }
 
     /**
      * Muestra mensaje de fechas vacias
@@ -161,7 +144,7 @@ public class Config extends Activity {
     }
 
     /**
-     * Muestra mensaje de fechas vacias
+     * Muestra mensaje de fechas datos vacios
      * @param context
      */
     public static final void dialogoDatosVacios(Context context){
@@ -180,7 +163,7 @@ public class Config extends Activity {
     }
 
     /**
-     * Muestra mensaje de error, en documento no existente (INE o IFE)
+     * Muestra mensaje de error, en el documento no existente (INE o IFE)
      * @param context
      */
     public static final void dialogoNoExisteUnDocumento(Context context){
@@ -218,14 +201,14 @@ public class Config extends Activity {
     }
 
     /**
-     * Muestra mensaje de error, se requiere una firma
+     * Muestra mensaje, muestra mensaje de uso de menu
      * @param context
      */
-    public static final void dialogoRequiereFirma(Context context){
+    public static final void dialogoMenu(Context context){
         final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_firma));
-        progressDialog.setTitle(context.getResources().getString(R.string.msj_titulo_firma));
-        progressDialog.setMessage(context.getResources().getString(R.string.msj_contenido_vacio_firma));
+        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_menu));
+        progressDialog.setTitle(context.getResources().getString(R.string.msj_titulo_menu));
+        progressDialog.setMessage(context.getResources().getString(R.string.msj_contenido_menu));
         progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -237,14 +220,14 @@ public class Config extends Activity {
     }
 
     /**
-     * Muestra mensaje de error, no existen coordenadas
+     * Muestra mensaje de error, se requiere una firma
      * @param context
      */
-    public static final void dialogoSinCoordenadas(Context context){
+    public static final void dialogoRequiereFirma(Context context){
         final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_coordenadas));
-        progressDialog.setTitle(context.getResources().getString(R.string.msj_titulo_sin_coordenadas));
-        progressDialog.setMessage(context.getResources().getString(R.string.msj_cotentido_sin_coordenadas));
+        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_firma));
+        progressDialog.setTitle(context.getResources().getString(R.string.msj_titulo_firma));
+        progressDialog.setMessage(context.getResources().getString(R.string.msj_contenido_vacio_firma));
         progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -275,35 +258,26 @@ public class Config extends Activity {
     }
 
     /**
-     * Muestra mensaje de error, seleccion de un apartado de spinner
      * @param context
+     * @param title
+     * @param message
+     * @param time
+     * @return el mensja e de dialogo
      */
-    public static final void dialogoSpinnerSinSeleccion(Context context){
-        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_lista));
-        progressDialog.setTitle(context.getResources().getString(R.string.msj_titulo_seleccion_spinner));
-        progressDialog.setMessage(context.getResources().getString(R.string.msj_contenido_sin_spinner));
-        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        progressDialog.dismiss();
-                    }
-                });
-        progressDialog.show();
-    }
-
     public static ProgressDialog msjTime(Context context, CharSequence title, CharSequence message, int time) {
         MyTask task = new MyTask();
-        // Run task after 10 seconds
+        // Inicia task despues de 10 segundos
         mTimer.schedule(task, 0, time);
         dialog = ProgressDialog.show(context, title, message);
         return dialog;
     }
 
+    /**
+     * Clase statica para extender el timerTask y usar lo despues del tiempo apliacado,
+     * se usa en la actividad splash
+     */
     static class MyTask extends TimerTask {
         public void run() {
-            // Do what you wish here with the dialog
             if (dialog != null) {
                 dialog.cancel();
             }
@@ -311,17 +285,15 @@ public class Config extends Activity {
     }
 
     /**
-     *
+     * se crea un Map de fechas: fecha inicial y fecha final
      * @param diasAdicionales
      * @return Map
      */
     public static final Map<String, String> fechas(int diasAdicionales){
-
         Map<String, Integer> datos = Config.dias();
         int mDay = datos.get("dia");
         int mMonth = datos.get("mes");
         int mYear = datos.get("anio");
-
         String fechaFin = mDay + "-" + (mMonth + 1) + "-" + mYear;
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         Calendar c = Calendar.getInstance();
@@ -353,6 +325,10 @@ public class Config extends Activity {
         return datos;
     }
 
+    /**
+     * @param context
+     * @return map retorna las variables del usuairo logeado
+     */
     public static final Map<String, String> usuario(Context context){
         SessionManager sessionManager = new SessionManager(context.getApplicationContext());
         HashMap<String, String> datos = sessionManager.getUserDetails();
@@ -366,7 +342,6 @@ public class Config extends Activity {
      * @param context
      * @return datos del usuario a iniciar sesion
      */
-
     public static final Map<String, String> datosUsuario(Context context){
         SessionManager sessionManager = new SessionManager(context.getApplicationContext());
         HashMap<String, String> informacion = sessionManager.getUserDetails();
@@ -383,6 +358,10 @@ public class Config extends Activity {
         return informacion;
     }
 
+    /**
+     * @param context
+     * @return regresa un Map para usuarlo en el metodo de peticion requerido, REST de JsonObjectRequest
+     */
     public static final Map<String, String> credenciales(Context context){
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json; charset=utf-8");
@@ -402,17 +381,26 @@ public class Config extends Activity {
 
     /**
      * @param list
-     * @return
+     * @return numero de lista de la vita del listado
      */
     public static final int pidePagina(List list){
         return (int) Math.ceil((list.size() / Config.numVistaPagina) + 1);
     }
 
+    /**
+     * Estable la minimizacion de teclado, dependiendo del elemento editText a disminuir
+     * @param context
+     * @param editText
+     */
     public static final void teclado(Context context, EditText editText){
         InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
     }
 
+    /**
+     * @param context
+     * @return el usuario de inicio de sesion, ya que se hace uso de este usuario en distintas peticiones
+     */
     public static final String usuarioCusp(Context context){
         SessionManager sessionManager = new SessionManager(context);
         HashMap<String, String> usuario = sessionManager.getUserDetails();

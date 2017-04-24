@@ -186,14 +186,14 @@ public class ReporteAsesores extends Fragment {
                     final String idAsesor = etAsesor.getText().toString();
 
                     if(fechaIncial.isEmpty() || fechaFinal.isEmpty() || idAsesor.isEmpty()){
-                        Config.dialogoDatosVacios(getContext());
+                        Config.dialogoFechasVacias(getContext());
                     }else{
                         ReporteAsesores fragmentoAsesores = new ReporteAsesores();
                         Director director = (Director) getContext();
                         director.switchAsesoresFA(fragmentoAsesores, Integer.valueOf(idAsesor),fechaIncial,fechaFinal);
                     }
                     // TODO: ocultar teclado
-                    imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+                    Config.teclado(getContext(), etAsesor);
                 }else{
                     Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                 }

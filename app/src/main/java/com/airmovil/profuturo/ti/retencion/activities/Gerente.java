@@ -1,5 +1,6 @@
 package com.airmovil.profuturo.ti.retencion.activities;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -75,7 +76,18 @@ public class Gerente extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
+        final ProgressDialog progressDialog = new ProgressDialog(this, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_menu));
+        progressDialog.setTitle(getResources().getString(R.string.msj_titulo_menu));
+        progressDialog.setMessage(getResources().getString(R.string.msj_contenido_menu));
+        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog.dismiss();
+                    }
+                });
+        progressDialog.show();
         return;
     }
 
