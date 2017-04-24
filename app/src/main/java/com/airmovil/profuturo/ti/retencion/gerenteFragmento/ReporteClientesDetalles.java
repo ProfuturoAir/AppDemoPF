@@ -156,15 +156,23 @@ public class ReporteClientesDetalles extends Fragment {
         tv_inicial = (TextView) view.findViewById(R.id.ggfrasd_tv_letra);
         tv_fechas = (TextView) view.findViewById(R.id.ggfrasd_tv_fecha);
         tvEmail = (TextView) view.findViewById(R.id.gfrcd_tv_registros);
+
         numeroCuenta =  getArguments().getString("numeroCuenta");
         String fechaInicio = getArguments().getString("fechaInicio");
         String fechaFin = getArguments().getString("fechaFin");
         String numeroCuenta = getArguments().getString("numeroCuenta");
         String nombreCliente = getArguments().getString("nombreCliente");
-        tv_numero_empleado.setText(nombreCliente);
-        tv_nombre_asesor.setText(numeroCuenta);
+        String idAsesor =  getArguments().getString("idAsesor");
+        String nombreC =  getArguments().getString("nombreCliente1");
+
+        char letra = nombreC.charAt(0);
+        String inicial = Character.toString(letra);
+
+        tv_numero_empleado.setText(nombreC);
+        tv_nombre_asesor.setText(idAsesor);
         tv_fechas.setText(fechaInicio + " - "+ fechaFin);
         sendJson(true);
+        tv_inicial.setText(inicial);
 
         tvEmail.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:background="@android:color/white"
     android:orientation="vertical">
-    <TextView style="@style/tituloProceso" android:text="Asistencia test " />
+    <TextView style="@style/tituloProceso" android:text="Asistencia" />
     <TextView android:id="@+id/ggfras_tv_fecha" style="@style/fecha"/>
 
     <LinearLayout
@@ -47,13 +47,6 @@
     <LinearLayout style="@style/contenedorFiltros2">
 
         <LinearLayout style="@style/linearLayoutHorizontal">
-            <!--<LinearLayout style="@style/contenedorSpinner">
-                <Spinner android:id="@+id/ggfras_spinner_gerencia"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:backgroundTint="@color/colorWhite"/>
-                <TextView style="@style/linea"/>
-            </LinearLayout>-->
             <LinearLayout style="@style/contenedorSpinner">
                 <Spinner android:id="@+id/ggfras_spinner_sucursal"
                     android:layout_width="match_parent"

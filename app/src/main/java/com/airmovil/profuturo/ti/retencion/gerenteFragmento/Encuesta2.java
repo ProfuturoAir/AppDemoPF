@@ -185,7 +185,7 @@ public class Encuesta2 extends Fragment {
                             Config.teclado(getContext(), etTelefono);
                             Config.teclado(getContext(), etEmail);
                             sendJson(true, iParam1IdGerencia, iParam2IdMotivos, iParam3IdEstatus, iParam4IdTitulo, iParam5IdRegimentPensionario, iParam6IdDocumentacion, iParam7Telefono, iParam8Email);
-                            enviaPrevio.sendPrevios(idTramite,getContext());
+                            //enviaPrevio.sendPrevios(idTramite,getContext());
                             Fragment fragmentoGenerico = new Firma();
                             Gerente gerente = (Gerente) getContext();
                             gerente.switchFirma(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);

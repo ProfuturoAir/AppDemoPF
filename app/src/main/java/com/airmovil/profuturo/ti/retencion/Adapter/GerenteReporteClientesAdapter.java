@@ -130,8 +130,8 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
                 @Override
                 public void onClick(View v) {
 
-                    Toast.makeText(mContext, "idAsesor:: " , Toast.LENGTH_SHORT).show();
-                    //fragmentJumpDatosUsuario(lista.getIdSucursal(), lista.getTramite(), lista.getNumeroCuenta(),  fechaInicio, fechaFin, Config.usuarioCusp(mContext),lista.getNombreCliente(), lista.getNombreAsesor(), v);
+
+                    fragmentJumpDatosUsuario(lista.getIdSucursal(), lista.getTramite(), lista.getNumeroCuenta(),  fechaInicio, fechaFin, Config.usuarioCusp(mContext),lista.getNombreCliente(), lista.getNombreAsesor(), v);
                 }
             });
         } else{
@@ -205,7 +205,7 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
                     Fragment fragmento = new ReporteClientesDetalles();
                     if (view.getContext() instanceof Gerente) {
                         Gerente gerente = (Gerente) view.getContext();
-                        Log.d("onMenuItemClick", list.getIdSucursal() + " -> " + list.getIdTramite() +  " -> " + list.getNumeroCuenta() + " -> " +  fechaInicio + " -> " + fechaFin + " -> " + Config.usuarioCusp(mContext) + " -> " + view);
+                        //Log.d("onMenuItemClick", list.getIdSucursal() + " -> " + list.getIdTramite() +  " -> " + list.getNumeroCuenta() + " -> " +  fechaInicio + " -> " + fechaFin + " -> " + Config.usuarioCusp(mContext) + " -> " + view);
                         gerente.switchDetalleClientes(list.getIdSucursal(), list.getTramite(), list.getNumeroCuenta(),  fechaInicio, fechaFin, Config.usuarioCusp(mContext),list.getNombreCliente(), list.getNombreAsesor(), fragmento);
                     }
                     return true;

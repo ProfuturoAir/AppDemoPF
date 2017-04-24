@@ -258,7 +258,7 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
                                 //Config.msj(getContext(), "Mensaje ", "Se ha finalizado el proceso con exito");
                                 sendJson(true, base64);
                                 final EnviaJSON enviaPrevio = new EnviaJSON();
-                                enviaPrevio.sendPrevios(idTramite, getContext());
+                                //enviaPrevio.sendPrevios(idTramite, getContext());
                             }else {
                                 AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
                                 dialogo.setTitle(getResources().getString(R.string.error_conexion));

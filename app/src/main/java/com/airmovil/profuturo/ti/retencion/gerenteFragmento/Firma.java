@@ -198,38 +198,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                 if(!dvFirma.isActive()) {
                     Config.msj(v.getContext(),"Error", "Se requiere una firma");
                 }else if(latitud.equals("(desconocida)")||longitud.equals("(desconocida)")){
-
-                    /*
-                    final Connected conected = new Connected();
-                    if(conected.estaConectado(v.getContext())) {
-                    }else{
-                        Config.mensajeError(v.getContext(), "Sin Conexion por el momento.Firma P-1.1.3.7");
-                    }
-                    AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
-                    dialogo1.setTitle("Importante");
-                    dialogo1.setMessage("¿Guardar esta firma?");
-                    dialogo1.setCancelable(false);
-                    dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dvFirma.setDrawingCacheEnabled(true);
-                            String base64 = encodeTobase64(dvFirma.getDrawingCache());
-                            Log.d("BASE64-->", base64);
-                            dvFirma.setDrawingCacheEnabled(false);
-                            Fragment fragmentoGenerico = new Documento();
-                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                            if (fragmentoGenerico != null) {
-                                fragmentManager.beginTransaction().replace(R.id.a_content, fragmentoGenerico).commit();
-                            }
-                        }
-                    });
-                    dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    });
-                    dialogo1.show();
-                    */
+                    Log.d("Coordenadas", "nulas");
                 }else{
                     if(dvFirma.isActive()){
                         AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
@@ -239,7 +208,6 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                         dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
                                 dvFirma.setDrawingCacheEnabled(true);
                                 final String base64 = encodeTobase64(dvFirma.getDrawingCache());
                                 Bitmap emBit = Bitmap.createBitmap(dvFirma.getWidth(), dvFirma.getHeight(), Bitmap.Config.ARGB_8888);
@@ -248,10 +216,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                                 if(connected.estaConectado(getContext())) {
                                     sendJson(true, base64);
                                     final EnviaJSON enviaPrevio = new EnviaJSON();
-                                    enviaPrevio.sendPrevios(idTramite, getContext());
-                                    // * Fragment fragmentoGenerico = new Escaner();
-                                    // *FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                                    // *fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
+                                    //enviaPrevio.sendPrevios(idTramite, getContext());
                                     Fragment fragmentoGenerico = new Escaner();
                                     Gerente gerente = (Gerente) getContext();
                                     gerente.switchDocumento(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta);
@@ -288,24 +253,6 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                                     });
                                     dialogo.show();
 
-                                    /*
-                                    rqt.put("estatusTramite", 123);
-                                    rqt.put("firmaCliente", "CADENABASE64");
-                                    rqt.put("idTramite", 1);
-                                    JSONObject ubicacion = new JSONObject();
-                                    ubicacion.put("latitud", "90.2349");
-                                    ubicacion.put("longitud", "-23.9897");*/
-                                    // * db.addFirma(idTramite,123,base64,90.2349,-23.9897);
-                                    // * db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
-                                    //db.addIDTramite(idTramite);
-                                    //Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
-                                    // * Config.msj(getContext(), "Error", "Error en conexión a internet, se enviaran los datos cuando existan conexión");
-                                    /*Fragment fragmentoGenerico = new Escaner();
-                                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                                    if (fragmentoGenerico != null) {
-                                        fragmentManager
-                                                .beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
-                                    }*/
                                 }
 
                             }

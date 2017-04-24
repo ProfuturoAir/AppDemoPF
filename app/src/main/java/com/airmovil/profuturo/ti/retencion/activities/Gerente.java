@@ -40,6 +40,7 @@ import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsesores;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteSucursales;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.ServicioJSON;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
@@ -72,6 +73,12 @@ public class Gerente extends AppCompatActivity{
         sessionManager = new SessionManager(getApplicationContext());
         // TODO: Validacion de la sesion del usuario
         validateSession();
+
+        try {
+            startService(new Intent(this, ServicioJSON.class));
+        }catch (Exception e){
+            Log.d("-->Error en servicio:", e.toString());
+        }
     }
 
     @Override
@@ -805,6 +812,7 @@ public class Gerente extends AppCompatActivity{
         bundle.putInt("idSucursales", idSucursal);
         bundle.putInt("idTramite", idTramite);
         bundle.putString("idAsesor", idAsesor);
+        bundle.putString("nombreCliente1", nombreCliente);
         bundle.putInt("idRetenido", 0);
         bundle.putInt("idCita", 0);
         bundle.putInt("selectCliente", 0);

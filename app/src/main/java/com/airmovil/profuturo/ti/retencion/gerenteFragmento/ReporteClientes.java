@@ -852,7 +852,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     getDatos2.setRetenido(json.getString("retenido"));
                     getDatos2.setIdSucursal(json.getInt("idSucursal"));
                     getDatos2.setHora(json.getString("horaAtencion"));
-                    //CESARgetDatos2.setTramite(json.getInt("idTramite"));
+                    getDatos2.setTramite(json.getInt("idTramite"));
                     //getDatos2.setCurp(json.getString("curp"));
                     //getDatos2.setNss(json.getString("nss"));
                 }catch (JSONException e){
@@ -921,6 +921,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     getDatos2.setRetenido(json.getString("retenido"));
                     getDatos2.setIdSucursal(json.getInt("idSucursal"));
                     getDatos2.setHora(json.getString("horaAtencion"));
+                    getDatos2.setTramite(json.getInt("idTramite"));
                     //getDatos2.setCurp(json.getString("curp"));
                     //getDatos2.setNss(json.getString("nss"));
                 }catch (JSONException e){
