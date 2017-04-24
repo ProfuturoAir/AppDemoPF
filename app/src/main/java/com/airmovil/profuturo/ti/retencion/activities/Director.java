@@ -30,6 +30,7 @@ import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteGerencias;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteSucursales;
 import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
 import com.airmovil.profuturo.ti.retencion.fragmento.Calculadora;
+import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
@@ -84,7 +85,6 @@ public class Director extends AppCompatActivity{
             startActivity(new Intent(Director.this, Login.class));
             finish();
         }else{
-            Log.d(TAG, "Sesion: true");
             setToolbar();
             setDrawerLayout();
             setToggle();
@@ -163,7 +163,7 @@ public class Director extends AppCompatActivity{
         String primeraLetra = Character.toString(letra);
         navPrimeraLetra.setText(primeraLetra);
 
-        navDatosGerente.setText("Nombre: " + sNombreEmpleado + "\nNumero Empleado: " + sNumeroEmpleado);
+        navDatosGerente.setText("Nombre: " + sNombreEmpleado + "\nNumero Empleado: " + Config.usuarioCusp(getApplicationContext()));
     }
 
     /**
@@ -226,7 +226,7 @@ public class Director extends AppCompatActivity{
         }
         if (fragmentoGenerico != null){
             fragmentManager
-                    .beginTransaction()//.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                    .beginTransaction()
                     .replace(R.id.content_director, fragmentoGenerico)
                     .addToBackStack("F_MAIN")
                     .commit();
@@ -286,23 +286,18 @@ public class Director extends AppCompatActivity{
         ft.commit();
     }
 
-    //director.switchClientes(fragmentoClientes, lista.getNumeroEmpleado(),fechaIni,fechaFin);
     public void switchClientes(Fragment frag, int numeroEmpleado,String fechaIni,String fechaFin) {
         Bundle bundle=new Bundle();
         bundle.putInt("numeroEmpleado",numeroEmpleado);
         bundle.putString("fechaIni",fechaIni);
         bundle.putString("fechaFin",fechaFin);
-        //bundle.putString("hora",hora);
-
         Log.d("DIRECTOR", "CLIENTES - #Empleado " + numeroEmpleado + " FIN: " + fechaFin);
-
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_director, frag, frag.toString());
         ft.addToBackStack(null);
         ft.commit();
     }
-
 
     public void switchAsistencia(Fragment frag,int idGerencia, int idSucursal,String numeroEmpleado,String fechaIni,String fechaFin) {
         Bundle bundle=new Bundle();
@@ -311,9 +306,6 @@ public class Director extends AppCompatActivity{
         bundle.putString("idAsesor",numeroEmpleado);
         bundle.putString("fechaInicio",fechaIni);
         bundle.putString("fechaFin",fechaFin);
-
-        Log.d("DIRECTOR", "ASITENCIA - #Empleado " + numeroEmpleado + " FIN: " + fechaFin + " ");
-
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_director, frag, frag.toString());
@@ -327,12 +319,6 @@ public class Director extends AppCompatActivity{
         bundle.putString("nombreEmpleado", nombreEmpleado);
         bundle.putString("fechaIni",fechaIni);
         bundle.putString("fechaFin",fechaFin);
-        //bundle.putString("idGerencia",idGerencia);
-        //bundle.putString("idSucursal",idSucursal);
-        //bundle.putString("hora",hora);
-
-        Log.d("DIRECTOR", "ASITENCIA - #Empleado " + numeroEmpleado + " FIN: " + fechaFin + " ");
-
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_director, frag, frag.toString());
@@ -388,7 +374,6 @@ public class Director extends AppCompatActivity{
        bundle.putString("usuario", usuario);
        bundle.putString("nombreAsesor",nombreAsesor);
        frag.setArguments(bundle);
-
        frag.setArguments(bundle);
        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
        ft.replace(R.id.content_director, frag, frag.toString());
@@ -407,10 +392,6 @@ public class Director extends AppCompatActivity{
         bundle.putInt("numeroId",numeroId);
         bundle.putInt("retenido",retenido);
         bundle.putInt("estatus",estatus);
-        //bundle.putString("hora",hora);
-
-        Log.d("GERENTE", "CLIENTES - #idSucursal " + numeroEmpleado + " FIN: " + fechaFin);
-
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_director, frag, frag.toString());
@@ -437,10 +418,6 @@ public class Director extends AppCompatActivity{
         bundle.putString("idAsesor",numeroEmpleado);
         bundle.putString("fechaInicio",fechaIni);
         bundle.putString("fechaFin",fechaFin);
-        //bundle.putString("hora",hora);
-
-        Log.d("DIRECTOR", "CLIENTES - #idSucursal " + idSucursal + " FIN: " + fechaFin);
-
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_director, frag, frag.toString());
@@ -453,10 +430,6 @@ public class Director extends AppCompatActivity{
         bundle.putInt("idSucursal",idSucursal);
         bundle.putString("fechaIni",fechaIni);
         bundle.putString("fechaFin",fechaFin);
-        //bundle.putString("hora",hora);
-
-        Log.d("DIRECTOR", "CLIENTES - #Empleado " + idSucursal + " FIN: " + fechaFin);
-
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_director, frag, frag.toString());

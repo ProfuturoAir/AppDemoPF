@@ -287,19 +287,6 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
             }
         }
 
-        /*if(fechaIni!=null){
-            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-            ReporteClientes procesoDatosFiltroInicio = ReporteClientes.newInstance(
-                    fechaIni, fechaFin, String.valueOf(numeroEmpleado), mParam4, mParam5, mParam6, mParam7, mParam8, mParam9,
-                    rootView.getContext()
-            );
-            borrar.onDestroy();
-            ft.remove(borrar);
-            ft.replace(R.id.content_director, procesoDatosFiltroInicio);
-            ft.addToBackStack(null);
-            ft.commit();
-        }*/
-
         // TODO: Spinner
         final ArrayAdapter<String> adapterId = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.IDS);
         adapterId.setDropDownViewResource(R.layout.spinner_dropdown_item);
@@ -351,14 +338,6 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         spinnerId.setAdapter(adapterId);
         spinnerId.setSelection(spinId);
         // TODO: Spinner
-        /*ArrayAdapter<String> adapterGerencias = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.GERENCIAS);
-        adapterGerencias.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerGerencias.setAdapter(adapterGerencias);
-        // TODO: Spinner
-        ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.SUCURSALES);
-        adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerSucursal.setAdapter(adapterSucursal);*/
-        // TODO: Spinner
         ArrayAdapter<String> adapterRetenido = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.RETENIDO);
         adapterRetenido.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinnerRetenido.setAdapter(adapterRetenido);
@@ -400,26 +379,12 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     mParam9 = spinnerCita.getSelectedItemPosition(); // estatusCita -> int
 
 
-                    if(mParam1 == 0 || mParam2.isEmpty() || mParam3 == 0 || mParam4 == 0 ||
-                            mParam5.isEmpty() || mParam6.isEmpty() || mParam7.isEmpty() || mParam8 == 0 || mParam9 == 0){
-                        Config.dialogoDatosVacios(getContext());
+                    if(mParam6.isEmpty() || mParam7.isEmpty()){
+                        Config.dialogoFechasVacias(getContext());
                     }else{
-                        Log.d("idS","SS: "+idSucursal + " ___ " +mParam3);
-
-
-                        Log.d("HOLA", "Todos : " + mParam6);
-                        Log.d("HOLA", "Todos : " + mParam3);
                         ReporteClientes fragmentoClientes = new ReporteClientes();
                         Director director = (Director) getContext();
                         director.switchClientesFCQ(fragmentoClientes,idSucursal,idGerencia,Integer.valueOf(mParam5),fechaIni,fechaFin,mParam1,Integer.valueOf(mParam2),mParam8,mParam9);
-                        /*ReporteClientes fragmento = ReporteClientes.newInstance(mParam1, mParam2, mParam3, mParam4, mParam5, mParam6, mParam7, mParam8, mParam9, rootView.getContext());
-                        Config.teclado(getContext(), etIngresarAsesor);
-                        Config.teclado(getContext(), etIngresarDato);
-                        borrar.onDestroy();
-                        ft.remove(borrar);
-                        ft.replace(R.id.content_director, fragmento);
-                        ft.addToBackStack(null);
-                        ft.commit();*/
                     }
                 }else{
                     Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));

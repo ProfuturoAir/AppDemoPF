@@ -15,7 +15,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -29,21 +28,15 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.airmovil.profuturo.ti.retencion.Adapter.CitasClientesAdapter;
-import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteAsistenciaAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteAsistenciaAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.directorFragmento.*;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.EnviaMail;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
-import com.airmovil.profuturo.ti.retencion.model.CitasClientesModel;
-import com.airmovil.profuturo.ti.retencion.model.DirectorReporteAsistenciaModel;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteAsistenciaModel;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -60,14 +53,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ReporteAsistencia.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ReporteAsistencia#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelectedListener{
     // TODO: Rename parameter arguments, choose names that match
     private static final String ARG_PARAM1 = "idGerencia";
@@ -80,7 +65,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
     private String mParam3; //idAsesor
     private String mParam4; //fechaInicio
     private String mParam5; //fechaFin
-    // TODO: LIST
     private List<DirectorReporteAsistenciaModel> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
@@ -89,12 +73,14 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
     private DirectorReporteAsistenciaAdapter adapter;
     private int pagina = 1;
     private int numeroMaximoPaginas = 0;
+    private int numeroEmpleado;
+    private int idSucursal = 0;
+    private int idGerencia = 0;
     private int totalF;
-    // TODO: View, sessionManager, datePickerDialog
     private View rootView;
     private SessionManager sessionManager;
     private DatePickerDialog datePickerDialog;
-    // TODO: Elements XML
+    private OnFragmentInteractionListener mListener;
     private TextView tvFecha;
     private TextView tvATiempo, tvRetardados, tvSinAsistencia;
     private Spinner spinnerSucursal;
@@ -111,10 +97,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
     private String fechaFin = "";
     private String fechaMostrar = "";
     private Connected connected;
-    private OnFragmentInteractionListener mListener;
-    private int numeroEmpleado;
-    private int idSucursal = 0;
-    private int idGerencia = 0;
     private ArrayList<String> sucursales;
     private ArrayList<String> id_sucursales;
     private ArrayList<String> gerencia;
@@ -122,12 +104,12 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
 
     int idSucursal123 = 0;
     public ReporteAsistencia() {
-        // Required empty public constructor
+        // Constructor público vacío obligatorio
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * Utilice este método de fábrica para crear una nueva instancia de
+     * Este fragmento utilizando los parámetros proporcionados.
      *
      * @param param1 parametro 1 id gerencia.
      * @param param2 parametro 2 id sucursal.
@@ -150,7 +132,10 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
     }
 
 
-
+    /**
+     * El sistema lo llama cuando crea el fragmento
+     * @param savedInstanceState, llama las variables en el bundle
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -163,15 +148,16 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         }
     }
 
+    /**
+     * @param view regresa la vista
+     * @param savedInstanceState parametros a enviar para conservar en el bundle
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
-
         primeraPeticion();
         variables();
         fechas();
-
-
         connected = new Connected();
         sucursales = new ArrayList<String>();
         id_sucursales = new ArrayList<String>();
@@ -340,19 +326,31 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         });
 
     }
+
+    /**
+     * Se lo llama para crear la jerarquía de vistas asociada con el fragmento.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.director_fragmento_reporte_asistencia, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
+    // TODO: Renombrar método, actualizar argumento y método de gancho en evento de IU
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
 
+    /**
+     * Reciba una llamada cuando se asocia el fragmento con la actividad
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -398,6 +396,9 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                 }, Config.TIME_HANDLER);
     }
 
+    /**
+     * Setear las variables de xml
+     */
     private void variables(){
         tvFecha = (TextView) rootView.findViewById(R.id.ddfras_tv_fecha);
         tvATiempo = (TextView) rootView.findViewById(R.id.ddfras_tv_a_tiempo);
@@ -410,7 +411,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         tvRangoFecha2 = (TextView) rootView.findViewById(R.id.ddfras_tv_fecha_rango2);
         btnFiltro = (Button) rootView.findViewById(R.id.ddfras_btn_filtro);
         tvResultados = (TextView) rootView.findViewById(R.id.ddfras_tv_registros);
-
         spinnerSucursal.setOnItemSelectedListener(this);
         spinnerGerencia.setOnItemSelectedListener(this);
         getData1();
@@ -418,6 +418,13 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
     }
 
 
+    /**
+     * Spinner para selccion de elemetos de geretnecias o sucursales
+     * @param parent
+     * @param view
+     * @param position
+     * @param id
+     */
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         Log.d("-->posicion:", ""+ position);
@@ -443,6 +450,9 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
 
     }
 
+    /**
+     * Inicia la peticion para el consumo del spinner
+     */
     private void getData1(){
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_SUCURSALES,
                 new Response.Listener<JSONObject>() {
@@ -502,7 +512,10 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         MySingleton.getInstance(getContext()).addToRequestQueue(jsonArrayRequest);
     }
 
-    //obtener sucursales
+    /**
+     * Inicia la peticion para el consumo de sucursales
+     * @param j
+     */
     private void getSucursales(JSONArray j){
         sucursales.add("Selecciona una sucursal");
         id_sucursales.add("0");
@@ -566,6 +579,9 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         spinnerGerencia.setSelection(position);
     }
 
+    /**
+     * Inicia las fechas dependientos si tiene datos procesados
+     */
     private void fechas(){
         rangoInicial();
         rangoFinal();
@@ -592,7 +608,10 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         }
     }
 
-    // TODO: REST
+    /**
+     * Primeta peticion para usar REST
+     * @param primerPeticion
+     */
     private void sendJson(final boolean primerPeticion) {
         JSONObject obj = new JSONObject();
         JSONObject rqt = new JSONObject();
@@ -710,6 +729,10 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
     }
 
+    /**
+     * Inicia la lista solo con 10 elementos
+     * @param obj
+     */
     private void primerPaso(JSONObject obj) {
         Log.d("RESPONSE", " primerPaso -->" + obj.toString());
         int onTime = 0;
@@ -788,6 +811,10 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         });
     }
 
+    /**
+     * consume la lista cada 10 elemtos con su scrollView
+     * @param obj
+     */
     private void segundoPaso(JSONObject obj) {
         try{
             JSONObject asistencia = obj.getJSONObject("asistencia");
@@ -814,6 +841,9 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         adapter.setLoaded();
     }
 
+    /**
+     * Rango inicial de fechas
+     */
     private void rangoInicial(){
         tvRangoFecha1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -831,6 +861,9 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         });
     }
 
+    /**
+     * Rango de fecha final
+     */
     private void rangoFinal(){
         tvRangoFecha2.setOnClickListener(new View.OnClickListener() {
             @Override
