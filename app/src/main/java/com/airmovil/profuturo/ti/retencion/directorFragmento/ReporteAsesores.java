@@ -572,7 +572,16 @@ public class ReporteAsesores extends Fragment {
                 }
                 Log.e("haint", "Load More");
                 getDatos1.add(null);
-                adapter.notifyItemInserted(getDatos1.size() - 1);
+                Handler handler = new Handler();
+
+                final Runnable r = new Runnable() {
+                    public void run() {
+                        adapter.notifyItemInserted(getDatos1.size() - 1);
+                    }
+                };
+
+                handler.post(r);
+
 
                 //Load more data for reyclerview
                 new Handler().postDelayed(new Runnable() {
@@ -599,7 +608,7 @@ public class ReporteAsesores extends Fragment {
     private void segundoPaso(JSONObject obj) {
         Log.d("ReporteAsesor", "rqt ->" + obj);
         try{
-            JSONArray array = obj.getJSONArray("Sucursal");
+            JSONArray array = obj.getJSONArray("Asesor");
             for(int i = 0; i < array.length(); i++){
                 GerenteReporteAsesoresModel getDatos2 = new GerenteReporteAsesoresModel();
                 JSONObject json = null;

@@ -772,7 +772,16 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                 }
                 Log.e("haint", "Load More");
                 getDatos1.add(null);
-                adapter.notifyItemInserted(getDatos1.size() - 1);
+                Handler handler = new Handler();
+
+                final Runnable r = new Runnable() {
+                    public void run() {
+                        adapter.notifyItemInserted(getDatos1.size() - 1);
+                    }
+                };
+
+                handler.post(r);
+
 
                 //Load more data for reyclerview
                 new Handler().postDelayed(new Runnable() {

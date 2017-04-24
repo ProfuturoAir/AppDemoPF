@@ -674,7 +674,15 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
                 }
                 Log.e("haint", "Load More");
                 getDato1.add(null);
-                adapter.notifyItemInserted(getDato1.size() - 1);
+                Handler handler = new Handler();
+
+                final Runnable r = new Runnable() {
+                    public void run() {
+                    adapter.notifyItemInserted(getDato1.size() - 1);
+                   }
+                };
+
+                handler.post(r);
 
                 //Load more data for reyclerview
                 new Handler().postDelayed(new Runnable() {

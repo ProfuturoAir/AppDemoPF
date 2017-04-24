@@ -463,9 +463,10 @@ public class Director extends AppCompatActivity{
         ft.commit();
     }
 
-    public void switchClientesFCQ1(Fragment frag, int idSucursal, String numeroEmpleado, String fechaIni, String fechaFin, int tipoBuscar, String numeroId, int retenido, int estatus) {
+    public void switchClientesFCQ1(Fragment frag, int idSucursal,int idGerencia, String numeroEmpleado, String fechaIni, String fechaFin, int tipoBuscar, String numeroId, int retenido, int estatus) {
         Bundle bundle=new Bundle();
         bundle.putInt("idSucursal",idSucursal);
+        bundle.putInt("idGerencia",idGerencia);
         bundle.putString("numeroEmpleado",numeroEmpleado);
         bundle.putString("fechaIni",fechaIni);
         bundle.putString("fechaFin",fechaFin);

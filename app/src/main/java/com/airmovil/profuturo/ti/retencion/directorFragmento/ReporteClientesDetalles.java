@@ -230,12 +230,12 @@ public class ReporteClientesDetalles extends Fragment {
                 filtro.put("nss", mParam2);
                 filtro.put("numeroCuenta", mParam3);
                 rqt.put("idTramite", mParam4);
-                rqt.put("idSucursal", 0);
-                rqt.put("pagina", pagina);
+                //rqt.put("idSucursal", 0);
+                //rqt.put("pagina", pagina);
                 rqt.put("periodo", periodo);
                 periodo.put("fechaInicio", mParam5);
                 periodo.put("fechaFin", mParam6);
-                rqt.put("retenido", "retenido");
+                //rqt.put("retenido", "retenido");
                 rqt.put("usuario", Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }
