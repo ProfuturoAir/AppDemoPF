@@ -103,7 +103,6 @@ public class GerenteReporteSucursalesAdapter extends RecyclerView.Adapter{
         if(holder instanceof MyViewHolder){
             final GerenteReporteSucursalesModel lista = list.get(position);
             final MyViewHolder myholder = (MyViewHolder) holder;
-
             myholder.campoIdSucursal.setText("Sucursal: " + lista.getIdSucursal());
             myholder.campoConCita.setText(" " + lista.getConCita());
             myholder.campoSinCita.setText(" " + lista.getSinCita());
@@ -112,14 +111,11 @@ public class GerenteReporteSucursalesAdapter extends RecyclerView.Adapter{
             myholder.campoSaldoEmitido.setText(" " + lista.getSaldoEmitido());
             myholder.campoPorcentaje.setText(Config.df.format((float)(lista.getEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido())) +"% "
                     + Config.df.format((float)(lista.getNoEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido()))+"%");
-
             int var = lista.getIdSucursal();
             String intToString = String.valueOf(var);
             char dato = intToString.charAt(0);
             final String inicial = Character.toString(dato);
-
             myholder.campoLetra.setText(inicial);
-
             myholder.btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -179,10 +175,7 @@ public class GerenteReporteSucursalesAdapter extends RecyclerView.Adapter{
                     ReporteClientes fragmentoClientes = new ReporteClientes();
                     Gerente gerente = (Gerente) mRecyclerView.getContext();
                     gerente.switchClientesFS(fragmentoClientes, lista.getIdSucursal(),fechaIni,fechaFin);
-                    //AppCompatActivity a2 = (AppCompatActivity) mRecyclerView.getContext();
-                    //com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes f2 = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes();
-                    //a2.getSupportFragmentManager().beginTransaction().replace(R.id.content_gerente, f2).addToBackStack(null).commit();
-                    return true;
+                   return true;
                 case R.id.sub_menu_reporte_sucusal_nav_asistencia:
                     ReporteAsistencia fragmentoAsistencia = new ReporteAsistencia();
                     Gerente dt = (Gerente) mRecyclerView.getContext();
