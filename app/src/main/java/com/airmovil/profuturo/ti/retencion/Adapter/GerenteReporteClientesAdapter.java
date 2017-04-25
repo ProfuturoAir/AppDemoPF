@@ -249,7 +249,14 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
                                         rqt.put("detalle", detalle);
                                         rqt.put("filtro", filtro);
                                         filtro.put("cita", list.getCita());
-                                        filtro.put("filtroRetenicion", list.getRetenido());
+                                        int idCita;
+                                        String cita = list.getCita();
+                                        if(cita == "true"){
+                                            idCita = 1;
+                                        }else{
+                                            idCita = 2;
+                                        }
+                                        filtro.put("filtroRetenicion", idCita);
                                         filtroCliente.put("curp", "");
                                         filtroCliente.put("nss", "");
                                         filtroCliente.put("numeroCuenta", "");

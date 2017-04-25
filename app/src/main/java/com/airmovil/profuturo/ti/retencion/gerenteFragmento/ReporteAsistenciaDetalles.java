@@ -258,7 +258,6 @@ public class ReporteAsistenciaDetalles extends Fragment {
                                 try {
                                     JSONObject rqt = new JSONObject();
                                     rqt.put("correo", email);
-                                    rqt.put("detalle", true);
                                     rqt.put("numeroEmpleado", mParam1);
                                     JSONObject periodo = new JSONObject();
                                     periodo.put("fechaFin", mParam3);

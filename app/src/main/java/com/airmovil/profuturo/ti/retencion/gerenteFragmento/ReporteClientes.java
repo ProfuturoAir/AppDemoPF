@@ -286,7 +286,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         ArrayAdapter<String> adapterCita = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.CITAS);
         adapterCita.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinnerCita.setAdapter(adapterCita);
-        spinnerCita.setSelection(idRetenido1);
+        spinnerCita.setSelection(idCita1);
 
         // TODO: Recycler
         getDatos1 = new ArrayList<>();
@@ -416,7 +416,15 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                                         rqt.put("correo", email);
                                         rqt.put("detalle", detalle);
                                         rqt.put("filtro", filtro);
-                                            filtro.put("cita", idCita1);
+                                        int citas = getArguments().getInt("idCita");
+                                        boolean cita = true;
+                                        int idCita;
+                                        if(cita == true){
+                                            idCita = 1;
+                                        }else{
+                                            idCita = 2;
+                                        }
+                                            filtro.put("cita", citas);
                                             filtro.put("filtroCliente", filtroCliente);
                                             if(tipoBuscar == 1){
                                                 filtroCliente.put("curp", "");

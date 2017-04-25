@@ -587,7 +587,7 @@ public class Gerente extends AppCompatActivity{
 
     public void switchClientesFS(Fragment frag, int idSucursal,String fechaIni,String fechaFin) {
         Bundle bundle=new Bundle();
-        bundle.putInt("idSucursal",idSucursal);
+        bundle.putInt("idSucursales",idSucursal);
         bundle.putString("fechaInicio",fechaIni);
         bundle.putString("fechaFin",fechaFin);
         bundle.putString("IngresarDatoCliente", "");
@@ -806,6 +806,7 @@ public class Gerente extends AppCompatActivity{
     public void switchDetalleClientes(int idSucursal, int idTramite, String numeroCuenta, String fechaInicio, String fechaFin, String usuario, String nombreCliente, String idAsesor, Fragment frag){
         Log.d("switchDetallesClie", " --> " + " --> " + idSucursal + " --> " + idTramite + " --> " + numeroCuenta + " --> " + fechaInicio + " --> " + fechaFin + " --> " + usuario);
         Bundle bundle=new Bundle();
+        bundle.putString("numeroCuenta", numeroCuenta);
         bundle.putString("fechaInicio", fechaInicio);
         bundle.putString("fechaFin", fechaFin);
         bundle.putString("IngresarDatoCliente", "");
