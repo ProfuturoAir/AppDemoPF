@@ -134,7 +134,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
     private ArrayList<String> id_gerencias;
     private String fechaInicio1;
     private String fechafin1;
-    private String datosCliente1;
+    private String datosCliente1 = "";
     private int idSucursal1;
     private int idGerencia1;
     private String idAsesor1;
@@ -196,9 +196,11 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         // TODO: ocultar teclado
         imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
 
+        datosCliente1 = "";
         if(getArguments() != null) {
             Log.d("-->>>SI ENTRA", getArguments().toString());
             fechaInicio1 = getArguments().getString("fechaInicio");
+            fechaIni = fechaInicio1;
             fechafin1 = getArguments().getString("fechaFin");
             datosCliente1 = getArguments().getString("ingresarDatoCliente");
             idSucursal1 = getArguments().getInt("idSucursal");
@@ -234,8 +236,10 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                 etIngresarAsesor.setText(idAsesor1);
 
             //Log.d("ENTRA datosnte---->", datosCliente1);
-            if(!datosCliente1.isEmpty()){
-                etIngresarDato.setText(datosCliente1);
+            if(datosCliente1 != null) {
+                if (!datosCliente1.isEmpty()) {
+                    etIngresarDato.setText(datosCliente1);
+                }
             }
 
         }
@@ -440,7 +444,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                                         }
                                         filtro.put("filtroRetencion", retenido);
                                         filtro.put("idSucursal", idSucursal);
-                                        filtro.put("idGerencia", 0);
+                                        filtro.put("idGerencia", idGerencia);
                                         filtro.put("numeroEmpleado", numeroEmpleado);
                                         periodo.put("fechaInicio", fechaIni);
                                         periodo.put("fechaFin", fechaFin);

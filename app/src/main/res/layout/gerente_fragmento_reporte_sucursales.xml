@@ -152,7 +152,7 @@
 
     <LinearLayout style="@style/cabeceraLista">
 
-        <TextView style="@style/campoCliente" />
+        <TextView style="@style/campoCliente" android:text="Sucursales"/>
 
         <TextView
             android:id="@+id/gfrs_tv_registros"

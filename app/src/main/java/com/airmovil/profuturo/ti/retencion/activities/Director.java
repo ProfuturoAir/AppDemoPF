@@ -302,7 +302,9 @@ public class Director extends AppCompatActivity{
     public void switchClientes(Fragment frag, int numeroEmpleado,String fechaIni,String fechaFin) {
         Bundle bundle=new Bundle();
         bundle.putInt("numeroEmpleado",numeroEmpleado);
+        bundle.putString("idAsesor", ""+numeroEmpleado);
         bundle.putString("fechaIni",fechaIni);
+        bundle.putString("fechaInicio",fechaIni);
         bundle.putString("fechaFin",fechaFin);
         Log.d("DIRECTOR", "CLIENTES - #Empleado " + numeroEmpleado + " FIN: " + fechaFin);
         frag.setArguments(bundle);
@@ -343,7 +345,9 @@ public class Director extends AppCompatActivity{
         Bundle bundle=new Bundle();
         bundle.putInt("idGerencia",idGerencia);
         bundle.putString("fechaIni",fechaInicio);
+        bundle.putString("fechaInicio",fechaInicio);
         bundle.putString("fechaFin",fechaFin);
+        bundle.putString("ingresarDatoCliente","");
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_director, frag, frag.toString());
@@ -367,6 +371,7 @@ public class Director extends AppCompatActivity{
         Bundle bundle=new Bundle();
         bundle.putInt("idGerencia",idGerencia);
         bundle.putString("fechaIni",fechaInicio);
+        bundle.putString("fechaInicio",fechaInicio);
         bundle.putString("fechaFin",fechaFin);
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -443,6 +448,7 @@ public class Director extends AppCompatActivity{
         Bundle bundle=new Bundle();
         bundle.putInt("idSucursal",idSucursal);
         bundle.putString("fechaIni",fechaIni);
+        bundle.putString("fechaInicio",fechaIni);
         bundle.putString("fechaFin",fechaFin);
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
