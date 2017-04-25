@@ -67,7 +67,7 @@
     </LinearLayout>
 
     <LinearLayout style="@style/cabeceraLista">
-        <TextView style="@style/tituloLista" android:text="@string/texto_asesores"/>
+        <TextView style="@style/tituloLista" android:text="@string/texto_asistencia"/>
         <TextView android:id="@+id/ggfras_tv_registros" style="@style/campoCantidadesMail"/>
     </LinearLayout>
 
