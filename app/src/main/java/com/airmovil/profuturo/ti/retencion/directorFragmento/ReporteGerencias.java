@@ -496,7 +496,7 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
                 mParam2 = getArguments().getString(ARG_PARAM2);
                 mParam3 = getArguments().getInt(ARG_PARAM3);
                 rqt.put("idGerencia", mParam3);
-                rqt.put("idSucursal", "");
+                rqt.put("idSucursal", 0);
                 rqt.put("pagina", pagina);
                 periodo.put("fechaFin", mParam1);
                 periodo.put("fechaInicio", mParam2);

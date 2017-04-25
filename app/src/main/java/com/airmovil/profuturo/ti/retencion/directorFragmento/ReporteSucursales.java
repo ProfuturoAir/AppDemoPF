@@ -121,7 +121,7 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
     private OnFragmentInteractionListener mListener;
     private Connected connected;
 
-    int idSucursal,idGerencia;
+    int idSucursal = 0,idGerencia = 0;
     int numeroEmpleado;
 
     public ReporteSucursales() {
@@ -151,6 +151,8 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
+        variables();
+        fechas();
         primeraPeticion();
 
         sucursales = new ArrayList<String>();
@@ -159,8 +161,6 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         idSucursal = 0;
         numeroEmpleado = 0;
 
-        variables();
-        fechas();
         // TODO: Spinner
 
         sessionManager = new SessionManager(getContext());
@@ -490,29 +490,36 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         if(getArguments() != null){
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+            fechaIni = mParam1;
+            fechaFin = mParam2;
             tvFecha.setText(mParam1 + " - " + mParam2);
+            Log.d("fecha INI IF: " , mParam1 + ", " + mParam2);
         }else{
+            fechaIni = smParam1;
+            fechaFin = smParam2;
             tvFecha.setText(smParam1 + " - " + smParam2);
+            Log.d("fecha INI ELSE: " , smParam1 + ", " + smParam2);
         }
     }
 
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
+        Log.d("------>fechas:", fechaIni + ", " + fechaFin);
         JSONObject obj = new JSONObject();
         try {
             // TODO: Formacion del JSON request
             JSONObject rqt = new JSONObject();
-            rqt.put("idGerencia", 0);
+            rqt.put("idGerencia", idGerencia);
             rqt.put("idSucursal", idSucursal);
             rqt.put("pagina", pagina);
             rqt.put("usuario", numeroEmpleado);
             JSONObject periodo = new JSONObject();
             rqt.put("periodo", periodo);
-            periodo.put("fechaInicio", "");
-            periodo.put("fechaFin", "");
+            periodo.put("fechaInicio", fechaIni);
+            periodo.put("fechaFin", fechaFin);
             rqt.put("usuario", Config.usuarioCusp(getContext()));
             obj.put("rqt", rqt);
-            Log.d("ReporteSucursales ", "RQT --> " + obj);
+            Log.d("ReporteSucursales ", "RQT <--> " + obj);
 
             /*
             checar argumentos

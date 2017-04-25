@@ -229,7 +229,7 @@ public class DirectorReporteAsesoresAdapter extends RecyclerView.Adapter{
                                         JSONObject rqt = new JSONObject();
                                         rqt.put("correo", email);
                                         rqt.put("detalle", true);
-                                        rqt.put("idAsesor", lista.getNumeroEmpleado());
+                                        rqt.put("numeroEmpleado", lista.getNumeroEmpleado() + "");
                                         JSONObject periodo = new JSONObject();
                                         periodo.put("fechaFin", fechaFin);
                                         periodo.put("fechaInicio", fechaIni);

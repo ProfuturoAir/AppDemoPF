@@ -70,7 +70,7 @@ public class ReporteAsesores extends Fragment {
     private int posicion;
     private int pagina = 1;
     private int numeroMaximoPaginas = 0;
-    private int numeroEmpleado,idAsesor;
+    private int numeroEmpleado;
     private DirectorReporteAsesoresAdapter adapter;
     private List<GerenteReporteAsesoresModel> getDatos1;
     private RecyclerView recyclerView;
@@ -90,6 +90,8 @@ public class ReporteAsesores extends Fragment {
     private int filas;
     private final Fragment borrar = this;
     private OnFragmentInteractionListener mListener;
+    private String idAsesor = "";
+
 
     public ReporteAsesores() {
         // Constructor público vacío obligatorio
@@ -152,7 +154,7 @@ public class ReporteAsesores extends Fragment {
         if(getArguments() != null) {
             Log.d("HOLA", "Todos : " + getArguments().toString());
             numeroEmpleado = getArguments().getInt("numeroEmpleado");
-            idAsesor = getArguments().getInt("idAsesor");
+            idAsesor = getArguments().getString("idAsesor");
             String idAsesor = getArguments().getString("idAsesor");
             fechaIni = getArguments().getString("fechaIni");
             fechaFin = getArguments().getString("fechaFin");
@@ -259,7 +261,7 @@ public class ReporteAsesores extends Fragment {
                                     JSONObject rqt = new JSONObject();
                                     rqt.put("correo", email);
                                     rqt.put("detalle", checa);
-                                    rqt.put("idEmpleado", mParam3);
+                                    rqt.put("numeroEmpleado", (idAsesor.isEmpty()) ? "" : idAsesor);
                                     JSONObject periodo = new JSONObject();
                                     periodo.put("fechaFin", fechaFin);
                                     periodo.put("fechaInicio", fechaIni);
@@ -399,7 +401,7 @@ public class ReporteAsesores extends Fragment {
                 mParam5 = getArguments().getInt(ARG_PARAM5); // id sucursal
                 rqt.put("idGerencia", mParam4);
                 rqt.put("idSucursal", mParam5);
-                rqt.put("numeroEmpleadoAsesor", mParam3);
+                rqt.put("numeroEmpleadoAsesor", idAsesor);
                 rqt.put("pagina", pagina);
                 periodo.put("fechaFin", fechaFin);
                 periodo.put("fechaInicio", fechaIni);
@@ -699,6 +701,8 @@ public class ReporteAsesores extends Fragment {
             mParam3 = getArguments().getString(ARG_PARAM3);
             tvFecha.setText(mParam1 + " - " + mParam2);
         }else{
+            fechaIni = smParam1;
+            fechaFin = smParam2;
             tvFecha.setText(smParam1 + " - " + smParam2);
         }
     }

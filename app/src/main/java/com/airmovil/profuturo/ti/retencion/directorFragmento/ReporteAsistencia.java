@@ -608,14 +608,14 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                 mParam3 = getArguments().getString(ARG_PARAM3);
                 mParam4 = getArguments().getString(ARG_PARAM4);
                 mParam5 = getArguments().getString(ARG_PARAM5);
-                rqt.put("idSucursal", mParam1);
-                rqt.put("idGerencia", mParam2);
+                rqt.put("idSucursal", mParam2);
+                rqt.put("idGerencia", mParam1);
                 rqt.put("numeroEmpleado", mParam3);
                 rqt.put("pagina", pagina);
-                periodo.put("fechaIni", mParam4);
+                periodo.put("fechaInicio", mParam4);
                 periodo.put("fechaFin", mParam5);
-                rqt.put("perido", periodo);
-                rqt.put("asesor",Config.usuarioCusp(getContext()));
+                rqt.put("periodo", periodo);
+                rqt.put("usuario",Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }else{
                 Map<String, String> fecha = Config.fechas(1);
@@ -631,10 +631,10 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                 rqt.put("idGerencia", 0);
                 rqt.put("numeroEmpleado","");
                 rqt.put("pagina", pagina);
-                periodo.put("fechaIni", param1);
+                periodo.put("fechaInicio", param1);
                 periodo.put("fechaFin", param2);
-                rqt.put("perido", periodo);
-                rqt.put("asesor",Config.usuarioCusp(getContext()));
+                rqt.put("periodo", periodo);
+                rqt.put("usuario",Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }
             Log.d("Rqt", "" + obj);
