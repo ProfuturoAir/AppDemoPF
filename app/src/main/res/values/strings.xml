@@ -116,4 +116,9 @@
     <string name="titulo_espera">Espere un momento</string>
     <string name="texto_pendientes">Pendientes</string>
     <string name="texto">tex</string>
+    <!-- TODO: nuevas cadenas en dialogos -->
+    <string name="msj_error_datos_servicio">Se ha encontrado un problema, con los datos a procesar</string>
+    <string name="msj_error_conexion_internet">Se ha encontrado un problema, debes revisar tu conexion a internet</string>
+
+    <string name="titulo_error">Error</string>
 </resources>

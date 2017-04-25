@@ -2,15 +2,12 @@ package com.airmovil.profuturo.ti.retencion.helper;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Base64;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-
-import java.net.ConnectException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -23,12 +20,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.directorFragmento.Inicio;
 
 /**
  * Created by tecnicoairmovil on 13/03/17.
@@ -91,7 +83,7 @@ public class Config extends Activity {
     public static final String PASSWORD = "123123"; // Contraseña, para el acceso al basic authentication
     // TODO: Variables long fijas aplicadas en la actividad splash y el el handler de la primera peticion REST
     public static final long SPLASH_SCREEN_DELEY = 3500;
-    public static final long TIME_HANDLER = 2000;
+    public static final long TIME_HANDLER = 1000;
     // TODO: Creacion de una nueva instancia a usar para el timer, aplicado en la actividad splash
     private static Timer mTimer = new Timer();
     private static ProgressDialog dialog;
@@ -104,10 +96,9 @@ public class Config extends Activity {
 
 
     /**
-     * @param ctx parametro 1,
-     * @param titulo parametro 2,
-     * @param msj parametro 3
-     * @return Dialogo de mensaje
+     * @param ctx parametro 1 referencia de la llamada, fragmento o actividad
+     * @param titulo parametro 2 titulo del dialogo
+     * @param msj parametro 3 mensaje del dialogo
      */
     public static final void msj(Context ctx, String titulo, String msj){
         AlertDialog.Builder dialog  = new AlertDialog.Builder(ctx);
@@ -126,7 +117,7 @@ public class Config extends Activity {
 
     /**
      * Muestra mensaje de fechas vacias
-     * @param context
+     * @param context referencia de la llamada, fragmento o actividad
      */
     public static final void dialogoFechasVacias(Context context){
         final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
@@ -145,7 +136,7 @@ public class Config extends Activity {
 
     /**
      * Muestra mensaje de fechas datos vacios
-     * @param context
+     * @param context referencia de la llamada, fragmento o actividad
      */
     public static final void dialogoDatosVacios(Context context){
         final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
@@ -165,7 +156,7 @@ public class Config extends Activity {
 
     /**
      * Muestra mensaje de datos vacios
-     * @param context
+     * @param context referencia de la llamada, fragmento o actividad
      */
     public static final void dialogoDatosVacios1(Context context, String mensaje){
         final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
@@ -184,7 +175,7 @@ public class Config extends Activity {
 
     /**
      * Muestra mensaje de error, en el documento no existente (INE o IFE)
-     * @param context
+     * @param context referencia de la llamada, fragmento o actividad
      */
     public static final void dialogoNoExisteUnDocumento(Context context){
         final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
@@ -203,7 +194,7 @@ public class Config extends Activity {
 
     /**
      * Muestra mensaje, aviso de contenido limpio en firma
-     * @param context
+     * @param context referencia de la llamada, fragmento o actividad
      */
     public static final void dialogoContenidoLimpio(Context context){
         final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
@@ -222,7 +213,7 @@ public class Config extends Activity {
 
     /**
      * Muestra mensaje, muestra mensaje de uso de menu
-     * @param context
+     * @param context referencia de la llamada, fragmento o actividad
      */
     public static final void dialogoMenu(Context context){
         final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
@@ -241,7 +232,7 @@ public class Config extends Activity {
 
     /**
      * Muestra mensaje de error, se requiere una firma
-     * @param context
+     * @param context referencia de la llamada, fragmento o actividad
      */
     public static final void dialogoRequiereFirma(Context context){
         final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
@@ -260,7 +251,7 @@ public class Config extends Activity {
 
     /**
      * Muestra mensaje de error, seleccion de un apartado de spinner
-     * @param context
+     * @param context referencia de la llamada, fragmento o actividad
      */
     public static final void dialogoSinSeleccionSpinner(Context context, String apartado){
         final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
@@ -278,15 +269,14 @@ public class Config extends Activity {
     }
 
     /**
-     * @param context
-     * @param title
-     * @param message
-     * @param time
+     * @param context referencia de la llamada, fragmento o actividad
+     * @param title titulo del dialogo
+     * @param message mensaje del dialogo
+     * @param time tiempo de disminucion del dialogo
      * @return el mensja e de dialogo
      */
     public static ProgressDialog msjTime(Context context, CharSequence title, CharSequence message, int time) {
         MyTask task = new MyTask();
-        // Inicia task despues de 10 segundos
         mTimer.schedule(task, 0, time);
         dialog = ProgressDialog.show(context, title, message);
         return dialog;
@@ -306,8 +296,8 @@ public class Config extends Activity {
 
     /**
      * se crea un Map de fechas: fecha inicial y fecha final
-     * @param diasAdicionales
-     * @return Map
+     * @param diasAdicionales verificacion de la peticion inicial o final, de fechas
+     * @return Map con las fechas
      */
     public static final Map<String, String> fechas(int diasAdicionales){
         Map<String, Integer> datos = Config.dias();

@@ -1,9 +1,7 @@
 package com.airmovil.profuturo.ti.retencion.directorFragmento;
 
-import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,11 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.TextView;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.android.volley.AuthFailureError;
@@ -32,24 +30,18 @@ import java.util.Map;
 
 public class Inicio extends Fragment {
     public static final String TAG = Inicio.class.getSimpleName();
-    private static final String ARG_PARAM1 = "parametro1";
-    private static final String ARG_PARAM2 = "parametro2";
-    private String mParam1;
-    private String mParam2;
+    private static final String ARG_PARAM1 = "fechaInicio";
+    private static final String ARG_PARAM2 = "fechaFin";
+    private String mParam1; // fecha Inicio
+    private String mParam2; // fecha fin
     private OnFragmentInteractionListener mListener;
     private View rootView;
-    private DatePickerDialog datePickerDialog;
     private TextView tvInicial, tvNombre, tvFecha, tvRetenidos, tvNoRetenidos, tvSaldoRetenido, tvSaldoNoRetenido, tvRangoFecha1, tvRangoFecha2;
-    private String fechaIni = "";
-    private String fechaFin = "";
-    private String numeroUsuario;
     private JSONObject retenidos = null;
     private JSONObject saldos = null;
     private Button btnFiltro;
-    final Fragment borrar = this;
-    private int mYear;
-    private int mMonth;
-    private int mDay;
+    private Fragment borrar = this;
+    private Connected connected;
     private int iRetenidos = 0;
     private int iNoRetenidos = 0;
     private int iSaldoRetenido = 0;
@@ -70,8 +62,8 @@ public class Inicio extends Fragment {
     public static Inicio newInstance(String param1, String param2, Context context) {
         Inicio fragment = new Inicio();
         Bundle args = new Bundle();
-        args.putString("parametro1", param1);
-        args.putString("parametro2", param2);
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -83,10 +75,6 @@ public class Inicio extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     /**
@@ -98,14 +86,14 @@ public class Inicio extends Fragment {
         // TODO: Lineas para ocultar el teclado virtual (Hide keyboard)
         rootView = view;
         // TODO: CASTEO DE ELEMENTOS
-        variables(rootView);
+        variables();
+        argumentos();
         // TODO: Colocando la parte superior de la seccion: 1er letra del nombre, Nombre
         detalleSuperior();
         // TODO: inclucion de fechas
-        fechas();
         // TODO: Rango inicial y final para seleccionar el dialogo de fechas
-        rangoInicial();
-        rangoFinal();
+        Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha1);
+        Dialogos.dialogoFechaFin(getContext(), tvRangoFecha2);
         // TODO: inicio de la primera peticion REST
         primeraPeticion();
         btnFiltro.setOnClickListener(new View.OnClickListener() {
@@ -130,10 +118,10 @@ public class Inicio extends Fragment {
 
     /**
      * Se lo llama para crear la jerarquía de vistas asociada con el fragmento.
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
+     * @param inflater inflacion del xml
+     * @param container contenedor del ml
+     * @param savedInstanceState datos guardados
+     * @return el fragmento declarado DIRECTOR INICIO
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -170,23 +158,24 @@ public class Inicio extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
     /**
      * Setear las variables de xml
      */
-    public void variables(View view){
-        tvInicial = (TextView) view.findViewById(R.id.dfi_tv_inicial);
-        tvNombre = (TextView) view.findViewById(R.id.dfi_tv_nombre);
-        tvFecha = (TextView) view.findViewById(R.id.dfi_tv_fecha);
-        tvRetenidos = (TextView) view.findViewById(R.id.dfi_tv_retenidos);
-        tvNoRetenidos = (TextView) view.findViewById(R.id.dfi_tv_no_retenidos);
-        tvSaldoRetenido = (TextView) view.findViewById(R.id.dfi_tv_saldo_a_favor);
-        tvSaldoNoRetenido = (TextView) view.findViewById(R.id.dfi_tv_saldo_retenido);
-        tvRangoFecha1 = (TextView) view.findViewById(R.id.dfi_tv_fecha_rango1);
-        tvRangoFecha2 = (TextView) view.findViewById(R.id.dfi_tv_fecha_rango2);
-        btnFiltro = (Button) view.findViewById(R.id.dfi_btn_filtro);
+    public void variables(){
+        connected = new Connected();
+
+        tvInicial = (TextView) rootView.findViewById(R.id.dfi_tv_inicial);
+        tvNombre = (TextView) rootView.findViewById(R.id.dfi_tv_nombre);
+        tvFecha = (TextView) rootView.findViewById(R.id.dfi_tv_fecha);
+        tvRetenidos = (TextView) rootView.findViewById(R.id.dfi_tv_retenidos);
+        tvNoRetenidos = (TextView) rootView.findViewById(R.id.dfi_tv_no_retenidos);
+        tvSaldoRetenido = (TextView) rootView.findViewById(R.id.dfi_tv_saldo_a_favor);
+        tvSaldoNoRetenido = (TextView) rootView.findViewById(R.id.dfi_tv_saldo_retenido);
+        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.dfi_tv_fecha_rango1);
+        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.dfi_tv_fecha_rango2);
+        btnFiltro = (Button) rootView.findViewById(R.id.dfi_btn_filtro);
     }
 
     /**
@@ -198,35 +187,24 @@ public class Inicio extends Fragment {
         progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
         progressDialog.setMessage(getResources().getString(R.string.msj_espera));
         progressDialog.show();
-        // TODO: Implement your own authentication logic here.
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
-                        progressDialog.dismiss();
                         sendJson(true);
+                        progressDialog.dismiss();
                     }
                 }, Config.TIME_HANDLER);
     }
 
-    /**
-     *  Espera el regreso de fechas incial (hoy y el dia siguiente)
-     *  y cuando se realiza una nueva busqueda, retorna las fechas seleccionadas
-     */
-    private void fechas(){
-        Map<String, Integer> fechaDatos = Config.dias();
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
-        // TODO: fecha
-        Map<String, String> fechaActual = Config.fechas(1);
-        String smParam1 = fechaActual.get("fechaIni");
-        String smParam2 = fechaActual.get("fechaFin");
+    private void argumentos(){
         if(getArguments() != null){
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
             tvFecha.setText(mParam1 + " - " + mParam2);
+            tvRangoFecha1.setText(mParam1);
+            tvRangoFecha2.setText(mParam2);
         }else{
-            tvFecha.setText(smParam1 + " - " + smParam2);
+            tvFecha.setText(Dialogos.fechaActual() + " - " + Dialogos.fechaSiguiente());
         }
     }
 
@@ -239,46 +217,8 @@ public class Inicio extends Fragment {
         String apePaterno = usuarioDatos.get(SessionManager.APELLIDO_PATERNO);
         String apeMaterno = usuarioDatos.get(SessionManager.APELLIDO_MATERNO);
         tvNombre.setText(nombre + " " + apePaterno + " " + apeMaterno);
-    }
-
-    /**
-     * funcion para devolver la fecha inicial
-     */
-    private void rangoInicial(){
-        tvRangoFecha1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                datePickerDialog = new DatePickerDialog(getContext(),
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                tvRangoFecha1.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
-                                fechaIni = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
-                            }
-                        }, mYear, mMonth, mDay);
-                datePickerDialog.show();
-            }
-        });
-    }
-
-    /**
-     * funcion para devolver la fecha final
-     */
-    private void rangoFinal(){
-        tvRangoFecha2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                datePickerDialog = new DatePickerDialog(getContext(),
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                tvRangoFecha2.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
-                                fechaIni = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
-                            }
-                        }, mYear, mMonth, mDay);
-                datePickerDialog.show();
-            }
-        });
+        char dato = nombre.charAt(0);
+        tvInicial.setText(String.valueOf(dato));
     }
 
     /**
@@ -288,28 +228,22 @@ public class Inicio extends Fragment {
     public void sendJson(final boolean primeraPeticion){
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
+        JSONObject periodo = new JSONObject();
         try{
             if(getArguments() != null){
-                JSONObject periodo = new JSONObject();
-                mParam1 = getArguments().getString(ARG_PARAM1);
-                mParam2 = getArguments().getString(ARG_PARAM2);
                 rqt.put("periodo", periodo);
                 periodo.put("fechaInicio", mParam1);
                 periodo.put("fechaFin", mParam2);
                 rqt.put("usuario", Config.usuarioCusp(getContext()));
                 json.put("rqt", rqt);
             }else{
-                Map<String, String> fecha = Config.fechas(1);
-                String param1 = fecha.get("fechaIni");
-                String param2 = fecha.get("fechaFin");
-                JSONObject periodo = new JSONObject();
                 rqt.put("periodo", periodo);
-                periodo.put("fechaInicio", param1);
-                periodo.put("fechaFin", param2);
+                periodo.put("fechaInicio", Dialogos.fechaActual());
+                periodo.put("fechaFin", Dialogos.fechaSiguiente());
                 rqt.put("usuario", Config.usuarioCusp(getContext()));
                 json.put("rqt", rqt);
             }
-            Log.d(TAG, "REQUEST -->" + json);
+            Log.d(TAG, "RQT -->" + json);
         } catch (JSONException e){
             Config.msj(getContext(),"Error","Existe un error al formar la peticion");
         }
@@ -325,46 +259,10 @@ public class Inicio extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        try{
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                        Connected connected = new Connected();
                         if(connected.estaConectado(getContext())){
-                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                            dlgAlert.setTitle("Error");
-                            dlgAlert.setMessage("Se ha encontrado un problema, deseas volver intentarlo");
-                            dlgAlert.setCancelable(true);
-                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    sendJson(true);
-                                }
-                            });
-                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                            dlgAlert.create().show();
+                            Dialogos.dialogoErrorServicio(getContext());
                         }else{
-                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                            dlgAlert.setTitle("Error de conexión");
-                            dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
-                            dlgAlert.setCancelable(true);
-                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            });
-                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                            dlgAlert.create().show();
+                            Dialogos.dialogoErrorConexion(getContext());
                         }
                     }
                 })
@@ -378,8 +276,7 @@ public class Inicio extends Fragment {
     }
 
     /**
-     *
-     * @param obj
+     * @param obj recibe el obj json de la peticion
      */
     private void primerPaso(JSONObject obj){
         try{
@@ -394,9 +291,9 @@ public class Inicio extends Fragment {
         }catch (JSONException e){
             Config.msj(getContext(), "Error", "Lo sentimos ocurrio un error con los datos");
         }
-        tvRetenidos.setText("" + iRetenidos);
-        tvNoRetenidos.setText("" + iNoRetenidos);
-        tvSaldoRetenido.setText("" + Config.nf.format(iSaldoRetenido));
-        tvSaldoNoRetenido.setText("" + Config.nf.format(iSaldoNoRetenido));
+        tvRetenidos.setText(""+iRetenidos);
+        tvNoRetenidos.setText(""+iNoRetenidos);
+        tvSaldoRetenido.setText(""+Config.nf.format(iSaldoRetenido));
+        tvSaldoNoRetenido.setText(""+Config.nf.format(iSaldoNoRetenido));
     }
 }
