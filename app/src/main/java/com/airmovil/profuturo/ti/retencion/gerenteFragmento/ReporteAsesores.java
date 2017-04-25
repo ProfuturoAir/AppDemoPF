@@ -418,7 +418,7 @@ public class ReporteAsesores extends Fragment {
                 int idSucursal = getArguments().getInt("idSucursal");
                 rqt.put("idSucursal", idSucursal);
                 rqt.put("pagina", pagina);
-                rqt.put("numeroEmpleadoAsesor", numEmpleado);
+                rqt.put("numeroEmpleado", numEmpleado);
                 JSONObject periodo = new JSONObject();
                 rqt.put("periodo", periodo);
                 periodo.put("fechaInicio", fechaIni);
@@ -430,7 +430,7 @@ public class ReporteAsesores extends Fragment {
                 rqt.put("idGerencia", 0);
                 rqt.put("idSucursal", 0);
                 rqt.put("pagina", pagina);
-                rqt.put("numeroEmpleadoAsesor", "");
+                rqt.put("numeroEmpleado", "");
                 JSONObject periodo = new JSONObject();
                 rqt.put("periodo", periodo);
                 periodo.put("fechaInicio", smParam1);

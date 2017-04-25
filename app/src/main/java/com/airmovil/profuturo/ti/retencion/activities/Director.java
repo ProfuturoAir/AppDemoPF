@@ -463,21 +463,28 @@ public class Director extends AppCompatActivity{
         ft.commit();
     }
 
-    public void switchClientesFCQ1(Fragment frag, int idSucursal,int idGerencia, String numeroEmpleado, String fechaIni, String fechaFin, int tipoBuscar, String numeroId, int retenido, int estatus) {
+
+    //gerente.switchClientesFCQ1(fragmentoClientes,
+    // mParam1 /*fechaInicio*/,
+    // mParam2/*fechafin*/,
+    // mParam3/*DatosCliente*/,
+    // idSucursal/*IdSucursal*/,
+    // mParam6/*idAsesor*/,
+    // mParam7/*idRetenido*/,
+    // mParam8/*idCitas*/,
+    // mParam9/*SeleccionIDS*/);
+    public void switchClientesFCQ11(Fragment frag, String fechaInicio, String fechaFin, String datosCliente, int idSucursal, int idGerencia, String idAsesor,
+                                   int idRetenido, int idCitas, int idSeleccion) {
         Bundle bundle=new Bundle();
-        bundle.putInt("idSucursal",idSucursal);
-        bundle.putInt("idGerencia",idGerencia);
-        bundle.putString("numeroEmpleado",numeroEmpleado);
-        bundle.putString("fechaIni",fechaIni);
-        bundle.putString("fechaFin",fechaFin);
-        bundle.putInt("tipoBuscar",tipoBuscar);
-        bundle.putString("numeroId",numeroId);
-        bundle.putInt("retenido",retenido);
-        bundle.putInt("estatus",estatus);
-        //bundle.putString("hora",hora);
-
-        Log.d("GERENTE", "CLIENTES - #idSucursal " + numeroEmpleado + " FIN: " + fechaFin);
-
+        bundle.putString("fechaInicio", fechaInicio);
+        bundle.putString("fechaFin", fechaFin);
+        bundle.putString("ingresarDatoCliente", datosCliente);
+        bundle.putInt("idSucursal", idSucursal);
+        bundle.putInt("idGerencia", idGerencia);
+        bundle.putString("idAsesor", idAsesor);
+        bundle.putInt("idRetenido", idRetenido);
+        bundle.putInt("idCita", idCitas);
+        bundle.putInt("selectCliente", idSeleccion);
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_director, frag, frag.toString());

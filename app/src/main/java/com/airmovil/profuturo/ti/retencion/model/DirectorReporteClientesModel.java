@@ -14,6 +14,15 @@ public class DirectorReporteClientesModel {
     public String retenido;
     public String nombreAsesor;
     public String hora;
+    public int tramite;
+
+    public int getTramite() {
+        return tramite;
+    }
+
+    public void setTramite(int tramite) {
+        this.tramite = tramite;
+    }
 
     public String getHora() {
         return hora;

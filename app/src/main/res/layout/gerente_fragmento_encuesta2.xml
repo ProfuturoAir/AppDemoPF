@@ -28,18 +28,6 @@
             <TextView style="@style/linea1"/>
         </LinearLayout>
 
-        <!--<com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
-            android:id="@+id/gfe2_spinner_motivo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:textColorHint="@color/colorPrimaryDark"
-            android:textColor="@color/colorPrimaryDark"
-            android:hint="Motivo"
-            android:backgroundTint="@color/colorPrimaryDark"
-            app:met_floatingLabel="normal" />-->
-
         <LinearLayout style="@style/contenedorSpinner1">
             <Spinner android:id="@+id/gfe2_spinner_motivo"
                 android:layout_width="match_parent"
@@ -48,17 +36,6 @@
             <TextView style="@style/linea1"/>
         </LinearLayout>
 
-        <!--<com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
-            android:id="@+id/gfe2_spinner_estatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:textColorHint="@color/colorPrimaryDark"
-            android:textColor="@color/colorPrimaryDark"
-            android:hint="Estatus"
-            android:backgroundTint="@color/colorPrimaryDark"
-            app:met_floatingLabel="normal" />-->
         <LinearLayout style="@style/contenedorSpinner1">
             <Spinner android:id="@+id/gfe2_spinner_estatus"
                 android:layout_width="match_parent"
@@ -67,17 +44,6 @@
             <TextView style="@style/linea1"/>
         </LinearLayout>
 
-        <!--<com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
-            android:id="@+id/gfe2_spinner_instituto"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:textColorHint="@color/colorPrimaryDark"
-            android:textColor="@color/colorPrimaryDark"
-            android:hint="Instituto"
-            android:backgroundTint="@color/colorPrimaryDark"
-            app:met_floatingLabel="normal" />-->
         <LinearLayout style="@style/contenedorSpinner1">
             <Spinner android:id="@+id/gfe2_spinner_instituto"
                 android:layout_width="match_parent"
@@ -86,17 +52,6 @@
             <TextView style="@style/linea1"/>
         </LinearLayout>
 
-        <!--<com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
-            android:id="@+id/gfe2_spinner_regimen"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:textColorHint="@color/colorPrimaryDark"
-            android:textColor="@color/colorPrimaryDark"
-            android:hint="Regimen pensionario"
-            android:backgroundTint="@color/colorPrimaryDark"
-            app:met_floatingLabel="normal" />-->
         <LinearLayout style="@style/contenedorSpinner1">
             <Spinner android:id="@+id/gfe2_spinner_regimen"
                 android:layout_width="match_parent"
@@ -105,18 +60,6 @@
             <TextView style="@style/linea1"/>
         </LinearLayout>
 
-        <!--<com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
-            android:id="@+id/gfe2_spinner_documentos"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:backgroundTintMode="screen"
-            android:textColorHint="@color/colorPrimaryDark"
-            android:backgroundTint="@color/colorPrimaryDark"
-            android:textColor="@color/colorPrimaryDark"
-            android:hint="¿Qué documentos se le entregó al cliente?"
-            app:met_floatingLabel="normal" />-->
         <LinearLayout style="@style/contenedorSpinner1">
             <Spinner android:id="@+id/gfe2_spinner_documentos"
                 android:layout_width="match_parent"
