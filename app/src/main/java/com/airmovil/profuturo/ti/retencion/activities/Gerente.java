@@ -362,7 +362,7 @@ public class Gerente extends AppCompatActivity{
     public void salirFragment(Context context){
         AlertDialog.Builder dialogo1 = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppTheme));
 
-        /*AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getApplicationContext());*/
+        //AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getApplicationContext());
         dialogo1.setTitle("Confirmar");
         dialogo1.setMessage("\"¿Estàs seguro que deseas cancelar y guardar los cambios del proceso " + global + " ?");
         dialogo1.setCancelable(false);

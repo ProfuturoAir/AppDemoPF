@@ -267,10 +267,6 @@ public class Biblioteca extends Fragment implements GoogleApiClient.ConnectionCa
                 @Override
                 public void onResult(DriveFolder.DriveFileResult result) {
                     if (result.getStatus().isSuccess()) {
-
-                        Toast.makeText(getContext(), "file created: "+" "+
-                                result.getDriveFile().getDriveId(), Toast.LENGTH_LONG).show();
-
                     }
 
                     return;

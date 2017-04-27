@@ -40,6 +40,7 @@ import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.EnviaMail;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
@@ -78,8 +79,9 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
     private static final String ARG_PARAM5 = "idSucursal";
     private static final String ARG_PARAM6 = "IdAsesor";
     private static final String ARG_PARAM7 = "idEstatus";
-    private static final String ARG_PARAM8 = "odCita";
+    private static final String ARG_PARAM8 = "idCita";
     private static final String ARG_PARAM9 = "selecionId";
+    private static final String ARG_PARAM10 = "idGerencia";
     // TODO: Rename and change types of parameters
     private String mParam1; // fecha ini
     private String mParam2; // fecha fin
@@ -193,8 +195,9 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         variables();
         fechas();
         connected = new Connected();
-        // TODO: ocultar teclado
-        imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+
+        Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha1);
+        Dialogos.dialogoFechaFin(getContext(), tvRangoFecha2);
 
         datosCliente1 = "";
         if(getArguments() != null) {
@@ -569,7 +572,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                         progressDialog.dismiss();
                         sendJson(true);
                     }
-                }, 3000);
+                }, Config.TIME_HANDLER);
     }
 
     private void variables(){
@@ -592,7 +595,6 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         getData();
         getDataGerencias();
     }
-
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -743,8 +745,6 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
      *  y cuando se realiza una nueva busqueda, retorna las fechas seleccionadas
      */
     private void fechas(){
-        rangoInicial();
-        rangoFinal();
         Map<String, Integer> fechaDatos = Config.dias();
         mYear  = fechaDatos.get("anio");
         mMonth = fechaDatos.get("mes");
@@ -764,77 +764,45 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         JSONObject filtroCliente = new JSONObject();
         JSONObject periodo = new JSONObject();
         try{
-            if(getArguments() != null){
-                Log.d("---->>>>SI ENTRA:" , getArguments().toString());
-                String datoCliente1 = getArguments().getString("idAsesor");
-                String fechaInicio1 = getArguments().getString("fechaInicio");
-                String fechafin1 = getArguments().getString("fechaFin");
-                this.fechaIni = fechaInicio1;
-                this.fechaFin = fechafin1;
-                String datosCliente1 = getArguments().getString("ingresarDatoCliente");
-                int idGERENCIA = getArguments().getInt("idGerencia");
-                int idSUCURSAL = getArguments().getInt("idSucursal");
-                this.datosCliente1 = datosCliente1;
-                int idSucursal1 = getArguments().getInt("idSucursales");
-                String idAsesor1 = getArguments().getString("idAsesor");
-                int idRetenido1 = getArguments().getInt("idRetenido");
-                idCita1 = getArguments().getInt("idCita");
-                int selectID = getArguments().getInt("selectCliente");
-                this.tipoBuscar = selectID;
-                rqt.put("cita", idCita1);
-                this.numeroEmpleado = idAsesor1;
-                this.retenido = idRetenido1;
-                if(selectID == 1){
-                    filtroCliente.put("curp", "");
-                    filtroCliente.put("nss", "");
-                    filtroCliente.put("numeroCuenta", datosCliente1);
-                } else if(selectID == 2){
-                    filtroCliente.put("curp", "");
-                    filtroCliente.put("nss", datosCliente1);
-                    filtroCliente.put("numeroCuenta", "");
-                }else if(selectID == 3){
-                    filtroCliente.put("curp", datosCliente1);
+            boolean argumentos = (getArguments()!= null);
+            rqt.put("cita", (argumentos) ? getArguments().getString(ARG_PARAM8) : 0);
+            switch ((argumentos) ? getArguments().getInt(ARG_PARAM9) : 0){
+                case 1:
+                    filtroCliente.put("curp", (argumentos) ? getArguments().getString(ARG_PARAM3) : "");
                     filtroCliente.put("nss", "");
                     filtroCliente.put("numeroCuenta", "");
-                } else{
+                    break;
+                case 2:
+                    filtroCliente.put("curp", "");
+                    filtroCliente.put("nss", (argumentos) ? getArguments().getString(ARG_PARAM3) : "");
+                    filtroCliente.put("numeroCuenta", "");
+                    break;
+                case 3:
                     filtroCliente.put("curp", "");
                     filtroCliente.put("nss", "");
-                    filtroCliente.put("numeroCuenta", "");
-                }
-                rqt.put("numeroEmpleado", idAsesor1);
-                rqt.put("filtroCliente", filtroCliente);
-                rqt.put("idGerencia", idGERENCIA);
-                rqt.put("idSucursal", idSUCURSAL);
-                rqt.put("pagina", pagina);
-                periodo.put("fechaFin", fechafin1);
-                periodo.put("fechaInicio", fechaInicio1);
-                rqt.put("periodo", periodo);
-                rqt.put("retenido", idRetenido1);
-                rqt.put("usuario", Config.usuarioCusp(getContext()));
-                json.put("rqt", rqt);
-            }else {
-                Map<String, String> fechaActual = Config.fechas(1);
-                String smParam1 = fechaActual.get("fechaIni");
-                String smParam2 = fechaActual.get("fechaFin");
-                rqt.put("cita", 0);
-                filtroCliente.put("curp","");
-                filtroCliente.put("nss", "");
-                filtroCliente.put("numeroCuenta", "");
-                rqt.put("filtroCliente", filtroCliente);
-                rqt.put("idGerencia", 0);
-                rqt.put("idSucursal", 0);
-                rqt.put("pagina", pagina);
-                rqt.put("numeroEmpleado", "");
-                periodo.put("fechaFin", smParam2);
-                periodo.put("fechaInicio", smParam1);
-                rqt.put("periodo", periodo);
-                rqt.put("retenido", 0);
-                rqt.put("usuario", Config.usuarioCusp(getContext()));
-                json.put("rqt", rqt);
+                    filtroCliente.put("numeroCuenta", (argumentos) ? getArguments().getString(ARG_PARAM3) : "");
+                    break;
+                default:
+                    filtroCliente.put("curp", "");
+                    filtroCliente.put("nss", "");
+                    filtroCliente.put("numeroCuenta","");
+                    break;
             }
+            rqt.put("numeroEmpleado", (argumentos) ? getArguments().getString(ARG_PARAM6) : "");
+            rqt.put("filtroCliente", filtroCliente);
+            rqt.put("idGerencia", (argumentos) ? getArguments().getInt(ARG_PARAM10) : "");
+            rqt.put("idSucursal", (argumentos) ? getArguments().getInt(ARG_PARAM5) : "");
+            rqt.put("pagina", pagina);
+            periodo.put("fechaInicio", (argumentos) ? getArguments().getString(ARG_PARAM1) : Dialogos.fechaSiguiente());
+            periodo.put("fechaFin", (argumentos) ? getArguments().getString(ARG_PARAM2) : Dialogos.fechaActual());
+            rqt.put("periodo", periodo);
+            rqt.put("retenido", (argumentos) ? getArguments().getInt(ARG_PARAM7) : 0);
+            rqt.put("usuario", Config.usuarioCusp(getContext()));
+            json.put("rqt", rqt);
+
             Log.d("ReporteClientes", " REQUEST -->" + json);
         } catch (JSONException e){
-            Config.msj(getContext(),"Error","Existe un right_in al formar la peticion");
+            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
         }
 
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_CLIENTES, json,
@@ -1007,42 +975,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         }catch (JSONException e){
             e.printStackTrace();
         }
-
         adapter.notifyDataSetChanged();
         adapter.setLoaded();
-    }
-
-    private void rangoInicial(){
-        tvRangoFecha1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                datePickerDialog = new DatePickerDialog(getContext(),
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                tvRangoFecha1.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
-                                fechaIni = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
-                            }
-                        }, mYear, mMonth, mDay);
-                datePickerDialog.show();
-            }
-        });
-    }
-
-    private void rangoFinal(){
-        tvRangoFecha2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                datePickerDialog = new DatePickerDialog(getContext(),
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                tvRangoFecha2.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
-                                fechaIni = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
-                            }
-                        }, mYear, mMonth, mDay);
-                datePickerDialog.show();
-            }
-        });
     }
 }

@@ -31,6 +31,7 @@ import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteAsistenciaDeta
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.EnviaMail;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
@@ -162,10 +163,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         ReporteAsistenciaDetalles fragmento = ReporteAsistenciaDetalles.newInstance(mParam1, fechaIncial, fechaFinal, mParam4, rootView.getContext());
                         borrar.onDestroy();
-                        ft.remove(borrar);
-                        ft.replace(R.id.content_director, fragmento);
-                        ft.addToBackStack(null);
-                        ft.commit();
+                        ft.remove(borrar).replace(R.id.content_director, fragmento).addToBackStack(null).commit();
                     }
                     // TODO: ocultar teclado
                     //imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
@@ -352,33 +350,17 @@ public class ReporteAsistenciaDetalles extends Fragment {
         else
             loading = null;
 
-        SessionManager sessionManager = new SessionManager(getContext());
-        HashMap<String, String> usuario = sessionManager.getUserDetails();
-        String numeroEmpleado = mParam1;
-
         JSONObject obj = new JSONObject();
         JSONObject rqt = new JSONObject();
         JSONObject periodo = new JSONObject();
         try{
-            if(getArguments() != null){
-                rqt.put("numeroEmpleado", mParam1);
-                rqt.put("pagina", pagina);
-                periodo.put("fechaInicio", mParam2);
-                periodo.put("fechaFin", mParam3);
-                rqt.put("periodo", periodo);
-                obj.put("rqt", rqt);
-            }else{
-                Map<String, String> fecha = Config.fechas(1);
-                String param1 = fecha.get("fechaIni");
-                String param2 = fecha.get("fechaFin");
-                rqt.put("numeroEmpleado", mParam1);
-                rqt.put("pagina", pagina);
-                periodo.put("fechaInicio", param1);
-                periodo.put("fechaFin", param2);
-                rqt.put("periodo", periodo);
-                obj.put("rqt", rqt);
-            }
-
+            boolean argumentos = (getArguments()!=null);
+            rqt.put("numeroEmpleado", (argumentos) ? getArguments().getString(ARG_PARAM1) : "");
+            rqt.put("pagina", pagina);
+            periodo.put("fechaInicio", (argumentos) ? getArguments().getString(ARG_PARAM2) : Dialogos.fechaActual());
+            periodo.put("fechaFin", (argumentos) ? getArguments().getString(ARG_PARAM3) : Dialogos.fechaSiguiente());
+            rqt.put("periodo", periodo);
+            obj.put("rqt", rqt);
             Log.d("-->>>>Req", "PETICION VACIA-->" + obj);
         }catch (JSONException e){
             e.printStackTrace();
