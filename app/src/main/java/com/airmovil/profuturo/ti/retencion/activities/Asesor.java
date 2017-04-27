@@ -335,7 +335,12 @@ public class Asesor extends AppCompatActivity{
                 }
                 break;
             case R.id.asesor_nav_implicaciones_pendientes:
-                fragmentoGenerico = new ProcesoImplicacionesPendientes();
+                if(checkProccess == false) {
+                    checkMapsFragment = false;
+                    fragmentoGenerico = new ProcesoImplicacionesPendientes();
+                }else{
+                    salirFragment(getApplicationContext());
+                }
                 break;
             case R.id.asesor_nav_cerrar:
                 checkMapsFragment = false;
