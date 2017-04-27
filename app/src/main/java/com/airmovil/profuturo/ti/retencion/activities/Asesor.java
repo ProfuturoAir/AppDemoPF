@@ -257,11 +257,11 @@ public class Asesor extends AppCompatActivity{
             Log.d("Envia","a patir Aviso de Privacidad");
             global = "1.1.3.6";
             checkProccess = true;
-        }/*else if(f instanceof Firma){
-            Log.d("Envia","a patir Firma");
-            global = "1.1.3.7";
+        }else if(f instanceof Escaner){
+            //Log.d("Envia","a patir Firma");
+            //global = "1.1.3.7";
             checkProccess = true;
-        }else if(f instanceof Documento){
+        }/*else if(f instanceof Documento){
             Log.d("Envia","a patir Documento");
             global = "1.1.3.8";
             checkProccess = true;
@@ -312,6 +312,14 @@ public class Asesor extends AppCompatActivity{
                 }
                 break;
             case R.id.asesor_nav_asistencia:
+                if(checkProccess == false) {
+                    checkMapsFragment = false;
+                    //fragmentoGenerico = new ProcesoImplicacionesPendientes();
+                    fragmentoGenerico = new Asistencia();
+                }else{
+                    salirFragment(getApplicationContext());
+                }
+                break;
                 /*if(checkProccess == false) {
                     if(checkMapsFragment == true){
                         Toast.makeText(this,"map is already loaded",Toast.LENGTH_LONG).show();
@@ -324,8 +332,6 @@ public class Asesor extends AppCompatActivity{
                     salirFragment(getApplicationContext());
                 }*/
                 //startActivity(new Intent(this, Test.class));
-                fragmentoGenerico = new Asistencia();
-                break;
             case R.id.asesor_nav_reporte:
                 if(checkProccess == false) {
                     checkMapsFragment = false;
