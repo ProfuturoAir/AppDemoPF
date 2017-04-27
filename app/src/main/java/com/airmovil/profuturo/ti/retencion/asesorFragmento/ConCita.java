@@ -323,7 +323,7 @@ public class ConCita extends Fragment {
             JSONObject rqt = new JSONObject();
             rqt.put("estatusCita", spinner.getSelectedItemId());
             rqt.put("pagina", pagina);
-            rqt.put("usuario", Config.usuarioCusp(getContext()));
+            rqt.put("usuario", /*Config.usuarioCusp(getContext())*/ Config.idUsuario);
             obj.put("rqt", rqt);
             Log.d(TAG, "Primera peticion-->" + obj);
         } catch (JSONException e) {

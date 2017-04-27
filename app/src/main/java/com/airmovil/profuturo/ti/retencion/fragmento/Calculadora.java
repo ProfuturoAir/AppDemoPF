@@ -158,8 +158,6 @@ public class Calculadora extends Fragment {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             // TODO Auto-generated method stub
-            Toast.makeText(getContext(), "2", Toast.LENGTH_SHORT).show();
-            Log.d("--------->", "2" );
             loading.dismiss();
 
 

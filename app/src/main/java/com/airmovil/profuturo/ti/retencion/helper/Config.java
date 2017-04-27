@@ -94,6 +94,7 @@ public class Config extends Activity {
     public static final DecimalFormat df = new DecimalFormat("0.00"); // formato para implimer solo dos decimales en variable double de mas de 3 decimales
     public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static Context context; // Context
+    public static String idUsuario = "";
 
 
     /**

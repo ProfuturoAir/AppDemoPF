@@ -280,6 +280,9 @@ public class Login extends AppCompatActivity {
             numeroEmpleado = obj.getString("numeroEmpleado");
             rolEmpleado = obj.getString("rolEmpleado");
             userId = obj.getString("userId");
+
+            Config.idUsuario = CUSP;
+
             Log.d("DATOS A RECOLECTAR ->", " " + apellidoMaterno + " " + apellidoPaterno + " " + centroCosto + " " + claveConsar + " " + curp + " " + email + " " +
                     fechaAltaConsar + " " + idRolEmpleado + " "+ " " + nombre + " " + numeroEmpleado + " " + rolEmpleado + " " + userId + " " );
             sessionManager.createLoginSession(apellidoMaterno, apellidoPaterno, sCentroCosto, claveConsar,curp, email, fechaAltaConsar, sIdRolEmpleado,nombre, numeroEmpleado, rolEmpleado, userId, CUSP);

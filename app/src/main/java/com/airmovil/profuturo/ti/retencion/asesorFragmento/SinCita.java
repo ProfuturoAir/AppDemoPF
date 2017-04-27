@@ -3,6 +3,7 @@ package com.airmovil.profuturo.ti.retencion.asesorFragmento;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
@@ -104,6 +105,7 @@ public class SinCita extends Fragment {
     private RecyclerView.Adapter recyclerViewAdapter;
 
     private OnFragmentInteractionListener mListener;
+    SharedPreferences sharedPreferences;
 
     public SinCita() {
         // Required empty public constructor
@@ -140,6 +142,9 @@ public class SinCita extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // TODO: Casteo
         rootView = view;
+
+        sharedPreferences = getActivity().getSharedPreferences("Login", Context.MODE_PRIVATE);
+
 
         tvFecha = (TextView) rootView.findViewById(R.id.afsc_tv_fecha);
         spinner = (Spinner) rootView.findViewById(R.id.afsc_spinner_tipo_dato);
@@ -446,11 +451,8 @@ public class SinCita extends Fragment {
             }
             rqt.put("filtro", filtros);
             rqt.put("pagina", "1");
-            SessionManager sessionManager = new SessionManager(getActivity().getApplicationContext());
-            HashMap<String, String> usuario = sessionManager.getUserDetails();
-            String idUsuario = usuario.get(SessionManager.USER_ID);
 
-            rqt.put("usuario", idUsuario);
+            rqt.put("usuario", Config.usuarioCusp(getContext()));
             obj.put("rqt", rqt);
             Log.d(TAG, "PETICION VACIA-->" + obj);
         } catch (JSONException e) {
