@@ -2,21 +2,21 @@ package com.airmovil.profuturo.ti.retencion.asesorFragmento;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Base64;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.android.volley.AuthFailureError;
@@ -24,96 +24,47 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
-
-import java.util.HashMap;
 import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ReporteClientesDetalle.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ReporteClientesDetalle#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ReporteClientesDetalle extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private String sParam1;
-    private int sParam2;
-    private String sParam3;
-    private String sParam4;
-    private String sParam5;
-
-    // TODO: XML
-    private TextView tvInicial;
-    private TextView tvNombreAsesor;
-    private TextView tvNumeroEmpleado;
-    private TextView tvFecha;
-    private TextView tvNombreCliente;
-    private TextView tvNumeroCuentaCliente;
-    private TextView tvNSS;
-    private TextView tvEstatus;
-    private TextView tvSaldo;
-    private TextView tvSucursales;
-    private TextView tvHoraAtencion;
-    private TextView tvCurp;
-
+    private static final String TAG = ReporteClientesDetalle.class.getSimpleName();
+    private static final String ARG_PARAM1 = "curp";
+    private static final String ARG_PARAM2 = "idTramite";
+    private static final String ARG_PARAM3 = "hora";
+    private static final String ARG_PARAM4 = "fechaInicio";
+    private static final String ARG_PARAM5 = "fechaFin";
+    private TextView tvInicial, tvNombreAsesor, tvNumeroEmpleado, tvFecha, tvNombreCliente, tvNumeroCuentaCliente, tvNSS, tvEstatus, tvSaldo, tvSucursales, tvHoraAtencion, tvCurp;
     private View rootView;
-
     private OnFragmentInteractionListener mListener;
+    private Connected connected;
 
     public ReporteClientesDetalle() {
-        // Required empty public constructor
+        // Se requiere un constructor vacio
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ReporteClientesDetalle.
+     * @param savedInstanceState
      */
-    // TODO: Rename and change types and number of parameters
-    public static ReporteClientesDetalle newInstance(String param1, String param2) {
-        ReporteClientesDetalle fragment = new ReporteClientesDetalle();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
+    /**
+     *
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
-
         tvInicial = (TextView) rootView.findViewById(R.id.afrcd_tv_letra);
         tvNombreAsesor = (TextView) rootView.findViewById(R.id.afrcd_tv_nombre_asesor);
         tvNumeroEmpleado = (TextView) rootView.findViewById(R.id.afrcd_tv_numero_empleado_asesor);
         tvFecha = (TextView) rootView.findViewById(R.id.afrcd_tv_fecha);
-
         tvNombreCliente = (TextView) rootView.findViewById(R.id.afrcd_tv_nombre_cliente);
         tvNumeroCuentaCliente = (TextView) rootView.findViewById(R.id.afrcd_tv_numero_cuenta_cliente);
         tvNSS = (TextView) rootView.findViewById(R.id.afrcd_tv_nss_cliente);
@@ -122,40 +73,55 @@ public class ReporteClientesDetalle extends Fragment {
         tvSaldo = (TextView) rootView.findViewById(R.id.afrcd_tv_fecha_cliente);
         tvSucursales = (TextView) rootView.findViewById(R.id.afrcd_tv_saldo_cliente);
         tvHoraAtencion = (TextView) rootView.findViewById(R.id.afrcd_tv_hora_atencion);
-
+        connected = new Connected();
         primeraPeticion();
-        //sendJson(true);
+        datosUsuario();
     }
 
+    /**
+     *
+     */
     private void primeraPeticion(){
         final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
         progressDialog.setIcon(R.drawable.icono_abrir);
         progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
         progressDialog.setMessage(getResources().getString(R.string.msj_espera));
         progressDialog.show();
-        // TODO: Implement your own authentication logic here.
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
                         progressDialog.dismiss();
                         sendJson(true);
                     }
-                }, 3000);
+                }, Config.TIME_HANDLER);
     }
 
+    /**
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.asesor_fragmento_reporte_clientes_detalle, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
+    /**
+     *
+     * @param uri
+     */
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
 
+    /**
+     *
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -164,6 +130,9 @@ public class ReporteClientesDetalle extends Fragment {
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -171,82 +140,76 @@ public class ReporteClientesDetalle extends Fragment {
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     *
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                    Fragment fragmentoGenerico = new ReporteClientes();
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    /**
+     * Esta interfaz debe es implementada por la actividad que contiene este fragmento
+     * para permitir implementar la comunicacion con este fragmeto
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
-    private void sendJson(final boolean primeraPeticion){
-
-        final ProgressDialog loading;
-        //if (primeraPeticion)
-        //loading = ProgressDialog.show(getActivity(), "Cargando datos", "Porfavor espere...", false, false);
-        //else
-          //  loading = null; sParam1 = getArguments().getString("curp");
-        sParam1 = getArguments().getString("curp");
-        sParam2 = getArguments().getInt("idTramite");
-        sParam3 = getArguments().getString("hora");
-        sParam4 = getArguments().getString("fechaInicio");
-        sParam5 = getArguments().getString("fechaFin");
-
-        SessionManager sessionManager = new SessionManager(getContext());
-        HashMap<String, String> datosUsuario = sessionManager.getUserDetails();
-        String usuario = datosUsuario.get(SessionManager.USER_ID);
-        String nombreAsesor = datosUsuario.get(SessionManager.NOMBRE);
-        String apePaternoAsesor = datosUsuario.get(SessionManager.APELLIDO_PATERNO);
-        String apeMaternoAsesor = datosUsuario.get(SessionManager.APELLIDO_MATERNO);
-        String numeroEmpleado = datosUsuario.get(SessionManager.NUMERO_EMPLEADO);
+    /**
+     *
+     */
+    private void datosUsuario(){
+        Map<String, String> usuario = Config.datosUsuario(getContext());
+        String nombreAsesor = usuario.get(SessionManager.NOMBRE);
+        String apePaternoAsesor = usuario.get(SessionManager.APELLIDO_PATERNO);
+        String apeMaternoAsesor = usuario.get(SessionManager.APELLIDO_MATERNO);
+        String numeroEmpleado = usuario.get(SessionManager.NUMERO_EMPLEADO);
 
         tvNombreAsesor.setText("Nombre del Asesor: " +nombreAsesor + " " + apePaternoAsesor + " " + apeMaternoAsesor);
         tvNumeroEmpleado.setText("Número de empleado: " + numeroEmpleado);
-        tvFecha.setText(sParam4 + " - " + sParam5);
-        tvHoraAtencion.setText("Cita: " + sParam3);
+        tvFecha.setText((getArguments()!=null) ? getArguments().getString(ARG_PARAM4) + " - " + getArguments().getString(ARG_PARAM5): "");
+        tvInicial.setText(String.valueOf(nombreAsesor.charAt(0)));
+    }
 
+    /**
+     *
+     * @param primeraPeticion
+     */
+    private void sendJson(final boolean primeraPeticion){
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
         JSONObject filtro = new JSONObject();
         JSONObject periodo = new JSONObject();
         try{
-            // Log.d(" * * * * * * * ", "curp" + sParam1);
-            // Log.d(" * * * * * * * ", "idTramite" + sParam2);
-            // Log.d(" * * * * * * * ", "hora" + sParam3);
-            // Log.d(" * * * * * * * ", "fechaInicio" + sParam4);
-            // Log.d(" * * * * * * * ", "fechaFin" + sParam5);
             if(getArguments() != null){
-                filtro.put("curp", sParam1);
+                filtro.put("curp", getArguments().getString(ARG_PARAM1));
                 filtro.put("nss", "");
                 filtro.put("numeroCuenta", "");
                 rqt.put("filtro", filtro);
-                rqt.put("idTramite", sParam2);
-                periodo.put("fechaFin", sParam5);
-                periodo.put("fechaInicio", sParam4);
+                rqt.put("idTramite", getArguments().getInt(ARG_PARAM2));
+                periodo.put("fechaInicio", getArguments().getString(ARG_PARAM4));
+                periodo.put("fechaFin", getArguments().getString(ARG_PARAM5));
                 rqt.put("periodo",periodo);
                 rqt.put("usuario", Config.usuarioCusp(getContext()));
                 json.put("rqt", rqt);
-            }else{
-                filtro.put("curp", "");
-                filtro.put("nss", "");
-                filtro.put("numeroCuenta", "");
-                rqt.put("filtro", filtro);
-                rqt.put("idTramite", "");
-                periodo.put("fechaFin", "");
-                periodo.put("fechaInicio", "");
-                rqt.put("periodo",periodo);
-                rqt.put("usuario", usuario);
-                json.put("rqt", rqt);
             }
-            Log.d("RQT ->", "" + json);
+            Log.d(TAG, "<- RQT ->\n" + json + "\n");
         } catch (JSONException e){
-            Config.msj(getContext(),"Error","Existe un right_in al formar la peticion");
+            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
         }
 
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_GENERAL_REPORTE_CLIENTE, json,
@@ -254,7 +217,6 @@ public class ReporteClientesDetalle extends Fragment {
                     @Override
                     public void onResponse(JSONObject response) {
                         if(primeraPeticion){
-                            //loading.dismiss();
                             primerPaso(response);
                         }
                     }
@@ -262,48 +224,10 @@ public class ReporteClientesDetalle extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        try{
-                            //loading.dismiss();
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                        Connected connected = new Connected();
                         if(connected.estaConectado(getContext())){
-                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                            dlgAlert.setTitle("Error");
-                            dlgAlert.setMessage("Se ha encontrado un problema, deseas volver intentarlo");
-                            dlgAlert.setCancelable(true);
-                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    //sendJson(true);
-                                }
-                            });
-                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                            dlgAlert.create().show();
+                            Dialogos.dialogoErrorServicio(getContext());
                         }else{
-                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                            dlgAlert.setTitle("Error de conexión");
-                            dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
-                            dlgAlert.setCancelable(true);
-                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    //sendJson(true, f1, f2);
-                                }
-                            });
-                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                            dlgAlert.create().show();
+                            Dialogos.dialogoErrorConexion(getContext());
                         }
                     }
                 })
@@ -316,9 +240,12 @@ public class ReporteClientesDetalle extends Fragment {
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
     }
 
+    /**
+     *
+     * @param obj
+     */
     private void primerPaso(JSONObject obj){
-
-        Log.d("TAG", "primerPaso: "  + obj );
+        Log.d(TAG, "<- Response -> \n"  + obj + "\n");
         String nombre = "";
         String numeroCuenta = "";
         String curp = "";
@@ -338,18 +265,13 @@ public class ReporteClientesDetalle extends Fragment {
         }catch (JSONException e){
             e.printStackTrace();
         }
-
         tvNombreCliente.setText(nombre);
         tvNumeroCuentaCliente.setText(numeroCuenta);
         tvCurp.setText("" + curp);
         tvNSS.setText("" + nss);
-        if(estatus == true)
-            tvEstatus.setText("Retenido");
-        if(estatus == false)
-            tvEstatus.setText("No retenido");
+        tvEstatus.setText((estatus) ? "Retenido" : "No retenido");
         tvSaldo.setText(Config.nf.format(saldo));
         tvSucursales.setText(nombreSucursal);
-
-
+        tvHoraAtencion.setText((getArguments()!=null) ? getArguments().getString(ARG_PARAM3) : "");
     }
 }

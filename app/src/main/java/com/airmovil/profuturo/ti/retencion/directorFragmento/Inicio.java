@@ -165,7 +165,6 @@ public class Inicio extends Fragment {
      */
     public void variables(){
         connected = new Connected();
-
         tvInicial = (TextView) rootView.findViewById(R.id.dfi_tv_inicial);
         tvNombre = (TextView) rootView.findViewById(R.id.dfi_tv_nombre);
         tvFecha = (TextView) rootView.findViewById(R.id.dfi_tv_fecha);

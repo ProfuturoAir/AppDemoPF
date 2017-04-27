@@ -858,7 +858,6 @@
     <style name="contenedorDetalleLista">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="android:gravity">center_vertical</item>
         <item name="android:orientation">horizontal</item>
     </style>
 
@@ -866,26 +865,26 @@
     <style name="conCitaLista">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:text">Con Cita: </item>
+        <item name="android:text">Con Cita:</item>
         <item name="android:textSize">12dp</item>
     </style>
     <style name="sucursalLista">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:text">Sucursal: </item>
+        <item name="android:text">Sucursal:</item>
         <item name="android:textSize">12dp</item>
     </style>
     <style name="noEmitido">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">12dp</item>
-        <item name="android:text">No emitido: </item>
+        <item name="android:text">No emitido:</item>
     </style>
     <style name="conCitaListaGreen">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">12dp</item>
-        <item name="android:text">Con Cita: </item>
+        <item name="android:text">Con Cita:</item>
         <item name="android:textColor">@android:color/holo_green_dark</item>
     </style>
     <style name="retenidoListaRed">
@@ -898,26 +897,27 @@
     <style name="EmitidasLista">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingLeft">15dp</item>
         <item name="android:textSize">12dp</item>
-        <item name="android:text">emitido: </item>
+        <item name="android:text"> Emitido:</item>
     </style>
     <style name="noEmitidasLista">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">12dp</item>
-        <item name="android:text">No emitidas: </item>
+        <item name="android:text">No emitidas:</item>
     </style>
     <style name="sinCitaLista">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">12dp</item>
-        <item name="android:text">Sin Cita: </item>
+        <item name="android:text">Sin Cita:</item>
     </style>
     <style name="asesorLista">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">12dp</item>
-        <item name="android:text">Asesor: </item>
+        <item name="android:text">Asesor:</item>
     </style>
     <style name="separador">
         <item name="android:layout_width">wrap_content</item>
@@ -925,14 +925,11 @@
         <item name="android:textSize">12dp</item>
         <item name="android:text">|</item>
         <item name="android:layout_marginTop">0dp</item>
-        <item name="android:layout_marginRight">4dp</item>
-        <item name="android:layout_marginBottom">0dp</item>
         <item name="android:layout_marginLeft">4dp</item>
     </style>
     <style name="textoRedLista">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:text">0</item>
         <item name="android:textColor">@android:color/holo_red_dark</item>
         <item name="android:textSize">12dp</item>
     </style>
@@ -952,6 +949,7 @@
     <style name="saldosLista">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingLeft">15dp</item>
         <item name="android:text">Saldos: </item>
         <item name="android:textSize">12dp</item>
     </style>
@@ -963,6 +961,7 @@
     <style name="cantidadPorcentaje">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
         <item name="android:textSize">12dp</item>
     </style>
 

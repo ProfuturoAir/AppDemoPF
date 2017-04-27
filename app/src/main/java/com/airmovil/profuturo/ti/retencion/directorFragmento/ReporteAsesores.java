@@ -32,6 +32,7 @@ import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.EnviaMail;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
@@ -51,9 +52,10 @@ import java.util.List;
 import java.util.Map;
 
 public class ReporteAsesores extends Fragment {
-    private static final String ARG_PARAM1 = "parametro1"; // fecha Inicio
-    private static final String ARG_PARAM2 = "parametro2"; // fecha final
-    private static final String ARG_PARAM3 = "parametro3"; // numero asesor
+    private static final String TAG = ReporteAsesores.class.getSimpleName();
+    private static final String ARG_PARAM1 = "fechaInicio"; // fecha Inicio
+    private static final String ARG_PARAM2 = "fechaFin"; // fecha final
+    private static final String ARG_PARAM3 = "idAsesor"; // numero asesor
     private static final String ARG_PARAM4 = "parametro4"; // id gerencia
     private static final String ARG_PARAM5 = "parametro5"; // id sucursal
     private String mParam1; // fecha inicio
@@ -64,9 +66,6 @@ public class ReporteAsesores extends Fragment {
     private String fechaFin = "";
     private int mParam4; // id gerencia
     private int mParam5; // id sucursal
-    private int mYear;
-    private int mMonth;
-    private int mDay;
     private int posicion;
     private int pagina = 1;
     private int numeroMaximoPaginas = 0;
@@ -75,7 +74,6 @@ public class ReporteAsesores extends Fragment {
     private List<GerenteReporteAsesoresModel> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
-    private RecyclerView.Adapter recyclerViewAdapter;
     private View rootView;
     private SessionManager sessionManager;
     private DatePickerDialog datePickerDialog;
@@ -128,52 +126,15 @@ public class ReporteAsesores extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
-
         primeraPeticion();
-
-        tvFecha = (TextView) rootView.findViewById(R.id.dfra_tv_fecha);
-        tvEmitidas = (TextView) rootView.findViewById(R.id.dfra_tv_emitidas);
-        tvNoEmitidas = (TextView) rootView.findViewById(R.id.dfra_tv_no_emitidas);
-        tvSaldoEmitido = (TextView) rootView.findViewById(R.id.dfra_tv_saldo_emitido);
-        tvSaldoNoEmitido = (TextView) rootView.findViewById(R.id.dfra_tv_saldo_no_emitido);
-        etAsesor = (EditText) rootView.findViewById(R.id.dfra_et_asesor);
-        tvResultados = (TextView) rootView.findViewById(R.id.dfra_tv_total_registros);
-        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.dfra_tv_fecha_rango1);
-        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.dfra_tv_fecha_rango2);
-        btnBuscar = (Button) rootView.findViewById(R.id.dfra_btn_buscar);
-
-        // TODO: ocultar teclado
-        imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-        sessionManager = new SessionManager(getContext());
-        connected = new Connected();
-
+        variables();
         fechas();
-        rangoInicial();
-        rangoFinal();
+        Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha1);
+        Dialogos.dialogoFechaFin(getContext(), tvRangoFecha2);
 
-        if(getArguments() != null) {
-            Log.d("HOLA", "Todos : " + getArguments().toString());
-            numeroEmpleado = getArguments().getInt("numeroEmpleado");
-            idAsesor = getArguments().getString("idAsesor");
-            String idAsesor = getArguments().getString("idAsesor");
-            fechaIni = getArguments().getString("fechaIni");
-            fechaFin = getArguments().getString("fechaFin");
-
-            if(fechaIni!=null){
-                tvRangoFecha1.setText(fechaIni);
-                tvRangoFecha2.setText(fechaFin);
-                tvFecha.setText(fechaIni + " - " + fechaFin);
-            }
-
-            if(etAsesor!=null){
-               etAsesor.setText(idAsesor);
-            }
-
-        }
 
         // TODO: model
         getDatos1 = new ArrayList<>();
-
         // TODO: Recycler
         recyclerView = (RecyclerView) rootView.findViewById(R.id.dfra_rv_lista);
         recyclerView.setHasFixedSize(true);
@@ -257,6 +218,7 @@ public class ReporteAsesores extends Fragment {
                                     checa = false;
                                 }
 
+                                boolean argumentos = (getArguments()!=null);
                                 try {
                                     JSONObject rqt = new JSONObject();
                                     rqt.put("correo", email);
@@ -364,6 +326,20 @@ public class ReporteAsesores extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    private void variables(){
+        tvFecha = (TextView) rootView.findViewById(R.id.dfra_tv_fecha);
+        tvEmitidas = (TextView) rootView.findViewById(R.id.dfra_tv_emitidas);
+        tvNoEmitidas = (TextView) rootView.findViewById(R.id.dfra_tv_no_emitidas);
+        tvSaldoEmitido = (TextView) rootView.findViewById(R.id.dfra_tv_saldo_emitido);
+        tvSaldoNoEmitido = (TextView) rootView.findViewById(R.id.dfra_tv_saldo_no_emitido);
+        etAsesor = (EditText) rootView.findViewById(R.id.dfra_et_asesor);
+        tvResultados = (TextView) rootView.findViewById(R.id.dfra_tv_total_registros);
+        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.dfra_tv_fecha_rango1);
+        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.dfra_tv_fecha_rango2);
+        btnBuscar = (Button) rootView.findViewById(R.id.dfra_btn_buscar);
+        connected = new Connected();
+    }
+
     /**
      * Inicia el proceso de primera peticion por REST
      */
@@ -380,58 +356,36 @@ public class ReporteAsesores extends Fragment {
                         progressDialog.dismiss();
                         sendJson(true);
                     }
-                }, 3000);
+                }, Config.TIME_HANDLER);
     }
 
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
-
         JSONObject obj = new JSONObject();
         JSONObject rqt = new JSONObject();
         JSONObject periodo = new JSONObject();
-        Map<String, String> fechaActual = Config.fechas(1);
-        final String smParam1 = fechaActual.get("fechaIni");
-        final String smParam2 = fechaActual.get("fechaFin");
         try{
-            if(getArguments() != null){
-                mParam1 = getArguments().getString(ARG_PARAM1); // fecha inicio
-                mParam2 = getArguments().getString(ARG_PARAM2); // fecha Fin
-                mParam3 = getArguments().getString(ARG_PARAM3); // id asesor
-                mParam4 = getArguments().getInt(ARG_PARAM4); // id gerencia
-                mParam5 = getArguments().getInt(ARG_PARAM5); // id sucursal
-                rqt.put("idGerencia", mParam4);
-                rqt.put("idSucursal", mParam5);
-                rqt.put("numeroEmpleadoAsesor", idAsesor);
-                rqt.put("pagina", pagina);
-                periodo.put("fechaFin", fechaFin);
-                periodo.put("fechaInicio", fechaIni);
-                rqt.put("periodo", periodo);
-                rqt.put("usuario", Config.usuarioCusp(getContext()));
-                obj.put("rqt", rqt);
-            }else{
-                rqt.put("idGerencia", 0);
-                rqt.put("idSucursal", 0);
-                rqt.put("numeroEmpleadoAsesor", "");
-                rqt.put("pagina", pagina);
-                periodo.put("fechaFin", smParam2);
-                periodo.put("fechaInicio", smParam1);
-                rqt.put("periodo", periodo);
-                rqt.put("usuario", Config.usuarioCusp(getContext()));
-                obj.put("rqt", rqt);
-            }
-            Log.d("RQT", " ReporteAsesores ->" + obj);
+            boolean argumentos = (getArguments()!=null);
+            rqt.put("idGerencia", (argumentos==true) ? getArguments().getInt(ARG_PARAM4) : 0);
+            rqt.put("idSucursal", (argumentos==true) ? getArguments().getInt(ARG_PARAM5) : 0);
+            rqt.put("numeroEmpleadoAsesor", (argumentos==true) ? getArguments().getString(ARG_PARAM3) : "");
+            rqt.put("pagina", pagina);
+            periodo.put("fechaFin", (argumentos==true) ?  getArguments().getString(ARG_PARAM2) : Dialogos.fechaSiguiente() );
+            periodo.put("fechaInicio", (argumentos==true) ? getArguments().getString(ARG_PARAM1) : Dialogos.fechaActual());
+            rqt.put("periodo", periodo);
+            rqt.put("usuario", Config.usuarioCusp(getContext()));
+            obj.put("rqt", rqt);
+            Log.d(TAG, " RQT ->" + obj);
         }catch (JSONException e){
             e.printStackTrace();
         }
-
-        //creacion del json request
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_ASESORES, obj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         // Disminuye el dialog
                         if (primerPeticion) {
-                            primerPaso(response,smParam1,smParam2);
+                            primerPaso(response);
                         } else {
                             segundoPaso(response);
                         }
@@ -440,47 +394,10 @@ public class ReporteAsesores extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        try{
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                        Connected connected = new Connected();
                         if(connected.estaConectado(getContext())){
-                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                            dlgAlert.setTitle("Error");
-                            dlgAlert.setMessage("Se ha encontrado un problema, deseas volver intentarlo");
-                            dlgAlert.setCancelable(true);
-                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    //sendJson(true);
-                                }
-                            });
-                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                            dlgAlert.create().show();
+                            Dialogos.dialogoErrorServicio(getContext());
                         }else{
-                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                            dlgAlert.setTitle("Error de conexión");
-                            dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
-                            dlgAlert.setCancelable(true);
-                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    //sendJson(true);
-                                }
-                            });
-                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                            dlgAlert.create().show();
+                            Dialogos.dialogoErrorConexion(getContext());
                         }
                     }
                 }) {
@@ -498,13 +415,12 @@ public class ReporteAsesores extends Fragment {
      * @param smParam1
      * @param smParam2
      */
-    private void primerPaso(JSONObject obj,String smParam1,String smParam2) {
+    private void primerPaso(JSONObject obj) {
         int emitidos = 0;
         int noEmitido = 0;
         int saldoEmitido = 0;
         int saldoNoEmitido = 0;
         int totalFilas = 1;
-
         try{
             JSONArray array = obj.getJSONArray("Asesor");
             JSONObject objEmitidos = obj.getJSONObject("retenido");
@@ -584,21 +500,15 @@ public class ReporteAsesores extends Fragment {
 
                 handler.post(r);
 
-
-                //Load more data for reyclerview
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Log.e("haint", "Load More 2");
-                        //Remove loading item
                         getDatos1.remove(getDatos1.size() - 1);
                         adapter.notifyItemRemoved(getDatos1.size());
-                        //Load data
-                        Log.d("EnvioIndex", getDatos1.size() + "");
                         pagina = Config.pidePagina(getDatos1);
                         sendJson(false);
                     }
-                }, 5000);
+                }, Config.TIME_HANDLER);
             }
         });
     }
@@ -645,65 +555,19 @@ public class ReporteAsesores extends Fragment {
     }
 
     /**
-     * funcion para devolver la fecha inicial
-     */
-    private void rangoInicial(){
-        tvRangoFecha1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                datePickerDialog = new DatePickerDialog(getContext(),
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                tvRangoFecha1.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
-                                fechaIni = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
-                            }
-                        }, mYear, mMonth, mDay);
-                datePickerDialog.show();
-            }
-        });
-    }
-
-    /**
-     * funcion para devolver la fecha final
-     */
-    private void rangoFinal(){
-        tvRangoFecha2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                datePickerDialog = new DatePickerDialog(getContext(),
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                tvRangoFecha2.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
-                                fechaIni = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
-                            }
-                        }, mYear, mMonth, mDay);
-                datePickerDialog.show();
-            }
-        });
-    }
-
-    /**
      * Inicia las fechas, dependiendo si existen datos procesados
      */
     private void fechas(){
-        Map<String, Integer> fechaDatos = Config.dias();
-        Map<String, String> fechaActual = Config.fechas(1);
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
-        String smParam1 = fechaActual.get("fechaIni");
-        String smParam2 = fechaActual.get("fechaFin");
         if(getArguments() != null){
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
             mParam3 = getArguments().getString(ARG_PARAM3);
             tvFecha.setText(mParam1 + " - " + mParam2);
+            tvRangoFecha1.setText(mParam1);
+            tvRangoFecha2.setText(mParam2);
+            etAsesor.setText(mParam3);
         }else{
-            fechaIni = smParam1;
-            fechaFin = smParam2;
-            tvFecha.setText(smParam1 + " - " + smParam2);
+            tvFecha.setText(Dialogos.fechaActual() + " - " + Dialogos.fechaSiguiente());
         }
     }
 }

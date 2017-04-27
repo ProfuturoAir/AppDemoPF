@@ -18,49 +18,29 @@
         <LinearLayout style="@style/contenedorElementosLista">
                 <TextView android:id="@+id/dfrcll_tv_nombre_cliente" style="@style/campoLista" android:text="Nombre de sucursal"/>
                 <TextView android:id="@+id/dfrcll_tv_cuenta_cliente" style="@style/campoLista" android:text="Cuenta"/>
-
-                <LinearLayout style="@style/contenedorDetalleLista">
-
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:orientation="horizontal">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1">
                             <!-- TODO: campo 1 -->
                             <TextView android:id="@+id/dfrcll_tv_asesor_cliente" style="@style/textoLista"/>
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1">
                             <!-- TODO: campo 2 -->
-                            <TextView android:id="@+id/dfrcll_tv_con_cita_cliente" android:text="1531" style="@style/textoGreenLista"/>
-                        </LinearLayout>
-
                         <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1">
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content">
+                            <TextView android:id="@+id/dfrcll_tv_con_cita_cliente" style="@style/textoGreenLista"/>
+                            <TextView android:id="@+id/dfrcll_tv_sin_cita_cliente" style="@style/textoRedLista"/>
+                        </LinearLayout>
                             <!-- TODO: campo 2 -->
-                            <TextView android:id="@+id/dfrcll_tv_retenidos_cliente" style="@style/textoRedLista"/>
-                        </LinearLayout>
-
                         <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1">
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content">
+                            <TextView android:id="@+id/dfrcll_tv_retenidos_cliente" style="@style/textoGreenLista"/>
+                            <TextView android:id="@+id/dfrcll_tv_no_retenidos_cliente" style="@style/textoRedLista"/>
+                        </LinearLayout>
                             <!-- TODO: campo 1 -->
-                            <TextView style="@style/sucursalLista"/>
-                            <TextView android:id="@+id/dfrcll_tv_sucursal_cliente" android:text="4323" style="@style/textoLista"/>
-                        </LinearLayout>
+                            <TextView android:id="@+id/dfrcll_tv_sucursal_cliente" android:paddingLeft="10dp" style="@style/textoLista"/>
                     </LinearLayout>
-                </LinearLayout>
         </LinearLayout>
         <TextView
             android:id="@+id/dfrcll_btn_detalles"

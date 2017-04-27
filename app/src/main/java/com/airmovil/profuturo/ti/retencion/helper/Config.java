@@ -83,7 +83,7 @@ public class Config extends Activity {
     public static final String PASSWORD = "123123"; // Contraseña, para el acceso al basic authentication
     // TODO: Variables long fijas aplicadas en la actividad splash y el el handler de la primera peticion REST
     public static final long SPLASH_SCREEN_DELEY = 3500;
-    public static final long TIME_HANDLER = 1000;
+    public static final long TIME_HANDLER = 3000;
     // TODO: Creacion de una nueva instancia a usar para el timer, aplicado en la actividad splash
     private static Timer mTimer = new Timer();
     private static ProgressDialog dialog;
@@ -92,6 +92,7 @@ public class Config extends Activity {
     // TODO: formato para convertir (int) a valor monetario
     public static final NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.getDefault()); // formato para convertir variables int a formato pesos
     public static final DecimalFormat df = new DecimalFormat("0.00"); // formato para implimer solo dos decimales en variable double de mas de 3 decimales
+    public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static Context context; // Context
 
 

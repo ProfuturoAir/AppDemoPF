@@ -418,10 +418,11 @@ public class Director extends AppCompatActivity{
         ft.commit();
     }
 
-    public void switchSucursalFRS(Fragment frag, int idSucursal, String fechaInicio, String fechaFin){
+    public void switchSucursalFRS(Fragment frag,int idGerencia, int idSucursal, String fechaInicio, String fechaFin){
         Bundle bundle=new Bundle();
+        bundle.putInt("idGerencia", idGerencia);
         bundle.putInt("idSucursal",idSucursal);
-        bundle.putString("fechaIni",fechaInicio);
+        bundle.putString("fechaInicio",fechaInicio);
         bundle.putString("fechaFin",fechaFin);
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -460,7 +461,7 @@ public class Director extends AppCompatActivity{
     public void switchAsesoresFA(Fragment frag, String idAsesor, String fechaInicio, String fechaFin){
         Bundle bundle=new Bundle();
         bundle.putString("idAsesor",idAsesor);
-        bundle.putString("fechaIni",fechaInicio);
+        bundle.putString("fechaInicio",fechaInicio);
         bundle.putString("fechaFin",fechaFin);
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -479,8 +480,7 @@ public class Director extends AppCompatActivity{
     // mParam7/*idRetenido*/,
     // mParam8/*idCitas*/,
     // mParam9/*SeleccionIDS*/);
-    public void switchClientesFCQ11(Fragment frag, String fechaInicio, String fechaFin, String datosCliente, int idSucursal, int idGerencia, String idAsesor,
-                                   int idRetenido, int idCitas, int idSeleccion) {
+    public void switchClientesFCQ11(Fragment frag, String fechaInicio, String fechaFin, String datosCliente, int idSucursal, int idGerencia, String idAsesor, int idRetenido, int idCitas, int idSeleccion) {
         Bundle bundle=new Bundle();
         bundle.putString("fechaInicio", fechaInicio);
         bundle.putString("fechaFin", fechaFin);

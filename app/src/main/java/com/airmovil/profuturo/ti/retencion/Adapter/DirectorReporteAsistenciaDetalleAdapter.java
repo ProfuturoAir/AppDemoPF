@@ -90,18 +90,6 @@ public class DirectorReporteAsistenciaDetalleAdapter extends RecyclerView.Adapte
             myholder.campoHoraSalidasDetalle.setText(lista.getSalidaHora());
             myholder.campoSalidasCoordenadasDetalle.setText("Coordenadas: " + lista.getSalidaLatitud() + ", " + lista.getSalidaLongitud());
 
-            /*myholder.campoNombre.setText(lista.getClienteNombre());
-            myholder.campoCuenta.setText(lista.getClienteCuenta());
-            char nombre = lista.getClienteNombre().charAt(0);
-            final String pLetra = Character.toString(nombre);
-            myholder.campoLetra.setText(pLetra);
-
-            myholder.cardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    fragmentJumpDatosUsuario(pLetra, v);
-                }
-            });*/
         } else{
             ((LoadingViewHolder) holder).progressBar.setIndeterminate(true);
         }

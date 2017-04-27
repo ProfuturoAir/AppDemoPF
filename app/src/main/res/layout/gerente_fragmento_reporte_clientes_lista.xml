@@ -18,54 +18,31 @@
         <LinearLayout style="@style/contenedorElementosLista">
             <TextView android:id="@+id/gfrcll_tv_nombre_cliente" style="@style/campoLista" android:text="Nombre de sucursal"/>
             <TextView android:id="@+id/gfrcll_tv_cuenta_cliente" style="@style/campoLista" android:text="Cuenta"/>
-
-            <LinearLayout style="@style/contenedorDetalleLista">
-
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <!-- TODO: campo 1 -->
+                <TextView android:id="@+id/gfrcll_tv_asesor_cliente" style="@style/textoLista"/>
+                <!-- TODO: campo 2 -->
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
-                        <!-- TODO: campo 1 -->
-                        <TextView style="@style/asesorLista"/>
-                        <TextView android:id="@+id/gfrcll_tv_asesor_cliente" style="@style/textoGreenLista"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
-                        <!-- TODO: campo 2 -->
-                        <TextView style="@style/conCitaListaGreen"/>
-                        <TextView android:id="@+id/gfrcll_tv_con_cita_cliente" android:text="1531" style="@style/textoGreenLista"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
-                        <!-- TODO: campo 2 -->
-                        <TextView style="@style/retenidoListaRed"/>
-                        <TextView android:id="@+id/gfrcll_tv_retenidos_cliente" android:text="No" style="@style/textoRedLista"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
-                        <!-- TODO: campo 1 -->
-                        <TextView style="@style/sucursalLista"/>
-                        <TextView android:id="@+id/gfrcll_tv_sucursal_cliente" android:text="4323" style="@style/textoLista"/>
-                    </LinearLayout>
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content">
+                    <TextView android:id="@+id/gfrcll_tv_con_cita_cliente" style="@style/textoGreenLista"/>
+                    <TextView android:id="@+id/gfrcll_tv_sin_cita_cliente" style="@style/textoRedLista"/>
                 </LinearLayout>
+                <!-- TODO: campo 2 -->
+                <LinearLayout
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content">
+                    <TextView android:id="@+id/gfrcll_tv_retenidos_cliente" style="@style/textoGreenLista"/>
+                    <TextView android:id="@+id/gfrcll_tv_no_retenidos_cliente" style="@style/textoRedLista"/>
+                </LinearLayout>
+                <!-- TODO: campo 1 -->
+                <TextView android:id="@+id/gfrcll_tv_sucursal_cliente" android:paddingLeft="10dp" style="@style/textoLista"/>
             </LinearLayout>
         </LinearLayout>
-        <TextView
+        <ImageView
             android:id="@+id/gfrcll_btn_detalles"
             android:layout_width="50dp"
             android:layout_marginLeft="-50dp"

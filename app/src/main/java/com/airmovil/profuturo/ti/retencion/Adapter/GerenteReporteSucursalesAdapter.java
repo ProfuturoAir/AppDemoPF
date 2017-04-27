@@ -18,6 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -104,13 +105,16 @@ public class GerenteReporteSucursalesAdapter extends RecyclerView.Adapter{
             final GerenteReporteSucursalesModel lista = list.get(position);
             final MyViewHolder myholder = (MyViewHolder) holder;
             myholder.campoIdSucursal.setText("Sucursal: " + lista.getIdSucursal());
-            myholder.campoConCita.setText(" " + lista.getConCita());
-            myholder.campoSinCita.setText(" " + lista.getSinCita());
+            myholder.campoConCita.setText("" + lista.getConCita());
+            myholder.campoSinCita.setText("" + lista.getSinCita() + " ");
             myholder.campoEmitidas.setText(" " + lista.getEmitido());
-            myholder.campoNoEmitidas.setText( lista.getNoEmitido() + " ");
-            myholder.campoSaldoEmitido.setText(" " + lista.getSaldoEmitido());
-            myholder.campoPorcentaje.setText(Config.df.format((float)(lista.getEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido())) +"% "
-                    + Config.df.format((float)(lista.getNoEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido()))+"%");
+            myholder.campoNoEmitidas.setText(lista.getNoEmitido() + "");
+            myholder.campoSaldoEmitido.setText("" +  Config.nf.format(lista.getSaldoNoEmetido()));
+            myholder.campoSaldoNoEmitido.setText("" +  Config.nf.format(lista.getSaldoNoEmetido()));
+            myholder.campoPorcentaje.setText(
+                    "Porcentaje: Emitidos " + Config.df.format((float)(lista.getEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido())) +"% |No emitidos " + Config.df.format((float)(lista.getNoEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido()))+"%");
+
+
             int var = lista.getIdSucursal();
             String intToString = String.valueOf(var);
             char dato = intToString.charAt(0);
@@ -290,7 +294,7 @@ public class GerenteReporteSucursalesAdapter extends RecyclerView.Adapter{
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView campoLetra, campoIdSucursal, campoConCita, campoSinCita, campoEmitidas, campoNoEmitidas, campoSaldoEmitido, campoSaldoNoEmitido, campoPorcentaje;
-        public TextView btn;
+        public ImageView btn;
         public CardView cardView;
         public MyViewHolder(View view){
             super(view);
@@ -303,7 +307,7 @@ public class GerenteReporteSucursalesAdapter extends RecyclerView.Adapter{
             campoSaldoEmitido = (TextView) view.findViewById(R.id.gfrsl_tv_saldos_emitido);
             campoSaldoNoEmitido = (TextView) view.findViewById(R.id.gfrsl_tv_saldos_no_emitido);
             campoPorcentaje = (TextView) view.findViewById(R.id.gfrsl_tv_procentaje);
-            btn = (TextView) view.findViewById(R.id.gfrsl_tv_menu);
+            btn = (ImageView) view.findViewById(R.id.gfrsl_tv_menu);
             cardView = (CardView) view.findViewById(R.id.gfrsl_cv);
         }
     }

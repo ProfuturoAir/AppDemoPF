@@ -18,6 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -104,24 +105,16 @@ public class DirectorReporteAsesoresAdapter extends RecyclerView.Adapter{
         if(holder instanceof MyViewHolder){
             final GerenteReporteAsesoresModel lista = list.get(position);
             final MyViewHolder myholder = (MyViewHolder) holder;
-            //final String fechaIni = (String) fechaIni;
-            //final String fechaFin = (String) fechaFin;
-
-
             myholder.campoIdAsesor.setText("Asesor: " + lista.getNumeroEmpleado());
             myholder.campoConCita.setText(" " + lista.getConCita());
-            myholder.campoSinCita.setText(" " + lista.getSinCita());
+            myholder.campoSinCita.setText(" " + lista.getSinCita() + " " );
             myholder.campoEmitidas.setText(" " + lista.getEmitido());
             myholder.campoNoEmitidas.setText( lista.getNoEmitido() + " ");
-            myholder.campoSaldoEmitido.setText(" " + lista.getSaldoEmitido());
-            myholder.campoSaldoNoEmitido.setText(" " + lista.getSaldoNoEmetido());
-
-            int var = lista.getNumeroEmpleado();
-            String intToString = String.valueOf(var);
-            char dato = intToString.charAt(0);
-            final String inicial = Character.toString(dato);
-
-            myholder.campoLetra.setText(inicial);
+            myholder.campoSaldoEmitido.setText(" " + Config.nf.format(lista.getSaldoEmitido()));
+            myholder.campoSaldoNoEmitido.setText(" " + Config.nf.format(lista.getSaldoNoEmetido()));
+            myholder.campoPorcentajes.setText(("Porcentaje: Emitidos" + Config.df.format((float)(lista.getEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido())) +"%|No emitidos" + Config.df.format((float)(lista.getNoEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido()))+"%"));
+            char valor = String.valueOf(lista.getNumeroEmpleado()).charAt(0);
+            myholder.campoLetra.setText(String.valueOf(valor));
 
             myholder.btn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -184,12 +177,9 @@ public class DirectorReporteAsesoresAdapter extends RecyclerView.Adapter{
                     director.switchClientes(fragmentoClientes, lista.getNumeroEmpleado(),fechaIni,fechaFin);
                     return true;
                 case R.id.sub_menu_reporte_asesores_nav_asistencia:
-                    //AppCompatActivity Asistencia = (AppCompatActivity) mRecyclerView.getContext();
                     ReporteAsistencia fragmentoAsistencia = new ReporteAsistencia();
                     Director dt = (Director) mRecyclerView.getContext();
                     dt.switchAsistencia(fragmentoAsistencia,0,0, String.valueOf(lista.getNumeroEmpleado()),fechaIni,fechaFin);
-                    //Create a bundle to pass data, add data, set the bundle to your fragment and:
-                    //Asistencia.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoAsistencia).addToBackStack(null).commit();
                     return true;
                 case R.id.sub_menu_reporte_asesores_email:
                     final Dialog dialog = new Dialog(mContext);
@@ -207,8 +197,7 @@ public class DirectorReporteAsesoresAdapter extends RecyclerView.Adapter{
                         @Override
                         public void onClick(View v) {
                             final EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
-
-                            final String datoEditText = editText.getText().toString();
+                            final String datoEditText = editText.getText().toString().trim();
                             final String datoSpinner = spinner.getSelectedItem().toString();
 
                             Log.d("DATOS USER","SPINNER: "+datoEditText+" datosSpinner: "+ datoSpinner);
@@ -219,11 +208,6 @@ public class DirectorReporteAsesoresAdapter extends RecyclerView.Adapter{
                                 Connected connected = new Connected();
                                 final InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Service.INPUT_METHOD_SERVICE);
                                 if(connected.estaConectado(mContext)){
-                                    //final EnviaMail envia = new EnviaMail();
-                                    //String respuesta = envia.sendMail("1","correo",true,"1","12","12",Config.URL_SEND_MAIL,mContext);
-                                /*imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-                                Config.msjTime(mContext, "Enviando", "Se ha enviado el mensaje al destino", 4000);
-                                dialog.dismiss();*/
                                     JSONObject obj = new JSONObject();
                                     try {
                                         JSONObject rqt = new JSONObject();
@@ -297,8 +281,8 @@ public class DirectorReporteAsesoresAdapter extends RecyclerView.Adapter{
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        public TextView campoLetra, campoIdAsesor, campoConCita, campoSinCita, campoEmitidas, campoNoEmitidas, campoSaldoEmitido, campoSaldoNoEmitido;
-        public TextView btn;
+        public TextView campoLetra, campoIdAsesor, campoConCita, campoSinCita, campoEmitidas, campoNoEmitidas, campoSaldoEmitido, campoSaldoNoEmitido, campoPorcentajes;
+        public ImageView btn;
         public CardView cardView;
         public MyViewHolder(View view){
             super(view);
@@ -310,7 +294,8 @@ public class DirectorReporteAsesoresAdapter extends RecyclerView.Adapter{
             campoNoEmitidas = (TextView) view.findViewById(R.id.dfral_tv_no_emitidas);
             campoSaldoEmitido = (TextView) view.findViewById(R.id.dfral_tv_saldos_emitido);
             campoSaldoNoEmitido = (TextView) view.findViewById(R.id.dfral_tv_saldos_no_emitido);
-            btn = (TextView) view.findViewById(R.id.dfral_btn_detalles);
+            campoPorcentajes = (TextView) view.findViewById(R.id.dfral_tv_porcentaje);
+            btn = (ImageView) view.findViewById(R.id.dfral_btn_detalles);
             cardView = (CardView) view.findViewById(R.id.dfral_cv);
         }
     }

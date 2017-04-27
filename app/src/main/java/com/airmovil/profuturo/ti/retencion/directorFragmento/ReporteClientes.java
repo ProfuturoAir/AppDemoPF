@@ -912,7 +912,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
             JSONArray array = obj.getJSONArray("Cliente");
             filas = obj.getInt("filasTotal");
             totalFilas = obj.getInt("filasTotal");
-            Log.d("primerPaso", "response -->" + array);
+            Log.d("primerPaso", "Filas del servicio -->" + totalFilas);
             for(int i = 0; i < array.length(); i++){
                 DirectorReporteClientesModel getDatos2 = new DirectorReporteClientesModel();
                 JSONObject json = null;
@@ -939,7 +939,8 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         }
 
         tvResultados.setText(filas + " Registros");
-        numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
+        numeroMaximoPaginas = Config.maximoPaginas(60);
+        Log.d("primerPaso", "maximo de paginas -->" + numeroMaximoPaginas);
         String PtvFecha = tvFecha.getText().toString();
         String[] separated = PtvFecha.split(" - ");
 

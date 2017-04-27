@@ -3,38 +3,31 @@ package com.airmovil.profuturo.ti.retencion.asesorFragmento;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import com.airmovil.profuturo.ti.retencion.Adapter.CitasClientesAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
-import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.CitasClientesModel;
 import com.android.volley.AuthFailureError;
@@ -42,24 +35,13 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ConCita.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ConCita#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ConCita extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     private static final String TAG = ConCita.class.getSimpleName();
@@ -182,7 +164,7 @@ public class ConCita extends Fragment {
 
                 if(connected.estaConectado(getContext())){
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    ConCita newInstance = ConCita.newInstance("item3", "pagina3", rootView.getContext());
+                    ConCita newInstance = ConCita.newInstance(Dialogos.fechaActual(), "", rootView.getContext());
                     borrar.onDestroy();
                     ft.remove(borrar);
                     ft.replace(R.id.content_asesor, newInstance);
@@ -326,34 +308,16 @@ public class ConCita extends Fragment {
                         progressDialog.dismiss();
                         sendJson(true);
                     }
-                }, 800);
+                }, Config.TIME_HANDLER);
     }
 
     private void fechas(){
-        Map<String, Integer> fechaDatos = Config.dias();
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
-        // TODO: fecha
-        Map<String, String> fechaActual = Config.fechas(1);
-        String smParam1 = fechaActual.get("fechaIni");
-        String smParam2 = fechaActual.get("fechaFin");
-        if(getArguments() != null){
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-            tvFecha.setText(mParam1 + " - " + mParam2);
-        }else{
-            tvFecha.setText(smParam1 + " - " + smParam2);
-        }
+        tvFecha.setText(Dialogos.fechaActual());
     }
 
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
         final JSONObject obj = new JSONObject();
-        SessionManager sessionManager = new SessionManager(getContext());
-        HashMap<String, String> datos = sessionManager.getUserDetails();
-        String nombre = datos.get(SessionManager.NOMBRE);
-        String numeroUsuario = datos.get(SessionManager.USER_ID);
         try {
             // TODO: Formacion del JSON request
             JSONObject rqt = new JSONObject();

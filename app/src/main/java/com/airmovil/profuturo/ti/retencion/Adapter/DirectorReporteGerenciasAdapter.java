@@ -3,6 +3,7 @@ package com.airmovil.profuturo.ti.retencion.Adapter;
 import android.app.Dialog;
 import android.app.Service;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -68,16 +70,11 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
     private String mFechaInicio;
     private String mFechaFin;
 
-
-    //public DirectorReporteGerenciasAdapter(Context mContext, List<DirectorReporteGerenciasModel> list, RecyclerView mRecyclerView,  Map<String, String> datos ) {
     public DirectorReporteGerenciasAdapter(Context mContext, List<DirectorReporteGerenciasModel> list, RecyclerView mRecyclerView,  String mFechaInicio, String mFechaFin) {
         this.mContext = mContext;
         this.list = list;
         this.mRecyclerView = mRecyclerView;
 
-        datos = new HashMap<String, String>();
-        this.datos = datos;
-        //this.datos.get("fechaINi");
         this.mFechaInicio = mFechaInicio;
         this.mFechaFin = mFechaFin;
 
@@ -126,15 +123,15 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
 
             myViewHolder.letra.setText(letra);
             myViewHolder.idGerencia.setText("Gerencia:" + lista.getIdGerencia());
-            myViewHolder.conCita.setText("" + lista.getConCita() + "");
-            myViewHolder.sinCita.setText("" + lista.getSinCita() + "");
-            myViewHolder.retenido.setText("" + lista.getEmitidas());
-            myViewHolder.noRetenido.setText("" + lista.getNoEmitidas());
-            myViewHolder.saldoRetenido.setText(": " + lista.getdSaldoRetenido() + "");
-            myViewHolder.saldoNoRetenido.setText("" +lista.getdSaldoNoRetenido() + " ");
-            myViewHolder.porcentaje.setText(" " + Config.df.format((float)(lista.getEmitidas()*100)/(lista.getEmitidas()+lista.getNoEmitidas())) +"% "
-                    + Config.df.format((float)(lista.getNoEmitidas()*100)/(lista.getEmitidas()+lista.getNoEmitidas()))+"%");
-
+            myViewHolder.conCita.setText(" " + lista.getConCita() + " ");
+            myViewHolder.sinCita.setText(" " + lista.getSinCita() + " ");
+            myViewHolder.retenido.setText(" " + lista.getEmitidas() + " ");
+            myViewHolder.noRetenido.setText(" " + lista.getNoEmitidas() + " ");
+            myViewHolder.saldoRetenido.setText(": " + Config.nf.format(lista.getdSaldoRetenido()) + " ");
+            myViewHolder.saldoNoRetenido.setText(" " + Config.nf.format(lista.getdSaldoRetenido()) + " ");
+            myViewHolder.porcentaje.setText(
+                    "Porcentaje: Emitidos " + Config.df.format((float)(lista.getEmitidas()*100)/(lista.getEmitidas()+lista.getNoEmitidas())) +"%  " +
+                    " | No emitidos " + Config.df.format((float)(lista.getNoEmitidas()*100)/(lista.getEmitidas()+lista.getNoEmitidas()))+"%");
             myViewHolder.tvClick.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -223,7 +220,6 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
                     director.switchSucursales(reporteSucursales, list.idGerencia, mFechaInicio, mFechaFin);
                     return true;
                 case R.id.nav_asesor:
-                    //Log.d("IDDD","¨¨¨"+item.getItemId());
                     ReporteAsesores reporteAsesores = new ReporteAsesores();
                     Director dt = (Director) mRecyclerView.getContext();
                     dt.switchAsesoresFG(reporteAsesores, list.idGerencia, mFechaInicio, mFechaFin);
@@ -232,10 +228,6 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
                     ReporteClientes reporteClientes = new ReporteClientes();
                     Director dtr = (Director) mRecyclerView.getContext();
                     dtr.switchClientesFG(reporteClientes, list.idGerencia, mFechaInicio, mFechaFin);
-                    /*AppCompatActivity Clientes = (AppCompatActivity) mRecyclerView.getContext();
-                    ReporteClientes fragmentoClientes = new ReporteClientes();
-                    //Create a bundle to pass data, add data, set the bundle to your fragment and:
-                    Clientes.getSupportFragmentManager().beginTransaction().replace(R.id.content_director, fragmentoClientes).addToBackStack(null).commit();*/
                     return true;
                 case R.id.nav_enviar_a_email:
                     final Dialog dialog = new Dialog(mContext);
@@ -355,7 +347,7 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
     public class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView letra, idGerencia, conCita, sinCita, retenido, noRetenido, saldoRetenido, saldoNoRetenido, porcentaje;
         public CardView cardView;
-        public TextView tvClick;
+        public ImageView tvClick;
         public MyViewHolder(View view){
             super(view);
             letra = (TextView) view.findViewById(R.id.dfrgl_tv_letra);
@@ -367,7 +359,7 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
             saldoRetenido = (TextView) view.findViewById(R.id.dfrgl_tv_con_saldo);
             saldoNoRetenido = (TextView) view.findViewById(R.id.dfrgl_tv_sin_saldo);
             porcentaje = (TextView) view.findViewById(R.id.dfrgl_tv_porcentaje);
-            tvClick = (TextView) view.findViewById(R.id.dfrcll_btn_detalles);
+            tvClick = (ImageView) view.findViewById(R.id.dfrcll_btn_detalles);
             cardView = (CardView) view.findViewById(R.id.ddfrgl_cardview);
         }
     }

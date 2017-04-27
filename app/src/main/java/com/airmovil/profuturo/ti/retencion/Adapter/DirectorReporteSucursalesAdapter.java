@@ -18,6 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -108,14 +109,15 @@ public class DirectorReporteSucursalesAdapter extends RecyclerView.Adapter{
             final MyViewHolder myholder = (MyViewHolder) holder;
 
             myholder.campoIdSucursal.setText("Sucursal: " + lista.getIdSucursal());
-            myholder.campoConCita.setText(" " + lista.getConCita());
-            myholder.campoSinCita.setText(" " + lista.getSinCita());
+            myholder.campoConCita.setText("" + lista.getConCita());
+            myholder.campoSinCita.setText("" + lista.getSinCita() + " ");
             myholder.campoEmitidas.setText(" " + lista.getEmitido());
-            myholder.campoNoEmitidas.setText( lista.getNoEmitido() + " ");
-            myholder.campoSaldoEmitido.setText(" " + lista.getSaldoEmitido());
-            myholder.campoSaldoNoEmitido.setText(" " + lista.getSaldoNoEmetido());
-            myholder.campoPorcentaje.setText(Config.df.format((float)(lista.getEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido())) +"% "
-                    + Config.df.format((float)(lista.getNoEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido()))+"%");
+            myholder.campoNoEmitidas.setText(lista.getNoEmitido() + "");
+            myholder.campoSaldoEmitido.setText("" +  Config.nf.format(lista.getSaldoNoEmetido()));
+            myholder.campoSaldoNoEmitido.setText("" +  Config.nf.format(lista.getSaldoNoEmetido()));
+            myholder.campoPorcentaje.setText(
+                    "Porcentaje: Emitidos " + Config.df.format((float)(lista.getEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido())) +"%  " +
+                            " | No emitidos " + Config.df.format((float)(lista.getNoEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido()))+"%");
 
 
             int var = lista.getIdSucursal();
@@ -215,11 +217,6 @@ public class DirectorReporteSucursalesAdapter extends RecyclerView.Adapter{
                                 Connected connected = new Connected();
                                 final InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Service.INPUT_METHOD_SERVICE);
                                 if(connected.estaConectado(mContext)){
-                                    //final EnviaMail envia = new EnviaMail();
-                                    //String respuesta = envia.sendMail("1","correo",true,"1","12","12",Config.URL_SEND_MAIL,mContext);
-                                /*imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-                                Config.msjTime(mContext, "Enviando", "Se ha enviado el mensaje al destino", 4000);
-                                dialog.dismiss();*/
                                     JSONObject obj = new JSONObject();
                                     try {
                                         JSONObject rqt = new JSONObject();
@@ -293,7 +290,7 @@ public class DirectorReporteSucursalesAdapter extends RecyclerView.Adapter{
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView campoLetra, campoIdSucursal, campoConCita, campoSinCita, campoEmitidas, campoNoEmitidas, campoSaldoEmitido, campoSaldoNoEmitido, campoPorcentaje;
-        public TextView subMenu;
+        public ImageView subMenu;
         public CardView cardView;
         public MyViewHolder(View view){
             super(view);
@@ -306,7 +303,7 @@ public class DirectorReporteSucursalesAdapter extends RecyclerView.Adapter{
             campoSaldoEmitido = (TextView) view.findViewById(R.id.dfrsl_tv_saldos_emitido);
             campoSaldoNoEmitido = (TextView) view.findViewById(R.id.dfrsl_tv_saldos_no_emitido);
             campoPorcentaje = (TextView) view.findViewById(R.id.dfrsl_tv_procentaje);
-            subMenu = (TextView) view.findViewById(R.id.dfrsl_tv_menu);
+            subMenu = (ImageView) view.findViewById(R.id.dfrsl_tv_menu);
             cardView = (CardView) view.findViewById(R.id.dfrsl_cv);
         }
     }

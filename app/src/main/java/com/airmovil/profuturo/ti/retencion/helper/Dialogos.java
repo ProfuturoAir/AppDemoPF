@@ -83,18 +83,12 @@ public class Dialogos extends Activity{
     public static void dialogoErrorServicio(Context context){
         android.app.AlertDialog.Builder dialogoAlert  = new android.app.AlertDialog.Builder(context);
         dialogoAlert.setTitle(context.getResources().getString(R.string.titulo_error));
-        dialogoAlert.setIcon(context.getResources().getDrawable(R.drawable.icono_sin_wifi));
+        dialogoAlert.setIcon(context.getResources().getDrawable(R.drawable.icono_error));
         dialogoAlert.setMessage(context.getResources().getString(R.string.msj_error_datos_servicio));
         dialogoAlert.setCancelable(true);
         dialogoAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {}
-        });
-        dialogoAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
         });
         dialogoAlert.create().show();
     }

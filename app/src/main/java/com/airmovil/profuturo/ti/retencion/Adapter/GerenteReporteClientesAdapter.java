@@ -19,6 +19,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -108,15 +109,15 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
             final MyViewHolder myholder = (MyViewHolder) holder;
             myholder.campoNombreCliente.setText("Nombre del cliente: " + lista.getNombreCliente());
             myholder.campoCuentaCliente.setText("Número de cuenta: " + lista.getNumeroCuenta());
-            myholder.campoAsesorCliente.setText("Asesor: " + lista.getNumeroEmpleado());
-            myholder.campoConCitaCliente.setText((Boolean.parseBoolean(lista.getCita()) ? "Si" : "No"));
-            myholder.campoNoRetenidoCliente.setText((Boolean.parseBoolean(lista.getRetenido()) ? "Retenido" : "No Retenido"));
-            myholder.campoSucursalCliente.setText("Sucursal" + lista.getIdSucursal());
-
-            int var = lista.getIdSucursal();
-            String intToString = String.valueOf(var);
-            char dato = intToString.charAt(0);
+            myholder.campoAsesorCliente.setText("Asesor: " + lista.getNumeroEmpleado() + " ");
+            myholder.campoConCitaCliente.setText(" " + (Boolean.parseBoolean(lista.getCita()) ? " Con cita " : " "));
+            myholder.campoSinCitaCliente.setText(" " + (Boolean.parseBoolean(lista.getCita()) ? " " : " Sin cita "));
+            myholder.campoRetenidoCliente.setText(" " + (Boolean.parseBoolean(lista.getRetenido()) ? " Retenido " : " "));
+            myholder.campoNoRetenidoCliente.setText(" " + (Boolean.parseBoolean(lista.getRetenido()) ? " " : " No Retenido "));
+            myholder.campoSucursalCliente.setText(" Sucursal: " + lista.getIdSucursal() + " ");
+            char dato = String.valueOf(lista.getIdSucursal()).charAt(0);
             final String inicial = Character.toString(dato);
+            myholder.campoLetra.setText(inicial);
 
             myholder.btn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -326,8 +327,8 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        public TextView campoLetra, campoNombreCliente, campoCuentaCliente, campoAsesorCliente, campoConCitaCliente, campoNoRetenidoCliente, campoSucursalCliente;
-        public TextView btn;
+        public TextView campoLetra, campoNombreCliente, campoCuentaCliente, campoAsesorCliente, campoConCitaCliente, campoSinCitaCliente, campoRetenidoCliente, campoNoRetenidoCliente, campoSucursalCliente;
+        public ImageView btn;
         public CardView cardView;
         public MyViewHolder(View view){
             super(view);
@@ -336,9 +337,11 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
             campoCuentaCliente = (TextView) view.findViewById(R.id.gfrcll_tv_cuenta_cliente);
             campoAsesorCliente = (TextView) view.findViewById(R.id.gfrcll_tv_asesor_cliente);
             campoConCitaCliente = (TextView) view.findViewById(R.id.gfrcll_tv_con_cita_cliente);
-            campoNoRetenidoCliente = (TextView) view.findViewById(R.id.gfrcll_tv_retenidos_cliente);
+            campoSinCitaCliente = (TextView) view.findViewById(R.id.gfrcll_tv_sin_cita_cliente);
+            campoRetenidoCliente = (TextView) view.findViewById(R.id.gfrcll_tv_retenidos_cliente);
+            campoNoRetenidoCliente = (TextView) view.findViewById(R.id.gfrcll_tv_no_retenidos_cliente);
             campoSucursalCliente = (TextView) view.findViewById(R.id.gfrcll_tv_sucursal_cliente);
-            btn = (TextView) view.findViewById(R.id.gfrcll_btn_detalles);
+            btn = (ImageView) view.findViewById(R.id.gfrcll_btn_detalles);
             cardView = (CardView) view.findViewById(R.id.gfrcll_cv);
         }
     }
