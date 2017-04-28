@@ -154,10 +154,12 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
         lblLongitud = (TextView) view.findViewById(R.id.aff_lbl_LongitudDoc);
 
         connected = new Connected();
-        idTramite = getArguments().getString("idTramite");
-        nombre = getArguments().getString("nombre");
-        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-        hora = getArguments().getString("hora");
+        if(getArguments()!=null){
+            idTramite = getArguments().getString("idTramite");
+            nombre = getArguments().getString("nombre");
+            numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+            hora = getArguments().getString("hora");
+        }
 
         try{
             apiClient = new GoogleApiClient.Builder(getActivity())
@@ -568,10 +570,11 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
         }
 
         JSONObject obj = new JSONObject();
-        idTramite = getArguments().getString("idTramite");
-        SessionManager sessionManager = new SessionManager(getContext());
-        HashMap<String, String> usuario = sessionManager.getUserDetails();
-        String idUsuario = usuario.get(SessionManager.USER_ID);
+
+        if(getArguments()!=null){
+            idTramite = getArguments().getString("idTramite");
+        }
+
         String fechaN = "";
         try {
             SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");

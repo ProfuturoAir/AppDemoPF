@@ -114,9 +114,11 @@ public class DatosCliente extends Fragment {
         // TODO: Config
         usuario = Config.usuario(getContext());
 
-        nombre = getArguments().getString("nombre");
-        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-        hora = getArguments().getString("hora");
+        if(getArguments()!=null){
+            nombre = getArguments().getString("nombre");
+            numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+            hora = getArguments().getString("hora");
+        }
 
         Log.d("NOMBRES CLI ", "1 " + nombre + " numero " + numeroDeCuenta);
 
@@ -333,9 +335,6 @@ public class DatosCliente extends Fragment {
     private void sendJson(final boolean primerPeticion) {
 
         JSONObject obj = new JSONObject();
-        SessionManager sessionManager = new SessionManager(getContext());
-        HashMap<String, String> usuario = sessionManager.getUserDetails();
-        String idUsuario = usuario.get(SessionManager.USER_ID);
         nombre = getArguments().getString("nombre");
         numeroDeCuenta = getArguments().getString("numeroDeCuenta");
         hora = getArguments().getString("hora");

@@ -132,10 +132,13 @@ public class Encuesta2 extends Fragment {
         etEmail = (EditText) view.findViewById(R.id.gfe2_et_email);
 
         connected = new Connected();
-        idTramite = getArguments().getString("idTramite");
-        nombre = getArguments().getString("nombre");
-        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-        hora = getArguments().getString("hora");
+
+        if(getArguments()!=null){
+            idTramite = getArguments().getString("idTramite");
+            nombre = getArguments().getString("nombre");
+            numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+            hora = getArguments().getString("hora");
+        }
 
         arrayAdapterAfores = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.AFORES);
         arrayAdapterMotivo = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.MOTIVOS);

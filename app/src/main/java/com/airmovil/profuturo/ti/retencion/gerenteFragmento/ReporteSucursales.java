@@ -161,7 +161,6 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         variables();
         fechas();
 
-        sessionManager = new SessionManager(getContext());
         connected = new Connected();
 
         if(getArguments() != null) {

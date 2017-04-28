@@ -105,12 +105,12 @@ public class DatosAsesor extends Fragment {
         primeraPeticion();
         variables();
 
-        sessionManager = new SessionManager(getActivity().getApplicationContext());
-
-        idClienteCuenta =getArguments().getString("idClienteCuenta");
-        nombre = getArguments().getString("nombre");
-        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-        hora = getArguments().getString("hora");
+        if(getArguments()!=null){
+            idClienteCuenta =getArguments().getString("idClienteCuenta");
+            nombre = getArguments().getString("nombre");
+            numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+            hora = getArguments().getString("hora");
+        }
 
         Log.d("NOMBRES 1 ++", "1" + nombre + " numero" + numeroDeCuenta);
 
@@ -119,8 +119,6 @@ public class DatosAsesor extends Fragment {
         final FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 
         // TODO: obteniendo el numero del usuario
-        HashMap<String, String> hashMap = sessionManager.getUserDetails();
-        String numeroUsuario = hashMap.get(SessionManager.ID);
 
 
         btnContinuar.setOnClickListener(new View.OnClickListener() {

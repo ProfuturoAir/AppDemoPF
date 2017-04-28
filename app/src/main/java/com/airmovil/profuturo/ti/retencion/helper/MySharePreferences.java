@@ -1,20 +1,23 @@
 package com.airmovil.profuturo.ti.retencion.helper;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.airmovil.profuturo.ti.retencion.activities.Login;
 
 import java.util.HashMap;
 
+
 /**
- * Created by tecnicoairmovil on 15/03/17.
+ * Created by tecnicoairmovil on 28/04/17.
  */
 
-public class SessionManager {
+public class MySharePreferences {
+    private static final String TAG = MySharePreferences.class.getSimpleName();
+
     public static final String ID = "id";
     public static final String CAT="cat";
     public static final String APELLIDO_MATERNO = "apellidoMaterno";
@@ -32,47 +35,32 @@ public class SessionManager {
     public static final String PERFIL = "perfil";
     public static final String CUSP = "cusp";
 
-    private final static String TAG = SessionManager.class.getSimpleName();
-    //final SharedPreferences pref;
-    //final SharedPreferences.Editor editor;
-    //final Context _context;
-    final int PRIVATE_MODE = 0;
-    private static final String KEY_CT="create_time";
+    private static MySharePreferences sharePref = null;
+    private  SharedPreferences sharedPreferences;
+    private  SharedPreferences.Editor editor;
+    private Context context;
+
+    private static final String PLACE_OBJ = "place_obj";
     private static final String PREF_NAME = "Login";
     private static final String KEY_IS_LOGGEDIN = "isLoggedIn";
 
-    private static SessionManager mSessionManager;
-    private Context context;
-    private SharedPreferences sharedPreferences;
-
-    private SessionManager(){}
-
-    public static SessionManager getInstance(){
-        if (mSessionManager == null) mSessionManager = new SessionManager();
-        return mSessionManager;
+    private MySharePreferences(Context context) {
+        this.context = context;
+        sharedPreferences = context.getSharedPreferences(context.getPackageName(), Activity.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
     }
 
-    public SessionManager Initialize(Context ctxt){
-        context = ctxt;
-        //
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return null;
+    public static MySharePreferences getInstance(Context context) {
+        if (sharePref == null) {
+            sharePref = new MySharePreferences(context);
+        }
+        return sharePref;
     }
 
-
-    /*public SessionManager(Context context) {
-        this._context = context;
-        int PRIVATE_MODE = 0;
-        pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
-        editor = pref.edit();
-    }*/
 
     public void createLoginSession(String apellidoMaterno, String apellidoPaterno, String centroCosto, String claveConsar, String curp, String email,
-                String fechaAltaConsar, String idRolEmpelado, String nombre,String numeroEmpleado, String rolEmpleado ,String userId, String cusp){
-        // Storing name in pref
-        sharedPreferences = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
-        SharedPreferences.Editor editor;
-        editor = sharedPreferences.edit();
+                                   String fechaAltaConsar, String idRolEmpelado, String nombre,String numeroEmpleado, String rolEmpleado ,String userId, String cusp){
+        // Storing name in  sharedPreferences
         editor.putBoolean(KEY_IS_LOGGEDIN, true);
         editor.putString(APELLIDO_MATERNO, apellidoMaterno);
         editor.putString(APELLIDO_PATERNO, apellidoPaterno);
@@ -92,9 +80,7 @@ public class SessionManager {
     }
 
     public void setLogin(boolean isLoggedIn) {
-        sharedPreferences = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
-        SharedPreferences.Editor editor;
-        editor = sharedPreferences.edit();
+
         editor.putBoolean(KEY_IS_LOGGEDIN, isLoggedIn);
 
         // commit changes
@@ -104,25 +90,25 @@ public class SessionManager {
     }
 
     public boolean isLoggedIn(){
-        return sharedPreferences.getBoolean(KEY_IS_LOGGEDIN, false);
+        return sharedPreferences.getBoolean(KEY_IS_LOGGEDIN, true);
     }
 
     public HashMap<String, String> getUserDetails(){
         HashMap<String, String> user = new HashMap<>();
-        user.put(CAT,sharedPreferences.getString(CAT,null));
-        user.put(APELLIDO_MATERNO, sharedPreferences.getString(APELLIDO_MATERNO, null));
-        user.put(APELLIDO_PATERNO, sharedPreferences.getString(APELLIDO_PATERNO, null));
-        user.put(CENTRO_COSTO, sharedPreferences.getString(CENTRO_COSTO, null));
-        user.put(CLAVE_CONSAR, sharedPreferences.getString(CLAVE_CONSAR, null));
-        user.put(CURP, sharedPreferences.getString(CURP, null));
-        user.put(EMAIL, sharedPreferences.getString(EMAIL, null));
-        user.put(FECHA_ALTA_CONSAR, sharedPreferences.getString(FECHA_ALTA_CONSAR, null));
-        user.put(ID_ROL_EMPLEADO, sharedPreferences.getString(ID_ROL_EMPLEADO, null));
-        user.put(NOMBRE, sharedPreferences.getString(NOMBRE,null));
-        user.put(NUMERO_EMPLEADO, sharedPreferences.getString(NUMERO_EMPLEADO, null));
-        user.put(USER_ID, sharedPreferences.getString(USER_ID, null));
-        user.put(PERFIL,sharedPreferences.getString(PERFIL, null));
-        user.put(CUSP, sharedPreferences.getString(CUSP, null));
+        user.put(CAT, sharedPreferences.getString(CAT,null));
+        user.put(APELLIDO_MATERNO,  sharedPreferences.getString(APELLIDO_MATERNO, null));
+        user.put(APELLIDO_PATERNO,  sharedPreferences.getString(APELLIDO_PATERNO, null));
+        user.put(CENTRO_COSTO,  sharedPreferences.getString(CENTRO_COSTO, null));
+        user.put(CLAVE_CONSAR,  sharedPreferences.getString(CLAVE_CONSAR, null));
+        user.put(CURP,  sharedPreferences.getString(CURP, null));
+        user.put(EMAIL,  sharedPreferences.getString(EMAIL, null));
+        user.put(FECHA_ALTA_CONSAR,  sharedPreferences.getString(FECHA_ALTA_CONSAR, null));
+        user.put(ID_ROL_EMPLEADO,  sharedPreferences.getString(ID_ROL_EMPLEADO, null));
+        user.put(NOMBRE,  sharedPreferences.getString(NOMBRE,null));
+        user.put(NUMERO_EMPLEADO,  sharedPreferences.getString(NUMERO_EMPLEADO, null));
+        user.put(USER_ID,  sharedPreferences.getString(USER_ID, null));
+        user.put(PERFIL, sharedPreferences.getString(PERFIL, null));
+        user.put(CUSP,  sharedPreferences.getString(CUSP, null));
         return user;
     }
 
@@ -131,11 +117,22 @@ public class SessionManager {
      * Clear session
      * */
     public void logoutUser(){
-        sharedPreferences = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
-        SharedPreferences.Editor editor;
-        editor = sharedPreferences.edit();
         editor.putBoolean(KEY_IS_LOGGEDIN, false);
-        editor.putString(PERFIL, "");
+        editor.putString(CAT, null);
+        editor.putString(APELLIDO_MATERNO, null);
+        editor.putString(APELLIDO_PATERNO, null);
+        editor.putString(CENTRO_COSTO, null);
+        editor.putString(CLAVE_CONSAR, null);
+        editor.putString(CURP, null);
+        editor.putString(EMAIL, null);
+        editor.putString(FECHA_ALTA_CONSAR, null);
+        editor.putString(ID_ROL_EMPLEADO, null);
+        editor.putString(NOMBRE, null);
+        editor.putString(NUMERO_EMPLEADO, null);
+        editor.putString(USER_ID, null);
+        editor.putString(PERFIL, null);
+        editor.putString(CUSP, null);
+
         editor.clear();
         editor.commit();
         // Redirige a login
@@ -163,4 +160,7 @@ public class SessionManager {
         }
         return false;
     }
+
+
 }
+

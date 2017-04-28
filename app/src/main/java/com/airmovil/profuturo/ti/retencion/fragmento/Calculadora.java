@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 
 /**
@@ -178,9 +179,10 @@ public class Calculadora extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        SessionManager sessionManager = new SessionManager(getContext().getApplicationContext());
+                        MySharePreferences sessionManager = MySharePreferences.getInstance(getContext());
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 
+                        Log.d("calculadora", "-__________________>" + sessionManager.getUserDetails().get("perfil"));
                         if(sessionManager.getUserDetails().get("perfil").equals("1")){
                             Fragment fragmentoGenerico = new com.airmovil.profuturo.ti.retencion.directorFragmento.Inicio();
                             fragmentManager.beginTransaction().replace(R.id.content_director, fragmentoGenerico).commit();
@@ -196,13 +198,14 @@ public class Calculadora extends Fragment {
                             fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                         }
 
+
                     }
                 });
                 dialogo1.setPositiveButton("Reintentar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        SessionManager sessionManager = new SessionManager(getContext().getApplicationContext());
+                        MySharePreferences sessionManager = MySharePreferences.getInstance(getContext().getApplicationContext());
                         Fragment fragmentoGenerico = new Calculadora();
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 

@@ -22,6 +22,7 @@ import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.android.volley.AuthFailureError;
@@ -58,7 +59,7 @@ public class DatosAsesor extends Fragment {
     private View rootView;
     private TextView tvNombre, tvNumeroEmpleado, tvSucursal;
     private Button btnContinuar, btnCancelar;
-    private SessionManager sessionManager;
+    private MySharePreferences sessionManager;
 
     String nombre;
     String numeroDeCuenta;
@@ -104,12 +105,14 @@ public class DatosAsesor extends Fragment {
         primeraPeticion();
         variables();
 
-        sessionManager = new SessionManager(getActivity().getApplicationContext());
+        sessionManager = MySharePreferences.getInstance(getActivity().getApplicationContext());
 
-        idClienteCuenta =getArguments().getString("idClienteCuenta");
-        nombre = getArguments().getString("nombre");
-        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-        hora = getArguments().getString("hora");
+       if(getArguments()!= null){
+           idClienteCuenta =getArguments().getString("idClienteCuenta");
+           nombre = getArguments().getString("nombre");
+           numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+           hora = getArguments().getString("hora");
+       }
 
         Log.d("NOMBRES 1 ++", "1" + nombre + " numero" + numeroDeCuenta);
 

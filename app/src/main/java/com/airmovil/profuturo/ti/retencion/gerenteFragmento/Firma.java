@@ -126,10 +126,13 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
         Button btnCancelar= (Button) view.findViewById(R.id.gff_btn_cancelar);
 
         connected = new Connected();
-        idTramite = getArguments().getString("idTramite");
-        nombre = getArguments().getString("nombre");
-        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-        hora = getArguments().getString("hora");
+
+        if(getArguments()!=null){
+            idTramite = getArguments().getString("idTramite");
+            nombre = getArguments().getString("nombre");
+            numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+            hora = getArguments().getString("hora");
+        }
 
         lblLatitud = (TextView) view.findViewById(R.id.gff_lbl_Latitud);
         lblLongitud = (TextView) view.findViewById(R.id.gff_lbl_Longitud);

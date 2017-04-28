@@ -6,19 +6,23 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.ConCita;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.SinCita;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.android.volley.AuthFailureError;
@@ -36,10 +40,12 @@ import java.util.Map;
 
 public class Login extends AppCompatActivity {
     public static final String TAG = Login.class.getSimpleName();
-    private SessionManager sessionManager;
+//    private SessionManager sessionManager;
     private EditText _numeroEmpleadom, _contrasenia;
     private String numeroEmpleado, password;
     private Button btnIngresar;
+
+    MySharePreferences mySharePreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,19 +54,18 @@ public class Login extends AppCompatActivity {
         // TODO: Mantener el estado de la pantalla Vertical
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        sessionManager = new SessionManager(getApplicationContext());
-        HashMap<String, String> datosUsuario = sessionManager.getUserDetails();
+        mySharePreferences = MySharePreferences.getInstance(getApplicationContext());
 
         _numeroEmpleadom = (EditText) findViewById(R.id.login_et_usuario);
         _contrasenia = (EditText) findViewById(R.id.login_et_contrasenia);
         btnIngresar = (Button) findViewById(R.id.login_btn_ingresar);
 
-        if (sessionManager.isLoggedIn()) {
-            if (sessionManager.getUserDetails().get("idRolEmpleado").equals("3")) {
+        if (mySharePreferences.isLoggedIn()) {
+            if (mySharePreferences.getUserDetails().get("idRolEmpleado").equals("3")) {
                 startActivity(new Intent(this, Director.class));
-            } else if (sessionManager.getUserDetails().get("idRolEmpleado").equals("2")) {
+            } else if (mySharePreferences.getUserDetails().get("idRolEmpleado").equals("2")) {
                 startActivity(new Intent(this, Gerente.class));
-            } else if (sessionManager.getUserDetails().get("idRolEmpleado").equals("1")){
+            } else if (mySharePreferences.getUserDetails().get("idRolEmpleado").equals("1")){
                 startActivity(new Intent(this, Asesor.class));
             }else{
                 finish();
@@ -88,6 +93,11 @@ public class Login extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        return;
     }
 
     private void sendJson(final boolean primeraPeticion, final String numeroEmpleado, String password) {
@@ -199,7 +209,7 @@ public class Login extends AppCompatActivity {
     }
 
     public void redireccionSesiones(int rPerfil){
-        sessionManager.setLogin(true);
+        mySharePreferences.setLogin(true);
 
         switch (rPerfil){
             case 3:
@@ -285,12 +295,18 @@ public class Login extends AppCompatActivity {
 
             Log.d("DATOS A RECOLECTAR ->", " " + apellidoMaterno + " " + apellidoPaterno + " " + centroCosto + " " + claveConsar + " " + curp + " " + email + " " +
                     fechaAltaConsar + " " + idRolEmpleado + " "+ " " + nombre + " " + numeroEmpleado + " " + rolEmpleado + " " + userId + " " );
-            sessionManager.createLoginSession(apellidoMaterno, apellidoPaterno, sCentroCosto, claveConsar,curp, email, fechaAltaConsar, sIdRolEmpleado,nombre, numeroEmpleado, rolEmpleado, userId, CUSP);
+            mySharePreferences.createLoginSession(apellidoMaterno, apellidoPaterno, sCentroCosto, claveConsar,curp, email, fechaAltaConsar, sIdRolEmpleado,nombre, numeroEmpleado, rolEmpleado, userId, CUSP);
         }catch (JSONException e){
             e.printStackTrace();
         }
 
 
         redireccionSesiones(idRolEmpleado);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
     }
 }

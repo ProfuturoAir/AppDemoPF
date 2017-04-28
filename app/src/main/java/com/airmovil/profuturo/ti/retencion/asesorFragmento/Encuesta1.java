@@ -103,10 +103,12 @@ public class Encuesta1 extends Fragment {
 
         variables();
 
-        idTramite = getArguments().getString("idTramite");
-        nombre = getArguments().getString("nombre");
-        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-        hora = getArguments().getString("hora");
+        if(getArguments()!= null){
+            idTramite = getArguments().getString("idTramite");
+            nombre = getArguments().getString("nombre");
+            numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+            hora = getArguments().getString("hora");
+        }
 
         cb1si.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

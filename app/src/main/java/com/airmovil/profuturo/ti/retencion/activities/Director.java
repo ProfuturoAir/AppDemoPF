@@ -33,6 +33,7 @@ import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteSucursales;
 import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
 import com.airmovil.profuturo.ti.retencion.fragmento.Calculadora;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
@@ -41,7 +42,7 @@ import java.util.HashMap;
 
 public class Director extends AppCompatActivity{
     private static final String TAG = Asesor.class.getSimpleName();
-    private SessionManager sessionManager;
+    private MySharePreferences sessionManager;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private Boolean checkMapsFragment = false;
@@ -63,7 +64,7 @@ public class Director extends AppCompatActivity{
         // TODO: Mantener el estado de la pantalla Vertical
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         // TODO: nueva instancia para el sharePreference
-        sessionManager = new SessionManager(getApplicationContext());
+        sessionManager = MySharePreferences.getInstance(getApplicationContext());
         // TODO: Validacion de la sesion del usuario
         validateSession();
 
@@ -163,12 +164,11 @@ public class Director extends AppCompatActivity{
      */
     private void setInformacionDrawer() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.director_nav_view);
-        SessionManager sessionManager = new SessionManager(getApplicationContext());
         HashMap<String, String> informacion = sessionManager.getUserDetails();
-        String sNumeroEmpleado = informacion.get(SessionManager.USER_ID);
-        String sNombreEmpleado = informacion.get(SessionManager.NOMBRE);
+        String sNumeroEmpleado = informacion.get(MySharePreferences.USER_ID);
+        String sNombreEmpleado = informacion.get(MySharePreferences.NOMBRE);
 
-        String nom = informacion.get(SessionManager.NOMBRE);
+        String nom = informacion.get(MySharePreferences.NOMBRE);
         View hView = navigationView.getHeaderView(0);
         TextView navPrimeraLetra = (TextView) hView.findViewById(R.id.director_nav_tv_letra);
         TextView navDatosGerente = (TextView) hView.findViewById(R.id.director_nav_tv_datos);

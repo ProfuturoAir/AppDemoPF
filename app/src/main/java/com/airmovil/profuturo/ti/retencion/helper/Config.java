@@ -342,10 +342,10 @@ public class Config extends Activity {
      * @return map retorna las variables del usuairo logeado
      */
     public static final Map<String, String> usuario(Context context){
-        SessionManager sessionManager = new SessionManager(context.getApplicationContext());
+        MySharePreferences sessionManager = MySharePreferences.getInstance(context.getApplicationContext());
         HashMap<String, String> datos = sessionManager.getUserDetails();
-        datos.get(SessionManager.NOMBRE);
-        datos.get(SessionManager.ID);
+        datos.get(MySharePreferences.NOMBRE);
+        datos.get(MySharePreferences.ID);
         return datos;
     }
 
@@ -355,18 +355,18 @@ public class Config extends Activity {
      * @return datos del usuario a iniciar sesion
      */
     public static final Map<String, String> datosUsuario(Context context){
-        SessionManager sessionManager = new SessionManager(context.getApplicationContext());
+        MySharePreferences sessionManager = MySharePreferences.getInstance(context.getApplicationContext());
         HashMap<String, String> informacion = sessionManager.getUserDetails();
-        informacion.get(SessionManager.APELLIDO_MATERNO);
-        informacion.get(SessionManager.APELLIDO_PATERNO);
-        informacion.get(SessionManager.NOMBRE);
-        informacion.get(SessionManager.PERFIL);
-        informacion.get(SessionManager.CENTRO_COSTO);
-        informacion.get(SessionManager.CLAVE_CONSAR);
-        informacion.get(SessionManager.CURP);
-        informacion.get(SessionManager.EMAIL);
-        informacion.get(SessionManager.NUMERO_EMPLEADO);
-        informacion.get(SessionManager.USER_ID);
+        informacion.get(MySharePreferences.APELLIDO_MATERNO);
+        informacion.get(MySharePreferences.APELLIDO_PATERNO);
+        informacion.get(MySharePreferences.NOMBRE);
+        informacion.get(MySharePreferences.PERFIL);
+        informacion.get(MySharePreferences.CENTRO_COSTO);
+        informacion.get(MySharePreferences.CLAVE_CONSAR);
+        informacion.get(MySharePreferences.CURP);
+        informacion.get(MySharePreferences.EMAIL);
+        informacion.get(MySharePreferences.NUMERO_EMPLEADO);
+        informacion.get(MySharePreferences.USER_ID);
         return informacion;
     }
 
@@ -414,9 +414,9 @@ public class Config extends Activity {
      * @return el usuario de inicio de sesion, ya que se hace uso de este usuario en distintas peticiones
      */
     public static final String usuarioCusp(Context context){
-        SessionManager sessionManager = new SessionManager(context);
+        MySharePreferences sessionManager = MySharePreferences.getInstance(context);
         HashMap<String, String> usuario = sessionManager.getUserDetails();
-        String cusp = usuario.get(SessionManager.CUSP);
+        String cusp = usuario.get(MySharePreferences.CUSP);
         return cusp;
     }
 

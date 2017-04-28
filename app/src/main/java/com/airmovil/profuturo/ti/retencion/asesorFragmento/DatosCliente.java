@@ -114,9 +114,11 @@ public class DatosCliente extends Fragment {
         // TODO: Config
         usuario = Config.usuario(getContext());
 
-        nombre = getArguments().getString("nombre");
-        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-        hora = getArguments().getString("hora");
+        if(getArguments()!=null){
+            nombre = getArguments().getString("nombre");
+            numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+            hora = getArguments().getString("hora");
+        }
 
         Log.d("NOMBRES CLI ", "1 " + nombre + " numero " + numeroDeCuenta);
         btnContinuar.setOnClickListener(new View.OnClickListener() {
@@ -300,19 +302,19 @@ public class DatosCliente extends Fragment {
     private void sendJson(final boolean primerPeticion) {
 
         JSONObject obj = new JSONObject();
-        SessionManager sessionManager = new SessionManager(getContext());
-        HashMap<String, String> usuario = sessionManager.getUserDetails();
-        String idUsuario = usuario.get(SessionManager.USER_ID);
-        nombre = getArguments().getString("nombre");
-        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-        hora = getArguments().getString("hora");
+
         try {
-            // TODO: Formacion del JSON request
-            JSONObject rqt = new JSONObject();
-            rqt.put("estatusTramite", 1133);
-            rqt.put("numeroCuenta", numeroDeCuenta);
-            rqt.put("usuario", Config.usuarioCusp(getContext()));
-            obj.put("rqt", rqt);
+            if(getArguments()!=null){
+                nombre = getArguments().getString("nombre");
+                numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+                hora = getArguments().getString("hora");
+                // TODO: Formacion del JSON request
+                JSONObject rqt = new JSONObject();
+                rqt.put("estatusTramite", 1133);
+                rqt.put("numeroCuenta", numeroDeCuenta);
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
+                obj.put("rqt", rqt);
+            }
             Log.d(TAG, "Primera peticion-->" + obj);
         } catch (JSONException e) {
             Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");

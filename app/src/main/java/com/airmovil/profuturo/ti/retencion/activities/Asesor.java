@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.Asistencia;
@@ -39,7 +40,9 @@ import com.airmovil.profuturo.ti.retencion.asesorFragmento.ReporteClientes;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.SinCita;
 import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
 import com.airmovil.profuturo.ti.retencion.fragmento.Calculadora;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
 import com.airmovil.profuturo.ti.retencion.helper.ServicioJSON;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.google.android.gms.drive.DriveId;
@@ -49,7 +52,7 @@ import java.util.HashMap;
 
 public class Asesor extends AppCompatActivity{
     private static final String TAG = Asesor.class.getSimpleName();
-    private SessionManager sessionManager;
+    //private SessionManager mySharePreferences;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private Boolean checkMapsFragment = false;
@@ -58,6 +61,9 @@ public class Asesor extends AppCompatActivity{
     private DriveId mFileId;
     private static final  int REQUEST_CODE_OPENER = 2;
     String url;
+    public static Fragment itemMenu = null;
+
+    MySharePreferences mySharePreferences;
     /**
      * Se utiliza para iniciar la actividad
      * @param savedInstanceState
@@ -70,7 +76,8 @@ public class Asesor extends AppCompatActivity{
         // TODO: Mantener el estado de la pantalla Vertical
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         // TODO: nueva instancia para el sharePreference
-        sessionManager = new SessionManager(getApplicationContext());
+        mySharePreferences = MySharePreferences.getInstance(getApplicationContext());
+        //mySharePreferences = new SessionManager(getApplicationContext());
         // TODO: Validacion de la sesion del usuario
         validateSession();
 
@@ -107,7 +114,7 @@ public class Asesor extends AppCompatActivity{
      * toggle(Icono abrir menu)
      */
     public void validateSession(){
-        if(sessionManager.isLoggedIn() == false){
+        if(mySharePreferences.isLoggedIn() == false){
             startActivity(new Intent(Asesor.this, Login.class));
             finish();
         }else{
@@ -186,13 +193,12 @@ public class Asesor extends AppCompatActivity{
         navigationView.getMenu().hasVisibleItems();
 
         // TODO: obteniendo datos del sharePreference
-        SessionManager sessionManager = new SessionManager(getApplicationContext());
-        HashMap<String,String> datosUsuario = sessionManager.getUserDetails();
+        HashMap<String,String> datosUsuario = mySharePreferences.getUserDetails();
 
-        String apePaterno = datosUsuario.get(SessionManager.APELLIDO_PATERNO);
-        String apeMaterno = datosUsuario.get(SessionManager.APELLIDO_MATERNO);
-        String nombre = datosUsuario.get(SessionManager.NOMBRE);
-        String idEmpleado = datosUsuario.get(SessionManager.USER_ID);
+        String apePaterno = datosUsuario.get(MySharePreferences.APELLIDO_PATERNO);
+        String apeMaterno = datosUsuario.get(MySharePreferences.APELLIDO_MATERNO);
+        String nombre = datosUsuario.get(MySharePreferences.NOMBRE);
+        String idEmpleado = datosUsuario.get(MySharePreferences.USER_ID);
 
         char letra = nombre.charAt(0);
         String inicial = Character.toString(letra);
@@ -283,6 +289,7 @@ public class Asesor extends AppCompatActivity{
                     checkMapsFragment = false;
                     fragmentoGenerico = new Inicio();
                 }else{
+                    Asesor.itemMenu= new Inicio();
                     salirFragment(getApplicationContext());
                 }
                 break;
@@ -291,6 +298,7 @@ public class Asesor extends AppCompatActivity{
                     checkMapsFragment = false;
                     fragmentoGenerico = new Calculadora();
                 }else{
+                    Asesor.itemMenu= new Calculadora();
                     salirFragment(getApplicationContext());
                 }
                 break;
@@ -299,6 +307,7 @@ public class Asesor extends AppCompatActivity{
                     checkMapsFragment = false;
                     fragmentoGenerico = new Biblioteca();
                 }else{
+                    Asesor.itemMenu= new Biblioteca();
                     salirFragment(getApplicationContext());
                 }
                 break;
@@ -307,6 +316,7 @@ public class Asesor extends AppCompatActivity{
                     checkMapsFragment = false;
                     fragmentoGenerico = new ConCita();
                     //fragmentoGenerico = new Firma();
+                    Asesor.itemMenu= new ConCita();
                 }else{
                     salirFragment(getApplicationContext());
                 }
@@ -317,26 +327,16 @@ public class Asesor extends AppCompatActivity{
                     //fragmentoGenerico = new ProcesoImplicacionesPendientes();
                     fragmentoGenerico = new Asistencia();
                 }else{
+                    Asesor.itemMenu = new Asistencia();
                     salirFragment(getApplicationContext());
                 }
                 break;
-                /*if(checkProccess == false) {
-                    if(checkMapsFragment == true){
-                        Toast.makeText(this,"map is already loaded",Toast.LENGTH_LONG).show();
-                    }
-                    if(checkMapsFragment == false){
-                        fragmentoGenerico = new Asistencia();
-                        checkMapsFragment = true;
-                    }
-                }else{
-                    salirFragment(getApplicationContext());
-                }*/
-                //startActivity(new Intent(this, Test.class));
             case R.id.asesor_nav_reporte:
                 if(checkProccess == false) {
                     checkMapsFragment = false;
                     fragmentoGenerico = new ReporteClientes() ;
                 }else{
+                    Asesor.itemMenu = new ReporteClientes();
                     salirFragment(getApplicationContext());
                 }
                 break;
@@ -345,6 +345,7 @@ public class Asesor extends AppCompatActivity{
                     checkMapsFragment = false;
                     fragmentoGenerico = new ProcesoImplicacionesPendientes();
                 }else{
+                    Asesor.itemMenu = new ProcesoImplicacionesPendientes();
                     salirFragment(getApplicationContext());
                 }
                 break;
@@ -355,6 +356,7 @@ public class Asesor extends AppCompatActivity{
         }
         //</editor-fold>
         if (fragmentoGenerico != null){
+
             fragmentManager
                     .beginTransaction()
                     .replace(R.id.content_asesor, fragmentoGenerico)
@@ -374,7 +376,7 @@ public class Asesor extends AppCompatActivity{
         dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                sessionManager.logoutUser();
+                mySharePreferences.logoutUser();
             }
         });
         dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -425,16 +427,14 @@ public class Asesor extends AppCompatActivity{
 
         /*AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getApplicationContext());*/
         dialogo1.setTitle("Confirmar");
-        dialogo1.setMessage("\"¿Estàs seguro que deseas cancelar y guardar los cambios del proceso " + global + " ?");
+        dialogo1.setMessage("\"¿Estás seguro que deseas cancelar el proceso " + global + " ?");
         dialogo1.setCancelable(false);
         dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Fragment f = getSupportFragmentManager().findFragmentById(R.id.content_asesor);
-
-                if (f instanceof ConCita) {
-                    Log.d("Envia", "a patir de Retencion");
-                }else if(f instanceof SinCita){
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                if(f instanceof SinCita){
                     Log.d("Envia", "apartir sin cita");
                 }else if(f instanceof DatosAsesor){
                     Log.d("Envia","a patir Asesor");
@@ -454,20 +454,13 @@ public class Asesor extends AppCompatActivity{
                     global = "1.1.3.8";
                     Log.d("Envia","a patir Documento");
                 }
-
-                Log.d("Estas en este fragment","FF: "+f);
-
                 checkProccess = false;
-                Fragment fragmentoGenerico = null;
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentoGenerico = new Inicio();
-                if (fragmentoGenerico != null){
-                    fragmentManager
-                            .beginTransaction()//.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-                            .replace(R.id.content_asesor, fragmentoGenerico)
-                            .addToBackStack("F_MAIN")
-                            .commit();
-                }
+                final Fragment borrar = f;
+                borrar.onDestroy();
+                ft.remove(borrar);
+                ft.replace(R.id.content_asesor, Asesor.itemMenu);
+                ft.addToBackStack(null);
+                ft.commit();
             }
         });
         dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {

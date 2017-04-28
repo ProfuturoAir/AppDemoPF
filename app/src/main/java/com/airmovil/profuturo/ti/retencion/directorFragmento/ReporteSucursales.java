@@ -164,7 +164,6 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
 
         // TODO: Spinner
 
-        sessionManager = new SessionManager(getContext());
         connected = new Connected();
 
         if(getArguments() != null) {

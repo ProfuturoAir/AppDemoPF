@@ -190,7 +190,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
             if(mParam1 != 0)
                 idGerencia = mParam1;
         }
-        sessionManager = new SessionManager(getContext());
         // TODO: Recycler y modelo
         getDatos1 = new ArrayList<>();
         recyclerView = (RecyclerView) rootView.findViewById(R.id.ggfras_rv_lista);

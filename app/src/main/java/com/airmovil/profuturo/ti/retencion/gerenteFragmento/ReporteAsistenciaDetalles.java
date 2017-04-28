@@ -381,9 +381,6 @@ public class ReporteAsistenciaDetalles extends Fragment {
         else
             loading = null;
 
-        SessionManager sessionManager = new SessionManager(getContext());
-        HashMap<String, String> usuario = sessionManager.getUserDetails();
-        String numeroEmpleado = mParam1;
 
         JSONObject obj = new JSONObject();
         JSONObject rqt = new JSONObject();
@@ -400,7 +397,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
                 Map<String, String> fecha = Config.fechas(1);
                 String param1 = fecha.get("fechaIni");
                 String param2 = fecha.get("fechaFin");
-                rqt.put("numeroEmpleado", mParam1);
+                rqt.put("numeroEmpleado", Config.usuarioCusp(getContext()));
                 rqt.put("pagina", pagina);
                 periodo.put("fechaInicio", param1);
                 periodo.put("fechaFin", param2);

@@ -20,6 +20,7 @@ import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
+import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.android.volley.AuthFailureError;
@@ -43,6 +44,9 @@ public class Inicio extends Fragment {
     private TextView tvInicial, tvNombre, tvFecha, tvRetenidos, tvNoRetenidos, tvSaldoRetenido, tvSaldoNoRetenido, tvRangoFecha1, tvRangoFecha2;
     private Button btnFiltro;
     private Fragment borrar = this;
+
+    MySharePreferences mySharePreferences;
+
 
     public Inicio() {
         // Se requiere un constructor vacio
@@ -249,9 +253,9 @@ public class Inicio extends Fragment {
      */
     public void detalleSuperior(){
         Map<String, String> usuario = Config.datosUsuario(getContext());
-        String nombre = usuario.get(SessionManager.NOMBRE);
-        String apePaterno = usuario.get(SessionManager.APELLIDO_PATERNO);
-        String apeMaterno = usuario.get(SessionManager.APELLIDO_MATERNO);
+        String nombre = usuario.get(MySharePreferences.NOMBRE);
+        String apePaterno = usuario.get(MySharePreferences.APELLIDO_PATERNO);
+        String apeMaterno = usuario.get(MySharePreferences.APELLIDO_MATERNO);
         tvNombre.setText("" + nombre + " " + apePaterno + " " + apeMaterno);
         char letra = nombre.charAt(0);
         String inicial = Character.toString(letra);

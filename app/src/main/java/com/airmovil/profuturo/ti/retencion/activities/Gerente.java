@@ -40,6 +40,7 @@ import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsesores;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteSucursales;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
 import com.airmovil.profuturo.ti.retencion.helper.ServicioJSON;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.google.android.gms.drive.DriveId;
@@ -49,7 +50,7 @@ import java.util.HashMap;
 
 public class Gerente extends AppCompatActivity{
     private static final String TAG = Gerente.class.getSimpleName();
-    private SessionManager sessionManager;
+    private MySharePreferences sessionManager;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private Boolean checkMapsFragment = false;
@@ -58,6 +59,8 @@ public class Gerente extends AppCompatActivity{
     private DriveId mFileId;
     private static final  int REQUEST_CODE_OPENER = 2;
     String url;
+
+    public static Fragment itemMenu = null;
     /**
      * Se utiliza para iniciar la actividad
      * @param savedInstanceState
@@ -70,7 +73,7 @@ public class Gerente extends AppCompatActivity{
         // TODO: Mantener el estado de la pantalla Vertical
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         // TODO: nueva instancia para el sharePreference
-        sessionManager = new SessionManager(getApplicationContext());
+        sessionManager = MySharePreferences.getInstance(getApplicationContext());
         // TODO: Validacion de la sesion del usuario
         validateSession();
 
@@ -185,13 +188,12 @@ public class Gerente extends AppCompatActivity{
         navigationView.getMenu().hasVisibleItems();
 
         // TODO: obteniendo datos del sharePreference
-        SessionManager sessionManager = new SessionManager(getApplicationContext());
         HashMap<String,String> datosUsuario = sessionManager.getUserDetails();
 
-        String apePaterno = datosUsuario.get(SessionManager.APELLIDO_PATERNO);
-        String apeMaterno = datosUsuario.get(SessionManager.APELLIDO_MATERNO);
-        String nombre = datosUsuario.get(SessionManager.NOMBRE);
-        String idEmpleado = datosUsuario.get(SessionManager.USER_ID);
+        String apePaterno = datosUsuario.get(MySharePreferences.APELLIDO_PATERNO);
+        String apeMaterno = datosUsuario.get(MySharePreferences.APELLIDO_MATERNO);
+        String nombre = datosUsuario.get(MySharePreferences.NOMBRE);
+        String idEmpleado = datosUsuario.get(MySharePreferences.USER_ID);
 
         char letra = nombre.charAt(0);
         String inicial = Character.toString(letra);
@@ -277,6 +279,7 @@ public class Gerente extends AppCompatActivity{
                     checkMapsFragment = false;
                     fragmentoGenerico = new Inicio();
                 }else{
+                    Gerente.itemMenu = new Inicio();
                     salirFragment(getApplicationContext());
                 }
                 break;
@@ -285,6 +288,7 @@ public class Gerente extends AppCompatActivity{
                     checkMapsFragment = false;
                     fragmentoGenerico = new Calculadora();
                 }else{
+                    Gerente.itemMenu = new Calculadora();
                     salirFragment(getApplicationContext());
                 }
                 break;
@@ -293,6 +297,7 @@ public class Gerente extends AppCompatActivity{
                     checkMapsFragment = false;
                     fragmentoGenerico = new Biblioteca();
                 }else{
+                    Gerente.itemMenu = new Biblioteca();
                     salirFragment(getApplicationContext());
                 }
                 break;
@@ -301,6 +306,7 @@ public class Gerente extends AppCompatActivity{
                     checkMapsFragment = false;
                     fragmentoGenerico = new SinCita();
                 }else{
+                    Gerente.itemMenu = new SinCita();
                     salirFragment(getApplicationContext());
                 }
                 break;
@@ -309,6 +315,7 @@ public class Gerente extends AppCompatActivity{
                     checkMapsFragment = false;
                     fragmentoGenerico = new ReporteSucursales();
                 }else{
+                    Gerente.itemMenu = new ReporteSucursales();
                     salirFragment(getApplicationContext());
                 }
                 break;
@@ -317,6 +324,7 @@ public class Gerente extends AppCompatActivity{
                     checkMapsFragment = false;
                     fragmentoGenerico = new ReporteAsesores();
                 }else{
+                    Gerente.itemMenu = new ReporteAsesores();
                     salirFragment(getApplicationContext());
                 }
                 break;
@@ -325,6 +333,7 @@ public class Gerente extends AppCompatActivity{
                     checkMapsFragment = false;
                     fragmentoGenerico = new ReporteClientes();
                 }else{
+                    Gerente.itemMenu = new ReporteClientes();
                     salirFragment(getApplicationContext());
                 }
                 break;
@@ -333,6 +342,7 @@ public class Gerente extends AppCompatActivity{
                     checkMapsFragment = false;
                     fragmentoGenerico = new ReporteAsistencia();
                 }else{
+                    Gerente.itemMenu = new ReporteAsistencia();
                     salirFragment(getApplicationContext());
                 }
                 break;
@@ -341,6 +351,7 @@ public class Gerente extends AppCompatActivity{
                     checkMapsFragment = false;
                     fragmentoGenerico = new ProcesoImplicacionesPendientes();
                 }else{
+                    Gerente.itemMenu = new ProcesoImplicacionesPendientes();
                     salirFragment(getApplicationContext());
                 }
                 break;
@@ -364,13 +375,13 @@ public class Gerente extends AppCompatActivity{
 
         //AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getApplicationContext());
         dialogo1.setTitle("Confirmar");
-        dialogo1.setMessage("\"¿Estàs seguro que deseas cancelar y guardar los cambios del proceso " + global + " ?");
+        dialogo1.setMessage("\"¿Estás seguro que deseas cancelar el proceso" + global + " ?");
         dialogo1.setCancelable(false);
         dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Fragment f = getSupportFragmentManager().findFragmentById(R.id.content_gerente);
-
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 if (f instanceof SinCita) {
                     Log.d("Envia", "a patir de Retencion");
                 }else if(f instanceof DatosAsesor){
@@ -398,13 +409,19 @@ public class Gerente extends AppCompatActivity{
                 Fragment fragmentoGenerico = null;
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 fragmentoGenerico = new Inicio();
-                if (fragmentoGenerico != null){
+                /*if (fragmentoGenerico != null){
                     fragmentManager
                             .beginTransaction()//.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
                             .replace(R.id.content_gerente, fragmentoGenerico)
                             .addToBackStack("F_MAIN")
                             .commit();
-                }
+                }*/
+                final Fragment borrar = f;
+                borrar.onDestroy();
+                ft.remove(borrar);
+                ft.replace(R.id.content_gerente, Gerente.itemMenu);
+                ft.addToBackStack(null);
+                ft.commit();
             }
         });
         dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {

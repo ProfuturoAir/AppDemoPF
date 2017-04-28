@@ -210,8 +210,7 @@ public class Inicio extends Fragment {
         String nombre = usuarioDatos.get(SessionManager.NOMBRE);
         String apePaterno = usuarioDatos.get(SessionManager.APELLIDO_PATERNO);
         String apeMaterno = usuarioDatos.get(SessionManager.APELLIDO_MATERNO);
-        char letra = nombre.charAt(0);
-        String convertirATexto = Character.toString(letra);
+        String convertirATexto = Character.toString(nombre.charAt(0));
         tvNombre.setText(nombre + " " + apePaterno + " " + apeMaterno);
         tvInicial.setText(convertirATexto);
     }
