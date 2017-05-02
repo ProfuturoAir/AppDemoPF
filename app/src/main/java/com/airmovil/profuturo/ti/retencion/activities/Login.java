@@ -22,9 +22,12 @@ import com.airmovil.profuturo.ti.retencion.asesorFragmento.ConCita;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.SinCita;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
+import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
+import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -44,6 +47,9 @@ public class Login extends AppCompatActivity {
     private EditText _numeroEmpleadom, _contrasenia;
     private String numeroEmpleado, password;
     private Button btnIngresar;
+    private IResult mResultCallback = null;
+    private VolleySingleton volleySingleton;
+    private String cusp;
 
     MySharePreferences mySharePreferences;
 
@@ -54,24 +60,34 @@ public class Login extends AppCompatActivity {
         // TODO: Mantener el estado de la pantalla Vertical
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        //metodo para callback de volley
+        initVolleyCallback();
+
         mySharePreferences = MySharePreferences.getInstance(getApplicationContext());
 
         _numeroEmpleadom = (EditText) findViewById(R.id.login_et_usuario);
         _contrasenia = (EditText) findViewById(R.id.login_et_contrasenia);
         btnIngresar = (Button) findViewById(R.id.login_btn_ingresar);
 
-        if (mySharePreferences.isLoggedIn()) {
-            if (mySharePreferences.getUserDetails().get("idRolEmpleado").equals("3")) {
-                startActivity(new Intent(this, Director.class));
-            } else if (mySharePreferences.getUserDetails().get("idRolEmpleado").equals("2")) {
-                startActivity(new Intent(this, Gerente.class));
-            } else if (mySharePreferences.getUserDetails().get("idRolEmpleado").equals("1")){
-                startActivity(new Intent(this, Asesor.class));
-            }else{
+        try{
+            if (mySharePreferences.isLoggedIn()) {
+                if (mySharePreferences.getUserDetails().get("idRolEmpleado").equals("3")) {
+                    startActivity(new Intent(this, Director.class));
+                } else if (mySharePreferences.getUserDetails().get("idRolEmpleado").equals("2")) {
+                    startActivity(new Intent(this, Gerente.class));
+                } else if (mySharePreferences.getUserDetails().get("idRolEmpleado").equals("1")){
+                    startActivity(new Intent(this, Asesor.class));
+                }else{
+                    finish();
+                }
                 finish();
             }
-            finish();
+        }catch (Exception e){
+
         }
+
+        //llama clase singleton volley
+        volleySingleton = VolleySingleton.getInstance(mResultCallback, getApplicationContext());
 
         btnIngresar.performClick();
         btnIngresar.setOnClickListener(new View.OnClickListener() {
@@ -95,6 +111,31 @@ public class Login extends AppCompatActivity {
         });
     }
 
+    /*
+     *@see metodo para callback de volley
+     */
+    void initVolleyCallback() {
+
+        mResultCallback = new IResult() {
+            @Override
+            public void notifySuccess(String requestType, JSONObject response) {
+                Log.d(TAG, "Volley requester " + requestType);
+                Log.d(TAG, "Volley JSON post" + response);
+                if(requestType.equals("primerPaso"))
+                    primerPaso(response, numeroEmpleado);
+
+                if(requestType.equals("obtencionDatos"))
+                    obtencionDatos(response, cusp);
+            }
+
+            @Override
+            public void notifyError(String requestType, VolleyError error) {
+                Log.d(TAG, "Volley requester " + requestType);
+                Log.d(TAG, "Volley JSON post" + "That didn't work! " + error.toString());
+            }
+        };
+    }
+
     @Override
     public void onBackPressed() {
         return;
@@ -112,27 +153,9 @@ public class Login extends AppCompatActivity {
         } catch (JSONException e) {
             Config.msj(this,"Error", "1 Lo sentimos ocurrio un error al formar los datos");
         }
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_AUTENTIFICACION, obj,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        if (primeraPeticion) {
-                            primerPaso(response, numeroEmpleado);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d(TAG, error.toString());
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return Config.credenciales(getApplicationContext());
-            }
-        };
-        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonArrayRequest);
+
+        this.numeroEmpleado = numeroEmpleado;
+        volleySingleton.postDataVolley("primerPaso", Config.URL_AUTENTIFICACION, obj);
     }
 
     private void primerPaso(JSONObject obj, String sNumeroEmpleado) {
@@ -236,27 +259,10 @@ public class Login extends AppCompatActivity {
         } catch (JSONException e) {
             Config.msj(this,"Error", "1 Lo sentimos ocurrio un error al formar los datos");
         }
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTA_INFORMACION_USUARIO, obj,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        if (primeraPeticion) {
-                            obtencionDatos(response, CUSP);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d(TAG, error.toString());
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return Config.credenciales(getApplicationContext());
-            }
-        };
-        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonArrayRequest);
+
+        cusp = CUSP;
+
+        volleySingleton.postDataVolley("obtencionDatos", Config.URL_CONSULTA_INFORMACION_USUARIO, obj);
     }
 
     private void obtencionDatos(JSONObject obj, String CUSP){

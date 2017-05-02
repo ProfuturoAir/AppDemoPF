@@ -30,8 +30,10 @@ import com.airmovil.profuturo.ti.retencion.asesorFragmento.*;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
+import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.ServicioEmailJSON;
+import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteGerenciasModel;
 import com.android.volley.AuthFailureError;
@@ -77,6 +79,8 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
     private int totalNoEntidades = 0;
     private int totalSaldosEmitodos= 0;
     private int totalSaldoNoEmitidos = 0;
+    private IResult mResultCallback = null;
+    private VolleySingleton volleySingleton;
 
     public ReporteGerencias() {
         // Required empty public constructor
@@ -109,9 +113,44 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         }
     }
 
+    /*
+     *@see metodo para callback de volley
+     */
+    void initVolleyCallback() {
+
+        mResultCallback = new IResult() {
+            @Override
+            public void notifySuccess(String requestType, JSONObject response) {
+                Log.d(TAG, "Volley requester " + requestType);
+                Log.d(TAG, "Volley JSON post" + response);
+                if (requestType.trim().equals("true")) {
+                    primerPaso(response);
+                } else {
+                    segundoPaso(response);
+                }
+            }
+
+            @Override
+            public void notifyError(String requestType, VolleyError error) {
+                Log.d(TAG, "Volley requester " + requestType);
+                Log.d(TAG, "Volley JSON post" + "That didn't work! " + error.toString());
+                if(connected.estaConectado(getContext())){
+                    Dialogos.dialogoErrorServicio(getContext());
+                }else{
+                    Dialogos.dialogoErrorConexion(getContext());
+                }
+            }
+        };
+    }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+
+        //metodo para callback de volley
+        initVolleyCallback();
         rootView = view;
+        //llama clase singleton volley
+        volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
         // TODO: Casteo
         variables();
         // TODO: ocultar teclado
@@ -340,33 +379,8 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         } catch (JSONException e) {
             Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
         }
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_GERENCIAS, obj,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        if (primerPeticion) {
-                            primerPaso(response);
-                        } else {
-                            segundoPaso(response);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if(connected.estaConectado(getContext())){
-                            Dialogos.dialogoErrorServicio(getContext());
-                        }else{
-                            Dialogos.dialogoErrorConexion(getContext());
-                        }
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return Config.credenciales(getContext());
-            }
-        };
-        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+
+        volleySingleton.postDataVolley("" + primerPeticion, Config.URL_CONSULTAR_REPORTE_RETENCION_GERENCIAS, obj);
     }
 
     private void primerPaso(JSONObject obj) {

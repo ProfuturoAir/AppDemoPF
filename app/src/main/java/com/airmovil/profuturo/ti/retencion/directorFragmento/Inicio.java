@@ -1,11 +1,13 @@
 package com.airmovil.profuturo.ti.retencion.directorFragmento;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,8 +19,10 @@ import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
+import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
+import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -40,16 +44,16 @@ public class Inicio extends Fragment {
     private JSONObject retenidos = null;
     private JSONObject saldos = null;
     private Button btnFiltro;
-    private Fragment borrar = this;
+    private Fragment borrar;
     private Connected connected;
     private int iRetenidos = 0;
     private int iNoRetenidos = 0;
     private int iSaldoRetenido = 0;
     private int iSaldoNoRetenido = 0;
+    private IResult mResultCallback = null;
+    private VolleySingleton volleySingleton;
 
-    public Inicio() {
-        // Constructor público vacío obligatorio
-    }
+    public Inicio() {/* Constructor público vacío obligatorio*/}
 
     /**
      * Utilice este método de fábrica para crear una nueva instancia de
@@ -83,8 +87,13 @@ public class Inicio extends Fragment {
      */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+
+        //metodo para callback de volley
+        initVolleyCallback();
         // TODO: Lineas para ocultar el teclado virtual (Hide keyboard)
         rootView = view;
+        //llama clase singleton volley
+        volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
         // TODO: CASTEO DE ELEMENTOS
         variables();
         argumentos();
@@ -96,6 +105,7 @@ public class Inicio extends Fragment {
         Dialogos.dialogoFechaFin(getContext(), tvRangoFecha2);
         // TODO: inicio de la primera peticion REST
         primeraPeticion();
+        borrar = this;
         btnFiltro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,7 +115,7 @@ public class Inicio extends Fragment {
                     Config.dialogoFechasVacias(getContext());
                 }else {
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    Inicio procesoDatosFiltroInicio = Inicio.newInstance(fechaIncial, fechaFinal, rootView.getContext());
+                    Fragment procesoDatosFiltroInicio = Inicio.newInstance(fechaIncial, fechaFinal, rootView.getContext());
                     borrar.onDestroy();
                     ft.remove(borrar).replace(R.id.content_director, procesoDatosFiltroInicio).addToBackStack(null).commit();
                 }
@@ -185,7 +195,7 @@ public class Inicio extends Fragment {
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
-                        sendJson(true);
+                        sendJson();
                         progressDialog.dismiss();
                     }
                 }, Config.TIME_HANDLER);
@@ -218,9 +228,9 @@ public class Inicio extends Fragment {
 
     /**
      *
-     * @param primeraPeticion
+     * @param
      */
-    public void sendJson(final boolean primeraPeticion){
+    public void sendJson(){
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
         JSONObject periodo = new JSONObject();
@@ -235,38 +245,52 @@ public class Inicio extends Fragment {
         } catch (JSONException e){
             Config.msj(getContext(),"Error","Existe un error al formar la peticion");
         }
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_RESUMEN_RETENCIONES, json,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        if(primeraPeticion){
-                            primerPaso(response);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if(connected.estaConectado(getContext())){
-                            Dialogos.dialogoErrorServicio(getContext());
-                        }else{
-                            Dialogos.dialogoErrorConexion(getContext());
-                        }
-                    }
-                })
-        {
+
+        volleySingleton.postDataVolley("primerPaso", Config.URL_CONSULTAR_RESUMEN_RETENCIONES, json);
+    }
+
+
+    /*
+     *@see metodo para callback de volley
+     */
+    void initVolleyCallback() {
+
+        mResultCallback = new IResult() {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return Config.credenciales(getContext());
+            public void notifySuccess(String requestType, JSONObject response) {
+                Log.d(TAG, "Volley requester " + requestType);
+                Log.d(TAG, "Volley JSON post" + response);
+                primerPaso(response);
+            }
+
+            @Override
+            public void notifyError(String requestType, VolleyError error) {
+                Log.d(TAG, "Volley requester " + requestType);
+                Log.d(TAG, "Volley JSON post" + "That didn't work! " + error.toString());
+                if(connected.estaConectado(getContext())){
+                    Dialogos.dialogoErrorServicio(getContext());
+                }else{
+                    Dialogos.dialogoErrorConexion(getContext());
+                }
             }
         };
-        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
     }
 
     /**
      * @param obj recibe el obj json de la peticion
      */
     private void primerPaso(JSONObject obj){
+        try {
+            tvRetenidos.setText("JOJOJO");
+            if(rootView != null)
+                Log.d("-->difernete nul", rootView.toString());
+
+            tvRetenidos = (TextView) rootView.findViewById(R.id.dfi_tv_retenidos);
+            tvRetenidos.setText("JOJOJO");
+        }catch (Exception e){
+            Log.e("-->es error:", e.toString());
+        }
+        Log.d("-->JSON:", obj.toString());
         try{
             JSONObject infoConsulta = obj.getJSONObject("infoConsulta");
             retenidos = infoConsulta.getJSONObject("retenido");
@@ -275,10 +299,12 @@ public class Inicio extends Fragment {
             saldos = infoConsulta.getJSONObject("saldo");
             iSaldoRetenido = (Integer) saldos.get("saldoRetenido");
             iSaldoNoRetenido = (Integer) saldos.get( "saldoNoRetenido");
-            Log.d("JSON", retenidos.toString());
         }catch (JSONException e){
             Config.msj(getContext(), "Error", "Lo sentimos ocurrio un error con los datos");
         }
+
+        Log.d("-->retenido:", iRetenidos + "," + iNoRetenidos);
+
         tvRetenidos.setText(""+iRetenidos);
         tvNoRetenidos.setText(""+iNoRetenidos);
         tvSaldoRetenido.setText(""+Config.nf.format(iSaldoRetenido));
