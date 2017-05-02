@@ -107,10 +107,7 @@ public class Inicio extends Fragment {
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                     Inicio procesoDatosFiltroInicio = Inicio.newInstance(fechaIncial, fechaFinal, rootView.getContext());
                     borrar.onDestroy();
-                    ft.remove(borrar);
-                    ft.replace(R.id.content_director, procesoDatosFiltroInicio);
-                    ft.addToBackStack(null);
-                    ft.commit();
+                    ft.remove(borrar).replace(R.id.content_director, procesoDatosFiltroInicio).addToBackStack(null).commit();
                 }
             }
         });
@@ -125,7 +122,6 @@ public class Inicio extends Fragment {
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflar el diseño de este fragmento
         return inflater.inflate(R.layout.director_fragmento_inicio, container, false);
     }
 
@@ -229,19 +225,12 @@ public class Inicio extends Fragment {
         JSONObject rqt = new JSONObject();
         JSONObject periodo = new JSONObject();
         try{
-            if(getArguments() != null){
-                rqt.put("periodo", periodo);
-                periodo.put("fechaInicio", mParam1);
-                periodo.put("fechaFin", mParam2);
-                rqt.put("usuario", Config.usuarioCusp(getContext()));
-                json.put("rqt", rqt);
-            }else{
-                rqt.put("periodo", periodo);
-                periodo.put("fechaInicio", Dialogos.fechaActual());
-                periodo.put("fechaFin", Dialogos.fechaSiguiente());
-                rqt.put("usuario", Config.usuarioCusp(getContext()));
-                json.put("rqt", rqt);
-            }
+            boolean argumentos = (getArguments()!=null);
+            rqt.put("periodo", periodo);
+            periodo.put("fechaInicio", (argumentos) ? mParam1 : Dialogos.fechaActual());
+            periodo.put("fechaFin", (argumentos) ? mParam2 : Dialogos.fechaSiguiente());
+            rqt.put("usuario", Config.usuarioCusp(getContext()));
+            json.put("rqt", rqt);
             Log.d(TAG, "RQT -->" + json);
         } catch (JSONException e){
             Config.msj(getContext(),"Error","Existe un error al formar la peticion");

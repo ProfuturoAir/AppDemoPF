@@ -33,6 +33,7 @@ import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteAsistenciaAdap
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.EnviaMail;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
@@ -54,7 +55,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelectedListener{
-    // TODO: Rename parameter arguments, choose names that match
+    private static final String TAG = ReporteAsistencia.class.getSimpleName();
     private static final String ARG_PARAM1 = "idGerencia";
     private static final String ARG_PARAM2 = "idSucursal";
     private static final String ARG_PARAM3 = "idAsesor";
@@ -155,32 +156,18 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
+        // TODO: consumiendo servicio REST
         primeraPeticion();
+        // TODO: Casteo de variables
         variables();
-        fechas();
-        connected = new Connected();
-        sucursales = new ArrayList<String>();
-        id_sucursales = new ArrayList<String>();
-        gerencia = new ArrayList<String>();
-        id_gerencias = new ArrayList<String>();
+        // TODO: Verificacion de variables
+        argumentos();
+        // TODO: Dialogos de fechas
+        Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha1);
+        Dialogos.dialogoFechaFin(getContext(), tvRangoFecha2);
+        // Minimizacion de teclado
+        Config.teclado(getContext(), etAsesor);
 
-        mParam1 = 0;
-        mParam2 = 0;
-        mParam3 = "";
-
-        if(getArguments() != null) {
-            mParam1 = getArguments().getInt(ARG_PARAM1);
-            mParam2 = getArguments().getInt(ARG_PARAM2);
-            mParam3 = getArguments().getString(ARG_PARAM3);
-            mParam4 = getArguments().getString(ARG_PARAM4);
-            mParam5 = getArguments().getString(ARG_PARAM5);
-
-            if(mParam2 != 0)
-                idSucursal = mParam2;
-
-            if(mParam1 != 0)
-                idGerencia = mParam1;
-        }
         // TODO: Recycler y modelo
         getDatos1 = new ArrayList<>();
         recyclerView = (RecyclerView) rootView.findViewById(R.id.ddfras_rv_lista);
@@ -194,25 +181,14 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
             @Override
             public void onClick(View v) {
                 if(connected.estaConectado(getContext())){
-
-                    mParam1 = idGerencia;
-                    mParam2 = idSucursal;
-                    mParam3 = etAsesor.getText().toString().trim();
-                    mParam4 = tvRangoFecha1.getText().toString().trim();
-                    mParam5 = tvRangoFecha2.getText().toString().trim();
-
-                    Log.d("-->>Gerencia: " , idGerencia + ", Sucursales: " + idSucursal);
-                    Log.d("-->>Asesor: " , mParam3 +", fI: " + mParam4 + ", fFIN" + mParam5);
-                    if(mParam4.isEmpty() || mParam5.isEmpty()){
+                    if(tvRangoFecha1.getText().toString().isEmpty() || tvRangoFecha2.getText().toString().isEmpty()){
                         Config.dialogoFechasVacias(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ReporteAsistencia fragmento = ReporteAsistencia.newInstance(mParam1, mParam2, mParam3, mParam4, mParam5, rootView.getContext());
+                        ReporteAsistencia fragmento = ReporteAsistencia.newInstance(idGerencia, idSucursal, etAsesor.getText().toString().trim(),
+                                tvRangoFecha1.getText().toString().trim(), tvRangoFecha2.getText().toString().trim(), rootView.getContext());
                         borrar.onDestroy();
-                        ft.remove(borrar);
-                        ft.replace(R.id.content_director, fragmento);
-                        ft.addToBackStack(null);
-                        ft.commit();
+                        ft.remove(borrar).replace(R.id.content_director, fragmento).addToBackStack(null).commit();
                         Config.teclado(getContext(), etAsesor);
                     }
                 }else{
@@ -232,97 +208,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
             }
         });
 
-        tvResultados.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Dialog dialog = new Dialog(getContext());
-                dialog.setContentView(R.layout.custom_layout);
 
-                Button btn = (Button) dialog.findViewById(R.id.dialog_btn_enviar);
-                final Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
-
-                // TODO: Spinner
-                ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item_azul, Config.EMAIL);
-                adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
-                spinner.setAdapter(adapterSucursal);
-
-                btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        final EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
-
-                        final String datoEditText = editText.getText().toString();
-                        final String datoSpinner = spinner.getSelectedItem().toString();
-                        Log.d("DATOS USER","SPINNER: "+datoEditText+" datosSpinner: "+ datoSpinner);
-                        if(datoEditText == "" || datoSpinner == "Seleciona un email"){
-                            Config.msj(getContext(), "Error", "Ingresa email valido");
-                        }else{
-                            String email = datoEditText+"@"+datoSpinner;
-                            Connected connected = new Connected();
-                            final InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Service.INPUT_METHOD_SERVICE);
-                            if(connected.estaConectado(getContext())){
-
-                                JSONObject obj = new JSONObject();
-
-                                try {
-                                    JSONObject rqt = new JSONObject();
-                                    rqt.put("correo", email);
-                                    rqt.put("detalle", false);
-                                    rqt.put("idSucursal", mParam2);
-                                    rqt.put("idGerencia", mParam1);
-                                    rqt.put("numeroEmpleado", mParam3);
-                                    JSONObject periodo = new JSONObject();
-                                    periodo.put("fechaFin", mParam5);
-                                    periodo.put("fechaInicio", mParam4);
-                                    rqt.put("periodo", periodo);
-                                    rqt.put("usuario", Config.usuarioCusp(getContext()));
-                                    obj.put("rqt", rqt);
-                                    Log.d("-->>>>datos Email array", "REQUEST-->" + obj);
-                                } catch (JSONException e) {
-                                    Config.msj(getContext(), "Error", "Error al formar los datos");
-                                }
-                                EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_ASISTENCIA,getContext(),new EnviaMail.VolleyCallback() {
-
-                                    @Override
-                                    public void onSuccess(JSONObject result) {
-                                        Log.d("RESPUESTA SUCURSAL", result.toString());
-                                        int status;
-
-                                        try {
-                                            status = result.getInt("status");
-                                        }catch(JSONException error){
-                                            status = 400;
-                                        }
-
-                                        Log.d("EST","EE: "+status);
-                                        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-                                        if(status == 200) {
-                                            Config.msj(getContext(), "Enviando", "Se ha enviado el mensaje al destino");
-                                            //Config.msjTime(getContext(), "Enviando", "Se ha enviado el mensaje al destino", 4000);
-                                            dialog.dismiss();
-                                        }else{
-                                            Config.msj(getContext(), "Error", "Ups algo salio mal =(");
-                                            dialog.dismiss();
-                                        }
-                                        //db.addUserCredits(fk_id_usuario,result);
-                                    }
-                                    @Override
-                                    public void onError(String result) {
-                                        Log.d("RESPUESTA ERROR", result);
-                                        Config.msj(getContext(), "Error en conexión", "Por favor, revisa tu conexión a internet ++");
-                                        //db.addUserCredits(fk_id_usuario, "ND");
-                                    }
-                                });
-                            }else{
-                                Config.msj(getContext(), "Error en conexión", "Por favor, revisa tu conexión a internet");
-                            }
-                        }
-                    }
-                });
-                dialog.show();
-            }
-        });
 
     }
 
@@ -400,12 +286,18 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         tvRangoFecha2 = (TextView) rootView.findViewById(R.id.ddfras_tv_fecha_rango2);
         btnFiltro = (Button) rootView.findViewById(R.id.ddfras_btn_filtro);
         tvResultados = (TextView) rootView.findViewById(R.id.ddfras_tv_registros);
+
+        connected = new Connected();
+        sucursales = new ArrayList<String>();
+        id_sucursales = new ArrayList<String>();
+        gerencia = new ArrayList<String>();
+        id_gerencias = new ArrayList<String>();
+
         spinnerSucursal.setOnItemSelectedListener(this);
         spinnerGerencia.setOnItemSelectedListener(this);
         getData1();
         getData2();
     }
-
 
     /**
      * Spinner para selccion de elemetos de geretnecias o sucursales
@@ -433,7 +325,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
     }
 
     /**
@@ -465,6 +356,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         };
         MySingleton.getInstance(getContext()).addToRequestQueue(jsonArrayRequest);
     }
+
     private void getData2(){
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_GERENCIAS,
                 new Response.Listener<JSONObject>() {
@@ -562,29 +454,13 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
     /**
      * Inicia las fechas dependientos si tiene datos procesados
      */
-    private void fechas(){
-        rangoInicial();
-        rangoFinal();
-        Map<String, Integer> fechaDatos = Config.dias();
-        Map<String, String> fechaActual = Config.fechas(1);
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
-        String smParam1 = fechaActual.get("fechaIni");
-        String smParam2 = fechaActual.get("fechaFin");
-
-        mParam4 = smParam1;
-        mParam5 = smParam2;
-
+    private void argumentos(){
         if(getArguments() != null){
-            mParam4 = getArguments().getString(ARG_PARAM4);
-            mParam5= getArguments().getString(ARG_PARAM5);
-            tvFecha.setText(mParam4 + " - " + mParam5);
-
-            tvRangoFecha1.setText(mParam4);
-            tvRangoFecha2.setText(mParam5);
+            tvFecha.setText(getArguments().getString(ARG_PARAM4) + " - " + getArguments().getString(ARG_PARAM5));
+            tvRangoFecha1.setText(getArguments().getString(ARG_PARAM4));
+            tvRangoFecha2.setText(getArguments().getString(ARG_PARAM5));
         }else{
-            tvFecha.setText(smParam1 + " - " + smParam2);
+            tvFecha.setText(Dialogos.fechaActual() + " - " + Dialogos.fechaSiguiente());
         }
     }
 
@@ -598,51 +474,24 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         JSONObject periodo = new JSONObject();
         try {
             // TODO: Formacion del JSON request
-            if(getArguments() != null) {
-                mParam1 = getArguments().getInt(ARG_PARAM1);
-                mParam2 = getArguments().getInt(ARG_PARAM2);
-                mParam3 = getArguments().getString(ARG_PARAM3);
-                mParam4 = getArguments().getString(ARG_PARAM4);
-                mParam5 = getArguments().getString(ARG_PARAM5);
-                rqt.put("idSucursal", mParam2);
-                rqt.put("idGerencia", mParam1);
-                rqt.put("numeroEmpleado", mParam3);
-                rqt.put("pagina", pagina);
-                periodo.put("fechaInicio", mParam4);
-                periodo.put("fechaFin", mParam5);
-                rqt.put("periodo", periodo);
-                rqt.put("usuario",Config.usuarioCusp(getContext()));
-                obj.put("rqt", rqt);
-            }else{
-                Map<String, String> fecha = Config.fechas(1);
-                String param1 = fecha.get("fechaIni");
-                String param2 = fecha.get("fechaFin");
-                mParam1 = 0;
-                mParam2 = 0;
-                mParam3 = "";
-                mParam4 = param1;
-                mParam5 = param2;
-
-                rqt.put("idSucursal", 0);
-                rqt.put("idGerencia", 0);
-                rqt.put("numeroEmpleado","");
-                rqt.put("pagina", pagina);
-                periodo.put("fechaInicio", param1);
-                periodo.put("fechaFin", param2);
-                rqt.put("periodo", periodo);
-                rqt.put("usuario",Config.usuarioCusp(getContext()));
-                obj.put("rqt", rqt);
-            }
-            Log.d("Rqt", "" + obj);
+            boolean argumentos = (getArguments()!=null);
+            rqt.put("idSucursal", (argumentos)?getArguments().getInt(ARG_PARAM2):0);
+            rqt.put("idGerencia", (argumentos)?getArguments().getInt(ARG_PARAM1):0);
+            rqt.put("numeroEmpleado", (argumentos)?getArguments().getString(ARG_PARAM3):"");
+            rqt.put("pagina", pagina);
+            periodo.put("fechaInicio", (argumentos)?getArguments().getString(ARG_PARAM4):Dialogos.fechaActual());
+            periodo.put("fechaFin", (argumentos)?getArguments().getString(ARG_PARAM5):Dialogos.fechaSiguiente());
+            rqt.put("periodo", periodo);
+            rqt.put("usuario",Config.usuarioCusp(getContext()));
+            obj.put("rqt", rqt);
+            Log.d(TAG, "<-RQT-> \n" + obj + "\n");
         } catch (JSONException e) {
             Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
         }
-        //Creating a json array request
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_ASISTENCIA, obj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        //Dismissing progress dialog
                         if (primerPeticion) {
                             primerPaso(response);
                         } else {
@@ -653,48 +502,10 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        try{
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-
-                        Connected connected = new Connected();
                         if(connected.estaConectado(getContext())){
-                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                            dlgAlert.setTitle("Error");
-                            dlgAlert.setMessage("Se ha encontrado un problema, deseas volver intentarlo");
-                            dlgAlert.setCancelable(true);
-                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    //sendJson(true);
-                                }
-                            });
-                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                            dlgAlert.create().show();
+                            Dialogos.dialogoErrorServicio(getContext());
                         }else{
-                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                            dlgAlert.setTitle("Error de conexión");
-                            dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
-                            dlgAlert.setCancelable(true);
-                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    //sendJson(true);
-                                }
-                            });
-                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                            dlgAlert.create().show();
+                            Dialogos.dialogoErrorConexion(getContext());
                         }
                     }
                 }) {
@@ -711,7 +522,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
      * @param obj
      */
     private void primerPaso(JSONObject obj) {
-        Log.d("RESPONSE", " primerPaso -->" + obj.toString());
         int onTime = 0;
         int retardo = 0;
         int inasistencia = 0;
@@ -741,16 +551,11 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         }catch (JSONException e){
             e.printStackTrace();
         }
-
         tvResultados.setText(filas + " Resulatdos");
         tvATiempo.setText("" + onTime);
         tvRetardados.setText("" + retardo);
         tvSinAsistencia.setText("" + inasistencia);
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
-        String PtvFecha = tvFecha.getText().toString();
-        String[] separated = PtvFecha.split(" - ");
-        if(!mParam3.isEmpty())
-            etAsesor.setText(mParam3);
 
         adapter = new DirectorReporteAsistenciaAdapter(rootView.getContext(), getDatos1, recyclerView, mParam4, mParam5);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -761,15 +566,11 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-                Log.d("setOnLoadMoreListener", "pagina->" + pagina + "numeroMaximo" + numeroMaximoPaginas);
                 if (pagina >= numeroMaximoPaginas) {
-                    Log.d("FINALIZA", "termino proceso");
                     return;
                 }
-                Log.e("haint", "Load More");
                 getDatos1.add(null);
                 Handler handler = new Handler();
-
                 final Runnable r = new Runnable() {
                     public void run() {
                         adapter.notifyItemInserted(getDatos1.size() - 1);
@@ -777,18 +578,11 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                 };
 
                 handler.post(r);
-
-
-                //Load more data for reyclerview
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Log.e("haint", "Load More 2");
-                        //Remove loading item
                         getDatos1.remove(getDatos1.size() - 1);
                         adapter.notifyItemRemoved(getDatos1.size());
-                        //Load data
-                        Log.d("EnvioIndex", getDatos1.size() + "");
                         pagina = Config.pidePagina(getDatos1);
                         sendJson(false);
                     }
@@ -825,45 +619,5 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         }
         adapter.notifyDataSetChanged();
         adapter.setLoaded();
-    }
-
-    /**
-     * Rango inicial de fechas
-     */
-    private void rangoInicial(){
-        tvRangoFecha1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                datePickerDialog = new DatePickerDialog(getContext(),
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                tvRangoFecha1.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
-                                fechaIni = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
-                            }
-                        }, mYear, mMonth, mDay);
-                datePickerDialog.show();
-            }
-        });
-    }
-
-    /**
-     * Rango de fecha final
-     */
-    private void rangoFinal(){
-        tvRangoFecha2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                datePickerDialog = new DatePickerDialog(getContext(),
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                tvRangoFecha2.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
-                                fechaIni = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
-                            }
-                        }, mYear, mMonth, mDay);
-                datePickerDialog.show();
-            }
-        });
     }
 }

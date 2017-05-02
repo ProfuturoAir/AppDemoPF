@@ -1,11 +1,7 @@
 package com.airmovil.profuturo.ti.retencion.directorFragmento;
 
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,22 +16,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
-
 import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteAsesoresAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
-import com.airmovil.profuturo.ti.retencion.helper.EnviaMail;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
-import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
+import com.airmovil.profuturo.ti.retencion.helper.ServicioEmailJSON;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.GerenteReporteAsesoresModel;
 import com.android.volley.AuthFailureError;
@@ -47,7 +38,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,23 +51,15 @@ public class ReporteAsesores extends Fragment {
     private String mParam1; // fecha inicio
     private String mParam2; // fecha fin
     private String mParam3; // id asesor
-    private String fechaIni = "";
-    private String fechaMostrar = "";
-    private String fechaFin = "";
     private int mParam4; // id gerencia
     private int mParam5; // id sucursal
-    private int posicion;
     private int pagina = 1;
     private int numeroMaximoPaginas = 0;
-    private int numeroEmpleado;
     private DirectorReporteAsesoresAdapter adapter;
     private List<GerenteReporteAsesoresModel> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private View rootView;
-    private SessionManager sessionManager;
-    private DatePickerDialog datePickerDialog;
-    private InputMethodManager imm;
     private Connected connected;
     private TextView tvFecha;
     private TextView tvEmitidas, tvNoEmitidas, tvSaldoEmitido, tvSaldoNoEmitido;
@@ -88,8 +70,6 @@ public class ReporteAsesores extends Fragment {
     private int filas;
     private final Fragment borrar = this;
     private OnFragmentInteractionListener mListener;
-    private String idAsesor = "";
-
 
     public ReporteAsesores() {
         // Constructor público vacío obligatorio
@@ -145,16 +125,12 @@ public class ReporteAsesores extends Fragment {
             @Override
             public void onClick(View v) {
                 if(connected.estaConectado(getContext())){
-                    final String fechaIncial = tvRangoFecha1.getText().toString();
-                    final String fechaFinal = tvRangoFecha2.getText().toString();
-                    final String idAsesor = etAsesor.getText().toString();
-
-                    if(fechaIncial.isEmpty() || fechaFinal.isEmpty()){
+                    if(tvRangoFecha1.getText().toString().isEmpty() ||  tvRangoFecha2.getText().toString().isEmpty()){
                         Config.dialogoFechasVacias(getContext());
                     }else{
                         ReporteAsesores fragmentoAsesores = new ReporteAsesores();
                         Director director = (Director) getContext();
-                        director.switchAsesoresFA(fragmentoAsesores, idAsesor,fechaIncial,fechaFinal);
+                        director.switchAsesoresFA(fragmentoAsesores, etAsesor.getText().toString(),tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString());
                     }
                     // TODO: ocultar teclado
                     Config.teclado(getContext(), etAsesor);
@@ -177,101 +153,11 @@ public class ReporteAsesores extends Fragment {
             }
         });
 
-        // TODO: Inicia la peticion, para el envio del email
-        tvResultados.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Dialog dialog = new Dialog(getContext());
-                dialog.setContentView(R.layout.custom_layout);
+        boolean argumentos =  (getArguments()!=null);
+        ServicioEmailJSON.enviarEmailReporteAsespres(getContext(), tvResultados, (argumentos) ? getArguments().getString(ARG_PARAM1):Dialogos.fechaActual(),
+                (argumentos)? getArguments().getString(ARG_PARAM2) : Dialogos.fechaSiguiente(), (argumentos)? getArguments().getString(ARG_PARAM3) : "", (argumentos) ? true : false);
 
-                Button btn = (Button) dialog.findViewById(R.id.dialog_btn_enviar);
-                final Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
 
-                // TODO: Spinner
-                ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item_azul, Config.EMAIL);
-                adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
-                spinner.setAdapter(adapterSucursal);
-
-                btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        final EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
-
-                        final String datoEditText = editText.getText().toString();
-                        final String datoSpinner = spinner.getSelectedItem().toString();
-
-                        Log.d("DATOS USER","SPINNER: "+datoEditText+" datosSpinner: "+ datoSpinner);
-                        if(datoEditText == "" || datoSpinner == "Seleciona un email"){
-                            Config.msj(getContext(), "Error", "Ingresa email valido");
-                        }else{
-                            String email = datoEditText+"@"+datoSpinner;
-                            Connected connected = new Connected();
-                            final InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Service.INPUT_METHOD_SERVICE);
-                            if(connected.estaConectado(getContext())){
-                                JSONObject obj = new JSONObject();
-                                boolean checa = true;
-                                if (getArguments() != null){
-                                    mParam3 = getArguments().getString(ARG_PARAM3);
-                                    checa = true;
-                                }else{
-                                    mParam3 = "";
-                                    checa = false;
-                                }
-
-                                boolean argumentos = (getArguments()!=null);
-                                try {
-                                    JSONObject rqt = new JSONObject();
-                                    rqt.put("correo", email);
-                                    rqt.put("detalle", checa);
-                                    rqt.put("numeroEmpleado", (idAsesor.isEmpty()) ? "" : idAsesor);
-                                    JSONObject periodo = new JSONObject();
-                                    periodo.put("fechaFin", fechaFin);
-                                    periodo.put("fechaInicio", fechaIni);
-                                    rqt.put("periodo", periodo);
-                                    rqt.put("usuario", Config.usuarioCusp(getContext()));
-                                    obj.put("rqt", rqt);
-                                    Log.d("datos", "REQUEST-->" + obj);
-                                } catch (JSONException e) {
-                                    Config.msj(getContext(), "Error", "Error al formar los datos");
-                                }
-                                EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_ASESOR,getContext(),new EnviaMail.VolleyCallback() {
-
-                                    @Override
-                                    public void onSuccess(JSONObject result) {
-                                        Log.d("RESPUESTA SUCURSAL", result.toString());
-                                        int status;
-
-                                        try {
-                                            status = result.getInt("status");
-                                        }catch(JSONException error){
-                                            status = 400;
-                                        }
-
-                                        Log.d("EST","EE: "+status);
-                                        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-                                        if(status == 200) {
-                                            Config.msj(getContext(), "Enviando", "Se ha enviado el mensaje al destino");
-                                            dialog.dismiss();
-                                        }else{
-                                            Config.msj(getContext(), "Error", "Ups algo salio mal =(");
-                                            dialog.dismiss();
-                                        }
-                                    }
-                                    @Override
-                                    public void onError(String result) {
-                                        Log.d("RESPUESTA ERROR", result);
-                                        Config.msj(getContext(), "Error en conexión", "Por favor, revisa tu conexión a internet ++");
-                                    }
-                                });
-                            }else{
-                                Config.msj(getContext(), "Error en conexión", "Por favor, revisa tu conexión a internet");
-                            }
-                        }
-                    }
-                });
-                dialog.show();
-            }
-        });
     }
 
     /**
@@ -462,44 +348,27 @@ public class ReporteAsesores extends Fragment {
         tvResultados.setText("" + filas + " Resultados ");
 
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
-        String PtvFecha = tvFecha.getText().toString();
-        String[] separated = PtvFecha.split(" - ");
-
-        Map<String, String> fechaActual = Config.fechas(1);
-        String sParam1 = fechaActual.get("fechaIni");
-        String sParam2 = fechaActual.get("fechaFin");
-        if(getArguments() != null){
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-            adapter = new DirectorReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView,separated[0].trim(),separated[1].trim());
-        }else{
-            adapter = new DirectorReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView,separated[0].trim(),separated[1].trim());
-        }
+        boolean argumentos = (getArguments()!=null);
+        adapter = new DirectorReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView, (argumentos) ? getArguments().getString(ARG_PARAM1) : Dialogos.fechaActual() ,
+                (argumentos) ? getArguments().getString(ARG_PARAM2) : Dialogos.fechaSiguiente());
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
         adapter.notifyDataSetChanged();
-
         adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-                Log.d("onLoadMore", " pagina->" + pagina + "numeroMaximo" + numeroMaximoPaginas);
                 if (pagina >= numeroMaximoPaginas) {
-                    Log.d("FINALIZA", "termino proceso");
                     return;
                 }
-                Log.e("haint", "Load More");
                 getDatos1.add(null);
                 Handler handler = new Handler();
-
                 final Runnable r = new Runnable() {
                     public void run() {
                         adapter.notifyItemInserted(getDatos1.size() - 1);
                     }
                 };
-
                 handler.post(r);
-
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -518,7 +387,6 @@ public class ReporteAsesores extends Fragment {
      * @param obj
      */
     private void segundoPaso(JSONObject obj) {
-        Log.d("ReporteAsesor", "rqt ->" + obj);
         try{
             JSONArray array = obj.getJSONArray("Asesor");
             for(int i = 0; i < array.length(); i++){
@@ -527,20 +395,15 @@ public class ReporteAsesores extends Fragment {
                 try{
                     json = array.getJSONObject(i);
                     getDatos2.setNumeroEmpleado(json.getInt("numeroEmpleado"));
-
                     JSONObject cita = json.getJSONObject("cita");
                     getDatos2.setConCita(cita.getInt("conCita"));
                     getDatos2.setSinCita(cita.getInt("sinCita"));
-
                     JSONObject retenido = json.getJSONObject("retenido");
                     getDatos2.setEmitido(retenido.getInt("retenido"));
                     getDatos2.setNoEmitido(retenido.getInt("noRetenido"));
-
                     JSONObject saldo = json.getJSONObject("saldo");
                     getDatos2.setSaldoEmitido(saldo.getInt("saldoRetenido"));
                     getDatos2.setSaldoNoEmetido(saldo.getInt("saldoNoRetenido"));
-
-                    Log.d("RESPONSE CITA", "" + cita);
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -549,7 +412,6 @@ public class ReporteAsesores extends Fragment {
         }catch (JSONException e){
             e.printStackTrace();
         }
-
         adapter.notifyDataSetChanged();
         adapter.setLoaded();
     }
@@ -559,13 +421,10 @@ public class ReporteAsesores extends Fragment {
      */
     private void fechas(){
         if(getArguments() != null){
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-            mParam3 = getArguments().getString(ARG_PARAM3);
-            tvFecha.setText(mParam1 + " - " + mParam2);
-            tvRangoFecha1.setText(mParam1);
-            tvRangoFecha2.setText(mParam2);
-            etAsesor.setText(mParam3);
+            tvFecha.setText(getArguments().getString(ARG_PARAM1) + " - " + getArguments().getString(ARG_PARAM2));
+            tvRangoFecha1.setText(getArguments().getString(ARG_PARAM1));
+            tvRangoFecha2.setText(getArguments().getString(ARG_PARAM2));
+            etAsesor.setText(getArguments().getString(ARG_PARAM3));
         }else{
             tvFecha.setText(Dialogos.fechaActual() + " - " + Dialogos.fechaSiguiente());
         }
