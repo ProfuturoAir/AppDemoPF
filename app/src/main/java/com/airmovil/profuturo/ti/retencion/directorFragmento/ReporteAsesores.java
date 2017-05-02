@@ -61,12 +61,9 @@ public class ReporteAsesores extends Fragment {
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private View rootView;
     private Connected connected;
-    private TextView tvFecha;
-    private TextView tvEmitidas, tvNoEmitidas, tvSaldoEmitido, tvSaldoNoEmitido;
+    private TextView tvFecha, tvEmitidas, tvNoEmitidas, tvSaldoEmitido, tvSaldoNoEmitido, tvRangoFecha1, tvRangoFecha2, tvResultados;
     private EditText etAsesor;
-    private TextView tvRangoFecha1, tvRangoFecha2;
     private Button btnBuscar;
-    private TextView tvResultados;
     private int filas;
     private final Fragment borrar = this;
     private OnFragmentInteractionListener mListener;

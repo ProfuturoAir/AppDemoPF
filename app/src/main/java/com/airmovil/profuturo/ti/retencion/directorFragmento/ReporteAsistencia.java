@@ -1,11 +1,7 @@
 package com.airmovil.profuturo.ti.retencion.directorFragmento;
 
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,15 +12,12 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -34,9 +27,8 @@ import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
-import com.airmovil.profuturo.ti.retencion.helper.EnviaMail;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
-import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
+import com.airmovil.profuturo.ti.retencion.helper.ServicioEmailJSON;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteAsistenciaModel;
 import com.android.volley.AuthFailureError;
@@ -48,9 +40,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -69,41 +59,22 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
     private List<DirectorReporteAsistenciaModel> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
-    private RecyclerView.Adapter recyclerViewAdapter;
-    private int filas;
     private DirectorReporteAsistenciaAdapter adapter;
-    private int pagina = 1;
-    private int numeroMaximoPaginas = 0;
-    private int numeroEmpleado;
-    private int idSucursal = 0;
-    private int idGerencia = 0;
-    private int totalF;
+    private int pagina = 1, numeroMaximoPaginas = 0, idSucursal = 0, idGerencia = 0;
+    private int filas, totalF;
     private View rootView;
-    private SessionManager sessionManager;
-    private DatePickerDialog datePickerDialog;
     private OnFragmentInteractionListener mListener;
-    private TextView tvFecha;
-    private TextView tvATiempo, tvRetardados, tvSinAsistencia;
-    private Spinner spinnerSucursal;
-    private Spinner spinnerGerencia;
+    private TextView tvFecha, tvATiempo, tvRetardados, tvSinAsistencia, tvRangoFecha1, tvRangoFecha2, tvResultados;
+    private Spinner spinnerGerencia, spinnerSucursal;
     private EditText etAsesor;
-    private TextView tvRangoFecha1, tvRangoFecha2;
     private Button btnFiltro;
-    private TextView tvResultados;
-    private InputMethodManager imm;
-    private int mYear;
-    private int mMonth;
-    private int mDay;
-    private String fechaIni = "";
-    private String fechaFin = "";
-    private String fechaMostrar = "";
     private Connected connected;
     private ArrayList<String> sucursales;
     private ArrayList<String> id_sucursales;
     private ArrayList<String> gerencia;
     private ArrayList<String> id_gerencias;
+    private Fragment borrar = this;
 
-    int idSucursal123 = 0;
     public ReporteAsistencia() {
         // Constructor público vacío obligatorio
     }
@@ -119,7 +90,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
      * @param param5 parametro 5 id fecha fin
      * @return una nueva insrancia del fragmento ReporteAsistencia.
      */
-    // TODO: Rename and change types and number of parameters
     public static ReporteAsistencia newInstance(int param1, int param2, String param3, String param4, String param5, Context context) {
         ReporteAsistencia fragment = new ReporteAsistencia();
         Bundle args = new Bundle();
@@ -131,7 +101,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         fragment.setArguments(args);
         return fragment;
     }
-
 
     /**
      * El sistema lo llama cuando crea el fragmento
@@ -156,27 +125,22 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
-        // TODO: consumiendo servicio REST
+        // TODO: Peticion REST
         primeraPeticion();
-        // TODO: Casteo de variables
+        // TODO: Asignacion de variables
         variables();
-        // TODO: Verificacion de variables
+        // TODO: Verificacion de datos almacenados en bundle
         argumentos();
-        // TODO: Dialogos de fechas
+        // TODO: Dialogo de fecha inicio y fecha fin
         Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha1);
         Dialogos.dialogoFechaFin(getContext(), tvRangoFecha2);
-        // Minimizacion de teclado
-        Config.teclado(getContext(), etAsesor);
-
         // TODO: Recycler y modelo
         getDatos1 = new ArrayList<>();
         recyclerView = (RecyclerView) rootView.findViewById(R.id.ddfras_rv_lista);
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-
-        // TODO: btn filtro
-        final Fragment borrar = this;
+        // TODO: Btn nueva busqueda con fitros
         btnFiltro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -185,8 +149,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                         Config.dialogoFechasVacias(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ReporteAsistencia fragmento = ReporteAsistencia.newInstance(idGerencia, idSucursal, etAsesor.getText().toString().trim(),
-                                tvRangoFecha1.getText().toString().trim(), tvRangoFecha2.getText().toString().trim(), rootView.getContext());
+                        ReporteAsistencia fragmento = ReporteAsistencia.newInstance(mParam1 = idGerencia, mParam2 = idSucursal, etAsesor.getText().toString(), tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), rootView.getContext());
                         borrar.onDestroy();
                         ft.remove(borrar).replace(R.id.content_director, fragmento).addToBackStack(null).commit();
                         Config.teclado(getContext(), etAsesor);
@@ -196,20 +159,8 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                 }
             }
         });
-
-        etAsesor.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (event != null&& (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    InputMethodManager in = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-                    in.hideSoftInputFromWindow(etAsesor.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-                }
-                return false;
-            }
-        });
-
-
-
+        boolean argumentos = (getArguments()!=null);
+        ServicioEmailJSON.enviarEmailReporteAsistencia(getContext(), tvResultados, (argumentos)?getArguments().getInt(ARG_PARAM1):0, (argumentos)?getArguments().getInt(ARG_PARAM2):0, (argumentos)?getArguments().getString(ARG_PARAM3):"", (argumentos)?getArguments().getString(ARG_PARAM4):Dialogos.fechaActual(), (argumentos)?getArguments().getString(ARG_PARAM5):Dialogos.fechaSiguiente(), (argumentos) ? true : false);
     }
 
     /**
@@ -221,7 +172,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // infla el layout del XML
         return inflater.inflate(R.layout.director_fragmento_reporte_asistencia, container, false);
     }
 
@@ -255,6 +205,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         void onFragmentInteraction(Uri uri);
     }
 
+
     private void primeraPeticion(){
         final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
         progressDialog.setIcon(R.drawable.icono_abrir);
@@ -275,6 +226,11 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
      * Setear las variables de xml
      */
     private void variables(){
+        connected = new Connected();
+        sucursales = new ArrayList<String>();
+        id_sucursales = new ArrayList<String>();
+        gerencia = new ArrayList<String>();
+        id_gerencias = new ArrayList<String>();
         tvFecha = (TextView) rootView.findViewById(R.id.ddfras_tv_fecha);
         tvATiempo = (TextView) rootView.findViewById(R.id.ddfras_tv_a_tiempo);
         tvRetardados  = (TextView) rootView.findViewById(R.id.ddfras_tv_retardados);
@@ -286,18 +242,12 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         tvRangoFecha2 = (TextView) rootView.findViewById(R.id.ddfras_tv_fecha_rango2);
         btnFiltro = (Button) rootView.findViewById(R.id.ddfras_btn_filtro);
         tvResultados = (TextView) rootView.findViewById(R.id.ddfras_tv_registros);
-
-        connected = new Connected();
-        sucursales = new ArrayList<String>();
-        id_sucursales = new ArrayList<String>();
-        gerencia = new ArrayList<String>();
-        id_gerencias = new ArrayList<String>();
-
         spinnerSucursal.setOnItemSelectedListener(this);
         spinnerGerencia.setOnItemSelectedListener(this);
         getData1();
         getData2();
     }
+
 
     /**
      * Spinner para selccion de elemetos de geretnecias o sucursales
@@ -312,7 +262,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
             case R.id.ddfras_spinner_sucursal:
                 String sim1 = id_sucursales.get(position);
                 idSucursal = Integer.valueOf(sim1);
-                idSucursal123 = Integer.valueOf(sim1);
                 break;
             case R.id.ddfras_spinner_gerencia:
                 String sim2 = id_gerencias.get(position);
@@ -325,6 +274,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
+
     }
 
     /**
@@ -340,6 +290,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                             j = response.getJSONArray("Sucursales");
                             getSucursales(j);
                         } catch (JSONException e) {
+
                             e.printStackTrace();
                         }
                     }
@@ -382,6 +333,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
             }
         };
         MySingleton.getInstance(getContext()).addToRequestQueue(jsonArrayRequest);
+
     }
 
     /**
@@ -402,12 +354,8 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         }
         int position=0;
         if(idSucursal!=0){
-            Log.d("-->>>Sucursal", "dato : " + idSucursal);
             for(int i=0; i < id_sucursales.size(); i++) {
-                Log.d("SELE","by ID ->: " +id_sucursales.get(i));
-                Log.d("SELE","ID ->: " +idSucursal);
                 if(Integer.valueOf(id_sucursales.get(i)) == idSucursal){
-                    Log.d("SELE","SIZE ->: "+position);
                     position = i;
                     break;
                 }
@@ -434,12 +382,8 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         }
         int position=0;
         if(idGerencia!=0){
-            Log.d("-->>>Gerencia", "dato : " + idSucursal);
             for(int i=0; i < id_gerencias.size(); i++) {
-                Log.d("SELE","by ID ->: " +id_gerencias.get(i));
-                Log.d("SELE","ID ->: " +idGerencia);
                 if(Integer.valueOf(id_gerencias.get(i)) == idGerencia){
-                    Log.d("SELE","SIZE ->: "+position);
                     position = i;
                     break;
                 }
@@ -459,6 +403,9 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
             tvFecha.setText(getArguments().getString(ARG_PARAM4) + " - " + getArguments().getString(ARG_PARAM5));
             tvRangoFecha1.setText(getArguments().getString(ARG_PARAM4));
             tvRangoFecha2.setText(getArguments().getString(ARG_PARAM5));
+            if(mParam2 != 0) idSucursal = mParam2;
+            if(mParam1 != 0) idGerencia = mParam1;
+            etAsesor.setText(getArguments().getString(ARG_PARAM3));
         }else{
             tvFecha.setText(Dialogos.fechaActual() + " - " + Dialogos.fechaSiguiente());
         }
@@ -488,10 +435,12 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         } catch (JSONException e) {
             Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
         }
+        //Creating a json array request
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_ASISTENCIA, obj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        //Dismissing progress dialog
                         if (primerPeticion) {
                             primerPaso(response);
                         } else {
@@ -533,8 +482,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
             retardo = asistencia.getInt("retardo");
             inasistencia = asistencia.getInt("inasistencia");
             JSONArray empleado = obj.getJSONArray("Empleado");
-            totalFilas = 50;
-            filas = obj.getInt("filasTotal");
+            totalFilas = obj.getInt("filasTotal");
             for(int i = 0; i < empleado.length(); i++){
                 DirectorReporteAsistenciaModel getDatos2 = new DirectorReporteAsistenciaModel();
                 JSONObject json = null;
@@ -551,18 +499,17 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         }catch (JSONException e){
             e.printStackTrace();
         }
-        tvResultados.setText(filas + " Resulatdos");
+
+        tvResultados.setText(totalFilas + " Resulatdos");
         tvATiempo.setText("" + onTime);
         tvRetardados.setText("" + retardo);
         tvSinAsistencia.setText("" + inasistencia);
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
-
-        adapter = new DirectorReporteAsistenciaAdapter(rootView.getContext(), getDatos1, recyclerView, mParam4, mParam5);
+        boolean argumentos = (getArguments()!=null);
+        adapter = new DirectorReporteAsistenciaAdapter(rootView.getContext(), getDatos1, recyclerView, (argumentos)?getArguments().getString(ARG_PARAM4):Dialogos.fechaActual(), (argumentos)?getArguments().getString(ARG_PARAM5):Dialogos.fechaSiguiente());
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
-
         adapter.notifyDataSetChanged();
-
         adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
@@ -576,7 +523,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                         adapter.notifyItemInserted(getDatos1.size() - 1);
                     }
                 };
-
                 handler.post(r);
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -605,7 +551,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                 JSONObject json = null;
                 try{
                     json = empleado.getJSONObject(i);
-                    Log.d("OBJETO","PTR: "+json);
                     getDatos2.setNombre(json.getString("nombre"));
                     getDatos2.setnEmpleado(String.valueOf(json.getInt("numeroEmpleado")));
                     getDatos2.setIdSucursal(json.getInt("idSucursal"));

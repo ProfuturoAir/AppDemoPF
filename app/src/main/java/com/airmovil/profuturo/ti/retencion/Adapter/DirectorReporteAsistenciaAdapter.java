@@ -61,6 +61,7 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
     private RecyclerView mRecyclerView;
     private String numeroEmpleado = "";
     private String nombreEmpleado = "";
+    private int numeroSucursal;
     private String mParam4 = "";
     private String mParam5 = "";
 
@@ -95,7 +96,6 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder vh;
-
         if (viewType == VIEW_TYPE_ITEM) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.director_fragmento_reporte_asistencia_lista, parent, false);
             vh = new MyViewHolder(view);
@@ -119,6 +119,7 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
 
             numeroEmpleado = lista.getnEmpleado();
             nombreEmpleado = lista.getNombre();
+            numeroSucursal = lista.idSucursal;
 
             char nombre = lista.getNombre().charAt(0);
             final String pLetra = Character.toString(nombre);
@@ -128,7 +129,6 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
             myholder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //fragmentJumpDatosUsuario(pLetra, v);
                     Fragment fragmento = new ReporteAsistenciaDetalles();
                     if (mContext instanceof Director) {
                         Director director = (Director) mContext;
@@ -198,10 +198,8 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
                         @Override
                         public void onClick(View v) {
                             final EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
-
                             final String datoEditText = editText.getText().toString();
                             final String datoSpinner = spinner.getSelectedItem().toString();
-                            Log.d("DATOS USER","SPINNER: "+datoEditText+" datosSpinner: "+ datoSpinner);
                             if(datoEditText == "" || datoSpinner == "Seleciona un email"){
                                 Config.msj(mContext, "Error", "Ingresa email valido");
                             }else{
@@ -209,14 +207,12 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
                                 Connected connected = new Connected();
                                 final InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Service.INPUT_METHOD_SERVICE);
                                 if(connected.estaConectado(mContext)){
-
                                     JSONObject obj = new JSONObject();
-
                                     try {
                                         JSONObject rqt = new JSONObject();
                                         rqt.put("correo", email);
                                         rqt.put("detalle", true);
-                                        rqt.put("idSucursal", 0);
+                                        rqt.put("idSucursal", numeroSucursal);
                                         rqt.put("idGerencia", 0);
                                         rqt.put("numeroEmpleado", numeroEmpleado);
                                         JSONObject periodo = new JSONObject();
@@ -230,34 +226,27 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
                                         Config.msj(mContext, "Error", "Error al formar los datos");
                                     }
                                     EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_ASISTENCIA,mContext,new EnviaMail.VolleyCallback() {
-
                                         @Override
                                         public void onSuccess(JSONObject result) {
                                             int status;
-
                                             try {
                                                 status = result.getInt("status");
                                             }catch(JSONException error){
                                                 status = 400;
                                             }
-
-                                            Log.d("EST","EE: "+status);
                                             imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
                                             if(status == 200) {
                                                 Config.msj(mContext, "Enviando", "Se ha enviado el mensaje al destino");
-                                                //Config.msjTime(getContext(), "Enviando", "Se ha enviado el mensaje al destino", 4000);
                                                 dialog.dismiss();
                                             }else{
                                                 Config.msj(mContext, "Error", "Ups algo salio mal =(");
                                                 dialog.dismiss();
                                             }
-                                            //db.addUserCredits(fk_id_usuario,result);
                                         }
                                         @Override
                                         public void onError(String result) {
                                             Log.d("RESPUESTA ERROR", result);
                                             Config.msj(mContext, "Error en conexión", "Por favor, revisa tu conexión a internet ++");
-                                            //db.addUserCredits(fk_id_usuario, "ND");
                                         }
                                     });
                                 }else{

@@ -67,6 +67,9 @@ public class Config extends Activity {
     public static final String URL_SUCURSALES = URL_GENERAL + "mb/premium/rest/seleccionSucursales";
     public static final String URL_GERENCIAS = URL_GENERAL + "mb/premium/rest/seleccionGerencias";
     // TODO: definicion de campos fijos para el envio de datos de encuestas
+    public static final String[] GERENCIAS = new String[]{};
+    public static final String[] SUCURSALES = new String[]{};
+
     public static final String[] MOTIVOS = new String[]{"Selecciona el motivo", "Por mal servicio","Por falta de seguimiento ventas", "Promesas incumplidas", "Rendimiento", "Llevarse sus cuentas a la misma institución", "No da explicación", "Familiares o amigos en afore de la competencia"};
     public static final String[] AFORES = new String[]{"Selecciona una AFORE","Azteca", "Banamex", "Coppel", "Inbursa", "Invercap", "Metlife", "PensionISSSTE", "Principal", "Profuturo", "SURA", "XXI-Banorte"};
     public static final String[] ESTATUS = new String[]{"Selecciona un estatus", "Activo", "Inactivo"};
