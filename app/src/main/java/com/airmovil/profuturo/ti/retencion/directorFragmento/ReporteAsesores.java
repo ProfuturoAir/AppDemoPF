@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,8 +26,10 @@ import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
+import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.ServicioEmailJSON;
+import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.GerenteReporteAsesoresModel;
 import com.android.volley.AuthFailureError;
@@ -43,11 +46,11 @@ import java.util.Map;
 
 public class ReporteAsesores extends Fragment {
     private static final String TAG = ReporteAsesores.class.getSimpleName();
-    private static final String ARG_PARAM1 = "fechaInicio"; // fecha Inicio
-    private static final String ARG_PARAM2 = "fechaFin"; // fecha final
-    private static final String ARG_PARAM3 = "idAsesor"; // numero asesor
-    private static final String ARG_PARAM4 = "parametro4"; // id gerencia
-    private static final String ARG_PARAM5 = "parametro5"; // id sucursal
+    private static final String ARG_PARAM1 = "idAsesor"; // numero asesor
+    private static final String ARG_PARAM2 = "fechaInicio"; // fecha Inicio
+    private static final String ARG_PARAM3 = "fechaFin"; // fecha final
+    private static final String ARG_PARAM4 = "idGerencia"; // id gerencia
+    private static final String ARG_PARAM5 = "idSucursal"; // id sucursal
     private String mParam1; // fecha inicio
     private String mParam2; // fecha fin
     private String mParam3; // id asesor
@@ -67,10 +70,11 @@ public class ReporteAsesores extends Fragment {
     private int filas;
     private final Fragment borrar = this;
     private OnFragmentInteractionListener mListener;
+    private IResult mResultCallback = null;
+    private VolleySingleton volleySingleton;
+    private ProgressDialog loading;
 
-    public ReporteAsesores() {
-        // Constructor público vacío obligatorio
-    }
+    public ReporteAsesores() {/* Constructor público vacío obligatorio */}
 
     /**
      * Utilice este método de fábrica para crear una nueva instancia de
@@ -79,14 +83,12 @@ public class ReporteAsesores extends Fragment {
      * @param param2 Parameter 2.
      * @return una nueva instancia del fragmento ReporteAsesores.
      */
-    public static ReporteAsesores newInstance(String param1, String param2, String param3, int param4, int param5, Context context) {
+    public static ReporteAsesores newInstance(String param1, String param2, String param3, Context context) {
         ReporteAsesores fragment = new ReporteAsesores();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         args.putString(ARG_PARAM3, param3);
-        args.putInt(ARG_PARAM4, param4);
-        args.putInt(ARG_PARAM5, param5);
         fragment.setArguments(args);
         return fragment;
     }
@@ -100,19 +102,49 @@ public class ReporteAsesores extends Fragment {
         }
     }
 
+    /**
+     * metodo para callback de volley
+     */
+    void initVolleyCallback() {
+        mResultCallback = new IResult() {
+            @Override
+            public void notifySuccess(String requestType, JSONObject response) {
+                if (requestType.trim().equals("true")) {
+                    loading.dismiss();
+                    primerPaso(response);
+                } else {
+                    segundoPaso(response);
+                }
+            }
+
+            @Override
+            public void notifyError(String requestType, VolleyError error) {
+                if(connected.estaConectado(getContext())){
+                    Dialogos.dialogoErrorServicio(getContext());
+                }else{
+                    Dialogos.dialogoErrorConexion(getContext());
+                }
+            }
+        };
+    }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        initVolleyCallback();
         rootView = view;
-        primeraPeticion();
+        // TODO: llama clase singleton volley
+        volleySingleton = volleySingleton.getInstance(mResultCallback, rootView.getContext());
+        // TODO: Asisgnacion de variables
         variables();
-        fechas();
+        // TODO: verifica si existen datos en el fragmento
+        argumentos();
+        // TODO: primera peticion rest
+        sendJson(true);
+        // TODO: llama los dialos fecha inicio y fecha final
         Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha1);
         Dialogos.dialogoFechaFin(getContext(), tvRangoFecha2);
-
-
-        // TODO: model
-        getDatos1 = new ArrayList<>();
         // TODO: Recycler
+        getDatos1 = new ArrayList<>();
         recyclerView = (RecyclerView) rootView.findViewById(R.id.dfra_rv_lista);
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
@@ -125,9 +157,9 @@ public class ReporteAsesores extends Fragment {
                     if(tvRangoFecha1.getText().toString().isEmpty() ||  tvRangoFecha2.getText().toString().isEmpty()){
                         Config.dialogoFechasVacias(getContext());
                     }else{
-                        ReporteAsesores fragmentoAsesores = new ReporteAsesores();
-                        Director director = (Director) getContext();
-                        director.switchAsesoresFA(fragmentoAsesores, etAsesor.getText().toString(),tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString());
+                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        ReporteAsesores fragmento = ReporteAsesores.newInstance(etAsesor.getText().toString(),tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), rootView.getContext());
+                        borrar.onDestroy();ft.remove(borrar).replace(R.id.content_director, fragmento).addToBackStack(null).commit();
                     }
                     // TODO: ocultar teclado
                     Config.teclado(getContext(), etAsesor);
@@ -137,22 +169,9 @@ public class ReporteAsesores extends Fragment {
             }
         });
 
-
-
-        etAsesor.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (event != null&& (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    InputMethodManager in = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-                    in.hideSoftInputFromWindow(etAsesor.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-                }
-                return false;
-            }
-        });
-
         boolean argumentos =  (getArguments()!=null);
-        ServicioEmailJSON.enviarEmailReporteAsespres(getContext(), tvResultados, (argumentos) ? getArguments().getString(ARG_PARAM1):Dialogos.fechaActual(),
-                (argumentos)? getArguments().getString(ARG_PARAM2) : Dialogos.fechaSiguiente(), (argumentos)? getArguments().getString(ARG_PARAM3) : "", (argumentos) ? true : false);
+        ServicioEmailJSON.enviarEmailReporteAsespres(getContext(), tvResultados, (argumentos) ? getArguments().getString(ARG_PARAM2):Dialogos.fechaActual(),
+                (argumentos)? getArguments().getString(ARG_PARAM3) : Dialogos.fechaSiguiente(), (argumentos)? getArguments().getString(ARG_PARAM1) : "", (argumentos) ? true : false);
 
 
     }
@@ -223,27 +242,12 @@ public class ReporteAsesores extends Fragment {
         connected = new Connected();
     }
 
-    /**
-     * Inicia el proceso de primera peticion por REST
-     */
-    private void primeraPeticion(){
-        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIcon(R.drawable.icono_abrir);
-        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
-        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
-        progressDialog.show();
-        // TODO: Implement your own authentication logic here.
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        progressDialog.dismiss();
-                        sendJson(true);
-                    }
-                }, Config.TIME_HANDLER);
-    }
-
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
+        if (primerPeticion)
+            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
+        else
+            loading = null;
         JSONObject obj = new JSONObject();
         JSONObject rqt = new JSONObject();
         JSONObject periodo = new JSONObject();
@@ -251,10 +255,10 @@ public class ReporteAsesores extends Fragment {
             boolean argumentos = (getArguments()!=null);
             rqt.put("idGerencia", (argumentos==true) ? getArguments().getInt(ARG_PARAM4) : 0);
             rqt.put("idSucursal", (argumentos==true) ? getArguments().getInt(ARG_PARAM5) : 0);
-            rqt.put("numeroEmpleadoAsesor", (argumentos==true) ? getArguments().getString(ARG_PARAM3) : "");
+            rqt.put("numeroEmpleadoAsesor", (argumentos==true) ? getArguments().getString(ARG_PARAM1) : "");
             rqt.put("pagina", pagina);
-            periodo.put("fechaFin", (argumentos==true) ?  getArguments().getString(ARG_PARAM2) : Dialogos.fechaSiguiente() );
-            periodo.put("fechaInicio", (argumentos==true) ? getArguments().getString(ARG_PARAM1) : Dialogos.fechaActual());
+            periodo.put("fechaFin", (argumentos==true) ?  getArguments().getString(ARG_PARAM3) : Dialogos.fechaSiguiente());
+            periodo.put("fechaInicio", (argumentos==true) ? getArguments().getString(ARG_PARAM2) : Dialogos.fechaActual());
             rqt.put("periodo", periodo);
             rqt.put("usuario", Config.usuarioCusp(getContext()));
             obj.put("rqt", rqt);
@@ -262,41 +266,14 @@ public class ReporteAsesores extends Fragment {
         }catch (JSONException e){
             e.printStackTrace();
         }
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_ASESORES, obj,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        // Disminuye el dialog
-                        if (primerPeticion) {
-                            primerPaso(response);
-                        } else {
-                            segundoPaso(response);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if(connected.estaConectado(getContext())){
-                            Dialogos.dialogoErrorServicio(getContext());
-                        }else{
-                            Dialogos.dialogoErrorConexion(getContext());
-                        }
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return Config.credenciales(getContext());
-            }
-        };
-        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+        volleySingleton.postDataVolley("" + primerPeticion, Config.URL_CONSULTAR_REPORTE_RETENCION_ASESORES, obj);
     }
 
     /**
      * Inicia este metodo para llenar la lista de elementos, cada 10, inicia solamente con 10, despues inicia el metodo segundoPaso
-     * @param obj
-     * @param smParam1
-     * @param smParam2
+     * @param
+     * @param
+     * @param
      */
     private void primerPaso(JSONObject obj) {
         int emitidos = 0;
@@ -346,8 +323,8 @@ public class ReporteAsesores extends Fragment {
 
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         boolean argumentos = (getArguments()!=null);
-        adapter = new DirectorReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView, (argumentos) ? getArguments().getString(ARG_PARAM1) : Dialogos.fechaActual() ,
-                (argumentos) ? getArguments().getString(ARG_PARAM2) : Dialogos.fechaSiguiente());
+        adapter = new DirectorReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView, (argumentos) ? getArguments().getString(ARG_PARAM2) : Dialogos.fechaActual() ,
+                (argumentos) ? getArguments().getString(ARG_PARAM3) : Dialogos.fechaSiguiente());
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
@@ -416,12 +393,12 @@ public class ReporteAsesores extends Fragment {
     /**
      * Inicia las fechas, dependiendo si existen datos procesados
      */
-    private void fechas(){
+    private void argumentos(){
         if(getArguments() != null){
-            tvFecha.setText(getArguments().getString(ARG_PARAM1) + " - " + getArguments().getString(ARG_PARAM2));
-            tvRangoFecha1.setText(getArguments().getString(ARG_PARAM1));
-            tvRangoFecha2.setText(getArguments().getString(ARG_PARAM2));
-            etAsesor.setText(getArguments().getString(ARG_PARAM3));
+            tvFecha.setText(getArguments().getString(ARG_PARAM2) + " - " + getArguments().getString(ARG_PARAM3));
+            tvRangoFecha1.setText(getArguments().getString(ARG_PARAM2));
+            tvRangoFecha2.setText(getArguments().getString(ARG_PARAM3));
+            etAsesor.setText(getArguments().getString(ARG_PARAM1));
         }else{
             tvFecha.setText(Dialogos.fechaActual() + " - " + Dialogos.fechaSiguiente());
         }

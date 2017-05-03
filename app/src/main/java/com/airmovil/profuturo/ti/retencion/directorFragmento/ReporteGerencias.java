@@ -22,11 +22,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteGerenciasAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.asesorFragmento.*;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
@@ -81,10 +78,8 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
     private int totalSaldoNoEmitidos = 0;
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
-
-    public ReporteGerencias() {
-        // Required empty public constructor
-    }
+    private ProgressDialog loading;
+    public ReporteGerencias() {/* Required empty public constructor */}
 
     /**
      * Este fragmento usa lo previsto de los paramentros enviados
@@ -113,17 +108,17 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         }
     }
 
-    /*
-     *@see metodo para callback de volley
+    /**
+     * metodo para callback de volley
      */
     void initVolleyCallback() {
-
         mResultCallback = new IResult() {
             @Override
             public void notifySuccess(String requestType, JSONObject response) {
                 Log.d(TAG, "Volley requester " + requestType);
                 Log.d(TAG, "Volley JSON post" + response);
                 if (requestType.trim().equals("true")) {
+                    loading.dismiss();
                     primerPaso(response);
                 } else {
                     segundoPaso(response);
@@ -145,11 +140,10 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-
-        //metodo para callback de volley
+        // TODO: metodo para callback de volley
         initVolleyCallback();
         rootView = view;
-        //llama clase singleton volley
+        // TODO: llama clase singleton volley
         volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
         // TODO: Casteo
         variables();
@@ -178,11 +172,7 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         ReporteGerencias fragmento = ReporteGerencias.newInstance(mParam1, mParam2, idGerencia, rootView.getContext());
-                        borrar.onDestroy();
-                        ft.remove(borrar);
-                        ft.replace(R.id.content_director, fragmento);
-                        ft.addToBackStack(null);
-                        ft.commit();
+                        borrar.onDestroy();ft.remove(borrar).replace(R.id.content_director, fragmento).addToBackStack(null).commit();
                     }
                 }else{
                     Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
@@ -229,7 +219,6 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
                 idGerencia = Integer.valueOf(sim);
                 break;
             default:
-
                 break;
         }
     }
@@ -251,7 +240,7 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                    Fragment fragmentoGenerico = new ReporteGerencias();
+                    Fragment fragmentoGenerico = new Inicio();
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     fragmentManager.beginTransaction().replace(R.id.content_director, fragmentoGenerico).commit();
                     return true;
@@ -262,7 +251,6 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
@@ -290,12 +278,9 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-
                         JSONArray j = null;
                         try {
-                            //j = new JSONObject(response);
                             j = response.getJSONArray("Gerencias");
-
                             getSucursales(j);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -304,9 +289,7 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
                 },
                 new Response.ErrorListener() {
                     @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
+                    public void onErrorResponse(VolleyError error) {}
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -362,6 +345,10 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
 
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
+        if (primerPeticion)
+            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
+        else
+            loading = null;
         JSONObject obj = new JSONObject();
         JSONObject rqt = new JSONObject();
         JSONObject periodo = new JSONObject();
@@ -384,7 +371,6 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
     }
 
     private void primerPaso(JSONObject obj) {
-
         try{
             // TODO: jsonArray de gerencias
             JSONArray array = obj.getJSONArray("Gerencia");
@@ -426,12 +412,10 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         tvSaldoEmitido.setText("" + Config.nf.format(totalSaldosEmitodos));
         tvSaldoNoEmitido.setText("" + Config.nf.format(totalSaldoNoEmitidos));
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
-
         boolean argumentos = (getArguments()!=null);
         adapter = new DirectorReporteGerenciasAdapter(rootView.getContext(), getDato1, recyclerView, (argumentos == true) ? mParam1 : Dialogos.fechaActual(), (argumentos == true) ? mParam2 : Dialogos.fechaSiguiente() );
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
-
         adapter.notifyDataSetChanged();
         adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
@@ -458,7 +442,6 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
                 }, Config.TIME_HANDLER);
             }
         });
-
     }
 
     private void segundoPaso(JSONObject obj) {

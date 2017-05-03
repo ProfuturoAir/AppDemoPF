@@ -115,18 +115,12 @@ public class DirectorReporteSucursalesAdapter extends RecyclerView.Adapter{
             myholder.campoNoEmitidas.setText(lista.getNoEmitido() + "");
             myholder.campoSaldoEmitido.setText("" +  Config.nf.format(lista.getSaldoNoEmetido()));
             myholder.campoSaldoNoEmitido.setText("" +  Config.nf.format(lista.getSaldoNoEmetido()));
-            myholder.campoPorcentaje.setText(
-                    "Porcentaje: Emitidos " + Config.df.format((float)(lista.getEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido())) +"%  " +
-                            " | No emitidos " + Config.df.format((float)(lista.getNoEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido()))+"%");
-
-
+            myholder.campoPorcentaje.setText("Porcentaje: Emitidos " + Config.df.format((float)(lista.getEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido())) +"%  " + " | No emitidos " + Config.df.format((float)(lista.getNoEmitido()*100)/(lista.getEmitido()+lista.getNoEmitido()))+"%");
             int var = lista.getIdSucursal();
             String intToString = String.valueOf(var);
             char dato = intToString.charAt(0);
             final String inicial = Character.toString(dato);
-
             myholder.campoLetra.setText(inicial);
-
             myholder.subMenu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -181,14 +175,21 @@ public class DirectorReporteSucursalesAdapter extends RecyclerView.Adapter{
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
+                case R.id.sub_menu_reporte_sucusal_nav_asesores:
+                    ReporteAsesores fragmentoAsesores = new ReporteAsesores();
+                    Director d1 = (Director) mRecyclerView.getContext();
+                    d1.cambioAsesores(fragmentoAsesores, lista.getIdSucursal(), fechaIni, fechaFin);
+                    return true;
                 case R.id.sub_menu_reporte_sucusal_nav_clientes:
                     ReporteClientes fragmentoClientes = new ReporteClientes();
                     Director director = (Director) mRecyclerView.getContext();
-                    director.switchClientesFS(fragmentoClientes, lista.getIdSucursal(),fechaIni,fechaFin);return true;
+                    director.switchClientesFS(fragmentoClientes, lista.getIdSucursal(),fechaIni,fechaFin);
+                    return true;
                 case R.id.sub_menu_reporte_sucusal_nav_asistencia:
                     ReporteAsistencia fragmentoAsistencia = new ReporteAsistencia();
                     Director dt = (Director) mRecyclerView.getContext();
-                    dt.switchAsistenciaFS(fragmentoAsistencia,0, lista.getIdSucursal(),"",fechaIni,fechaFin);return true;
+                    dt.switchAsistenciaFS(fragmentoAsistencia,0, lista.getIdSucursal(),"",fechaIni,fechaFin);
+                    return true;
                 case R.id.sub_menu_reporte_sucusal_email:
                     final Dialog dialog = new Dialog(mContext);
                     dialog.setContentView(R.layout.custom_layout);

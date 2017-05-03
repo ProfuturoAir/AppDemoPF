@@ -22,21 +22,17 @@ import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
-import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.ServicioEmailJSON;
+import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteAsistenciaDetalleModel;
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ReporteAsistenciaDetalles extends Fragment {
     private static final String TAG = ReporteAsistenciaDetalles.class.getSimpleName();
@@ -53,14 +49,15 @@ public class ReporteAsistenciaDetalles extends Fragment {
     private List<DirectorReporteAsistenciaDetalleModel> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
-    private RecyclerView.Adapter recyclerViewAdapter;
     private DirectorReporteAsistenciaDetalleAdapter adapter;
     private Fragment borrar = this;
     private OnFragmentInteractionListener mListener;
 
-    public ReporteAsistenciaDetalles() {
-        // se requiere un constructor
-    }
+    private IResult mResultCallback = null;
+    private VolleySingleton volleySingleton;
+    private ProgressDialog loading;
+
+    public ReporteAsistenciaDetalles() {/* se requiere un constructor */}
 
     /**
      * Utilice este método de fábrica para crear una nueva instancia de
@@ -97,6 +94,37 @@ public class ReporteAsistenciaDetalles extends Fragment {
     }
 
     /**
+     * metodo para callback de volley
+     */
+    void initVolleyCallback() {
+        mResultCallback = new IResult() {
+            @Override
+            public void notifySuccess(String requestType, JSONObject response) {
+                Log.d(TAG, "Volley requester " + requestType);
+                Log.d(TAG, "Volley JSON post" + response);
+                if (requestType.trim().equals("true")) {
+                    loading.dismiss();
+                    primerPaso(response);
+                }else{
+                    segundoPaso(response);
+                }
+            }
+
+            @Override
+            public void notifyError(String requestType, VolleyError error) {
+                Log.d(TAG, "Volley requester " + requestType);
+                Log.d(TAG, "Volley JSON post" + "That didn't work! " + error.toString());
+                if(connected.estaConectado(getContext())){
+                    Dialogos.dialogoErrorServicio(getContext());
+                }else{
+                    Dialogos.dialogoErrorConexion(getContext());
+                }
+            }
+        };
+    }
+
+
+    /**
      * Se llama inmediatamente después de que onCreateView(LayoutInflater, ViewGroup, Bundle) ha onCreateView(LayoutInflater, ViewGroup, Bundle)
      * pero antes de que se haya onCreateView(LayoutInflater, ViewGroup, Bundle) estado guardado en la vista.
      * @param view vista de acceso para el xml
@@ -105,8 +133,11 @@ public class ReporteAsistenciaDetalles extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
+        initVolleyCallback();
+        // TODO: llama clase singleton volley
+        volleySingleton = VolleySingleton.getInstance(mResultCallback, getContext());
         // TODO: peticion REST
-        primeraPeticion();
+        sendJson(true);
         // TODO: Asisgmacion de variables
         variables();
         // TODO: verificacion de datos existentes
@@ -128,19 +159,15 @@ public class ReporteAsistenciaDetalles extends Fragment {
                         Config.dialogoFechasVacias(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ReporteAsistenciaDetalles fragmento = ReporteAsistenciaDetalles.newInstance(mParam1,  tvRangoFecha1.getText().toString(),
-                                tvRangoFecha2.getText().toString(), mParam4, rootView.getContext());
-                        borrar.onDestroy();
-                        ft.remove(borrar).replace(R.id.content_director, fragmento).addToBackStack(null).commit();
+                        ReporteAsistenciaDetalles fragmento = ReporteAsistenciaDetalles.newInstance(mParam1,  tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), mParam4, rootView.getContext());
+                        borrar.onDestroy();ft.remove(borrar).replace(R.id.content_director, fragmento).addToBackStack(null).commit();
                     }
                 }else{
                     Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                 }
             }
         });
-
         ServicioEmailJSON.enviarEmailReporteAsistenciaDetalles(getContext(), tvResultados, mParam1, mParam2, mParam3);
-
     }
 
     @Override
@@ -201,25 +228,8 @@ public class ReporteAsistenciaDetalles extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private void primeraPeticion(){
-        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIcon(R.drawable.icono_abrir);
-        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
-        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
-        progressDialog.show();
-        // TODO: Implement your own authentication logic here.
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        progressDialog.dismiss();
-                        sendJson(true);
-                    }
-                }, Config.TIME_HANDLER);
-    }
-
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
-        final ProgressDialog loading;
         if (primerPeticion)
             loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
         else
@@ -240,34 +250,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
         }catch (JSONException e){
             e.printStackTrace();
         }
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_ASISTENCIA_DETALLE, obj,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        if (primerPeticion) {
-                            loading.dismiss();
-                            primerPaso(response);
-                        } else {
-                            segundoPaso(response);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if(connected.estaConectado(getContext())){
-                            Dialogos.dialogoErrorServicio(getContext());
-                        }else{
-                            Dialogos.dialogoErrorConexion(getContext());
-                        }
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return Config.credenciales(getContext());
-            }
-        };
-        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+        volleySingleton.postDataVolley("" + primerPeticion, Config.URL_CONSULTAR_REPORTE_ASISTENCIA_DETALLE, obj);
     }
 
     private void primerPaso(JSONObject obj) {

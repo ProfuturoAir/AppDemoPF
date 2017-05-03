@@ -27,8 +27,10 @@ import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
+import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.ServicioEmailJSON;
+import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteAsistenciaModel;
 import com.android.volley.AuthFailureError;
@@ -74,6 +76,9 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
     private ArrayList<String> gerencia;
     private ArrayList<String> id_gerencias;
     private Fragment borrar = this;
+    private IResult mResultCallback = null;
+    private VolleySingleton volleySingleton;
+    private ProgressDialog loading;
 
     public ReporteAsistencia() {
         // Constructor público vacío obligatorio
@@ -119,14 +124,47 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
     }
 
     /**
+     * metodo para callback de volley
+     */
+    void initVolleyCallback() {
+        mResultCallback = new IResult() {
+            @Override
+            public void notifySuccess(String requestType, JSONObject response) {
+                Log.d(TAG, "Volley requester " + requestType);
+                Log.d(TAG, "Volley JSON post" + response);
+                if (requestType.trim().equals("true")) {
+                    loading.dismiss();
+                    primerPaso(response);
+                }else{
+                    segundoPaso(response);
+                }
+            }
+
+            @Override
+            public void notifyError(String requestType, VolleyError error) {
+                Log.d(TAG, "Volley requester " + requestType);
+                Log.d(TAG, "Volley JSON post" + "That didn't work! " + error.toString());
+                if(connected.estaConectado(getContext())){
+                    Dialogos.dialogoErrorServicio(getContext());
+                }else{
+                    Dialogos.dialogoErrorConexion(getContext());
+                }
+            }
+        };
+    }
+
+    /**
      * @param view regresa la vista
      * @param savedInstanceState parametros a enviar para conservar en el bundle
      */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
+        initVolleyCallback();
+        // TODO: llama clase singleton volley
+        volleySingleton = VolleySingleton.getInstance(mResultCallback, getContext());
         // TODO: Peticion REST
-        primeraPeticion();
+        sendJson(true);
         // TODO: Asignacion de variables
         variables();
         // TODO: Verificacion de datos almacenados en bundle
@@ -150,8 +188,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         ReporteAsistencia fragmento = ReporteAsistencia.newInstance(mParam1 = idGerencia, mParam2 = idSucursal, etAsesor.getText().toString(), tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), rootView.getContext());
-                        borrar.onDestroy();
-                        ft.remove(borrar).replace(R.id.content_director, fragmento).addToBackStack(null).commit();
+                        borrar.onDestroy();ft.remove(borrar).replace(R.id.content_director, fragmento).addToBackStack(null).commit();
                         Config.teclado(getContext(), etAsesor);
                     }
                 }else{
@@ -203,23 +240,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-    }
-
-
-    private void primeraPeticion(){
-        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIcon(R.drawable.icono_abrir);
-        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
-        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
-        progressDialog.show();
-        // TODO: Implement your own authentication logic here.
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        progressDialog.dismiss();
-                        sendJson(true);
-                    }
-                }, Config.TIME_HANDLER);
     }
 
     /**
@@ -336,10 +356,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
 
     }
 
-    /**
-     * Inicia la peticion para el consumo de sucursales
-     * @param j
-     */
     private void getSucursales(JSONArray j){
         sucursales.add("Selecciona una sucursal");
         id_sucursales.add("0");
@@ -367,7 +383,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         spinnerSucursal.setSelection(position);
     }
 
-    //obtener gerencias
     private void getGerencias(JSONArray j){
         gerencia.add("Selecciona una gerencia");
         id_gerencias.add("0");
@@ -416,6 +431,11 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
      * @param primerPeticion
      */
     private void sendJson(final boolean primerPeticion) {
+        if (primerPeticion)
+            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Porfavor espere...", false, false);
+        else
+            loading = null;
+
         JSONObject obj = new JSONObject();
         JSONObject rqt = new JSONObject();
         JSONObject periodo = new JSONObject();
@@ -435,35 +455,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         } catch (JSONException e) {
             Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
         }
-        //Creating a json array request
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_ASISTENCIA, obj,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        //Dismissing progress dialog
-                        if (primerPeticion) {
-                            primerPaso(response);
-                        } else {
-                            segundoPaso(response);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if(connected.estaConectado(getContext())){
-                            Dialogos.dialogoErrorServicio(getContext());
-                        }else{
-                            Dialogos.dialogoErrorConexion(getContext());
-                        }
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return Config.credenciales(getContext());
-            }
-        };
-        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+        volleySingleton.postDataVolley("" + primerPeticion, Config.URL_CONSULTAR_REPORTE_ASISTENCIA, obj);
     }
 
     /**

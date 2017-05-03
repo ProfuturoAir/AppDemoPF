@@ -112,7 +112,7 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
             myholder.campoRetenidoCliente.setText(" " + (Boolean.parseBoolean(lista.getRetenido()) ? " Retenido " : " "));
             myholder.campoNoRetenidoCliente.setText(" " + (Boolean.parseBoolean(lista.getRetenido()) ? " " : " No Retenido "));
             myholder.campoSucursalCliente.setText(" Sucursal: " + lista.getIdSucursal() + " ");
-            char dato = String.valueOf(lista.getIdSucursal()).charAt(0);
+            char dato = String.valueOf(lista.getNombreCliente()).charAt(0);
             final String inicial = Character.toString(dato);
             myholder.campoLetra.setText(inicial);
             myholder.btn.setOnClickListener(new View.OnClickListener() {

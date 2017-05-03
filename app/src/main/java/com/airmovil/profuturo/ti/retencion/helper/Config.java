@@ -12,6 +12,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +22,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.android.volley.RequestQueue;
+
+import org.json.JSONObject;
 
 /**
  * Created by tecnicoairmovil on 13/03/17.
@@ -98,6 +102,8 @@ public class Config extends Activity {
     public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static Context context; // Context
     public static String idUsuario = "";
+
+    public static RequestQueue mRequestQueue = null;
 
 
     /**
@@ -423,4 +429,18 @@ public class Config extends Activity {
         return cusp;
     }
 
+    public static JSONObject filtroClientes (int tipoBuscar, String numeroEmpleado){
+        JSONObject filtroCliente = new JSONObject();
+        List<String> filtros = Arrays.asList("numeroCuenta","nss","curp");
+        String valorEmpleado = "";
+        try{
+            for (int i = 0; i < filtros.size(); i++){
+                valorEmpleado = (i+1 == tipoBuscar) ? numeroEmpleado : "";
+                filtroCliente.put(filtros.get(i), valorEmpleado);
+            }
+        }catch (Exception e){
+
+        }
+        return filtroCliente;
+    }
 }

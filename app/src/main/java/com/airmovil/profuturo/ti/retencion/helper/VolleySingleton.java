@@ -65,7 +65,6 @@ public class VolleySingleton {
 
     public void getDataVolley(final String requestType, String url){
         try {
-            RequestQueue queue = Volley.newRequestQueue(mContext);
 
             JsonObjectRequest jsonObj = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
                 @Override
@@ -108,12 +107,14 @@ public class VolleySingleton {
     public static synchronized VolleySingleton getInstance(IResult resultCallback, Context context) {
 
 
-        if (mInstance == null) {
+        //if (mInstance == null) {
             mInstance = new VolleySingleton(resultCallback, context);
+       /*
         }else{
             mInstance.setCallback(resultCallback);
+            mInstance.setContext(context);
         }
-
+        */
         return mInstance;
 
     }
@@ -122,13 +123,17 @@ public class VolleySingleton {
         this.mResultCallback = resultCallback;
     }
 
+    public void setContext(Context context){
+        this.mContext = context;
+    }
+
     public RequestQueue getRequestQueue() {
-        if (mRequestQueue == null) {
+        if (Config.mRequestQueue == null) {
             // getApplicationContext() is key, it keeps you from leaking the
             // Activity or BroadcastReceiver if someone passes one in.
-            mRequestQueue = Volley.newRequestQueue(mContext.getApplicationContext());
+            Config.mRequestQueue = Volley.newRequestQueue(mContext.getApplicationContext());
         }
-        return mRequestQueue;
+        return Config.mRequestQueue;
     }
 
     public <T> void addToRequestQueue(Request<T> req) {

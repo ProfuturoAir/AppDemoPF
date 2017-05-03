@@ -1,11 +1,7 @@
 package com.airmovil.profuturo.ti.retencion.directorFragmento;
 
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,137 +13,81 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
-import android.util.Base64;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteClientesAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.activities.Director;
-import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
-import com.airmovil.profuturo.ti.retencion.helper.EnviaMail;
+import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
-import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
+import com.airmovil.profuturo.ti.retencion.helper.ServicioEmailJSON;
+import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
-import com.airmovil.profuturo.ti.retencion.model.CitasClientesModel;
-import com.airmovil.profuturo.ti.retencion.model.DirectorReporteClientesModel;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteClientesModel;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ReporteClientes.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ReporteClientes#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ReporteClientes extends Fragment implements  Spinner.OnItemSelectedListener{
-    // TODO: Rename parameter arguments, choose names that match
-    private static final String ARG_PARAM1 = "fechaIni";
-    private static final String ARG_PARAM2 = "fechaFin";
-    private static final String ARG_PARAM3 = "idBuscar";
-    private static final String ARG_PARAM5 = "idSucursal";
-    private static final String ARG_PARAM6 = "IdAsesor";
-    private static final String ARG_PARAM7 = "idEstatus";
-    private static final String ARG_PARAM8 = "idCita";
-    private static final String ARG_PARAM9 = "selecionId";
-    private static final String ARG_PARAM10 = "idGerencia";
-    // TODO: Rename and change types of parameters
-    private String mParam1; // fecha ini
-    private String mParam2; // fecha fin
-    private String mParam3; // idUsuario
-    private int mParam5; // id sucursal
-    private String mParam6; // idAsesor
-    private int mParam7; // idRetenidos
-    private int mParam8; // idCitas
-    private int mParam9; // Seleccion
+    private static final String TAG = ReporteClientes.class.getSimpleName();
+    private static final String ARG_PARAM1 = "idBusqueda";
+    private static final String ARG_PARAM2 = "datosCliente";
+    private static final String ARG_PARAM3 = "idGerencia";
+    private static final String ARG_PARAM4 = "idSucursal";
+    private static final String ARG_PARAM5 = "idAsesor";
+    private static final String ARG_PARAM6 = "fechaInicio";
+    private static final String ARG_PARAM7 = "fechaFin";
+    private static final String ARG_PARAM8 = "idRetenido";
+    private static final String ARG_PARAM9 = "idCita";
     int idGerencia;
-    private Spinner spinnerId, spinnerSucursales, spinnerRetenido, spinnerCita, spinnerGerencias;
-    private ArrayList<String> sucursales;
-    private ArrayList<String> id_sucursales;
-    private JSONArray resultSucursales;
-    private EditText etIngresarDato, etIngresarAsesor;
+    private Spinner spinnerId, spinnerSucursales, spinnerIdRetenido, spinnerIdCita, spinnerGerencias;
+    private TextView tvResultados, tvRangoFecha1, tvRangoFecha2, tvFecha;
     private Button btnBuscar;
-    private TextView tvResultados;
-    private TextView tvRangoFecha1, tvRangoFecha2, tvFecha;
+    private EditText etDatosCliente, etIdAsesor;
+    private ArrayList<String> sucursales, id_sucursales;
+    private JSONArray resultSucursales;
     private View rootView;
-    private SessionManager sessionManager;
-    private DatePickerDialog datePickerDialog;
-    private InputMethodManager imm;
     private Connected connected;
-    private int mYear;
-    private int mMonth;
-    private int mDay;
-    private String fechaIni = "";
-    private String fechaFin = "";
-    private String fechaMostrar = "";
-    private String numeroUsuario, nombre;
     private List<DirectorReporteClientesModel> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private RecyclerView.Adapter recyclerViewAdapter;
-    private int filas;
     private DirectorReporteClientesAdapter adapter;
-    private int pagina = 1;
-    private int numeroMaximoPaginas = 0;
-    private int totalF;
-    final Fragment borrar = this;
+    private int filas, pagina = 1, numeroMaximoPaginas = 0, totalF;
+    private Fragment borrar = this;
     private OnFragmentInteractionListener mListener;
-    String numeroEmpleado;
     int idSucursal;
     int tipoBuscar;
-    int numeroId ;
-    int estatus ;
-    int retenido;
     int spinId = 0;
-    int spinCit = 0;
-    int spinRet = 0;
-    private ArrayList<String> gerencias;
-    private ArrayList<String> id_gerencias;
-    private String fechaInicio1;
-    private String fechafin1;
-    private String datosCliente1 = "";
-    private int idSucursal1;
-    private int idGerencia1;
+    private ArrayList<String> gerencias, id_gerencias;
+    private int idSucursal1, idGerencia1, idRetenido1, idCita1;
     private String idAsesor1;
-    private int idRetenido1;
-    private int idCita1;
-    private int selectID;
+    private IResult mResultCallback = null;
+    private VolleySingleton volleySingleton;
+    private ProgressDialog loading;
 
 
-    public ReporteClientes() {
-        // requiere un constructor vacio
-    }
+    public ReporteClientes() {/* requiere un constructor vacio */}
 
     /**
      * Utilice este método de fábrica para crear una nueva instancia de
@@ -157,200 +97,142 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
      * @param param2 Parameter 2.
      * @return A new instance of fragment ReporteClientes.
      */
-    // TODO: Rename and change types and number of parameters
-    public static ReporteClientes newInstance(String param1, String param2, String param3, int param5, String param6, int param7, int param8, int param9, Context context) {
-        ReporteClientes fragment = new ReporteClientes();
+    public static ReporteClientes newInstance(int param1, String param2, int param3, int param4, String param5, String param6, String param7, int param8, int param9){
+        ReporteClientes fragmento = new ReporteClientes();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putInt(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
-        args.putString(ARG_PARAM3, param3);
-        args.putInt(ARG_PARAM5, param5);
+        args.putInt(ARG_PARAM3, param3);
+        args.putInt(ARG_PARAM4, param4);
+        args.putString(ARG_PARAM5, param5);
         args.putString(ARG_PARAM6, param6);
-        args.putInt(ARG_PARAM7, param7);
+        args.putString(ARG_PARAM7, param7);
         args.putInt(ARG_PARAM8, param8);
         args.putInt(ARG_PARAM9, param9);
-        fragment.setArguments(args);
-        return fragment;
+        fragmento.setArguments(args);
+        return fragmento;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    }
+
+    /**
+     * metodo para callback de volley
+     */
+    void initVolleyCallback() {
+        mResultCallback = new IResult() {
+            @Override
+            public void notifySuccess(String requestType, JSONObject response) {
+                Log.d(TAG, "Volley requester " + requestType);
+                Log.d(TAG, "Volley JSON post" + response);
+                if (requestType.trim().equals("true")) {
+                    loading.dismiss();
+                    primerPaso(response);
+                } else {
+                    segundoPaso(response);
+                }
+            }
+
+            @Override
+            public void notifyError(String requestType, VolleyError error) {
+                Log.d(TAG, "Volley requester " + requestType);
+                Log.d(TAG, "Volley JSON post" + "That didn't work! " + error.toString());
+                if(connected.estaConectado(getContext())){
+                    Dialogos.dialogoErrorServicio(getContext());
+                }else{
+                    Dialogos.dialogoErrorConexion(getContext());
+                }
+            }
+        };
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        // TODO: metodo para callback de volley
+        initVolleyCallback();
         rootView = view;
-        primeraPeticion();
-        sucursales = new ArrayList<String>();
-        id_sucursales = new ArrayList<String>();
-        gerencias = new ArrayList<String>();
-        id_gerencias = new ArrayList<String>();
-        idSucursal = 0;
-        numeroEmpleado = "";
+        // TODO: llama clase singleton volley
+        volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
+        // TODO: REST
+        sendJson(true);
+        // TODO: Asignacion de variables
         variables();
-        fechas();
-        connected = new Connected();
-
+        // TODO: Verifica si existen variables
+        argumentos();
+        // TODO: Muestra de dialogos fecha inicio y fecha fin
         Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha1);
         Dialogos.dialogoFechaFin(getContext(), tvRangoFecha2);
-
-        datosCliente1 = "";
-        if(getArguments() != null) {
-            Log.d("-->>>SI ENTRA", getArguments().toString());
-            fechaInicio1 = getArguments().getString("fechaInicio");
-            fechaIni = fechaInicio1;
-            fechafin1 = getArguments().getString("fechaFin");
-            datosCliente1 = getArguments().getString("ingresarDatoCliente");
-            idSucursal1 = getArguments().getInt("idSucursal");
-            idGerencia1 = getArguments().getInt("idGerencia");
-            idAsesor1 = getArguments().getString("idAsesor");
-            idRetenido1 = getArguments().getInt("idRetenido");
-            idCita1 = getArguments().getInt("idCita");
-            selectID = getArguments().getInt("selectCliente");
-            Log.d("PARAMETROS BUNDLE:", " *********************" );
-            Log.d("PARAMETROS BUNDLE:", " parametro 1: fecha inicio" + fechaInicio1);
-            if(fechaInicio1!=null)
-                tvRangoFecha1.setText(fechaInicio1);
-            Log.d("PARAMETROS BUNDLE:", " parametro 2: fecha fin" + fechafin1);
-            if(fechafin1!= null)
-                tvRangoFecha2.setText(fechafin1);
-            Log.d("PARAMETROS BUNDLE:", " parametro 3: idBuscar" + datosCliente1);
-            Log.d("PARAMETROS BUNDLE:", " parametro 5: idSucursal" + idSucursal1);
-            Log.d("PARAMETROS BUNDLE:", " parametro 6: iDAsesor" + idAsesor1);
-            Log.d("PARAMETROS BUNDLE:", " parametro 7: estatuS" + idRetenido1);
-            Log.d("PARAMETROS BUNDLE:", " parametro 8: con cita" + idCita1);
-            Log.d("PARAMETROS BUNDLE:", " parametro 9: fecha seleccion ID" + selectID);
-            Log.d("PARAMETROS BUNDLE:", " *********************");
-
-            tvFecha.setText(fechaInicio1 + " - " + fechafin1);
-
-            if(selectID!=0){
-                Log.d("HOLA", "Todos : " + tipoBuscar);
-                spinnerId.setSelection(selectID);
-                spinId = tipoBuscar;
-            }
-
-            if(etIngresarAsesor!=null)
-                etIngresarAsesor.setText(idAsesor1);
-
-            //Log.d("ENTRA datosnte---->", datosCliente1);
-            if(datosCliente1 != null) {
-                if (!datosCliente1.isEmpty()) {
-                    etIngresarDato.setText(datosCliente1);
-                }
-            }
-
-        }
-
         // TODO: Spinner
         final ArrayAdapter<String> adapterId = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.IDS);
         adapterId.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinnerId.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //etIngresarDato.setText("");
                 switch (position){
                     case 0:
-                        etIngresarDato.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+                        etDatosCliente.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-                        etIngresarDato.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryDark1), PorterDuff.Mode.OVERLAY);
-                        etIngresarDato.setFocusable(false);
+                        etDatosCliente.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryDark1), PorterDuff.Mode.OVERLAY);
+                        etDatosCliente.setFocusable(false);
                         break;
                     case 1:
-                        etIngresarDato.setFocusableInTouchMode(true);
+                        etDatosCliente.setFocusableInTouchMode(true);
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                        etIngresarDato.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
-                        etIngresarDato.setInputType(InputType.TYPE_CLASS_PHONE);
+                        etDatosCliente.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
+                        etDatosCliente.setInputType(InputType.TYPE_CLASS_PHONE);
                         break;
                     case 2:
-                        etIngresarDato.setFocusableInTouchMode(true);
+                        etDatosCliente.setFocusableInTouchMode(true);
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                        etIngresarDato.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
-                        etIngresarDato.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+                        etDatosCliente.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
+                        etDatosCliente.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
                         break;
                     case 3:
-                        etIngresarDato.setFocusableInTouchMode(true);
+                        etDatosCliente.setFocusableInTouchMode(true);
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                        etIngresarDato.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
-                        etIngresarDato.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+                        etDatosCliente.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
+                        etDatosCliente.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
                 }
-                etIngresarDato.setHint("Ingresa, " + adapterId.getItem(position));
+                etDatosCliente.setHint("Ingresa, " + adapterId.getItem(position));
 
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+        boolean argumentos = (getArguments()!=null);
         spinnerId.setAdapter(adapterId);
-        spinnerId.setSelection(selectID);
+        spinnerId.setSelection((argumentos)?getArguments().getInt(ARG_PARAM1): 0);
         // TODO: Spinner
         ArrayAdapter<String> adapterRetenido = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.RETENIDO);
         adapterRetenido.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerRetenido.setAdapter(adapterRetenido);
-        spinnerRetenido.setSelection(idRetenido1);
+        spinnerIdRetenido.setAdapter(adapterRetenido);
+        spinnerIdRetenido.setSelection(idRetenido1);
         // TODO: Spinner
         ArrayAdapter<String> adapterCita = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.CITAS);
         adapterCita.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerCita.setAdapter(adapterCita);
-        spinnerCita.setSelection(idRetenido1);
-
+        spinnerIdCita.setAdapter(adapterCita);
+        spinnerIdCita.setSelection(idCita1);
         // TODO: Recycler
         getDatos1 = new ArrayList<>();
         recyclerView = (RecyclerView) rootView.findViewById(R.id.ddfrc_rv_lista);
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Log.d("------>>>>>datos:", etIngresarDato.getText().toString());
                 if(connected.estaConectado(getContext())){
-                    mParam1 = tvRangoFecha1.getText().toString();
-                    mParam2 = tvRangoFecha2.getText().toString();
-                    mParam3 = etIngresarDato.getText().toString();
-                    mParam5 = spinnerSucursales.getSelectedItemPosition();
-                    mParam6 = etIngresarAsesor.getText().toString();
-                    mParam7 = spinnerRetenido.getSelectedItemPosition();
-                    mParam8 = spinnerCita.getSelectedItemPosition();
-                    mParam9 = spinnerId.getSelectedItemPosition();
-                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    if(mParam1.isEmpty() || mParam2.isEmpty()){
+                    if(tvRangoFecha1.getText().toString().isEmpty() || tvRangoFecha2.getText().toString().isEmpty()){
                         Config.dialogoFechasVacias(getContext());
                     }else{
-                        Log.d("idS","SS: "+idSucursal + " ___ " +mParam3);
-                        if(mParam3.isEmpty()){
-                            mParam3 = "";
-                        }
-                        if(mParam6.isEmpty()){
-                            mParam6 = "";
-                        }
-                        Log.d("HOLA", "Todos : " + mParam6);
-                        Log.d("HOLA", "Todos : " + mParam3);
-                        ReporteClientes fragmentoClientes = new ReporteClientes();
-                        Director director = (Director) getContext();
-
-                        Log.d("DATOS A ENVIAR", "fechaInicio: " +  mParam1);
-                        Log.d("DATOS A ENVIAR", "fechaFin: " +  mParam2);
-                        Log.d("DATOS A ENVIAR", "IngresarDatoCliente: " +  mParam3);
-                        Log.d("DATOS A ENVIAR", "ID sucursales:" +  idSucursal);
-                        Log.d("DATOS A ENVIAR", "idAsesor: " +  mParam6);
-                        Log.d("DATOS A ENVIAR", "idRetenido:" +  mParam7);
-                        Log.d("DATOS A ENVIAR", "idCita: " +  mParam8);
-                        Log.d("DATOS A ENVIAR", "selectCliente" +  mParam9);
-
-                        director.switchClientesFCQ11(fragmentoClientes, mParam1 /*fechaInicio*/, mParam2/*fechafin*/, mParam3/*DatosCliente*/,  idSucursal/*IdSucursal*/, idGerencia,
-                                mParam6/*idAsesor*/, mParam7/*idRetenido*/, mParam8/*idCitas*/, mParam9/*SeleccionIDS*/);
-
-                        //director.switchClientesFCQ(fragmentoClientes,idSucursal,mParam6, mParam1,mParam2,mParam9,mParam3,mParam7,mParam8);
-                        Config.teclado(getContext(), etIngresarAsesor);
-                        Config.teclado(getContext(), etIngresarDato);
+                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        ReporteClientes fragmento = ReporteClientes.newInstance(spinnerId.getSelectedItemPosition(),  etDatosCliente.getText().toString(), idGerencia,  idSucursal,  etIdAsesor.getText().toString(), tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), spinnerIdRetenido.getSelectedItemPosition(),  spinnerIdCita.getSelectedItemPosition());
+                        borrar.onDestroy();ft.remove(borrar).replace(R.id.content_director, fragmento).addToBackStack(null).commit();
+                        Config.teclado(getContext(), etIdAsesor);
+                        Config.teclado(getContext(), etDatosCliente);
                     }
                 }else{
                     Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
@@ -358,182 +240,20 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
             }
         });
 
-        etIngresarDato.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (event != null&& (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    InputMethodManager in = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-                    in.hideSoftInputFromWindow(etIngresarDato.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-                }
-                return false;
-            }
-        });
-
-        etIngresarAsesor.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (event != null&& (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    InputMethodManager in = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-                    in.hideSoftInputFromWindow(etIngresarAsesor.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-                }
-                return false;
-            }
-        });
-
-        tvResultados.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Dialog dialog = new Dialog(getContext());
-                dialog.setContentView(R.layout.custom_layout);
-
-                Button btn = (Button) dialog.findViewById(R.id.dialog_btn_enviar);
-                final Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
-
-                // TODO: Spinner
-                ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(getContext(), R.layout.spinner_item_azul, Config.EMAIL);
-                adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
-                spinner.setAdapter(adapterSucursal);
-
-                btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        final EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
-
-                        final String datoEditText = editText.getText().toString();
-                        final String datoSpinner = spinner.getSelectedItem().toString();
-
-                        Log.d("DATOS USER","SPINNER: "+datoEditText+" datosSpinner: "+ datoSpinner);
-                        if(datoEditText == "" || datoSpinner == "Seleciona un email"){
-                            Config.msj(getContext(), "Error", "Ingresa email valido");
-                        }else{
-                            String email = datoEditText+"@"+datoSpinner;
-                            Connected connected = new Connected();
-                            final InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Service.INPUT_METHOD_SERVICE);
-                            if(connected.estaConectado(getContext())){
-                                JSONObject obj = new JSONObject();
-                                JSONObject rqt = new JSONObject();
-                                JSONObject filtro = new JSONObject();
-                                JSONObject filtroCliente = new JSONObject();
-                                JSONObject periodo = new JSONObject();
-                                boolean checa = true;
-                                if (idSucursal == 0){
-                                    checa = false;
-                                }
-                                try {
-                                    Log.d("----->><<filtro c:", tipoBuscar +"");
-                                    if(getArguments() != null){
-                                        boolean detalle = true;
-                                        rqt.put("correo", email);
-                                        rqt.put("detalle", detalle);
-                                        rqt.put("filtro", filtro);
-                                        filtro.put("cita", idCita1);
-                                        filtro.put("filtroCliente", filtroCliente);
-                                        if(tipoBuscar == 1){
-                                            filtroCliente.put("curp", "");
-                                            filtroCliente.put("nss", "");
-                                            filtroCliente.put("numeroCuenta", datosCliente1);
-                                        } else if(tipoBuscar == 2){
-                                            filtroCliente.put("curp", "");
-                                            filtroCliente.put("nss", datosCliente1);
-                                            filtroCliente.put("numeroCuenta", "");
-                                        }else if(tipoBuscar == 3){
-                                            filtroCliente.put("curp", datosCliente1);
-                                            filtroCliente.put("nss", "");
-                                            filtroCliente.put("numeroCuenta", "");
-                                        } else{
-                                            filtroCliente.put("curp", "");
-                                            filtroCliente.put("nss", "");
-                                            filtroCliente.put("numeroCuenta", "");
-                                        }
-                                        filtro.put("filtroRetencion", retenido);
-                                        filtro.put("idSucursal", idSucursal);
-                                        filtro.put("idGerencia", idGerencia);
-                                        filtro.put("numeroEmpleado", numeroEmpleado);
-                                        periodo.put("fechaInicio", fechaIni);
-                                        periodo.put("fechaFin", fechaFin);
-                                        rqt.put("periodo", periodo);
-                                        rqt.put("numeroEmpleado", numeroEmpleado);
-                                        obj.put("rqt", rqt);
-                                    }else {
-                                        Map<String, String> fechaActual = Config.fechas(1);
-                                        String smParam1 = fechaActual.get("fechaIni");
-                                        String smParam2 = fechaActual.get("fechaFin");
-                                        boolean detalle = true;
-                                        rqt.put("correo", email);
-                                        rqt.put("detalle", detalle);
-                                        rqt.put("filtro", filtro);
-                                        filtro.put("cita", 0);
-                                        filtro.put("filtroCliente", filtroCliente);
-                                        filtroCliente.put("curp", "");
-                                        filtroCliente.put("nss", "");
-                                        filtroCliente.put("numeroCuenta", "");
-                                        filtro.put("filtroRetencion", 0);
-                                        filtro.put("idSucursal", 0);
-                                        filtro.put("numeroEmpleado", "");
-                                        periodo.put("fechaInicio", smParam1);
-                                        periodo.put("fechaFin", smParam2);
-                                        rqt.put("periodo", periodo);
-                                        filtro.put("idGerencia", 0);
-                                        rqt.put("numeroEmpleado", "");
-                                        obj.put("rqt", rqt);
-                                    }
-                                    Log.d("sendJson", " REQUEST -->" + obj);
-                                } catch (JSONException e) {
-                                    Config.msj(getContext(), "Error", "Error al formar los datos");
-                                }
-                                EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_CLIENTE,getContext(),new EnviaMail.VolleyCallback() {
-
-                                    @Override
-                                    public void onSuccess(JSONObject result) {
-                                        Log.d("RESPUESTA SUCURSAL", result.toString());
-                                        int status;
-
-                                        try {
-                                            status = result.getInt("status");
-                                        }catch(JSONException error){
-                                            status = 400;
-                                        }
-
-                                        Log.d("EST","EE: "+status);
-                                        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-                                        if(status == 200) {
-                                            Config.msj(getContext(), "Enviando", "Se ha enviado el mensaje al destino");
-                                            //Config.msjTime(getContext(), "Enviando", "Se ha enviado el mensaje al destino", 4000);
-                                            dialog.dismiss();
-                                        }else{
-                                            Config.msj(getContext(), "Error", "Ups algo salio mal =(");
-                                            dialog.dismiss();
-                                        }
-                                        //db.addUserCredits(fk_id_usuario,result);
-                                    }
-                                    @Override
-                                    public void onError(String result) {
-                                        Log.d("RESPUESTA ERROR", result);
-                                        Config.msj(getContext(), "Error en conexión", "Por favor, revisa tu conexión a internet ++");
-                                        //db.addUserCredits(fk_id_usuario, "ND");
-                                    }
-                                });
-                            }else{
-                                Config.msj(getContext(), "Error en conexión", "Por favor, revisa tu conexión a internet");
-                            }
-                        }
-
-                    }
-                });
-                dialog.show();
-            }
-        });
+        // TODO: Envio de email
+        ServicioEmailJSON.enviarEmailReporteClientes(getContext(), tvResultados, (argumentos) ? getArguments().getInt(ARG_PARAM3) : 0,
+                (argumentos) ? getArguments().getInt(ARG_PARAM4) : 0, (argumentos) ? getArguments().getInt(ARG_PARAM1) : 0, (argumentos) ? getArguments().getInt(ARG_PARAM9) : 0,
+                (argumentos) ? getArguments().getString(ARG_PARAM2) : "", (argumentos) ? getArguments().getInt(ARG_PARAM8) : 0, (argumentos) ? getArguments().getString(ARG_PARAM2) : "",
+                (argumentos) ? getArguments().getString(ARG_PARAM6) : Dialogos.fechaActual(), (argumentos) ? getArguments().getString(ARG_PARAM7) : Dialogos.fechaActual(), (argumentos) ? true:false );
 
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.director_fragmento_reporte_clientes, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -555,45 +275,34 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-    }
-
-    private void primeraPeticion(){
-        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIcon(R.drawable.icono_abrir);
-        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
-        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
-        progressDialog.show();
-        // TODO: Implement your own authentication logic here.
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        progressDialog.dismiss();
-                        sendJson(true);
-                    }
-                }, Config.TIME_HANDLER);
     }
 
     private void variables(){
         spinnerId = (Spinner) rootView.findViewById(R.id.ddfrc_spinner_id);
         spinnerGerencias = (Spinner) rootView.findViewById(R.id.ddfrc_spinner_gerencia);
         spinnerSucursales = (Spinner) rootView.findViewById(R.id.ddfrc_spinner_sucursal);
-        spinnerRetenido = (Spinner) rootView.findViewById(R.id.ddfrc_spinner_estado);
-        spinnerCita = (Spinner) rootView.findViewById(R.id.ddfrc_spinner_citas);
+        spinnerIdRetenido = (Spinner) rootView.findViewById(R.id.ddfrc_spinner_estado);
+        spinnerIdCita = (Spinner) rootView.findViewById(R.id.ddfrc_spinner_citas);
         tvFecha = (TextView) rootView.findViewById(R.id.ddfrc_tv_fecha);
         tvRangoFecha1  = (TextView) rootView.findViewById(R.id.ddfrc_tv_fecha_rango1);
         tvRangoFecha2  = (TextView) rootView.findViewById(R.id.ddfrc_tv_fecha_rango2);
         btnBuscar = (Button) rootView.findViewById(R.id.ddfrc_btn_buscar);
         tvResultados = (TextView) rootView.findViewById(R.id.ddfrc_tv_registros);
-        etIngresarDato = (EditText) rootView.findViewById(R.id.ddfrc_et_id);
-        etIngresarAsesor = (EditText) rootView.findViewById(R.id.ddfrc_et_asesor);
+        etDatosCliente = (EditText) rootView.findViewById(R.id.ddfrc_et_id);
+        etIdAsesor = (EditText) rootView.findViewById(R.id.ddfrc_et_asesor);
         spinnerSucursales.setOnItemSelectedListener(this);
         spinnerSucursales.setSelection(idSucursal);
         spinnerGerencias.setOnItemSelectedListener(this);
         spinnerGerencias.setSelection(idGerencia1);
+        sucursales = new ArrayList<String>();
+        id_sucursales = new ArrayList<String>();
+        gerencias = new ArrayList<String>();
+        id_gerencias = new ArrayList<String>();
+        idSucursal = 0;
         getData();
         getDataGerencias();
+        connected = new Connected();
     }
 
     @Override
@@ -601,12 +310,10 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         switch (parent.getId()) {
             case R.id.ddfrc_spinner_gerencia:
                 String sim = id_gerencias.get(position);
-                Log.d("SELE","ESTA G->: "+sim);
                 idGerencia = Integer.valueOf(sim);
                 break;
             case R.id.ddfrc_spinner_sucursal:
                 String s = id_sucursales.get(position);
-                Log.d("SELE","ESTA ->: "+s);
                 idSucursal = Integer.valueOf(s);
                 break;
             default:
@@ -614,18 +321,14 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         }
     }
 
-    //When no item is selected this method would execute
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        //Log.i("Message", "Nothing is selected");
-    }
+    public void onNothingSelected(AdapterView<?> parent) {}
 
     private void getData(){
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_SUCURSALES,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-
                         JSONArray j = null;
                         try {
                             j = response.getJSONArray("Sucursales");
@@ -637,9 +340,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                 },
                 new Response.ErrorListener() {
                     @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("LLENA", "SPINNER: -> ERROR " + error);
-                    }
+                    public void onErrorResponse(VolleyError error) {}
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -649,7 +350,6 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         MySingleton.getInstance(getContext()).addToRequestQueue(jsonArrayRequest);
     }
 
-    //obtener delegaciones
     private void getSucursales(JSONArray j){
         sucursales.add("Selecciona una sucursal");
         id_sucursales.add("0");
@@ -662,13 +362,10 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                 e.printStackTrace();
             }
         }
-
         int position=0;
         if(idSucursal1!=0){
-
             for(int i=0; i < id_sucursales.size(); i++) {
                 if(Integer.valueOf(id_sucursales.get(i)) == idSucursal1){
-                    Log.d("SELE","SIZE ->: "+position);
                     position = i;
                     break;
                 }
@@ -686,7 +383,6 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("STRING","GGG: "+response.toString());
                         JSONArray j = null;
                         try {
                             j = response.getJSONArray("Gerencias");
@@ -698,9 +394,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                 },
                 new Response.ErrorListener() {
                     @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("LLENA", "SPINNER: -> ERROR " + error);
-                    }
+                    public void onErrorResponse(VolleyError error) {}
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -710,7 +404,6 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         MySingleton.getInstance(getContext()).addToRequestQueue(jsonArrayRequest);
     }
 
-    //obtener gerencias
     private void getGerencias(JSONArray j){
         gerencias.add("Selecciona una gerencia");
         id_gerencias.add("0");
@@ -728,7 +421,6 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         if(idGerencia1!=0){
             for(int i=0; i < id_gerencias.size(); i++) {
                 if(Integer.valueOf(id_gerencias.get(i)) == idGerencia1){
-                    Log.d("SELECION GERENCIA","SIZE ->: " + position);
                     position = i;
                     break;
                 }
@@ -744,143 +436,64 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
      *  Espera el regreso de fechas incial (hoy y el dia siguiente)
      *  y cuando se realiza una nueva busqueda, retorna las fechas seleccionadas
      */
-    private void fechas(){
-        Map<String, Integer> fechaDatos = Config.dias();
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
-        // TODO: fecha
-        Map<String, String> fechaActual = Config.fechas(1);
-        String smParam1 = fechaActual.get("fechaIni");
-        String smParam2 = fechaActual.get("fechaFin");
-        if(getArguments() == null){
-            tvFecha.setText(smParam1 + " - " + smParam2);
+    private void argumentos(){
+        if(getArguments() != null){
+            tvFecha.setText(getArguments().getString(ARG_PARAM6) + " - " + getArguments().getString(ARG_PARAM7));
+            tvRangoFecha1.setText(getArguments().getString(ARG_PARAM6));
+            tvRangoFecha2.setText(getArguments().getString(ARG_PARAM7));
+            etDatosCliente.setText(getArguments().getString(ARG_PARAM2));
+            idSucursal1 = getArguments().getInt("idSucursal");
+            idGerencia1 = getArguments().getInt("idGerencia");
+            idAsesor1 = getArguments().getString("idAsesor");
+            idRetenido1 = getArguments().getInt("idRetenido");
+            idCita1 = getArguments().getInt("idCita");
+
+            if(getArguments().getInt(ARG_PARAM1)!=0){spinnerId.setSelection(getArguments().getInt(ARG_PARAM1));spinId = tipoBuscar;}
+            if(etIdAsesor!=null) etIdAsesor.setText(idAsesor1);
+            if(idCita1 != 0) spinnerIdCita.setSelection(idCita1);
+
+        }else{
+            tvFecha.setText(Dialogos.fechaActual() + " - " + Dialogos.fechaSiguiente());
         }
     }
 
     private void sendJson(final boolean primeraPeticion){
+        if (primeraPeticion)
+            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
+        else
+            loading = null;
+
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
         JSONObject filtroCliente = new JSONObject();
         JSONObject periodo = new JSONObject();
         try{
             boolean argumentos = (getArguments()!= null);
-            rqt.put("cita", (argumentos) ? getArguments().getString(ARG_PARAM8) : 0);
-            switch ((argumentos) ? getArguments().getInt(ARG_PARAM9) : 0){
-                case 1:
-                    filtroCliente.put("curp", (argumentos) ? getArguments().getString(ARG_PARAM3) : "");
-                    filtroCliente.put("nss", "");
-                    filtroCliente.put("numeroCuenta", "");
-                    break;
-                case 2:
-                    filtroCliente.put("curp", "");
-                    filtroCliente.put("nss", (argumentos) ? getArguments().getString(ARG_PARAM3) : "");
-                    filtroCliente.put("numeroCuenta", "");
-                    break;
-                case 3:
-                    filtroCliente.put("curp", "");
-                    filtroCliente.put("nss", "");
-                    filtroCliente.put("numeroCuenta", (argumentos) ? getArguments().getString(ARG_PARAM3) : "");
-                    break;
-                default:
-                    filtroCliente.put("curp", "");
-                    filtroCliente.put("nss", "");
-                    filtroCliente.put("numeroCuenta","");
-                    break;
-            }
-            rqt.put("numeroEmpleado", (argumentos) ? getArguments().getString(ARG_PARAM6) : "");
-            rqt.put("filtroCliente", filtroCliente);
-            rqt.put("idGerencia", (argumentos) ? getArguments().getInt(ARG_PARAM10) : "");
-            rqt.put("idSucursal", (argumentos) ? getArguments().getInt(ARG_PARAM5) : "");
+            rqt.put("cita", (argumentos) ? getArguments().getInt(ARG_PARAM9) : 0);
+            rqt.put("numeroEmpleado", (argumentos) ? getArguments().getString(ARG_PARAM2) : "");
+            rqt.put("filtroCliente", Config.filtroClientes((argumentos)? getArguments().getInt(ARG_PARAM1):0, (argumentos) ? getArguments().getString(ARG_PARAM2) : ""));
+            rqt.put("idGerencia", (argumentos) ? getArguments().getInt(ARG_PARAM3) : 0);
+            rqt.put("idSucursal", (argumentos) ? getArguments().getInt(ARG_PARAM4) : 0);
             rqt.put("pagina", pagina);
-            periodo.put("fechaInicio", (argumentos) ? getArguments().getString(ARG_PARAM1) : Dialogos.fechaSiguiente());
-            periodo.put("fechaFin", (argumentos) ? getArguments().getString(ARG_PARAM2) : Dialogos.fechaActual());
+            periodo.put("fechaInicio", (argumentos) ? getArguments().getString(ARG_PARAM6) : Dialogos.fechaSiguiente());
+            periodo.put("fechaFin", (argumentos) ? getArguments().getString(ARG_PARAM7) : Dialogos.fechaActual());
             rqt.put("periodo", periodo);
-            rqt.put("retenido", (argumentos) ? getArguments().getInt(ARG_PARAM7) : 0);
+            rqt.put("retenido", (argumentos) ? getArguments().getInt(ARG_PARAM8) : 0);
             rqt.put("usuario", Config.usuarioCusp(getContext()));
             json.put("rqt", rqt);
-
-            Log.d("ReporteClientes", " REQUEST -->" + json);
+            Log.d(TAG, " <- RQT -> \n" + json + "\n");
         } catch (JSONException e){
             Config.msj(getContext(),"Error","Existe un error al formar la peticion");
         }
-
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_REPORTE_RETENCION_CLIENTES, json,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        if(primeraPeticion){
-                            primerPaso(response);
-                        } else {
-                            segundoPaso(response);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        try{
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-
-                        Connected connected = new Connected();
-                        if(connected.estaConectado(getContext())){
-                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                            dlgAlert.setTitle("Error");
-                            dlgAlert.setMessage("Se ha encontrado un problema, deseas volver intentarlo");
-                            dlgAlert.setCancelable(true);
-                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    //sendJson(true);
-                                }
-                            });
-                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                            dlgAlert.create().show();
-                        }else{
-                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                            dlgAlert.setTitle("Error de conexión");
-                            dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
-                            dlgAlert.setCancelable(true);
-                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    //sendJson(true);
-                                }
-                            });
-                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                            dlgAlert.create().show();
-                        }
-                    }
-                })
-        {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return Config.credenciales(getContext());
-            }
-        };
-        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+        volleySingleton.postDataVolley("" + primeraPeticion, Config.URL_CONSULTAR_REPORTE_RETENCION_CLIENTES, json);
     }
 
     private void primerPaso(JSONObject obj){
-        //Log.d("primer paso", "Response: "  + obj );
         int totalFilas = 1;
         try{
             JSONArray array = obj.getJSONArray("Cliente");
             filas = obj.getInt("filasTotal");
             totalFilas = obj.getInt("filasTotal");
-            Log.d("primerPaso", "Filas del servicio -->" + totalFilas);
             for(int i = 0; i < array.length(); i++){
                 DirectorReporteClientesModel getDatos2 = new DirectorReporteClientesModel();
                 JSONObject json = null;
@@ -895,8 +508,6 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     getDatos2.setIdSucursal(json.getInt("idSucursal"));
                     getDatos2.setHora(json.getString("horaAtencion"));
                     getDatos2.setTramite(json.getInt("idTramite"));
-                    //getDatos2.setCurp(json.getString("curp"));
-                    //getDatos2.setNss(json.getString("nss"));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -907,43 +518,32 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         }
 
         tvResultados.setText(filas + " Registros");
-        numeroMaximoPaginas = Config.maximoPaginas(60);
-        Log.d("primerPaso", "maximo de paginas -->" + numeroMaximoPaginas);
+        numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         String PtvFecha = tvFecha.getText().toString();
         String[] separated = PtvFecha.split(" - ");
-
         adapter = new DirectorReporteClientesAdapter(rootView.getContext(), getDatos1, recyclerView,separated[0].trim(),separated[1].trim());
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
-
         adapter.notifyDataSetChanged();
 
         adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-                Log.d("setOnLoadMoreListener", "pagina->" + pagina + "numeroMaximo" + numeroMaximoPaginas);
                 if (pagina >= numeroMaximoPaginas) {
-                    Log.d("FINALIZA", "termino proceso");
                     return;
                 }
-                Log.e("haint", "Load More");
                 getDatos1.add(null);
                 adapter.notifyItemInserted(getDatos1.size() - 1);
 
-                //Load more data for reyclerview
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Log.e("haint", "Load More 2");
-                        //Remove loading item
                         getDatos1.remove(getDatos1.size() - 1);
                         adapter.notifyItemRemoved(getDatos1.size());
-                        //Load data
-                        Log.d("EnvioIndex", getDatos1.size() + "");
                         pagina = Config.pidePagina(getDatos1);
                         sendJson(false);
                     }
-                }, 5000);
+                }, Config.TIME_HANDLER);
             }
         });
     }
@@ -951,7 +551,6 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
     private void segundoPaso(JSONObject obj) {
         try{
             JSONArray array = obj.getJSONArray("Cliente");
-            filas = obj.getInt("filasTotal");
             for(int i = 0; i < array.length(); i++){
                 DirectorReporteClientesModel getDatos2 = new DirectorReporteClientesModel();
                 JSONObject json = null;
@@ -965,8 +564,6 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     getDatos2.setIdSucursal(json.getInt("idSucursal"));
                     getDatos2.setHora(json.getString("horaAtencion"));
                     getDatos2.setTramite(json.getInt("idTramite"));
-                    //getDatos2.setCurp(json.getString("curp"));
-                    //getDatos2.setNss(json.getString("nss"));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
