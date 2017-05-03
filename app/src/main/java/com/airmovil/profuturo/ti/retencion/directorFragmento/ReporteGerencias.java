@@ -147,12 +147,11 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
         // TODO: Casteo
         variables();
-        // TODO: ocultar teclado
         // TODO: dialog fechas
         Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha1);
         Dialogos.dialogoFechaFin(getContext(), tvRangoFecha2);
         argumentos();
-        primeraPeticion();
+        sendJson(true);
 
         getDato1 = new ArrayList<>();
         recyclerView = (RecyclerView) rootView.findViewById(R.id.dfrg_rv_gerencias);
@@ -324,23 +323,6 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinnerGerencias.setAdapter(adapter);
         spinnerGerencias.setSelection(position);
-    }
-
-    public void primeraPeticion(){
-        // TODO: Peticion via REST
-        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIcon(R.drawable.icono_abrir);
-        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
-        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
-        progressDialog.show();
-        // TODO: Implement your own authentication logic here.
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        progressDialog.dismiss();
-                        sendJson(true);
-                    }
-                }, Config.TIME_HANDLER);
     }
 
     // TODO: REST

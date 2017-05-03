@@ -133,7 +133,7 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         // TODO: verifica si existen datos en el fragmento
         argumentos();
         // TODO: primera peticion rest
-        primeraPeticion();
+        sendJson(true);
         // TODO: llama los dialos fecha inicio y fecha final
         Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha1);
         Dialogos.dialogoFechaFin(getContext(), tvRangoFecha2);
@@ -193,21 +193,6 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
-    }
-
-    private void primeraPeticion(){
-        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIcon(R.drawable.icono_abrir);
-        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
-        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
-        progressDialog.show();
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        progressDialog.dismiss();
-                        sendJson(true);
-                    }
-                }, Config.TIME_HANDLER);
     }
 
     /**
