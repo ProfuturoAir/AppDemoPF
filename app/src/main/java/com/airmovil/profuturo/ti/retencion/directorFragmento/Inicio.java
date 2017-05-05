@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
@@ -37,7 +38,7 @@ public class Inicio extends Fragment {
     private JSONObject retenidos = null;
     private JSONObject saldos = null;
     private Button btnFiltro;
-    private Fragment borrar;
+    private Fragment borrar = this;
     private Connected connected;
     private int iRetenidos = 0;
     private int iNoRetenidos = 0;
@@ -81,12 +82,11 @@ public class Inicio extends Fragment {
      */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-
         // TODO: metodo para callback de volley
         initVolleyCallback();
         // TODO: Lineas para ocultar el teclado virtual (Hide keyboard)
         rootView = view;
-        //llama clase singleton volley
+        // TODO: llama clase singleton volley
         volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
         // TODO: CASTEO DE ELEMENTOS
         variables();
@@ -98,8 +98,11 @@ public class Inicio extends Fragment {
         Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha1);
         Dialogos.dialogoFechaFin(getContext(), tvRangoFecha2);
         // TODO: inicio de la primera peticion REST
-        sendJson(true);
-        borrar = this;
+       if(Config.conexion(getContext()))
+           sendJson(true);
+       else
+           Dialogos.dialogoErrorConexion(getContext());
+
         btnFiltro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,7 +132,6 @@ public class Inicio extends Fragment {
         return inflater.inflate(R.layout.director_fragmento_inicio, container, false);
     }
 
-    // TODO: Renombrar método, actualizar argumento y método de gancho en evento de IU
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -157,6 +159,12 @@ public class Inicio extends Fragment {
         mListener = null;
     }
 
+    /**
+     * Esta interfaz debe ser implementada por actividades que contengan esta
+     * Para permitir que se comunique una interacción en este fragmento
+     * A la actividad y potencialmente otros fragmentos contenidos en ese
+     * actividad.
+     */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
@@ -253,27 +261,28 @@ public class Inicio extends Fragment {
     /**
      * @param obj recibe el obj json de la peticion
      */
-    private void primerPaso(JSONObject obj){
+    private void primerPaso(JSONObject obj) {
         try {
-            if(rootView != null)
-            tvRetenidos = (TextView) rootView.findViewById(R.id.dfi_tv_retenidos);
-        }catch (Exception e){
+            if (rootView != null)
+                tvRetenidos = (TextView) rootView.findViewById(R.id.dfi_tv_retenidos);
+        } catch (Exception e) {
             Log.e("-->es error:", e.toString());
         }
-        try{
+        try {
             JSONObject infoConsulta = obj.getJSONObject("infoConsulta");
             retenidos = infoConsulta.getJSONObject("retenido");
             iRetenidos = (Integer) retenidos.get("retenido");
             iNoRetenidos = (Integer) retenidos.get("noRetenido");
             saldos = infoConsulta.getJSONObject("saldo");
             iSaldoRetenido = (Integer) saldos.get("saldoRetenido");
-            iSaldoNoRetenido = (Integer) saldos.get( "saldoNoRetenido");
-        }catch (JSONException e){
+            iSaldoNoRetenido = (Integer) saldos.get("saldoNoRetenido");
+        } catch (JSONException e) {
             Config.msj(getContext(), "Error", "Lo sentimos ocurrio un error con los datos");
         }
-        tvRetenidos.setText(""+iRetenidos);
-        tvNoRetenidos.setText(""+iNoRetenidos);
-        tvSaldoRetenido.setText(""+Config.nf.format(iSaldoRetenido));
-        tvSaldoNoRetenido.setText(""+Config.nf.format(iSaldoNoRetenido));
+        tvRetenidos.setText("" + iRetenidos);
+        tvNoRetenidos.setText("" + iNoRetenidos);
+        tvSaldoRetenido.setText("" + Config.nf.format(iSaldoRetenido));
+        tvSaldoNoRetenido.setText("" + Config.nf.format(iSaldoNoRetenido));
     }
+
 }

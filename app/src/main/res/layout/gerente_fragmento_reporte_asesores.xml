@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context="com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsesores">
     <TextView style="@style/tituloProceso" android:text="Asesores " />
-    <TextView android:id="@+id/gfraa_tv_fecha" style="@style/fecha"/>
+    <TextView android:id="@+id/gfra_tv_fecha" style="@style/fecha"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,38 +15,38 @@
         <LinearLayout style="@style/contenedorRetenidosNoRetenidosSaldoAfavorSaldoEnContra">
             <LinearLayout style="@style/contenedorCantidadRetenidosSaldoAFavorColorFondo">
                 <TextView style="@style/textoRetenidos" android:text="Entidades"/>
-                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/gfraa_tv_emitidas"/>
+                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/gfra_tv_emitidas"/>
             </LinearLayout>
             <LinearLayout style="@style/contenedorCantidadRetenidosSaldoAFavorColorFondo" >
                 <TextView style="@style/textoNoRetenidos" android:text="No Entidades"/>
-                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/gfraa_tv_no_emitidas"/>
+                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/gfra_tv_no_emitidas"/>
             </LinearLayout>
         </LinearLayout>
         <LinearLayout style="@style/contenedorRetenidosNoRetenidosSaldoAfavorSaldoEnContra">
             <LinearLayout style="@style/contenedorCantidadRetenidosSaldoRetenido">
                 <TextView style="@style/textoCantidad" android:text="Saldo Emitido" />
-                <TextView style="@style/textoCantidadSaldoRetenido" android:id="@+id/gfraa_tv_saldo_emitido" />
+                <TextView style="@style/textoCantidadSaldoRetenido" android:id="@+id/gfra_tv_saldo_emitido" />
             </LinearLayout>
             <LinearLayout style="@style/contenedorCantidadNoRetenidosSaldoEnContra">
                 <TextView style="@style/textoCantidad" android:text="Saldo no Emitido"/>
-                <TextView style="@style/textoCantidadSaldoNoRetenido" android:id="@+id/gfraa_tv_saldo_no_emitido"/>
+                <TextView style="@style/textoCantidadSaldoNoRetenido" android:id="@+id/gfra_tv_saldo_no_emitido"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
 
     <LinearLayout style="@style/contenedorFiltros2">
-        <EditText android:id="@+id/gfraa_et_asesor" style="@style/busquedaLarge" android:hint="Ingresar un ID Asesor" android:inputType="number"/>
+        <EditText android:id="@+id/gfra_et_asesor" style="@style/busquedaLarge" android:hint="Ingresar un ID Asesor" android:inputType="number"/>
         <LinearLayout style="@style/linearLayoutHorizontal">
-            <TextView android:id="@+id/gfraa_tv_fecha_rango1" style="@style/fechaInicial2" />
-            <TextView android:id="@+id/gfraa_tv_fecha_rango2" style="@style/fechaFinal2"/>
+            <TextView android:id="@+id/gfra_tv_fecha_rango1" style="@style/fechaInicial2" />
+            <TextView android:id="@+id/gfra_tv_fecha_rango2" style="@style/fechaFinal2"/>
         </LinearLayout>
-        <Button android:id="@+id/gfraa_btn_buscar" style="@style/btnBuscar" />
+        <Button android:id="@+id/gfra_btn_buscar" style="@style/btnBuscar" />
     </LinearLayout>
 
     <LinearLayout style="@style/cabeceraLista">
         <TextView style="@style/tituloLista" android:text="@string/texto_asesores"/>
-        <TextView android:id="@+id/gfraa_tv_total_registros" style="@style/campoCantidadesMail"/>
+        <TextView android:id="@+id/gfra_tv_total_registros" style="@style/campoCantidadesMail"/>
     </LinearLayout>
 
     <LinearLayout
@@ -54,7 +54,7 @@
         android:layout_height="match_parent"
         android:layout_weight=".6">
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/gfraa_rv_lista"
+            android:id="@+id/gfra_rv_lista"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

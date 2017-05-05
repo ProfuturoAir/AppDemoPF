@@ -155,7 +155,7 @@
         <TextView style="@style/campoCliente" />
 
         <TextView
-            android:id="@+id/gfsc_tv_registros"
+            android:id="@+id/dfsc_tv_registros"
             style="@style/campoCantidadesMail" />
     </LinearLayout>
 

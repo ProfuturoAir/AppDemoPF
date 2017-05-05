@@ -12,37 +12,28 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteAsesoresAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
-import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.ServicioEmailJSON;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
-import com.airmovil.profuturo.ti.retencion.model.GerenteReporteAsesoresModel;
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
+import com.airmovil.profuturo.ti.retencion.model.DirectorReporteAsesoresModel;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ReporteAsesores extends Fragment {
     private static final String TAG = ReporteAsesores.class.getSimpleName();
@@ -51,15 +42,9 @@ public class ReporteAsesores extends Fragment {
     private static final String ARG_PARAM3 = "fechaFin"; // fecha final
     private static final String ARG_PARAM4 = "idGerencia"; // id gerencia
     private static final String ARG_PARAM5 = "idSucursal"; // id sucursal
-    private String mParam1; // fecha inicio
-    private String mParam2; // fecha fin
-    private String mParam3; // id asesor
-    private int mParam4; // id gerencia
-    private int mParam5; // id sucursal
-    private int pagina = 1;
-    private int numeroMaximoPaginas = 0;
+    private int pagina = 1, numeroMaximoPaginas = 0, filas;
     private DirectorReporteAsesoresAdapter adapter;
-    private List<GerenteReporteAsesoresModel> getDatos1;
+    private List<DirectorReporteAsesoresModel> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private View rootView;
@@ -67,7 +52,6 @@ public class ReporteAsesores extends Fragment {
     private TextView tvFecha, tvEmitidas, tvNoEmitidas, tvSaldoEmitido, tvSaldoNoEmitido, tvRangoFecha1, tvRangoFecha2, tvResultados;
     private EditText etAsesor;
     private Button btnBuscar;
-    private int filas;
     private final Fragment borrar = this;
     private OnFragmentInteractionListener mListener;
     private IResult mResultCallback = null;
@@ -93,13 +77,13 @@ public class ReporteAsesores extends Fragment {
         return fragment;
     }
 
+    /**
+     * El sistema lo llama cuando crea el fragmento
+     * @param savedInstanceState, llama las variables en el bundle
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     /**
@@ -128,6 +112,10 @@ public class ReporteAsesores extends Fragment {
         };
     }
 
+    /**
+     * @param view regresa la vista
+     * @param savedInstanceState parametros a enviar para conservar en el bundle
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         initVolleyCallback();
@@ -139,7 +127,11 @@ public class ReporteAsesores extends Fragment {
         // TODO: verifica si existen datos en el fragmento
         argumentos();
         // TODO: primera peticion rest
-        sendJson(true);
+        if(Config.conexion(getContext()))
+            sendJson(true);
+        else
+            Dialogos.dialogoErrorConexion(getContext());
+
         // TODO: llama los dialos fecha inicio y fecha final
         Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha1);
         Dialogos.dialogoFechaFin(getContext(), tvRangoFecha2);
@@ -169,31 +161,41 @@ public class ReporteAsesores extends Fragment {
             }
         });
 
-        boolean argumentos =  (getArguments()!=null);
-        ServicioEmailJSON.enviarEmailReporteAsespres(getContext(), tvResultados, (argumentos) ? getArguments().getString(ARG_PARAM2):Dialogos.fechaActual(),
-                (argumentos)? getArguments().getString(ARG_PARAM3) : Dialogos.fechaSiguiente(), (argumentos)? getArguments().getString(ARG_PARAM1) : "", (argumentos) ? true : false);
-
+        tvResultados.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean argumentos =  (getArguments()!=null);
+                ServicioEmailJSON.enviarEmailReporteAsesores(getContext(), (argumentos) ? getArguments().getString(ARG_PARAM2):Dialogos.fechaActual(),
+                        (argumentos)? getArguments().getString(ARG_PARAM3) : Dialogos.fechaSiguiente(), (argumentos)? getArguments().getString(ARG_PARAM1) : "", (argumentos) ? true : false);
+            }
+        });
 
     }
 
     /**
      * Se lo llama para crear la jerarquía de vistas asociada con el fragmento.
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
+     * @param inflater acceso para inflar XML
+     * @param container contenido
+     * @param savedInstanceState estado de los elementos almacenados
+     * @return el fragmento relacionado con la actividad
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflar el diseño de este fragmento
         return inflater.inflate(R.layout.director_fragmento_reporte_asesores, container, false);
     }
 
-    // TODO: Renombrar método, actualizar argumento y método de gancho en evento de IU
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+    /**
+     * Se implementa este metodo, para generar el regreso con clic nativo de android
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     /**
@@ -209,7 +211,7 @@ public class ReporteAsesores extends Fragment {
     }
 
     /**
-     * Se lo llama cuando se desasocia el fragmento de la actividad.
+     * Se llama para desasociar el fragmento de la actividad.
      */
     @Override
     public void onDetach() {
@@ -228,6 +230,10 @@ public class ReporteAsesores extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * Asignacion de las variables
+     * declaracion de objetos
+     */
     private void variables(){
         tvFecha = (TextView) rootView.findViewById(R.id.dfra_tv_fecha);
         tvEmitidas = (TextView) rootView.findViewById(R.id.dfra_tv_emitidas);
@@ -242,7 +248,10 @@ public class ReporteAsesores extends Fragment {
         connected = new Connected();
     }
 
-    // TODO: REST
+    /**
+     * Envio de datos por REST jsonObject
+     * @param primerPeticion valida que el proceso sea true
+     */
     private void sendJson(final boolean primerPeticion) {
         if (primerPeticion)
             loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
@@ -271,9 +280,7 @@ public class ReporteAsesores extends Fragment {
 
     /**
      * Inicia este metodo para llenar la lista de elementos, cada 10, inicia solamente con 10, despues inicia el metodo segundoPaso
-     * @param
-     * @param
-     * @param
+     * @param obj jsonObject
      */
     private void primerPaso(JSONObject obj) {
         int emitidos = 0;
@@ -292,7 +299,7 @@ public class ReporteAsesores extends Fragment {
             totalFilas = 50;
             filas = obj.getInt("filasTotal");
             for(int i = 0; i < array.length(); i++){
-                GerenteReporteAsesoresModel getDatos2 = new GerenteReporteAsesoresModel();
+                DirectorReporteAsesoresModel getDatos2 = new DirectorReporteAsesoresModel();
                 JSONObject json = null;
                 try{
                     json = array.getJSONObject(i);
@@ -320,14 +327,14 @@ public class ReporteAsesores extends Fragment {
         tvSaldoEmitido.setText("" + Config.nf.format(saldoEmitido));
         tvSaldoNoEmitido.setText("" + Config.nf.format(saldoNoEmitido));
         tvResultados.setText("" + filas + " Resultados ");
-
+        // TODO: calucula el tamaño de filas y devuelve la cantidad de paginas a procesar
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         boolean argumentos = (getArguments()!=null);
-        adapter = new DirectorReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView, (argumentos) ? getArguments().getString(ARG_PARAM2) : Dialogos.fechaActual() ,
-                (argumentos) ? getArguments().getString(ARG_PARAM3) : Dialogos.fechaSiguiente());
+        // TODO: envio de datos al adaptador para incluir dentro del recycler
+        adapter = new DirectorReporteAsesoresAdapter(rootView.getContext(), getDatos1, recyclerView, (argumentos) ? getArguments().getString(ARG_PARAM2) : Dialogos.fechaActual() , (argumentos) ? getArguments().getString(ARG_PARAM3) : Dialogos.fechaSiguiente());
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
-
+        // TODO: verificaion si existe un scroll enviando al segundo metodo
         adapter.notifyDataSetChanged();
         adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
@@ -358,13 +365,13 @@ public class ReporteAsesores extends Fragment {
 
     /**
      * Se vuelve a llamaar este metodo para llenar la lista cada 10 contenidos
-     * @param obj
+     * @param obj jsonObject de respuesta
      */
     private void segundoPaso(JSONObject obj) {
         try{
             JSONArray array = obj.getJSONArray("Asesor");
             for(int i = 0; i < array.length(); i++){
-                GerenteReporteAsesoresModel getDatos2 = new GerenteReporteAsesoresModel();
+                DirectorReporteAsesoresModel getDatos2 = new DirectorReporteAsesoresModel();
                 JSONObject json = null;
                 try{
                     json = array.getJSONObject(i);

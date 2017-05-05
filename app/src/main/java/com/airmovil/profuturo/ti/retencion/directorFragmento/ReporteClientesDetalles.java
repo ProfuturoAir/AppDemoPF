@@ -2,12 +2,10 @@ package com.airmovil.profuturo.ti.retencion.directorFragmento;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,21 +17,10 @@ import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
-import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
-import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ReporteClientesDetalles extends Fragment {
     private static final String TAG = ReporteClientesDetalles.class.getSimpleName();
@@ -45,12 +32,9 @@ public class ReporteClientesDetalles extends Fragment {
     private static final String ARG_PARAM7 = "hora"; // hora
     private static final String ARG_PARAM8 = "usuario";
     private static final String ARG_PARAM9 = "numeroEmpleado";
-    private static final String ARG_PARAM10 = "nombreAsesor";
-
+    private static final String ARG_PARAM10 = "nombreEmpleado";
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
-
-    // TODO: Rename and change types of parameters
     private String mParam1; // numero cuenta
     private String mParam2; // cita
     private String mParam3; // numeroCuenta
@@ -62,13 +46,9 @@ public class ReporteClientesDetalles extends Fragment {
     private String mParam9;
     private String mParam10;
     private int pagina = 1;
-
-    private TextView tv_nombre, tv_numero_cuenta, tv_nss, tv_curp, tv_estatus, tv_saldo, tv_sucursal, tv_hora_atencion;
-    private TextView tv_nombre_asesor, tv_numero_empleado, tv_inicial, tv_fechas;
+    private TextView tv_nombre, tv_numero_cuenta, tv_nss, tv_curp, tv_estatus, tv_saldo, tv_sucursal, tv_hora_atencion, tv_nombre_asesor, tv_numero_empleado, tv_inicial, tv_fechas;
     private Connected connected;
-
     private ProgressDialog loading;
-
     private OnFragmentInteractionListener mListener;
 
     public ReporteClientesDetalles() {/* se requiere un constructor vacio */}
@@ -104,13 +84,12 @@ public class ReporteClientesDetalles extends Fragment {
     /**
      * El sistema lo llama cuando crea el fragmento. En tu implementación, debes inicializar componentes esenciales
      * del fragmento que quieres conservar cuando el fragmento se pause o se detenga y luego se reanude.
-     * @param savedInstanceState
+     * @param savedInstanceState guarda datos en bundle
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            Log.d("Creado","TODOS "+getArguments());
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
             mParam4 = getArguments().getInt(ARG_PARAM4);
@@ -130,8 +109,6 @@ public class ReporteClientesDetalles extends Fragment {
         mResultCallback = new IResult() {
             @Override
             public void notifySuccess(String requestType, JSONObject response) {
-                Log.d(TAG, "Volley requester " + requestType);
-                Log.d(TAG, "Volley JSON post" + response);
                 if (requestType.trim().equals("true")) {
                     loading.dismiss();
                     primerPaso(response);
@@ -140,8 +117,6 @@ public class ReporteClientesDetalles extends Fragment {
 
             @Override
             public void notifyError(String requestType, VolleyError error) {
-                Log.d(TAG, "Volley requester " + requestType);
-                Log.d(TAG, "Volley JSON post" + "That didn't work! " + error.toString());
                 if(connected.estaConectado(getContext())){
                     Dialogos.dialogoErrorServicio(getContext());
                 }else{
@@ -173,16 +148,22 @@ public class ReporteClientesDetalles extends Fragment {
         tv_numero_empleado = (TextView) view.findViewById(R.id.ddfrasd_tv_numero_empleado_asesor);
         tv_inicial = (TextView) view.findViewById(R.id.ddfrasd_tv_letra);
         tv_fechas = (TextView) view.findViewById(R.id.ddfrasd_tv_fecha);
-        String nombreAsesor = getArguments().getString("nombreAsesor");
+        String nombreAsesor = getArguments().getString("nombreEmpleado");
         String numeroEmpleado = getArguments().getString("numeroEmpleado");
         String fechaInicio = getArguments().getString("fechaInicio");
         String fechaFin = getArguments().getString("fechaFin");
         tv_numero_empleado.setText("Numero del empleado: " + numeroEmpleado);
         tv_nombre_asesor.setText("nombre del Asesor:" +nombreAsesor);
         tv_fechas.setText(fechaInicio + " - "+ fechaFin);
+        tv_inicial.setText(String.valueOf(String.valueOf(nombreAsesor).charAt(0)));
 
         connected = new Connected();
-        sendJson(true);
+
+        if(Config.conexion(getContext()))
+            sendJson(true);
+        else
+            Dialogos.dialogoErrorConexion(getContext());
+
     }
 
     /**
@@ -190,20 +171,23 @@ public class ReporteClientesDetalles extends Fragment {
      * @param inflater infla la vista xml
      * @param container contiene los elementos
      * @param savedInstanceState guarda los parametros procesado
-     * @return
+     * @return XML y contenido
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.director_fragmento_reporte_clientes_detalles, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
 
+    /**
+     * Reciba una llamada cuando se asocia el fragmento con la actividad
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -212,16 +196,29 @@ public class ReporteClientesDetalles extends Fragment {
         }
     }
 
+    /**
+     * Se implementa este metodo, para generar el regreso con clic nativo de android
+     */
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
+    /**
+     * Esta interfaz debe ser implementada por actividades que contengan esta
+     * Para permitir que se comunique una interacción en este fragmento
+     * A la actividad y potencialmente otros fragmentos contenidos en ese
+     * actividad.
+     */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * Envio de datos por REST jsonObject
+     * @param primeraPeticion valida que el proceso sea true
+     */
     private void sendJson(final boolean primeraPeticion){
 
         if (primeraPeticion)
@@ -252,20 +249,14 @@ public class ReporteClientesDetalles extends Fragment {
         volleySingleton.postDataVolley("" + primeraPeticion, Config.URL_CONSULTAR_REPORTE_RETENCION_CLIENTE_DETALLE, obj);
     }
 
+    /**
+     * Inicia este metodo para llenar la lista de elementos, cada 10, inicia solamente con 10, despues inicia el metodo segundoPaso
+     * @param obj jsonObject
+     */
     private void primerPaso(JSONObject obj){
-        Log.d("primer paso", "Response: "  + obj );
-
-        String curp = "";
-        String horaAtencion = "";
+        String curp = "", horaAtencion = "", nombre = "", nombreSucursal = "", nss = "", numeroCuenta = "", rfc = "", saldo = "";
         int idTramite = 0;
-        String nombre = "";
-        String nombreSucursal = "";
-        String nss = "";
-        String numeroCuenta = "";
         boolean retenido = false;
-        String rfc = "";
-        String saldo = "";
-
         try{
             JSONObject cliente = obj.getJSONObject("cliente");
             curp = cliente.getString("curp");
@@ -279,12 +270,9 @@ public class ReporteClientesDetalles extends Fragment {
         }catch (JSONException e){
             e.printStackTrace();
         }
-
         String retencion = "No Retenido";;
-
-        if(retenido){
+        if(retenido)
             retencion = "Retenido";
-        }
 
         tv_nombre.setText("" + nombre);
         tv_numero_cuenta.setText("" + numeroCuenta);

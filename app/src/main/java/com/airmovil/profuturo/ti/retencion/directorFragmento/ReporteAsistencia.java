@@ -163,8 +163,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         initVolleyCallback();
         // TODO: llama clase singleton volley
         volleySingleton = VolleySingleton.getInstance(mResultCallback, getContext());
-        // TODO: Peticion REST
-        sendJson(true);
         // TODO: Asignacion de variables
         variables();
         // TODO: Verificacion de datos almacenados en bundle
@@ -172,6 +170,11 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         // TODO: Dialogo de fecha inicio y fecha fin
         Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha1);
         Dialogos.dialogoFechaFin(getContext(), tvRangoFecha2);
+        // TODO: Peticion REST
+        if(Config.conexion(getContext()))
+            sendJson(true);
+        else
+            Dialogos.dialogoErrorConexion(getContext());
         // TODO: Recycler y modelo
         getDatos1 = new ArrayList<>();
         recyclerView = (RecyclerView) rootView.findViewById(R.id.ddfras_rv_lista);
@@ -196,23 +199,28 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                 }
             }
         });
-        boolean argumentos = (getArguments()!=null);
-        ServicioEmailJSON.enviarEmailReporteAsistencia(getContext(), tvResultados, (argumentos)?getArguments().getInt(ARG_PARAM1):0, (argumentos)?getArguments().getInt(ARG_PARAM2):0, (argumentos)?getArguments().getString(ARG_PARAM3):"", (argumentos)?getArguments().getString(ARG_PARAM4):Dialogos.fechaActual(), (argumentos)?getArguments().getString(ARG_PARAM5):Dialogos.fechaSiguiente(), (argumentos) ? true : false);
+
+        tvResultados.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean argumentos = (getArguments()!=null);
+                ServicioEmailJSON.enviarEmailReporteAsistencia(getContext(), (argumentos)?getArguments().getInt(ARG_PARAM1):0, (argumentos)?getArguments().getInt(ARG_PARAM2):0, (argumentos)?getArguments().getString(ARG_PARAM3):"", (argumentos)?getArguments().getString(ARG_PARAM4):Dialogos.fechaActual(), (argumentos)?getArguments().getString(ARG_PARAM5):Dialogos.fechaSiguiente(), (argumentos) ? true : false);
+            }
+        });
     }
 
     /**
      * Se lo llama para crear la jerarquía de vistas asociada con el fragmento.
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
+     * @param inflater acceso para inflar XML
+     * @param container contenido
+     * @param savedInstanceState estado de los elementos almacenados
+     * @return el fragmento relacionado con la actividad
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.director_fragmento_reporte_asistencia, container, false);
     }
 
-    // TODO: Renombrar método, actualizar argumento y método de gancho en evento de IU
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -231,14 +239,22 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         }
     }
 
+    /**
+     * Se llama para desasociar el fragmento de la actividad.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
+    /**
+     * Esta interfaz debe ser implementada por actividades que contengan esta
+     * Para permitir que se comunique una interacción en este fragmento
+     * A la actividad y potencialmente otros fragmentos contenidos en ese
+     * actividad.
+     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
@@ -427,8 +443,8 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
     }
 
     /**
-     * Primeta peticion para usar REST
-     * @param primerPeticion
+     * Envio de datos por REST jsonObject
+     * @param primerPeticion valida que el proceso sea true
      */
     private void sendJson(final boolean primerPeticion) {
         if (primerPeticion)
@@ -459,8 +475,8 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
     }
 
     /**
-     * Inicia la lista solo con 10 elementos
-     * @param obj
+     * Inicia este metodo para llenar la lista de elementos, cada 10, inicia solamente con 10, despues inicia el metodo segundoPaso
+     * @param obj jsonObject
      */
     private void primerPaso(JSONObject obj) {
         int onTime = 0;
@@ -496,11 +512,14 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         tvATiempo.setText("" + onTime);
         tvRetardados.setText("" + retardo);
         tvSinAsistencia.setText("" + inasistencia);
+        // TODO: calucula el tamaño de filas y devuelve la cantidad de paginas a procesar
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         boolean argumentos = (getArguments()!=null);
+        // TODO: envio de datos al adaptador para incluir dentro del recycler
         adapter = new DirectorReporteAsistenciaAdapter(rootView.getContext(), getDatos1, recyclerView, (argumentos)?getArguments().getString(ARG_PARAM4):Dialogos.fechaActual(), (argumentos)?getArguments().getString(ARG_PARAM5):Dialogos.fechaSiguiente());
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
+        // TODO: verificaion si existe un scroll enviando al segundo metodo
         adapter.notifyDataSetChanged();
         adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
@@ -530,8 +549,8 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
     }
 
     /**
-     * consume la lista cada 10 elemtos con su scrollView
-     * @param obj
+     * Se vuelve a llamaar este metodo para llenar la lista cada 10 contenidos
+     * @param obj jsonObject de respuesta
      */
     private void segundoPaso(JSONObject obj) {
         try{

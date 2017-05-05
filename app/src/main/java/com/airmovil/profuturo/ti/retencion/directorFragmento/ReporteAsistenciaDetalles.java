@@ -37,7 +37,7 @@ import java.util.List;
 public class ReporteAsistenciaDetalles extends Fragment {
     private static final String TAG = ReporteAsistenciaDetalles.class.getSimpleName();
     private static final String ARG_PARAM1 = "numeroEmpleado";
-    private static final String ARG_PARAM2 = "fechaIni";
+    private static final String ARG_PARAM2 = "fechaInicio";
     private static final String ARG_PARAM3 = "fechaFin";
     private static final String ARG_PARAM4 = "nombreEmpleado";
     private String mParam1 = "" /*NumeroEmpleado*/, mParam2 = ""/*FechaInicio*/, mParam3 = "" /*fechaFinal*/, mParam4 = "" /*nombreEmpleado*/;
@@ -52,7 +52,6 @@ public class ReporteAsistenciaDetalles extends Fragment {
     private DirectorReporteAsistenciaDetalleAdapter adapter;
     private Fragment borrar = this;
     private OnFragmentInteractionListener mListener;
-
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
@@ -123,7 +122,6 @@ public class ReporteAsistenciaDetalles extends Fragment {
         };
     }
 
-
     /**
      * Se llama inmediatamente después de que onCreateView(LayoutInflater, ViewGroup, Bundle) ha onCreateView(LayoutInflater, ViewGroup, Bundle)
      * pero antes de que se haya onCreateView(LayoutInflater, ViewGroup, Bundle) estado guardado en la vista.
@@ -136,8 +134,6 @@ public class ReporteAsistenciaDetalles extends Fragment {
         initVolleyCallback();
         // TODO: llama clase singleton volley
         volleySingleton = VolleySingleton.getInstance(mResultCallback, getContext());
-        // TODO: peticion REST
-        sendJson(true);
         // TODO: Asisgmacion de variables
         variables();
         // TODO: verificacion de datos existentes
@@ -145,6 +141,11 @@ public class ReporteAsistenciaDetalles extends Fragment {
         // TODO: Dialogos de fecha inicial y fecha final
         Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha1);
         Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha2);
+        // TODO: peticion REST
+        if(Config.conexion(getContext()))
+            sendJson(true);
+        else
+            Dialogos.dialogoErrorConexion(getContext());
         // TODO Recycler
         recyclerView = (RecyclerView) rootView.findViewById(R.id.ddfrasd_rv_lista);
         recyclerView.setHasFixedSize(true);
@@ -167,15 +168,27 @@ public class ReporteAsistenciaDetalles extends Fragment {
                 }
             }
         });
-        ServicioEmailJSON.enviarEmailReporteAsistenciaDetalles(getContext(), tvResultados, mParam1, mParam2, mParam3);
+
+        tvResultados.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ServicioEmailJSON.enviarEmailReporteAsistenciaDetalles(getContext(), mParam1, mParam2, mParam3);
+            }
+        });
     }
 
+    /**
+     * Se lo llama para crear la jerarquía de vistas asociada con el fragmento.
+     * @param inflater acceso para inflar XML
+     * @param container contenido
+     * @param savedInstanceState estado de los elementos almacenados
+     * @return el fragmento relacionado con la actividad
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.director_fragmento_reporte_asistencia_detalles, container, false);
     }
 
-    // TODO: Renombrar método, actualizar argumento y método de gancho en evento de IU
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -220,15 +233,25 @@ public class ReporteAsistenciaDetalles extends Fragment {
         tvRangoFecha2 = (TextView) rootView.findViewById(R.id.ddfrasd_tv_fecha_rango2);
         btnBuscar = (Button) rootView.findViewById(R.id.ddfrasd_btn_buscar);
         tvResultados = (TextView) rootView.findViewById(R.id.ddfrasd_tv_resultados);
+        tvLetra.setText(String.valueOf(String.valueOf(mParam4).charAt(0)));
         getDatos1 = new ArrayList<>();
         connected = new Connected();
     }
 
+    /**
+     * Esta interfaz debe ser implementada por actividades que contengan esta
+     * Para permitir que se comunique una interacción en este fragmento
+     * A la actividad y potencialmente otros fragmentos contenidos en ese
+     * actividad.
+     */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
 
-    // TODO: REST
+    /**
+     * Envio de datos por REST jsonObject
+     * @param primerPeticion valida que el proceso sea true
+     */
     private void sendJson(final boolean primerPeticion) {
         if (primerPeticion)
             loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
@@ -253,6 +276,10 @@ public class ReporteAsistenciaDetalles extends Fragment {
         volleySingleton.postDataVolley("" + primerPeticion, Config.URL_CONSULTAR_REPORTE_ASISTENCIA_DETALLE, obj);
     }
 
+    /**
+     * Inicia este metodo para llenar la lista de elementos, cada 10, inicia solamente con 10, despues inicia el metodo segundoPaso
+     * @param obj jsonObject
+     */
     private void primerPaso(JSONObject obj) {
         int onTime = 0;
         int retardo = 0;
@@ -297,13 +324,14 @@ public class ReporteAsistenciaDetalles extends Fragment {
         tvRetardo.setText("" + retardo);
         tvSinAsistencia.setText("" + inasistencia);
         tvResultados.setText("" + totalFilas + " registros ");
+        // TODO: calucula el tamaño de filas y devuelve la cantidad de paginas a procesar
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
+        // TODO: envio de datos al adaptador para incluir dentro del recycler
         adapter = new DirectorReporteAsistenciaDetalleAdapter(rootView.getContext(), getDatos1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
-
+        // TODO: verificaion si existe un scroll enviando al segundo metodo
         adapter.notifyDataSetChanged();
-
         adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
@@ -326,6 +354,10 @@ public class ReporteAsistenciaDetalles extends Fragment {
         });
     }
 
+    /**
+     * Se vuelve a llamaar este metodo para llenar la lista cada 10 contenidos
+     * @param obj jsonObject de respuesta
+     */
     private void segundoPaso(JSONObject obj) {
         try{
             JSONObject asistencia = obj.getJSONObject("asistencia");

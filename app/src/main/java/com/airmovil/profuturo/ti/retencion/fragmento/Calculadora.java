@@ -18,32 +18,17 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
-import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link Calculadora.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link Calculadora#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class Calculadora extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
     private OnFragmentInteractionListener mListener;
     private WebView web;
     private ProgressBar progressBar;
@@ -52,66 +37,54 @@ public class Calculadora extends Fragment {
     private Connected connected;
     private LinearLayout linearLayout;
 
-    public Calculadora() {
-        // Required empty public constructor
-    }
+    public Calculadora() {/* Se requiere un constructor vacio */}
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Calculadora.
+     * El sistema lo llama cuando crea el fragmento
+     * @param savedInstanceState, llama las variables en el bundle
      */
-    // TODO: Rename and change types and number of parameters
-    public static Calculadora newInstance(String param1, String param2) {
-        Calculadora fragment = new Calculadora();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
+    /**
+     * @param view regresa la vista
+     * @param savedInstanceState parametros a enviar para conservar en el bundle
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         connected = new Connected();
-
         web = (WebView) view.findViewById(R.id.webview01);
-
         linearLayout = (LinearLayout) view.findViewById(R.id.ll);
-
         web.setWebViewClient(new myWebClient());
         web.getSettings().setJavaScriptEnabled(true);
         web.loadUrl(Config.URL_CALCULA_RETIRO_AFORE);
-
-
         dialogo1 = new AlertDialog.Builder(getContext());
     }
 
+    /**
+     * Se lo llama para crear la jerarquía de vistas asociada con el fragmento.
+     * @param inflater inflacion del xml
+     * @param container contenedor del ml
+     * @param savedInstanceState datos guardados
+     * @return el fragmento declarado DIRECTOR INICIO
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragmento_calculadora, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
 
+    /**
+     * Reciba una llamada cuando se asocia el fragmento con la actividad
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -120,6 +93,9 @@ public class Calculadora extends Fragment {
         }
     }
 
+    /**
+     * Se lo llama cuando se desasocia el fragmento de la actividad.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -127,27 +103,31 @@ public class Calculadora extends Fragment {
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * Esta interfaz debe ser implementada por actividades que contengan esta
+     * Para permitir que se comunique una interacción en este fragmento
+     * A la actividad y potencialmente otros fragmentos contenidos en ese
+     * actividad.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * Inicia una conexion con la Http, para consumo de pagina web
+     */
     public class myWebClient extends WebViewClient {
+
+        /**
+         * comienza la carga de las peticiones
+         * @param view xml
+         * @param url direccion web
+         * @param favicon mapa de bits
+         */
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             // TODO Auto-generated method stub
             super.onPageStarted(view, url, favicon);
-
-
+            // verificando la conexion a internet
             if(connected.estaConectado(getContext())){
                 loading = ProgressDialog.show(getActivity(), "Cargando datos", "Porfavor espere...", false, false);
                 linearLayout.setVisibility(View.GONE);
@@ -160,14 +140,16 @@ public class Calculadora extends Fragment {
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             // TODO Auto-generated method stub
             loading.dismiss();
-
-
             return true;
         }
 
+        /**
+         * Metodo de finalizacion de carga o error en conexion a internet
+         * @param view
+         * @param url
+         */
         @Override
         public void onPageFinished(WebView view, String url) {
-            // TODO Auto-generated method stub
             super.onPageFinished(view, url);
             if(connected.estaConectado(getActivity())) {
                 loading.dismiss();
@@ -182,50 +164,42 @@ public class Calculadora extends Fragment {
                         MySharePreferences sessionManager = MySharePreferences.getInstance(getContext());
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 
-                        Log.d("calculadora", "-__________________>" + sessionManager.getUserDetails().get("perfil"));
-                        if(sessionManager.getUserDetails().get("perfil").equals("1")){
+                        if(sessionManager.getUserDetails().get("idRolEmpleado").equals("3")){
                             Fragment fragmentoGenerico = new com.airmovil.profuturo.ti.retencion.directorFragmento.Inicio();
                             fragmentManager.beginTransaction().replace(R.id.content_director, fragmentoGenerico).commit();
                         }
 
-                        if(sessionManager.getUserDetails().get("perfil").equals("2")){
+                        if(sessionManager.getUserDetails().get("idRolEmpleado").equals("2")){
                             Fragment fragmentoGenerico = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.Inicio();
                             fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
                         }
 
-                        if(sessionManager.getUserDetails().get("perfil").equals("3")){
+                        if(sessionManager.getUserDetails().get("idRolEmpleado").equals("1")){
                             Fragment fragmentoGenerico = new com.airmovil.profuturo.ti.retencion.asesorFragmento.Inicio();
                             fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                         }
-
 
                     }
                 });
                 dialogo1.setPositiveButton("Reintentar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
-                        MySharePreferences sessionManager = MySharePreferences.getInstance(getContext().getApplicationContext());
+                        MySharePreferences sessionManager = MySharePreferences.getInstance(getContext());
                         Fragment fragmentoGenerico = new Calculadora();
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 
-                        if(sessionManager.getUserDetails().get("perfil").equals("1"))
+                        if(sessionManager.getUserDetails().get("idRolEmpleado").equals("3"))
                             fragmentManager.beginTransaction().replace(R.id.content_director, fragmentoGenerico).commit();
 
-
-                        if(sessionManager.getUserDetails().get("perfil").equals("2"))
+                        if(sessionManager.getUserDetails().get("idRolEmpleado").equals("2"))
                             fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
 
-
-                        if(sessionManager.getUserDetails().get("perfil").equals("3"))
+                        if(sessionManager.getUserDetails().get("idRolEmpleado").equals("1"))
                             fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
-
                     }
                 });
                 dialogo1.show();
             }
-            //progressBar.setVisibility(View.GONE);
-
         }
     }
 }

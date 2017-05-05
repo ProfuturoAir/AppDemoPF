@@ -102,7 +102,6 @@ public class Config extends Activity {
     public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static Context context; // Context
     public static String idUsuario = "";
-
     public static RequestQueue mRequestQueue = null;
 
 
@@ -429,7 +428,13 @@ public class Config extends Activity {
         return cusp;
     }
 
-    public static JSONObject filtroClientes (int tipoBuscar, String numeroEmpleado){
+    /**
+     * Metodo para generar un obj json del filtro selecion ID (CURP, NSS o NUMEROCUENTA)
+     * @param tipoBuscar recibe el id de (CURP, NSS o NUMEROCUENTA)
+     * @param numeroEmpleado dato a incluir en tipo a buscar
+     * @return el obj json con el tipo de selccion y su contenido
+     */
+    public static JSONObject filtroClientes(int tipoBuscar, String numeroEmpleado){
         JSONObject filtroCliente = new JSONObject();
         List<String> filtros = Arrays.asList("numeroCuenta","nss","curp");
         String valorEmpleado = "";
@@ -439,8 +444,18 @@ public class Config extends Activity {
                 filtroCliente.put(filtros.get(i), valorEmpleado);
             }
         }catch (Exception e){
-
         }
         return filtroCliente;
+    }
+
+    public static final boolean conexion(Context context){
+        boolean estatus;
+        Connected connected = new Connected();
+        if(connected.estaConectado(context)){
+            estatus = true;
+        }else{
+            estatus = false;
+        }
+        return estatus;
     }
 }

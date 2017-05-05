@@ -99,14 +99,9 @@ public class Dialogos extends Activity{
         dialogoAlert.setIcon(context.getResources().getDrawable(R.drawable.icono_sin_wifi));
         dialogoAlert.setMessage(context.getResources().getString(R.string.msj_error_conexion_internet));
         dialogoAlert.setCancelable(true);
-        dialogoAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+        dialogoAlert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {}
-        });
-        dialogoAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
         });
         dialogoAlert.create().show();
     }

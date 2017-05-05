@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTabHost;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -19,15 +18,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.Inicio;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsesores;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistencia;
-import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistenciaDetalles;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientes;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteGerencias;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteSucursales;
@@ -35,7 +31,6 @@ import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
 import com.airmovil.profuturo.ti.retencion.fragmento.Calculadora;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
-import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
 
@@ -51,8 +46,8 @@ public class Director extends AppCompatActivity{
     private DriveId mFileId;
     private NavigationView navigationView;
     private static final  int REQUEST_CODE_OPENER = 2;
-    String url;
-    private InputMethodManager imm;
+    private String url;
+    public static Fragment itemMenu = null;
 
     /**
      * Se utiliza para iniciar la actividad
@@ -135,8 +130,7 @@ public class Director extends AppCompatActivity{
      * el uso del drawableView, recorrido de izquierda a derecha
      */
     public void setToggle(){
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
     }
@@ -151,7 +145,6 @@ public class Director extends AppCompatActivity{
         navigationView.setItemIconTintList(null);
 
         if (navigationView != null) {
-            Log.d(TAG, "DRAWER OPEN");
             //añadir caracteristicas
             setupDrawerContent(navigationView);
             //Cambiar el numero para poner el fragmento que inicia en el arranque de la aplicacion
@@ -166,17 +159,13 @@ public class Director extends AppCompatActivity{
     private void setInformacionDrawer() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.director_nav_view);
         HashMap<String, String> informacion = sessionManager.getUserDetails();
-        String sNumeroEmpleado = informacion.get(MySharePreferences.USER_ID);
         String sNombreEmpleado = informacion.get(MySharePreferences.NOMBRE);
-
-        String nom = informacion.get(MySharePreferences.NOMBRE);
         View hView = navigationView.getHeaderView(0);
         TextView navPrimeraLetra = (TextView) hView.findViewById(R.id.director_nav_tv_letra);
         TextView navDatosGerente = (TextView) hView.findViewById(R.id.director_nav_tv_datos);
         char letra = sNombreEmpleado.charAt(0);
         String primeraLetra = Character.toString(letra);
         navPrimeraLetra.setText(primeraLetra);
-
         navDatosGerente.setText("Nombre: " + sNombreEmpleado + "\nNumero Empleado: " + Config.usuarioCusp(getApplicationContext()));
     }
 
@@ -234,17 +223,14 @@ public class Director extends AppCompatActivity{
                 fragmentoGenerico = new ReporteAsistencia();
                 break;
             case R.id.director_nav_cerrar:
-                checkMapsFragment = false;
                 cerrarSesion();
                 break;
         }
         if (fragmentoGenerico != null){
-            fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.content_director, fragmentoGenerico)
-                    .addToBackStack("F_MAIN")
-                    .commit();
+
+            fragmentManager.beginTransaction().replace(R.id.content_director, fragmentoGenerico).addToBackStack("F_MAIN").commit();
         }
+
     }
 
     /**
@@ -270,13 +256,18 @@ public class Director extends AppCompatActivity{
         dialogo1.show();
     }
 
+    /**
+     * Metodo para veridicar la cuenta de gmail y generar la vinculacion de actividad a fragmento
+     * @param requestCode codigo de respuesta
+     * @param resultCode resultado del codigo
+     * @param data envio de datos para abrir GoogleDrive
+     */
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         switch (requestCode) {
             case REQUEST_CODE_OPENER:
                 if (resultCode == RESULT_OK) {
                     mFileId = (DriveId) data.getParcelableExtra(OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
-                    Log.e("file id", mFileId.getResourceId() + " ");
                     url = "https://drive.google.com/open?id="+ mFileId.getResourceId();
                     Intent i = new Intent(Intent.ACTION_VIEW);
                     i.setData(Uri.parse(url));
@@ -289,190 +280,34 @@ public class Director extends AppCompatActivity{
         }
     }
 
-    public void switchContent(Fragment frag, String idClienteCuenta) {
-        Bundle bundle=new Bundle();
-        bundle.putString("idClienteCuenta",idClienteCuenta);
-        //Fragment fragment=new Fragment();
-        frag.setArguments(bundle);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_director, frag, frag.toString());
-        ft.addToBackStack(null);
-        ft.commit();
-    }
-
-    public void switchClientes(Fragment frag, int numeroEmpleado,String fechaIni,String fechaFin) {
-        Bundle bundle=new Bundle();
-        bundle.putInt("numeroEmpleado",numeroEmpleado);
-        bundle.putString("idAsesor", ""+numeroEmpleado);
-        bundle.putString("fechaIni",fechaIni);
-        bundle.putString("fechaInicio",fechaIni);
-        bundle.putString("fechaFin",fechaFin);
-        Log.d("DIRECTOR", "CLIENTES - #Empleado " + numeroEmpleado + " FIN: " + fechaFin);
-        frag.setArguments(bundle);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_director, frag, frag.toString());
-        ft.addToBackStack(null);
-        ft.commit();
-    }
-
-    public void switchAsistencia(Fragment frag,int idGerencia, int idSucursal,String numeroEmpleado,String fechaIni,String fechaFin) {
-        Bundle bundle=new Bundle();
-        bundle.putInt("idGerencia",idGerencia);
-        bundle.putInt("idSucursal",idSucursal);
-        bundle.putString("idAsesor",numeroEmpleado);
-        bundle.putString("fechaInicio",fechaIni);
-        bundle.putString("fechaFin",fechaFin);
-        frag.setArguments(bundle);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_director, frag, frag.toString());
-        ft.addToBackStack(null);
-        ft.commit();
-    }
-
-    public void switchAsistenciaDetalle(Fragment frag, String numeroEmpleado, String nombreEmpleado, String fechaIni,String fechaFin) {
-        Bundle bundle=new Bundle();
-        bundle.putString("numeroEmpleado",numeroEmpleado);
-        bundle.putString("nombreEmpleado", nombreEmpleado);
-        bundle.putString("fechaIni",fechaIni);
-        bundle.putString("fechaFin",fechaFin);
-        frag.setArguments(bundle);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_director, frag, frag.toString());
-        ft.addToBackStack(null);
-        ft.commit();
-    }
-
-    public void switchSucursales(Fragment frag, int idGerencia, String fechaInicio, String fechaFin){
-        Bundle bundle=new Bundle();
-        bundle.putInt("idGerencia",idGerencia);
-        bundle.putString("fechaIni",fechaInicio);
-        bundle.putString("fechaInicio",fechaInicio);
-        bundle.putString("fechaFin",fechaFin);
-        bundle.putString("ingresarDatoCliente","");
-        frag.setArguments(bundle);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_director, frag, frag.toString());
-        ft.addToBackStack(null);
-        ft.commit();
-    }
-
-    public void switchAsesoresFG(Fragment frag, int idGerencia, String fechaInicio, String fechaFin){
-        Bundle bundle=new Bundle();
-        bundle.putInt("idGerencia",idGerencia);
-        bundle.putString("fechaInicio",fechaInicio);
-        bundle.putString("fechaFin",fechaFin);
-        frag.setArguments(bundle);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_director, frag, frag.toString());
-        ft.addToBackStack(null);
-        ft.commit();
-    }
-
-    public void switchClientesFG(Fragment frag, int idGerencia, String fechaInicio, String fechaFin){
-        Bundle bundle=new Bundle();
-        bundle.putInt("idGerencia",idGerencia);
-        bundle.putString("fechaInicio",fechaInicio);
-        bundle.putString("fechaFin",fechaFin);
-        frag.setArguments(bundle);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_director, frag, frag.toString());
-        ft.addToBackStack(null);
-        ft.commit();
-    }
-
-   public void switchDetalleClientes(String numeroEmpleado, String nombreAsesor,String numeroCuenta, String cita, int idTramite, String fechaInicio, String fechaFin, String hora, String usuario, Fragment frag) {
-       Bundle bundle=new Bundle();
-       bundle.putString("numeroEmpleado",numeroEmpleado);
-       bundle.putString("numeroCuenta",numeroCuenta);
-       bundle.putString("cita",cita);
-       bundle.putString("hora",hora);
-       bundle.putInt("idTramite", idTramite);
-       bundle.putString("fechaInicio", fechaInicio);
-       bundle.putString("fechaFin", fechaFin);
-       bundle.putString("usuario", usuario);
-       bundle.putString("nombreAsesor",nombreAsesor);
-       frag.setArguments(bundle);
-       frag.setArguments(bundle);
-       FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-       ft.replace(R.id.content_director, frag, frag.toString());
-       ft.addToBackStack(null);
-       ft.commit();
-    }
-
-    public void switchAsistenciaFS(Fragment frag,int idGerencia, int idSucursal,String numeroEmpleado,String fechaIni,String fechaFin) {
-        Bundle bundle=new Bundle();
-        bundle.putInt("idGerencia",idGerencia);
-        bundle.putInt("idSucursal",idSucursal);
-        bundle.putString("idAsesor",numeroEmpleado);
-        bundle.putString("fechaInicio",fechaIni);
-        bundle.putString("fechaFin",fechaFin);
-        frag.setArguments(bundle);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_director, frag, frag.toString());
-        ft.addToBackStack(null);
-        ft.commit();
-    }
-
-    public void switchClientesFS(Fragment frag, int idSucursal,String fechaIni,String fechaFin) {
-        Bundle bundle=new Bundle();
-        bundle.putInt("idSucursal",idSucursal);
-        bundle.putString("fechaInicio",fechaIni);
-        bundle.putString("fechaFin",fechaFin);
-        frag.setArguments(bundle);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_director, frag, frag.toString());
-        ft.addToBackStack(null);
-        ft.commit();
-    }
-
-    public void switchAsesoresFA(Fragment frag, String idAsesor, String fechaInicio, String fechaFin){
-        Bundle bundle=new Bundle();
-        bundle.putString("idAsesor",idAsesor);
-        bundle.putString("fechaInicio",fechaInicio);
-        bundle.putString("fechaFin",fechaFin);
-        frag.setArguments(bundle);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_director, frag, frag.toString());
-        ft.addToBackStack(null);
-        ft.commit();
-    }
-
-
-    //gerente.switchClientesFCQ1(fragmentoClientes,
-    // mParam1 /*fechaInicio*/,
-    // mParam2/*fechafin*/,
-    // mParam3/*DatosCliente*/,
-    // idSucursal/*IdSucursal*/,
-    // mParam6/*idAsesor*/,
-    // mParam7/*idRetenido*/,
-    // mParam8/*idCitas*/,
-    // mParam9/*SeleccionIDS*/);
-    public void switchClientesFCQ11(Fragment frag, String fechaInicio, String fechaFin, String datosCliente, int idSucursal, int idGerencia, String idAsesor, int idRetenido, int idCitas, int idSeleccion) {
-        Bundle bundle=new Bundle();
+    /**
+     * Metodo para recibir los parametros y enviarlos entre fragmentos. Ejemplo enviar datos de filtros de Fragmento ReporteGerencias a ReporteClientes
+     * @param fragment fragmento al cual se enviara la informacion
+     * @param fechaInicio rango de la fecha inicial
+     * @param fechaFin rango de la fecha final
+     * @param idGerencia id de la gerencia
+     * @param idSucursal id de la sucursal
+     * @param idAsesor id del asesor
+     * @param numeroEmpleado numero de empledo del asesor
+     * @param nombreEmpleado nombre del empleado asesor
+     * @param numeroCuenta numero de cuenta del cliente
+     * @param cita 1.Con cita 2.Sin cita
+     * @param hora hora del tramite de implicaciones
+     * @param idTramite id generado por el la BD.
+     */
+    public void envioParametros(Fragment fragment, String fechaInicio, String fechaFin, int idGerencia, int idSucursal, String idAsesor, String numeroEmpleado, String nombreEmpleado, String numeroCuenta, boolean cita, String hora, int idTramite){
+        Bundle bundle = new Bundle();
         bundle.putString("fechaInicio", fechaInicio);
         bundle.putString("fechaFin", fechaFin);
-        bundle.putString("ingresarDatoCliente", datosCliente);
-        bundle.putInt("idSucursal", idSucursal);
         bundle.putInt("idGerencia", idGerencia);
-        bundle.putString("idAsesor", idAsesor);
-        bundle.putInt("idRetenido", idRetenido);
-        bundle.putInt("idCita", idCitas);
-        bundle.putInt("selectCliente", idSeleccion);
-        frag.setArguments(bundle);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_director, frag, frag.toString());
-        ft.addToBackStack(null);
-        ft.commit();
-    }
-
-    /**
-     * Switch: Envio de parametros de un fragmento a otro
-     */
-    public void cambioAsesores(Fragment fragment, int idSucursal, String fechaIncio, String fechaFin){
-        Bundle bundle = new Bundle();
-        bundle.putInt("idSucursal", idSucursal);
-        bundle.putString("fechaInicio", fechaIncio);
-        bundle.putString("fechaFin", fechaFin);
+        bundle.putInt("idSucursal",idSucursal);
+        bundle.putString("idAsesor",idAsesor);
+        bundle.putString("numeroEmpleado",numeroEmpleado);
+        bundle.putString("nombreEmpleado",nombreEmpleado);
+        bundle.putString("numeroCuenta",numeroCuenta);
+        bundle.putBoolean("cita",cita);
+        bundle.putString("hora",hora);
+        bundle.putInt("idTramite",idTramite);
         fragment.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_director, fragment, fragment.toString()).addToBackStack(null).commit();

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -50,12 +49,10 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
     private static final String ARG_PARAM1 = "fechaIncio";
     private static final String ARG_PARAM2 = "fechaFin";
     private static final String ARG_PARAM3 = "idGerencia";
-    private String mParam1;
-    private String mParam2;
-    private int mParam3;
+    private String mParam1, mParam2;
+    private int mParam3, idGerencia;
     private OnFragmentInteractionListener mListener;
     private View rootView;
-    private int idGerencia;
     private TextView tvFecha, tvEntidaes, tvNoEntidades, tvSaldoEmitido, tvSaldoNoEmitido, tvRangoFecha1, tvRangoFecha2, tvResultados, tvMail;
     private Spinner spinnerGerencias;
     private Button btnBuscar;
@@ -64,21 +61,14 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private DirectorReporteGerenciasAdapter adapter;
     private Fragment borrar = this;
-    private ArrayList<String> gerencias;
-    private ArrayList<String> id_gerencias;
+    private ArrayList<String> gerencias, id_gerencias;
     private Connected connected;
     private String linea = "\n __________________ \n";
-    private int pagina = 1;
-    private int numeroMaximoPaginas = 0;
-    // TODO: Variables para colocar del servicio
-    private int totalFilas = 1;
-    private int totalEntidades = 0;
-    private int totalNoEntidades = 0;
-    private int totalSaldosEmitodos= 0;
-    private int totalSaldoNoEmitidos = 0;
+    private int pagina = 1, numeroMaximoPaginas = 0, totalFilas = 1, totalEntidades = 0, totalNoEntidades = 0, totalSaldosEmitodos= 0, totalSaldoNoEmitidos = 0;
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
+
     public ReporteGerencias() {/* Required empty public constructor */}
 
     /**
@@ -98,6 +88,11 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         return fragment;
     }
 
+    /**
+     * El sistema lo llama cuando crea el fragmento. En tu implementación, debes inicializar componentes esenciales
+     * del fragmento que quieres conservar cuando el fragmento se pause o se detenga y luego se reanude.
+     * @param savedInstanceState guarda datos en bundle
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,8 +110,6 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         mResultCallback = new IResult() {
             @Override
             public void notifySuccess(String requestType, JSONObject response) {
-                Log.d(TAG, "Volley requester " + requestType);
-                Log.d(TAG, "Volley JSON post" + response);
                 if (requestType.trim().equals("true")) {
                     loading.dismiss();
                     primerPaso(response);
@@ -127,8 +120,6 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
 
             @Override
             public void notifyError(String requestType, VolleyError error) {
-                Log.d(TAG, "Volley requester " + requestType);
-                Log.d(TAG, "Volley JSON post" + "That didn't work! " + error.toString());
                 if(connected.estaConectado(getContext())){
                     Dialogos.dialogoErrorServicio(getContext());
                 }else{
@@ -138,6 +129,11 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         };
     }
 
+    /**
+     * El sistema lo llama cuando el fragmento debe diseñar su interfaz de usuario por primera vez
+     * @param view accede a la vista del XML
+     * @param savedInstanceState fuarda el estado de la instancia
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // TODO: metodo para callback de volley
@@ -150,8 +146,13 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         // TODO: dialog fechas
         Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha1);
         Dialogos.dialogoFechaFin(getContext(), tvRangoFecha2);
+        // TODO: Verifica que exitan datos en el fragmento
         argumentos();
-        sendJson(true);
+        // TODO: peticion para el consumo REST
+        if(Config.conexion(getContext()))
+            sendJson(true);
+        else
+            Dialogos.dialogoErrorConexion(getContext());
 
         getDato1 = new ArrayList<>();
         recyclerView = (RecyclerView) rootView.findViewById(R.id.dfrg_rv_gerencias);
@@ -164,13 +165,11 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
             public void onClick(View v) {
                 Connected connected = new Connected();
                 if(connected.estaConectado(getContext())){
-                    mParam1 = tvRangoFecha1.getText().toString();
-                    mParam2 = tvRangoFecha2.getText().toString();
-                    if(mParam1.isEmpty() || mParam2.isEmpty()){
+                    if(tvRangoFecha1.getText().toString().isEmpty() || tvRangoFecha2.getText().toString().isEmpty()){
                         Config.dialogoFechasVacias(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ReporteGerencias fragmento = ReporteGerencias.newInstance(mParam1, mParam2, idGerencia, rootView.getContext());
+                        ReporteGerencias fragmento = ReporteGerencias.newInstance(tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), idGerencia, rootView.getContext());
                         borrar.onDestroy();ft.remove(borrar).replace(R.id.content_director, fragmento).addToBackStack(null).commit();
                     }
                 }else{
@@ -178,13 +177,22 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
                 }
             }
         });
-
-        boolean argumentos = (getArguments() != null);
-        ServicioEmailJSON.enviarEmailReporteGerencias(getContext(), tvResultados,
-                (argumentos==true) ? true : false, (argumentos==true) ? mParam3 : 0,
-                (argumentos==true) ? mParam1 : Dialogos.fechaActual(), (argumentos==true) ? mParam2 : Dialogos.fechaSiguiente());
+        tvResultados.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean argumentos = (getArguments() != null);
+                ServicioEmailJSON.enviarEmailReporteGerencias(getContext(), (argumentos==true) ? true : false, (argumentos==true) ? mParam3 : 0, (argumentos==true) ? mParam1 : Dialogos.fechaActual(), (argumentos==true) ? mParam2 : Dialogos.fechaSiguiente());
+            }
+        });
     }
 
+    /**
+     * El sistema lo llama cuando el fragmento debe diseñar su interfaz de usuario por primera vez
+     * @param inflater infla la vista xml
+     * @param container contiene los elementos
+     * @param savedInstanceState guarda los parametros procesado
+     * @return XML y contenido
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.director_fragmento_reporte_gerencias, container, false);
@@ -196,6 +204,10 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         }
     }
 
+    /**
+     * Reciba una llamada cuando se asocia el fragmento con la actividad
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -204,6 +216,9 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         }
     }
 
+    /**
+     * Se implementa este metodo, para generar el regreso con clic nativo de android
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -228,7 +243,7 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
     }
 
     /**
-     *
+     * Se implementa este metodo, para generar el regreso con clic nativo de android
      */
     @Override
     public void onResume() {
@@ -239,9 +254,9 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                    Fragment fragmentoGenerico = new Inicio();
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    fragmentManager.beginTransaction().replace(R.id.content_director, fragmentoGenerico).commit();
+                    //Fragment fragmentoGenerico = new Inicio();
+                    //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    //fragmentManager.beginTransaction().replace(R.id.content_director, fragmentoGenerico).commit();
                     return true;
                 }
                 return false;
@@ -325,7 +340,10 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         spinnerGerencias.setSelection(position);
     }
 
-    // TODO: REST
+    /**
+     * Envio de datos por REST jsonObject
+     * @param primerPeticion valida que el proceso sea true
+     */
     private void sendJson(final boolean primerPeticion) {
         if (primerPeticion)
             loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
@@ -352,6 +370,10 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         volleySingleton.postDataVolley("" + primerPeticion, Config.URL_CONSULTAR_REPORTE_RETENCION_GERENCIAS, obj);
     }
 
+    /**
+     * Inicia este metodo para llenar la lista de elementos, cada 10, inicia solamente con 10, despues inicia el metodo segundoPaso
+     * @param obj jsonObject
+     */
     private void primerPaso(JSONObject obj) {
         try{
             // TODO: jsonArray de gerencias
@@ -393,11 +415,14 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         tvNoEntidades.setText("" + totalNoEntidades);
         tvSaldoEmitido.setText("" + Config.nf.format(totalSaldosEmitodos));
         tvSaldoNoEmitido.setText("" + Config.nf.format(totalSaldoNoEmitidos));
+        // TODO: calucula el tamaño de filas y devuelve la cantidad de paginas a procesar
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         boolean argumentos = (getArguments()!=null);
+        // TODO: envio de datos al adaptador para incluir dentro del recycler
         adapter = new DirectorReporteGerenciasAdapter(rootView.getContext(), getDato1, recyclerView, (argumentos == true) ? mParam1 : Dialogos.fechaActual(), (argumentos == true) ? mParam2 : Dialogos.fechaSiguiente() );
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
+        // TODO: verificaion si existe un scroll enviando al segundo metodo
         adapter.notifyDataSetChanged();
         adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
@@ -426,6 +451,10 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         });
     }
 
+    /**
+     * Se vuelve a llamaar este metodo para llenar la lista cada 10 contenidos
+     * @param obj jsonObject de respuesta
+     */
     private void segundoPaso(JSONObject obj) {
         try{
             // TODO: jsonArray de gerencias
@@ -456,6 +485,11 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         adapter.notifyDataSetChanged();
         adapter.setLoaded();
     }
+
+    /**
+     *  Espera el regreso de fechas inicial (hoy y el dia siguiente)
+     *  y cuando se realiza una nueva busqueda, retorna las fechas seleccionadas
+     */
     private void argumentos(){
         if(getArguments() != null){
             mParam1 = getArguments().getString(ARG_PARAM1);

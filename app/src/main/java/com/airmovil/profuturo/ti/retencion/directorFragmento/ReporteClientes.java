@@ -44,7 +44,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -65,23 +64,17 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
     private Button btnBuscar;
     private EditText etDatosCliente, etIdAsesor;
     private ArrayList<String> sucursales, id_sucursales;
-    private JSONArray resultSucursales;
     private View rootView;
     private Connected connected;
     private List<DirectorReporteClientesModel> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
-    private RecyclerView.Adapter recyclerViewAdapter;
     private DirectorReporteClientesAdapter adapter;
-    private int filas, pagina = 1, numeroMaximoPaginas = 0, totalF;
+    private int filas, pagina = 1, numeroMaximoPaginas = 0, idSucursal1, idGerencia1, idRetenido1, idCita1, idSucursal, tipoBuscar, spinId = 0;
+    private String idAsesor1;
     private Fragment borrar = this;
     private OnFragmentInteractionListener mListener;
-    int idSucursal;
-    int tipoBuscar;
-    int spinId = 0;
     private ArrayList<String> gerencias, id_gerencias;
-    private int idSucursal1, idGerencia1, idRetenido1, idCita1;
-    private String idAsesor1;
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
@@ -113,6 +106,10 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         return fragmento;
     }
 
+    /**
+     * Utilice este método de fábrica para crear una nueva instancia de
+     * Este fragmento utilizando los parámetros proporcionados.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,6 +145,10 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         };
     }
 
+    /**
+     * @param view regresa la vista
+     * @param savedInstanceState parametros a enviar para conservar en el bundle
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // TODO: metodo para callback de volley
@@ -155,8 +156,6 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         rootView = view;
         // TODO: llama clase singleton volley
         volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
-        // TODO: REST
-        sendJson(true);
         // TODO: Asignacion de variables
         variables();
         // TODO: Verifica si existen variables
@@ -164,6 +163,11 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         // TODO: Muestra de dialogos fecha inicio y fecha fin
         Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha1);
         Dialogos.dialogoFechaFin(getContext(), tvRangoFecha2);
+        // TODO: REST
+        if(Config.conexion(getContext()))
+            sendJson(true);
+        else
+            Dialogos.dialogoErrorConexion(getContext());
         // TODO: Spinner
         final ArrayAdapter<String> adapterId = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.IDS);
         adapterId.setDropDownViewResource(R.layout.spinner_dropdown_item);
@@ -241,14 +245,32 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         });
 
         // TODO: Envio de email
-        ServicioEmailJSON.enviarEmailReporteClientes(getContext(), tvResultados, (argumentos) ? getArguments().getInt(ARG_PARAM3) : 0,
-                (argumentos) ? getArguments().getInt(ARG_PARAM4) : 0, (argumentos) ? getArguments().getInt(ARG_PARAM1) : 0, (argumentos) ? getArguments().getInt(ARG_PARAM9) : 0,
-                (argumentos) ? getArguments().getString(ARG_PARAM2) : "", (argumentos) ? getArguments().getInt(ARG_PARAM8) : 0, (argumentos) ? getArguments().getString(ARG_PARAM2) : "",
-                (argumentos) ? getArguments().getString(ARG_PARAM6) : Dialogos.fechaActual(), (argumentos) ? getArguments().getString(ARG_PARAM7) : Dialogos.fechaActual(), (argumentos) ? true:false );
-
+        tvResultados.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean argumentos = (getArguments()!=null);
+                ServicioEmailJSON.enviarEmailReporteClientes(getContext(),
+                        (argumentos)?getArguments().getInt(ARG_PARAM3):0,
+                        (argumentos)?getArguments().getInt(ARG_PARAM1):0,
+                        (argumentos)?getArguments().getInt(ARG_PARAM9):0,
+                        (argumentos)?getArguments().getString(ARG_PARAM2):"",
+                        (argumentos)?getArguments().getInt(ARG_PARAM8):0,
+                        (argumentos)?getArguments().getString(ARG_PARAM5):"",
+                        (argumentos)?getArguments().getString(ARG_PARAM6):Dialogos.fechaActual(),
+                        (argumentos)?getArguments().getString(ARG_PARAM7):Dialogos.fechaSiguiente(),
+                        (argumentos) ? true:false );
+            }
+        });
 
     }
 
+    /**
+     * Se lo llama para crear la jerarquía de vistas asociada con el fragmento.
+     * @param inflater acceso para inflar XML
+     * @param container contenido
+     * @param savedInstanceState estado de los elementos almacenados
+     * @return el fragmento relacionado con la actividad
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.director_fragmento_reporte_clientes, container, false);
@@ -260,6 +282,10 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         }
     }
 
+    /**
+     * Reciba una llamada cuando se asocia el fragmento con la actividad
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -268,16 +294,29 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         }
     }
 
+    /**
+     * Se implementa este metodo, para generar el regreso con clic nativo de android
+     */
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
+    /**
+     * Esta interfaz debe ser implementada por actividades que contengan esta
+     * Para permitir que se comunique una interacción en este fragmento
+     * A la actividad y potencialmente otros fragmentos contenidos en ese
+     * actividad.
+     */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * Asignacion de las variables
+     * declaracion de objetos
+     */
     private void variables(){
         spinnerId = (Spinner) rootView.findViewById(R.id.ddfrc_spinner_id);
         spinnerGerencias = (Spinner) rootView.findViewById(R.id.ddfrc_spinner_gerencia);
@@ -457,6 +496,10 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         }
     }
 
+    /**
+     * Envio de datos por REST jsonObject
+     * @param primeraPeticion valida que el proceso sea true
+     */
     private void sendJson(final boolean primeraPeticion){
         if (primeraPeticion)
             loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
@@ -488,6 +531,10 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         volleySingleton.postDataVolley("" + primeraPeticion, Config.URL_CONSULTAR_REPORTE_RETENCION_CLIENTES, json);
     }
 
+    /**
+     * Inicia este metodo para llenar la lista de elementos, cada 10, inicia solamente con 10, despues inicia el metodo segundoPaso
+     * @param obj jsonObject
+     */
     private void primerPaso(JSONObject obj){
         int totalFilas = 1;
         try{
@@ -518,14 +565,16 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         }
 
         tvResultados.setText(filas + " Registros");
+        // TODO: calucula el tamaño de filas y devuelve la cantidad de paginas a procesar
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         String PtvFecha = tvFecha.getText().toString();
         String[] separated = PtvFecha.split(" - ");
+        // TODO: envio de datos al adaptador para incluir dentro del recycler
         adapter = new DirectorReporteClientesAdapter(rootView.getContext(), getDatos1, recyclerView,separated[0].trim(),separated[1].trim());
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
+        // TODO: verificaion si existe un scroll enviando al segundo metodo
         adapter.notifyDataSetChanged();
-
         adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
@@ -548,6 +597,10 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         });
     }
 
+    /**
+     * Se vuelve a llamaar este metodo para llenar la lista cada 10 contenidos
+     * @param obj jsonObject de respuesta
+     */
     private void segundoPaso(JSONObject obj) {
         try{
             JSONArray array = obj.getJSONArray("Cliente");
@@ -559,6 +612,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     getDatos2.setNombreCliente(json.getString("nombreCliente"));
                     getDatos2.setNumeroCuenta(json.getString("numeroCuenta"));
                     getDatos2.setNumeroEmpleado(json.getString("numeroEmpleado"));
+                    getDatos2.setNombreAsesor(json.getString("nombreAsesor"));
                     getDatos2.setCita(json.getString("cita"));
                     getDatos2.setRetenido(json.getString("retenido"));
                     getDatos2.setIdSucursal(json.getInt("idSucursal"));

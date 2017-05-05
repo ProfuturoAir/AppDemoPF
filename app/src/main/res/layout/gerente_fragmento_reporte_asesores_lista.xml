@@ -37,7 +37,7 @@
                 <TextView style="@style/separador" />
                 <TextView android:id="@+id/gfral_tv_saldos_no_emitido" android:text="233" style="@style/textoRedLista"/>
             </LinearLayout>
-            <TextView android:id="@+id/gfral_tv_procentaje" style="@style/cantidadPorcentaje"/>
+            <TextView android:id="@+id/gfral_tv_porcentaje" style="@style/cantidadPorcentaje"/>
         </LinearLayout>
         <ImageView
             android:id="@+id/gfral_btn_detalles"

@@ -7,50 +7,54 @@
     android:background="@android:color/white"
     tools:context="com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientes">
     <TextView style="@style/tituloProceso" android:text="Clientes " />
-    <TextView android:id="@+id/gfrc_tv_fecha" style="@style/fecha"/>
+    <TextView android:id="@+id/ggfrc_tv_fecha" style="@style/fecha"/>
 
     <LinearLayout style="@style/contenedorFiltros2">
 
         <LinearLayout style="@style/linearLayoutHorizontal">
             <LinearLayout style="@style/contenedorSpinner">
-                <Spinner android:id="@+id/gfrc_spinner_id"
+                <Spinner android:id="@+id/ggfrc_spinner_id"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:backgroundTint="@color/colorWhite"/>
                 <TextView style="@style/linea"/>
             </LinearLayout>
-
-            <EditText
-                android:id="@+id/gfrc_et_id"
-                style="@style/busqueda" />
+            <EditText android:id="@+id/ggfrc_et_id" style="@style/busqueda"/>
         </LinearLayout>
 
         <LinearLayout style="@style/linearLayoutHorizontal">
             <LinearLayout style="@style/contenedorSpinner">
-                <Spinner android:id="@+id/gfrc_spinner_sucursal"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:backgroundTint="@color/colorWhite"/>
-                <TextView style="@style/linea"/>
-            </LinearLayout>
-            <EditText android:id="@+id/gfrc_et_asesor" style="@style/busqueda" android:inputType="number" android:hint="Ingresa un ID Asesor"/>
-        </LinearLayout>
-
-        <LinearLayout style="@style/linearLayoutHorizontal">
-            <TextView android:id="@+id/gfrc_tv_fecha_rango1" style="@style/fechaInicial2" />
-            <TextView android:id="@+id/gfrc_tv_fecha_rango2" style="@style/fechaFinal2"/>
-        </LinearLayout>
-
-        <LinearLayout style="@style/linearLayoutHorizontal">
-            <LinearLayout style="@style/contenedorSpinner">
-                <Spinner android:id="@+id/gfrc_spinner_estado"
+                <Spinner android:id="@+id/ggfrc_spinner_gerencia"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:backgroundTint="@color/colorWhite"/>
                 <TextView style="@style/linea"/>
             </LinearLayout>
             <LinearLayout style="@style/contenedorSpinner">
-                <Spinner android:id="@+id/gfrc_spinner_citas"
+                <Spinner android:id="@+id/ggfrc_spinner_sucursal"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:backgroundTint="@color/colorWhite"/>
+                <TextView style="@style/linea"/>
+            </LinearLayout>
+            <EditText android:id="@+id/ggfrc_et_asesor" style="@style/busqueda" android:inputType="number" android:hint="Ingresa un ID Asesor"/>
+        </LinearLayout>
+
+        <LinearLayout style="@style/linearLayoutHorizontal">
+            <TextView android:id="@+id/ggfrc_tv_fecha_rango1" style="@style/fechaInicial2" />
+            <TextView android:id="@+id/ggfrc_tv_fecha_rango2" style="@style/fechaFinal2"/>
+        </LinearLayout>
+
+        <LinearLayout style="@style/linearLayoutHorizontal">
+            <LinearLayout style="@style/contenedorSpinner">
+                <Spinner android:id="@+id/ggfrc_spinner_estado"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:backgroundTint="@color/colorWhite"/>
+                <TextView style="@style/linea"/>
+            </LinearLayout>
+            <LinearLayout style="@style/contenedorSpinner">
+                <Spinner android:id="@+id/ggfrc_spinner_citas"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:backgroundTint="@color/colorWhite"/>
@@ -58,13 +62,13 @@
             </LinearLayout>
         </LinearLayout>
 
-        <Button android:id="@+id/gfrc_btn_buscar" style="@style/btnBuscar"/>
+        <Button android:id="@+id/ggfrc_btn_buscar" style="@style/btnBuscar"/>
 
     </LinearLayout>
 
     <LinearLayout style="@style/cabeceraLista">
-        <TextView style="@style/tituloLista" android:text="@string/texto_clientes"/>
-        <TextView android:id="@+id/gfrc_tv_registros" style="@style/campoCantidadesMail"/>
+        <TextView style="@style/tituloLista" android:text="Clientes"/>
+        <TextView android:id="@+id/ggfrc_tv_registros" style="@style/campoCantidadesMail"/>
     </LinearLayout>
 
     <LinearLayout
@@ -74,7 +78,7 @@
         android:layout_weight=".6">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/gfrc_rv_lista"
+            android:id="@+id/ggfrc_rv_lista"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

@@ -189,30 +189,16 @@ public class Asesor extends AppCompatActivity{
         View hView = navigationView.getHeaderView(0);
         TextView navPrimeraLetra = (TextView) hView.findViewById(R.id.asesor_nav_tv_letra);
         TextView navDatosGerente = (TextView) hView.findViewById(R.id.asesor_nav_tv_datos);
-
         navigationView.getMenu().hasVisibleItems();
-
         // TODO: obteniendo datos del sharePreference
         HashMap<String,String> datosUsuario = mySharePreferences.getUserDetails();
-
         String apePaterno = datosUsuario.get(MySharePreferences.APELLIDO_PATERNO);
         String apeMaterno = datosUsuario.get(MySharePreferences.APELLIDO_MATERNO);
         String nombre = datosUsuario.get(MySharePreferences.NOMBRE);
-        String idEmpleado = datosUsuario.get(MySharePreferences.USER_ID);
-
         char letra = nombre.charAt(0);
         String inicial = Character.toString(letra);
-
         navPrimeraLetra.setText(inicial);
         navDatosGerente.setText(nombre + " " + apePaterno + " " + apeMaterno + "\nNúmero empleado: " + Config.usuarioCusp(getApplicationContext()));
-
-        // TODO: Se utiliza
-        //char letra = sNombreEmpleado.charAt(0);
-        //String primeraLetra = Character.toString(letra);
-        // TODO: Se utiliza para colocar la primera de todo el nombre dentro de un contenedor
-        //navPrimeraLetra.setText(primeraLetra);
-        // TODO: Se utiliza para colocar el nombre y el numero de cuenta del usuario
-        //navDatosGerente.setText("Nombre: " + sNombreEmpleado + "\nNumero Empleado: " + sNumeroEmpleado);
     }
 
     /**

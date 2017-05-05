@@ -1,42 +1,24 @@
 package com.airmovil.profuturo.ti.retencion.Adapter;
 
-import android.app.Dialog;
-import android.app.Service;
 import android.content.Context;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Director;
+import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientesDetalles;
-import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteSucursales;
-import com.airmovil.profuturo.ti.retencion.helper.Config;
-import com.airmovil.profuturo.ti.retencion.helper.Connected;
-import com.airmovil.profuturo.ti.retencion.helper.EnviaMail;
+import com.airmovil.profuturo.ti.retencion.helper.ServicioEmailJSON;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteClientesModel;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.List;
 
 /**
@@ -54,17 +36,24 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
     private int visibleThreshold = 10;
     private int lastVisibleItem, totalItemCount;
     private RecyclerView mRecyclerView;
-    private String fechaInicio;
-    private String fechaFin;
+    private String mFechaInicio;
+    private String mFechaFin;
 
-    public DirectorReporteClientesAdapter(Context mContext, List<DirectorReporteClientesModel> list, RecyclerView mRecyclerView, String fechaInicio, String fechaFin) {
+    /**
+     * Constructor
+     * @param mContext contexto
+     * @param list clase del modelo
+     * @param mRecyclerView contenendor del servicio
+     * @param mFechaInicio fecha inicio
+     * @param mFechaFin fecha final
+     */
+    public DirectorReporteClientesAdapter(Context mContext, List<DirectorReporteClientesModel> list, RecyclerView mRecyclerView, String mFechaInicio, String mFechaFin) {
         this.mContext = mContext;
         this.list = list;
         this.mRecyclerView = mRecyclerView;
 
-        this.fechaInicio = fechaInicio;
-        this.fechaFin = fechaFin;
-        Log.d("SIGUE","AQUI ->");
+        this.mFechaInicio = mFechaInicio;
+        this.mFechaFin = mFechaFin;
 
         final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) this.mRecyclerView.getLayoutManager();
         this.mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -86,6 +75,10 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
         });
     }
 
+    /**
+     * @param parent acceso para determinar que tipo de XML mostrara
+     * @return la vista XML de elementos o loading
+     */
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder vh;
@@ -99,6 +92,11 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
         return vh;
     }
 
+    /**
+     * Inplementa el contenido consumido
+     * @param holder accede a los elementos XML a mostrar
+     * @param position posicion de cada elementos comparado con el servicio
+     */
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof MyViewHolder){
@@ -112,26 +110,19 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
             myholder.campoRetenidoCliente.setText(" " + (Boolean.parseBoolean(lista.getRetenido()) ? " Retenido " : " "));
             myholder.campoNoRetenidoCliente.setText(" " + (Boolean.parseBoolean(lista.getRetenido()) ? " " : " No Retenido "));
             myholder.campoSucursalCliente.setText(" Sucursal: " + lista.getIdSucursal() + " ");
-            char dato = String.valueOf(lista.getNombreCliente()).charAt(0);
-            final String inicial = Character.toString(dato);
-            myholder.campoLetra.setText(inicial);
+            myholder.campoLetra.setText(String.valueOf(String.valueOf(lista.getNombreCliente()).charAt(0)));
             myholder.btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     surgirMenu(v, lista);
                 }
             });
-
             myholder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    fragmentJumpDatosUsuario("", v);
-                    Fragment fragmento = new ReporteClientesDetalles();
-                    if (v.getContext() instanceof Director) {
-                        Director director = (Director) v.getContext();
-                        director.switchDetalleClientes(lista.getNumeroEmpleado(),lista.getNombreAsesor(),lista.getNumeroCuenta(), lista.getCita(), lista.getIdTramite(), fechaInicio, fechaFin, lista.getHora(), Config.usuarioCusp(mContext), fragmento);
-
-                    }
+                    ReporteClientesDetalles reporteClientesDetalles = new ReporteClientesDetalles();
+                    Director d1 = (Director) v.getContext();
+                    d1.envioParametros( reporteClientesDetalles,  mFechaInicio,  mFechaFin,  0,  0,  "",  lista.getNumeroEmpleado(), lista.nombreAsesor, lista.getNumeroCuenta(),  Boolean.parseBoolean(lista.getCita()),  lista.getHora(),  lista.getIdTramite());
                 }
             });
         } else{
@@ -139,28 +130,18 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
         }
     }
 
-    public void fragmentJumpDatosUsuario(String idClienteCuenta, View view) {
-        Fragment fragmento = new ReporteClientesDetalles();
-        if (view.getContext() == null)
-            return;
-        if (view.getContext() instanceof Director) {
-            Director director = (Director) view.getContext();
-
-            final Connected conected = new Connected();
-            if(conected.estaConectado(view.getContext())) {
-
-            }else{
-                Config.msj(view.getContext(),"Error conexión", "Sin Conexion por el momento.Cliente P-1.1.3");
-            }
-            director.switchContent(fragmento, idClienteCuenta);
-        }
-    }
-
+    /**
+     * @return el tamaño que del servicio REST
+     */
     @Override
     public int getItemCount() {
         return list.size();
     }
 
+    /**
+     * @param position verifica la posicion de elementos, si existen o no
+     * @return el tipo de vista
+     */
     @Override
     public int getItemViewType(int position) {
         return list.get(position) ==null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
@@ -170,7 +151,6 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
      * Muesta el menu cuando se hace click en los 3 botonos de la lista
      */
     private void surgirMenu(View view, DirectorReporteClientesModel list) {
-        // inflate menu
         PopupMenu popup = new PopupMenu(mContext, view);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.sub_menu_reporte_clientes, popup.getMenu());
@@ -178,14 +158,20 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
         popup.show();
     }
 
+    /**
+     * Loading comienza como un valor falso
+     */
     public void setLoaded() {
         isLoading = false;
     }
 
+    /**
+     * verifica si se ha consumido datos del servicio REST
+     * @param mOnLoadMoreListener
+     */
     public void setOnLoadMoreListener(OnLoadMoreListener mOnLoadMoreListener) {
         this.mOnLoadMoreListener = mOnLoadMoreListener;
     }
-
 
     /**
      * Click listener for popup menu items
@@ -202,106 +188,13 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.sub_menu_reporte_clientes_detalles:
-                    Fragment fragmento = new ReporteClientesDetalles();
-                    if (view.getContext() instanceof Director) {
-                        Director director = (Director) view.getContext();
-                        director.switchDetalleClientes(list.getNumeroEmpleado(),list.getNombreAsesor(),list.getNumeroCuenta(), list.getCita(), list.getIdTramite(), fechaInicio, fechaFin, list.getHora(), Config.usuarioCusp(mContext), fragmento);
-
-                    }
+                    ReporteClientesDetalles reporteClientesDetalles = new ReporteClientesDetalles();
+                    Gerente g1 = (Gerente) mRecyclerView.getContext();
+                    //fragment 1.fechaInicio 2.fechaFin 3.idGerencia 4.idSucursal 5.idAsesor 6.numeroEmpleado 7.nombreEmpleado 8.numeroCuenta 9.cita 10.hora 11.idTramite
+                    g1.envioParametros(reporteClientesDetalles, mFechaInicio, mFechaFin, 0, 0, "", list.getNumeroEmpleado(),list.nombreAsesor,list.getNumeroCuenta(), Boolean.parseBoolean(list.getCita()), list.getHora(), list.getIdTramite());
                     return true;
                 case R.id.sub_menu_reporte_clientes_email:
-                    final Dialog dialog = new Dialog(mContext);
-                    dialog.setContentView(R.layout.custom_layout);
-
-                    Button btn = (Button) dialog.findViewById(R.id.dialog_btn_enviar);
-                    final Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
-
-                    // TODO: Spinner
-                    ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(mContext, R.layout.spinner_item_azul, Config.EMAIL);
-                    adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
-                    spinner.setAdapter(adapterSucursal);
-
-                    btn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            final EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
-
-                            final String datoEditText = editText.getText().toString();
-                            final String datoSpinner = spinner.getSelectedItem().toString();
-
-                            Log.d("DATOS USER","SPINNER: "+datoEditText+" datosSpinner: "+ datoSpinner);
-                            if(datoEditText == "" || datoSpinner == "Seleciona un email"){
-                                Config.msj(mContext, "Error", "Ingresa email valido");
-                            }else{
-                                String email = datoEditText+"@"+datoSpinner;
-                                Connected connected = new Connected();
-                                final InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Service.INPUT_METHOD_SERVICE);
-                                if(connected.estaConectado(mContext)){
-                                    JSONObject obj = new JSONObject();
-                                    JSONObject rqt = new JSONObject();
-                                    JSONObject filtro = new JSONObject();
-                                    JSONObject filtroCliente = new JSONObject();
-                                    JSONObject periodo = new JSONObject();
-                                    try {
-
-                                        boolean detalle = true;
-                                        rqt.put("correo", email);
-                                        rqt.put("detalle", detalle);
-                                        rqt.put("filtro", filtro);
-                                            filtro.put("cita", list.getCita());
-                                            filtro.put("filtroRetenicion", list.getRetenido());
-                                                filtroCliente.put("curp", "");
-                                                filtroCliente.put("nss", "");
-                                                filtroCliente.put("numeroCuenta", "");
-                                            filtro.put("idSucursal", list.getIdSucursal());
-                                            filtro.put("numeroEmpleado", list.getIdSucursal());
-                                        rqt.put("numeroEmpleado", list.getNumeroEmpleado());
-                                        rqt.put("periodo", periodo);
-                                        periodo.put("fechaInicio", fechaInicio);
-                                        periodo.put("fechaFin", fechaFin);
-                                        obj.put("rqt", rqt);
-                                    } catch (JSONException e) {
-                                        Config.msj(mContext, "Error", "Error al formar los datos");
-                                    }
-                                    EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_CLIENTE,mContext,new EnviaMail.VolleyCallback() {
-
-                                        @Override
-                                        public void onSuccess(JSONObject result) {
-                                            Log.d("RESPUESTA DIRECTOR", result.toString());
-                                            int status;
-
-                                            try {
-                                                status = result.getInt("status");
-                                            }catch(JSONException error){
-                                                status = 400;
-                                            }
-
-                                            Log.d("EST","EE: "+status);
-                                            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-                                            if(status == 200) {
-                                                Config.msj(mContext, "Enviando", "Se ha enviado el mensaje al destino");
-                                                //Config.msjTime(mContext, "Enviando", "Se ha enviado el mensaje al destino", 4000);
-                                                dialog.dismiss();
-                                            }else{
-                                                Config.msj(mContext, "Error", "Ups algo salio mal =(");
-                                                dialog.dismiss();
-                                            }
-                                            //db.addUserCredits(fk_id_usuario,result);
-                                        }
-                                        @Override
-                                        public void onError(String result) {
-                                            Log.d("RESPUESTA ERROR", result);
-                                            Config.msj(mContext, "Error en conexión", "Por favor, revisa tu conexión a internet ++");
-                                            //db.addUserCredits(fk_id_usuario, "ND");
-                                        }
-                                    });
-                                }else{
-                                    Config.msj(mContext, "Error en conexión", "Por favor, revisa tu conexión a internet");
-                                }
-                            }
-                        }
-                    });
-                    dialog.show();
+                    ServicioEmailJSON.enviarEmailReporteClientes(mContext, list.getIdSucursal(), 2, (list.getCita()=="true")?1:2, list.getNumeroCuenta(), (list.getRetenido()=="true")?1:2, list.getNumeroEmpleado(),mFechaInicio, mFechaFin, true);
                     return true;
                 default:
             }
@@ -309,15 +202,20 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
         }
     }
 
+    /**
+     * mostrara XML al cargar contenido
+     */
     public static class LoadingViewHolder extends RecyclerView.ViewHolder {
         public ProgressBar progressBar;
-
         public LoadingViewHolder(View itemView) {
             super(itemView);
             progressBar = (ProgressBar) itemView.findViewById(R.id.loading);
         }
     }
 
+    /**
+     * mostrara XML a settear dentro del RecyclerView
+     */
     public class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView campoLetra, campoNombreCliente, campoCuentaCliente, campoAsesorCliente, campoConCitaCliente, campoSinCitaCliente, campoRetenidoCliente, campoNoRetenidoCliente, campoSucursalCliente;
         public TextView btn;

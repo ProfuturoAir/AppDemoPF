@@ -845,4 +845,37 @@ public class Gerente extends AppCompatActivity{
         ft.addToBackStack(null);
         ft.commit();
     }
+
+    /**
+     * Metodo para recibir los parametros y enviarlos entre fragmentos. Ejemplo enviar datos de filtros de Fragmento ReporteGerencias a ReporteClientes
+     * @param fragment fragmento al cual se enviara la informacion
+     * @param fechaInicio rango de la fecha inicial
+     * @param fechaFin rango de la fecha final
+     * @param idGerencia id de la gerencia
+     * @param idSucursal id de la sucursal
+     * @param idAsesor id del asesor
+     * @param numeroEmpleado numero de empledo del asesor
+     * @param nombreEmpleado nombre del empleado asesor
+     * @param numeroCuenta numero de cuenta del cliente
+     * @param cita 1.Con cita 2.Sin cita
+     * @param hora hora del tramite de implicaciones
+     * @param idTramite id generado por el la BD.
+     */
+    public void envioParametros(Fragment fragment, String fechaInicio, String fechaFin, int idGerencia, int idSucursal, String idAsesor, String numeroEmpleado, String nombreEmpleado, String numeroCuenta, boolean cita, String hora, int idTramite){
+        Bundle bundle = new Bundle();
+        bundle.putString("fechaInicio", fechaInicio);
+        bundle.putString("fechaFin", fechaFin);
+        bundle.putInt("idGerencia", idGerencia);
+        bundle.putInt("idSucursal",idSucursal);
+        bundle.putString("idAsesor",idAsesor);
+        bundle.putString("numeroEmpleado",numeroEmpleado);
+        bundle.putString("nombreEmpleado",nombreEmpleado);
+        bundle.putString("numeroCuenta",numeroCuenta);
+        bundle.putBoolean("cita",cita);
+        bundle.putString("hora",hora);
+        bundle.putInt("idTramite",idTramite);
+        fragment.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_gerente, fragment, fragment.toString()).addToBackStack(null).commit();
+    }
 }

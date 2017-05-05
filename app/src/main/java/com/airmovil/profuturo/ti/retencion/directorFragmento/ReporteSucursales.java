@@ -50,19 +50,15 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
     private static final String ARG_PARAM3 = "numeroEmpleado";
     private static final String ARG_PARAM4 = "fechaInicio";
     private static final String ARG_PARAM5 = "fechaFin";
-    private String mParam1;
-    private String mParam2;
     private DirectorReporteSucursalesAdapter adapter;
     private List<DirectorReporteSucursalesModel> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
-    private RecyclerView.Adapter recyclerViewAdapter;
     private View rootView;
-    private int posicion, pagina = 1, numeroMaximoPaginas = 0, filas, idSucursal = 0,idGerencia = 0, numeroEmpleado;
+    private int pagina = 1, numeroMaximoPaginas = 0, filas, idSucursal = 0,idGerencia = 0, numeroEmpleado;
     private TextView tvFecha, tvEmitidas, tvNoEmitidas, tvSaldoEmitido, tvSaldoNoEmitido, tvResultados, tvRangoFecha1, tvRangoFecha2;
     private Spinner spinnerSucursales;
     private ArrayList<String> sucursales, id_sucursales;
-    private JSONArray resultSucursales;
     private Button btnBuscar;
     private Fragment borrar = this;
     private OnFragmentInteractionListener mListener;
@@ -98,8 +94,6 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         mResultCallback = new IResult() {
             @Override
             public void notifySuccess(String requestType, JSONObject response) {
-                Log.d(TAG, "Volley requester " + requestType);
-                Log.d(TAG, "Volley JSON post" + response);
                 if (requestType.trim().equals("true")) {
                     loading.dismiss();
                     primerPaso(response);
@@ -110,8 +104,6 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
 
             @Override
             public void notifyError(String requestType, VolleyError error) {
-                Log.d(TAG, "Volley requester " + requestType);
-                Log.d(TAG, "Volley JSON post" + "That didn't work! " + error.toString());
                 if(connected.estaConectado(getContext())){
                     Dialogos.dialogoErrorServicio(getContext());
                 }else{
@@ -133,13 +125,17 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         // TODO: verifica si existen datos en el fragmento
         argumentos();
         // TODO: primera peticion rest
-        sendJson(true);
+        if(Config.conexion(getContext()))
+            sendJson(true);
+        else
+            Dialogos.dialogoErrorConexion(getContext());
+
         // TODO: llama los dialos fecha inicio y fecha final
         Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha1);
         Dialogos.dialogoFechaFin(getContext(), tvRangoFecha2);
         // TODO: Recycler
         getDatos1 = new ArrayList<>();
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.gfrs_rv_lista);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.dfrs_rv_lista);
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
@@ -157,18 +153,20 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
             }
         });
 
-        boolean argumentos = (getArguments()!=null);
-        ServicioEmailJSON.enviarEmailReporteSucursales(getContext(), tvResultados,(argumentos)?getArguments().getInt(ARG_PARAM2): 0,
-                (argumentos)?getArguments().getString(ARG_PARAM4):Dialogos.fechaActual(),
-                (argumentos)?getArguments().getString(ARG_PARAM5):Dialogos.fechaSiguiente(),
-                (argumentos)?true:false);
+        tvResultados.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean argumentos = (getArguments()!=null);
+                ServicioEmailJSON.enviarEmailReporteSucursales(getContext(),(argumentos)?getArguments().getInt(ARG_PARAM2): 0, (argumentos)?getArguments().getString(ARG_PARAM4):Dialogos.fechaActual(), (argumentos)?getArguments().getString(ARG_PARAM5):Dialogos.fechaSiguiente(), (argumentos)?true:false);
+            }
+        });
 
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.gerente_fragmento_reporte_sucursales, container, false);
+        return inflater.inflate(R.layout.director_fragmento_reporte_sucursales, container, false);
     }
 
     public void onButtonPressed(Uri uri) {
@@ -200,16 +198,16 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
      */
     public void variables(){
         connected = new Connected();
-        tvFecha = (TextView) rootView.findViewById(R.id.gfrs_tv_fecha);
-        tvEmitidas = (TextView) rootView.findViewById(R.id.gfrs_tv_emitidas);
-        tvNoEmitidas = (TextView) rootView.findViewById(R.id.gfrs_tv_no_emitidas);
-        tvSaldoEmitido = (TextView) rootView.findViewById(R.id.gfrs_tv_saldo_emitido);
-        tvSaldoNoEmitido = (TextView) rootView.findViewById(R.id.gfrs_tv_saldo_no_emitido);
-        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.gfrs_tv_fecha_rango1);
-        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.gfrs_tv_fecha_rango2);
-        spinnerSucursales = (Spinner) rootView.findViewById(R.id.gfrs_spinner_sucursales);
-        btnBuscar = (Button) rootView.findViewById(R.id.gfrs_btn_buscar);
-        tvResultados = (TextView) rootView.findViewById(R.id.gfrs_tv_registros);
+        tvFecha = (TextView) rootView.findViewById(R.id.dfrs_tv_fecha);
+        tvEmitidas = (TextView) rootView.findViewById(R.id.dfrs_tv_emitidas);
+        tvNoEmitidas = (TextView) rootView.findViewById(R.id.dfrs_tv_no_emitidas);
+        tvSaldoEmitido = (TextView) rootView.findViewById(R.id.dfrs_tv_saldo_emitido);
+        tvSaldoNoEmitido = (TextView) rootView.findViewById(R.id.dfrs_tv_saldo_no_emitido);
+        tvRangoFecha1 = (TextView) rootView.findViewById(R.id.dfrs_tv_fecha_rango1);
+        tvRangoFecha2 = (TextView) rootView.findViewById(R.id.dfrs_tv_fecha_rango2);
+        spinnerSucursales = (Spinner) rootView.findViewById(R.id.dfrs_spinner_sucursales);
+        btnBuscar = (Button) rootView.findViewById(R.id.dfrs_btn_buscar);
+        tvResultados = (TextView) rootView.findViewById(R.id.dfsc_tv_registros);
         spinnerSucursales.setOnItemSelectedListener(this);
         getData();
 

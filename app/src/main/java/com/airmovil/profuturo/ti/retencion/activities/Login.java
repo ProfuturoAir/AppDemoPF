@@ -300,7 +300,7 @@ public class Login extends AppCompatActivity {
             Config.idUsuario = CUSP;
 
             Log.d("DATOS A RECOLECTAR ->", " " + apellidoMaterno + " " + apellidoPaterno + " " + centroCosto + " " + claveConsar + " " + curp + " " + email + " " +
-                    fechaAltaConsar + " " + idRolEmpleado + " "+ " " + nombre + " " + numeroEmpleado + " " + rolEmpleado + " " + userId + " " );
+                    fechaAltaConsar + " idRolEmpleado" + idRolEmpleado + " " + nombre + " " + numeroEmpleado + " rolEmpleado" + rolEmpleado + " userId" + userId + " " );
             mySharePreferences.createLoginSession(apellidoMaterno, apellidoPaterno, sCentroCosto, claveConsar,curp, email, fechaAltaConsar, sIdRolEmpleado,nombre, numeroEmpleado, rolEmpleado, userId, CUSP);
         }catch (JSONException e){
             e.printStackTrace();

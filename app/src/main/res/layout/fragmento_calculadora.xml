@@ -5,15 +5,24 @@
     android:layout_height="match_parent"
     tools:context="com.airmovil.profuturo.ti.retencion.fragmento.Calculadora">
 
+    <WebView
+        android:layout_marginTop="-70dp"
+        android:id="@+id/webview01"
+        android:background="@android:color/white"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_weight="1">
+    </WebView>
+
     <LinearLayout
         android:id="@+id/ll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/icono_cara_triste"
+
             android:layout_gravity="center_horizontal"/>
         <TextView
             android:layout_width="match_parent"
@@ -25,14 +34,5 @@
             android:text="@string/texto_sin_conexion"
             android:textSize="40dp"/>
     </LinearLayout>
-
-    <WebView
-        android:layout_marginTop="-70dp"
-        android:id="@+id/webview01"
-        android:background="@android:color/white"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:layout_weight="1">
-    </WebView>
 
 </RelativeLayout>

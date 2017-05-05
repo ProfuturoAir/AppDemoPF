@@ -1,56 +1,32 @@
 package com.airmovil.profuturo.ti.retencion.Adapter;
 
-import android.app.Dialog;
-import android.app.Service;
 import android.content.Context;
-import android.graphics.Color;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsesores;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientes;
-import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteGerencias;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteSucursales;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
-import com.airmovil.profuturo.ti.retencion.helper.Connected;
-
-import com.airmovil.profuturo.ti.retencion.helper.EnviaMail;
+import com.airmovil.profuturo.ti.retencion.helper.ServicioEmailJSON;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteGerenciasModel;
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import com.airmovil.profuturo.ti.retencion.R;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
- * Created by cesarriver on 31/03/17.
+ * Created by tecnicoairmovil on 31/03/17.
  */
 
 public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
@@ -60,16 +36,22 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
     private Context mContext;
     private List<DirectorReporteGerenciasModel> list;
     private OnLoadMoreListener mOnLoadMoreListener;
-
     private boolean isLoading;
     private int visibleThreshold = 10;
     private int lastVisibleItem, totalItemCount;
     private RecyclerView mRecyclerView;
-    private Map<String, String> datos;
 
     private String mFechaInicio;
     private String mFechaFin;
 
+    /**
+     * Constructor
+     * @param mContext contexto
+     * @param list clase del modelo
+     * @param mRecyclerView contenendor del servicio
+     * @param mFechaInicio fecha inicio
+     * @param mFechaFin fecha final
+     */
     public DirectorReporteGerenciasAdapter(Context mContext, List<DirectorReporteGerenciasModel> list, RecyclerView mRecyclerView,  String mFechaInicio, String mFechaFin) {
         this.mContext = mContext;
         this.list = list;
@@ -98,6 +80,10 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
         });
     }
 
+    /**
+     * @param parent acceso para determinar que tipo de XML mostrara
+     * @return la vista XML de elementos o loading
+     */
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder vh;
@@ -111,17 +97,17 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
         return vh;
     }
 
+    /**
+     * Inplementa el contenido consumido
+     * @param holder accede a los elementos XML a mostrar
+     * @param position posicion de cada elementos comparado con el servicio
+     */
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof  MyViewHolder){
             final DirectorReporteGerenciasModel lista = list.get(position);
             final MyViewHolder myViewHolder = (MyViewHolder) holder;
-
-            String idGerencia = String.valueOf(lista.getIdGerencia());
-            char dato = idGerencia.charAt(0);
-            final String letra = Character.toString(dato);
-
-            myViewHolder.letra.setText(letra);
+            myViewHolder.letra.setText(String.valueOf(String.valueOf(lista.getIdGerencia()).charAt(0)));
             myViewHolder.idGerencia.setText("Gerencia:" + lista.getIdGerencia());
             myViewHolder.conCita.setText(" " + lista.getConCita() + " ");
             myViewHolder.sinCita.setText(" " + lista.getSinCita() + " ");
@@ -129,21 +115,11 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
             myViewHolder.noRetenido.setText(" " + lista.getNoEmitidas() + " ");
             myViewHolder.saldoRetenido.setText(": " + Config.nf.format(lista.getdSaldoRetenido()) + " ");
             myViewHolder.saldoNoRetenido.setText(" " + Config.nf.format(lista.getdSaldoRetenido()) + " ");
-            myViewHolder.porcentaje.setText(
-                    "Porcentaje: Emitidos " + Config.df.format((float)(lista.getEmitidas()*100)/(lista.getEmitidas()+lista.getNoEmitidas())) +"%  " +
-                    " | No emitidos " + Config.df.format((float)(lista.getNoEmitidas()*100)/(lista.getEmitidas()+lista.getNoEmitidas()))+"%");
+            myViewHolder.porcentaje.setText("Porcentaje: Emitidos " + Config.df.format((float)(lista.getEmitidas()*100)/(lista.getEmitidas()+lista.getNoEmitidas())) +"%  " + " | No emitidos " + Config.df.format((float)(lista.getNoEmitidas()*100)/(lista.getEmitidas()+lista.getNoEmitidas()))+"%");
             myViewHolder.tvClick.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     surgirMenu(v, lista);
-                }
-            });
-            myViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ReporteSucursales reporteSucursales = new ReporteSucursales();
-                    Director director = (Director) mRecyclerView.getContext();
-                    director.switchSucursales(reporteSucursales, lista.idGerencia, mFechaInicio, mFechaFin);
                 }
             });
         }else{
@@ -151,16 +127,26 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
         }
     }
 
+    /**
+     * @return el tamaño que del servicio REST
+     */
     @Override
     public int getItemCount() {
         return list.size();
     }
 
+    /**
+     * @param position verifica la posicion de elementos, si existen o no
+     * @return el tipo de vista
+     */
     @Override
     public int getItemViewType(int position) {
         return list.get(position) ==null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
     }
 
+    /**
+     * Loading comienza como un valor falso
+     */
     public void setLoaded() {
         isLoading = false;
     }
@@ -177,27 +163,10 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
         popup.show();
     }
 
-    public void fragmentJumpDatosUsuario(String idClienteCuenta, View view) {
-        Fragment fragmento = new ReporteSucursales();
-        if (view.getContext() == null)
-            return;
-        if (view.getContext() instanceof Director) {
-            Director director = (Director) view.getContext();
-
-            final Connected conected = new Connected();
-            if(conected.estaConectado(view.getContext())) {
-
-            }else{
-                Config.msj(view.getContext(),"Error conexión", "Sin Conexion por el momento.Cliente P-1.1.3");
-            }
-            director.switchContent(fragmento, idClienteCuenta);
-        }
-    }
-
-    public void fragmetoCambioSucursales(){
-
-    }
-
+    /**
+     * verifica si se ha consumido datos del servicio REST
+     * @param mOnLoadMoreListener
+     */
     public void setOnLoadMoreListener(OnLoadMoreListener mOnLoadMoreListener) {
         this.mOnLoadMoreListener = mOnLoadMoreListener;
     }
@@ -216,102 +185,22 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
 
                 case R.id.nav_sucursales:
                     ReporteSucursales reporteSucursales = new ReporteSucursales();
-                    Director director = (Director) mRecyclerView.getContext();
-                    director.switchSucursales(reporteSucursales, list.idGerencia, mFechaInicio, mFechaFin);
+                    Director d1 = (Director) mRecyclerView.getContext();
+                    //fragment 1. fechaInicio 2. fechaFin 3.idGerencia 4.idSucursal 5.idAsesor 6.numeroEmpleado 7.nombreEmpleado 8.numeroCuenta 9.cita 10.hora 11.idTramite
+                    d1.envioParametros(reporteSucursales, mFechaInicio, mFechaFin, list.idGerencia, 0, "", "","", "", false, "", 0);
                     return true;
                 case R.id.nav_asesor:
                     ReporteAsesores reporteAsesores = new ReporteAsesores();
-                    Director dt = (Director) mRecyclerView.getContext();
-                    dt.switchAsesoresFG(reporteAsesores, list.idGerencia, mFechaInicio, mFechaFin);
+                    Director d2 = (Director) mRecyclerView.getContext();
+                    d2.envioParametros(reporteAsesores, mFechaInicio, mFechaFin, list.idGerencia, 0, "", "","", "", false, "", 0);
                     return true;
                 case R.id.nav_clientes:
                     ReporteClientes reporteClientes = new ReporteClientes();
-                    Director dtr = (Director) mRecyclerView.getContext();
-                    dtr.switchClientesFG(reporteClientes, list.idGerencia, mFechaInicio, mFechaFin);
+                    Director d3 = (Director) mRecyclerView.getContext();
+                    d3.envioParametros(reporteClientes, mFechaInicio, mFechaFin, list.idGerencia, 0, "", "","", "", false, "", 0);
                     return true;
                 case R.id.nav_enviar_a_email:
-                    final Dialog dialog = new Dialog(mContext);
-                    dialog.setContentView(R.layout.custom_layout);
-
-                    Button btn = (Button) dialog.findViewById(R.id.dialog_btn_enviar);
-                    final Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
-
-                    // TODO: Spinner
-                    ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(mContext, R.layout.spinner_item_azul, Config.EMAIL);
-                    adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
-                    spinner.setAdapter(adapterSucursal);
-
-                    btn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            final EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
-
-                            final String datoEditText = editText.getText().toString();
-                            final String datoSpinner = spinner.getSelectedItem().toString();
-
-                            Log.d("DATOS USER","SPINNER: "+datoEditText+" datosSpinner: "+ datoSpinner);
-                            if(datoEditText == "" || datoSpinner == "Seleciona un email"){
-                                Config.msj(mContext, "Error", "Ingresa email valido");
-                            }else{
-                                String email = datoEditText+"@"+datoSpinner;
-                                Connected connected = new Connected();
-                                final InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Service.INPUT_METHOD_SERVICE);
-                                if(connected.estaConectado(mContext)){
-                                    JSONObject obj = new JSONObject();
-                                    try {
-                                        JSONObject rqt = new JSONObject();
-                                        rqt.put("correo", email);
-                                        rqt.put("detalle", true);
-                                        rqt.put("idGerencia", list.getIdGerencia());
-                                        JSONObject periodo = new JSONObject();
-                                        periodo.put("fechaFin", mFechaFin);
-                                        periodo.put("fechaInicio", mFechaInicio);
-                                        rqt.put("periodo", periodo);
-                                        rqt.put("usuario", Config.usuarioCusp(mRecyclerView.getContext()));
-                                        obj.put("rqt", rqt);
-                                        Log.d("datos", "REQUEST-->" + obj);
-                                    } catch (JSONException e) {
-                                        Config.msj(mContext, "Error", "Error al formar los datos");
-                                    }
-                                    EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_GERENCIA,mContext,new EnviaMail.VolleyCallback() {
-
-                                        @Override
-                                        public void onSuccess(JSONObject result) {
-                                            Log.d("RESPUESTA DIRECTOR", result.toString());
-                                            int status;
-
-                                            try {
-                                                status = result.getInt("status");
-                                            }catch(JSONException error){
-                                                status = 400;
-                                            }
-
-                                            Log.d("EST","EE: "+status);
-                                            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-                                            if(status == 200) {
-                                                Config.msj(mContext, "Enviando", "Se ha enviado el mensaje al destino");
-                                                //Config.msjTime(mContext, "Enviando", "Se ha enviado el mensaje al destino", 4000);
-                                                dialog.dismiss();
-                                            }else{
-                                                Config.msj(mContext, "Error", "Ups algo salio mal =(");
-                                                dialog.dismiss();
-                                            }
-                                            //db.addUserCredits(fk_id_usuario,result);
-                                        }
-                                        @Override
-                                        public void onError(String result) {
-                                            Log.d("RESPUESTA ERROR", result);
-                                            Config.msj(mContext, "Error en conexión", "Por favor, revisa tu conexión a internet ++");
-                                            //db.addUserCredits(fk_id_usuario, "ND");
-                                        }
-                                    });
-                                }else{
-                                    Config.msj(mContext, "Error en conexión", "Por favor, revisa tu conexión a internet");
-                                }
-                            }
-                        }
-                    });
-                    dialog.show();
+                    ServicioEmailJSON.enviarEmailReporteGerencias(mContext, true, list.idGerencia, mFechaInicio, mFechaFin);
                     return true;
                 default:
             }
@@ -319,22 +208,9 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public void fragmentJumpDatos(View view, String id) {
-        Fragment fragmento = new ReporteSucursales();
-        if (view.getContext() == null)
-            return;
-        if (view.getContext() instanceof Director) {
-            Director director = (Director) view.getContext();
-
-            final Connected conected = new Connected();
-            if(conected.estaConectado(view.getContext())) {
-            }else{
-                Config.msj(view.getContext(),"Error conexión", "Sin Conexion por el momento.Cliente P-1.1.3");
-            }
-            director.switchContent(fragmento, id);
-        }
-    }
-
+    /**
+     * mostrara XML al cargar contenido
+     */
     public static class LoadingViewHolder extends RecyclerView.ViewHolder {
         public ProgressBar progressBar;
 
@@ -344,6 +220,9 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
         }
     }
 
+    /**
+     * mostrara XML a settear dentro del RecyclerView
+     */
     public class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView letra, idGerencia, conCita, sinCita, retenido, noRetenido, saldoRetenido, saldoNoRetenido, porcentaje;
         public CardView cardView;
