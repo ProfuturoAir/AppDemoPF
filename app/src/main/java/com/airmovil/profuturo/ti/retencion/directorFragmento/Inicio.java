@@ -168,6 +168,7 @@ public class Inicio extends Fragment {
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
+
     /**
      * Setear las variables de xml
      */
@@ -185,6 +186,9 @@ public class Inicio extends Fragment {
         btnFiltro = (Button) rootView.findViewById(R.id.dfi_btn_filtro);
     }
 
+    /**
+     * Se utiliza para cololar datos recibidos entre una busqueda(por ejemplo: fechas)
+     */
     private void argumentos(){
         if(getArguments() != null){
             tvFecha.setText(getArguments().getString(ARG_PARAM1) + " - " + getArguments().getString(ARG_PARAM2));
@@ -209,8 +213,8 @@ public class Inicio extends Fragment {
     }
 
     /**
-     *
-     * @param
+     * Envio de datos por REST jsonObject
+     * @param primerPeticion valida que el proceso sea true
      */
     public void sendJson(final boolean primerPeticion){
         if (primerPeticion)

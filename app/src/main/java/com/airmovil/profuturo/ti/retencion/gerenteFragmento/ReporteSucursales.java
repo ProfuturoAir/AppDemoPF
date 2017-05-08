@@ -271,8 +271,6 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
             }
         }
         int position=0;
-        Log.d(TAG, "**-->" + idSucursal);
-        Log.d(TAG, "**-->" + position);
         if(idSucursal!=0){
             int size = id_sucursales.size();
             for(int i=0; i < id_sucursales.size(); i++) {
@@ -375,7 +373,6 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         }catch (JSONException e){
             e.printStackTrace();
         }
-
         tvEmitidas.setText("" + emitidos);
         tvNoEmitidas.setText("" + noEmitido);
         tvSaldoEmitido.setText("" + Config.nf.format(saldoEmitido));
@@ -435,7 +432,6 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         }catch (JSONException e){
             e.printStackTrace();
         }
-
         adapter.notifyDataSetChanged();
         adapter.setLoaded();
     }

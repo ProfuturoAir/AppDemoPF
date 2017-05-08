@@ -268,6 +268,9 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * Setear las variables de xml
+     */
     private void variables(){
         connected = new Connected();
         gerencias = new ArrayList<String>();

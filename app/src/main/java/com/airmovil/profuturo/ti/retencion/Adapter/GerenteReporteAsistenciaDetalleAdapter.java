@@ -1,7 +1,6 @@
 package com.airmovil.profuturo.ti.retencion.Adapter;
 
 import android.content.Context;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,10 +10,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.activities.Asesor;
-import com.airmovil.profuturo.ti.retencion.asesorFragmento.DatosAsesor;
-import com.airmovil.profuturo.ti.retencion.helper.Config;
-import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.GerenteReporteAsistenciaDetalleModel;
 
@@ -36,6 +31,12 @@ public class GerenteReporteAsistenciaDetalleAdapter extends RecyclerView.Adapter
     private int lastVisibleItem, totalItemCount;
     private RecyclerView mRecyclerView;
 
+    /**
+     * Constructor
+     * @param mContext contexto
+     * @param list clase del modelo
+     * @param mRecyclerView contenendor del servicio
+     */
     public GerenteReporteAsistenciaDetalleAdapter(Context mContext, List<GerenteReporteAsistenciaDetalleModel> list, RecyclerView mRecyclerView) {
         this.mContext = mContext;
         this.list = list;
@@ -61,6 +62,11 @@ public class GerenteReporteAsistenciaDetalleAdapter extends RecyclerView.Adapter
         });
     }
 
+
+    /**
+     * @param parent acceso para determinar que tipo de XML mostrara
+     * @return la vista XML de elementos o loading
+     */
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder vh;
@@ -74,83 +80,74 @@ public class GerenteReporteAsistenciaDetalleAdapter extends RecyclerView.Adapter
         return vh;
     }
 
+    /**
+     * Inplementa el contenido consumido
+     * @param holder accede a los elementos XML a mostrar
+     * @param position posicion de cada elementos comparado con el servicio
+     */
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof MyViewHolder){
             final GerenteReporteAsistenciaDetalleModel lista = list.get(position);
             final MyViewHolder myholder = (MyViewHolder) holder;
-
             myholder.campoFechaDetalle.setText(lista.getFechaAsistencia());
             myholder.campoEntradasHoraDetalle.setText(lista.getEntradaHora());
             myholder.campoEntradasCoordenadasDetalle.setText("Coordenadas: " + lista.getEntradaLatitud() + ", " + lista.getEntradaLongitud());
-
             myholder.campoHoraComidasDetalle.setText(lista.getComidaHora() + " - " + lista.getComidaSalida());
             myholder.campoComidasCoordenadasDetalle.setText("Coordenadas: " + lista.getComidaLatitud() + ", " + lista.getComidaLongitud());
-
             myholder.campoHoraSalidasDetalle.setText(lista.getSalidaHora());
             myholder.campoSalidasCoordenadasDetalle.setText("Coordenadas: " + lista.getSalidaLatitud() + ", " + lista.getSalidaLongitud());
-
-            /*myholder.campoNombre.setText(lista.getClienteNombre());
-            myholder.campoCuenta.setText(lista.getClienteCuenta());
-            char nombre = lista.getClienteNombre().charAt(0);
-            final String pLetra = Character.toString(nombre);
-            myholder.campoLetra.setText(pLetra);
-
-            myholder.cardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    fragmentJumpDatosUsuario(pLetra, v);
-                }
-            });*/
         } else{
             ((LoadingViewHolder) holder).progressBar.setIndeterminate(true);
         }
     }
 
+    /**
+     * @return el tamaño que del servicio REST
+     */
     @Override
     public int getItemCount() {
         return list.size();
     }
 
+    /**
+     * @param position verifica la posicion de elementos, si existen o no
+     * @return el tipo de vista
+     */
     @Override
     public int getItemViewType(int position) {
         return list.get(position) ==null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
     }
 
+    /**
+     * Loading comienza como un valor falso
+     */
     public void setLoaded() {
         isLoading = false;
     }
 
+    /**
+     * verifica si se ha consumido datos del servicio REST
+     * @param mOnLoadMoreListener
+     */
     public void setOnLoadMoreListener(OnLoadMoreListener mOnLoadMoreListener) {
         this.mOnLoadMoreListener = mOnLoadMoreListener;
     }
 
-    public void fragmentJumpDatosUsuario(String idClienteCuenta, View view) {
-        Fragment fragmento = new DatosAsesor();
-        if (view.getContext() == null)
-            return;
-        if (view.getContext() instanceof Asesor) {
-            Asesor asesor = (Asesor) view.getContext();
-
-            final Connected conected = new Connected();
-            if(conected.estaConectado(view.getContext())) {
-
-            }else{
-                Config.msj(view.getContext(),"Error conexión", "Sin Conexion por el momento.Cliente P-1.1.3");
-            }
-            asesor.switchContent(fragmento, idClienteCuenta);
-        }
-    }
-
+    /**
+     * mostrara XML al cargar contenido
+     */
     public static class LoadingViewHolder extends RecyclerView.ViewHolder {
         public ProgressBar progressBar;
-
         public LoadingViewHolder(View itemView) {
             super(itemView);
             progressBar = (ProgressBar) itemView.findViewById(R.id.loading);
         }
     }
 
+    /**
+     * mostrara XML a settear dentro del RecyclerView
+     */
     public class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView campoFechaDetalle;
         public TextView campoEntradasHoraDetalle, campoEntradasCoordenadasDetalle;

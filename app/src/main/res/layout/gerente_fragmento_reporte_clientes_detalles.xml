@@ -10,7 +10,7 @@
         android:orientation="vertical">
         <TextView style="@style/tituloProceso" android:text="Cliente " />
         <LinearLayout style="@style/contenedorPrimeraLetraNombre">
-            <TextView android:id="@+id/ggfrasd_tv_letra"  style="@style/primeraLetra"/>
+            <TextView android:id="@+id/gf_tv_letra"  style="@style/primeraLetra"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -18,14 +18,14 @@
                 android:layout_weight="1"
                 android:layout_marginLeft="20dp">
                 <TextView
-                    android:id="@+id/ggfrasd_tv_nombre_asesor"
+                    android:id="@+id/gf_tv_nombre_asesor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="18dp"
                     android:textStyle="bold"
                     android:text="Nombre del Asesor"/>
                 <TextView
-                    android:id="@+id/ggfrasd_tv_numero_empleado_asesor"
+                    android:id="@+id/gf_tv_numero_empleado_asesor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="16dp"
@@ -35,8 +35,7 @@
         </LinearLayout>
 
         <LinearLayout style="@style/cabeceraLista">
-            <TextView style="@style/tituloLista" android:text="@string/texto_gerencias" android:id="@+id/ggfrasd_tv_fecha"/>
-            <TextView android:id="@+id/gfrcd_tv_registros" style="@style/campoCantidadesMail"/>
+            <TextView style="@style/tituloLista" android:id="@+id/gf_tv_fecha"/>
         </LinearLayout>
 
         <!-- TODO: Contenido general -->

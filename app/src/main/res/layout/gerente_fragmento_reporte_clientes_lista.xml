@@ -49,6 +49,6 @@
             android:layout_height="wrap_content"
             android:background="#f6f6f6"
             android:layout_gravity="center_vertical"
-            android:drawableTop="@drawable/icono_menu_vertical"/>
+            android:src="@drawable/icono_menu_vertical"/>
     </LinearLayout>
 </android.support.v7.widget.CardView>

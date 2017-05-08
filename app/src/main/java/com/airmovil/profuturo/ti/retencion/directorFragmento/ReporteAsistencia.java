@@ -543,7 +543,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                         pagina = Config.pidePagina(getDatos1);
                         sendJson(false);
                     }
-                }, 5000);
+                }, Config.TIME_HANDLER);
             }
         });
     }

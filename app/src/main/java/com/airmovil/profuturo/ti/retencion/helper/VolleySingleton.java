@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Juan on 5/2/17.
+ * Created by tecnicoairmovil on 5/2/17.
  */
 
 public class VolleySingleton {
@@ -105,16 +105,7 @@ public class VolleySingleton {
     }
 
     public static synchronized VolleySingleton getInstance(IResult resultCallback, Context context) {
-
-
-        //if (mInstance == null) {
-            mInstance = new VolleySingleton(resultCallback, context);
-       /*
-        }else{
-            mInstance.setCallback(resultCallback);
-            mInstance.setContext(context);
-        }
-        */
+        mInstance = new VolleySingleton(resultCallback, context);
         return mInstance;
 
     }
@@ -129,8 +120,6 @@ public class VolleySingleton {
 
     public RequestQueue getRequestQueue() {
         if (Config.mRequestQueue == null) {
-            // getApplicationContext() is key, it keeps you from leaking the
-            // Activity or BroadcastReceiver if someone passes one in.
             Config.mRequestQueue = Volley.newRequestQueue(mContext.getApplicationContext());
         }
         return Config.mRequestQueue;

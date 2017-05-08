@@ -23,13 +23,13 @@
         </LinearLayout>
 
         <LinearLayout style="@style/linearLayoutHorizontal">
-            <LinearLayout style="@style/contenedorSpinner">
+            <!--LinearLayout style="@style/contenedorSpinner">
                 <Spinner android:id="@+id/ggfrc_spinner_gerencia"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:backgroundTint="@color/colorWhite"/>
                 <TextView style="@style/linea"/>
-            </LinearLayout>
+            </LinearLayout-->
             <LinearLayout style="@style/contenedorSpinner">
                 <Spinner android:id="@+id/ggfrc_spinner_sucursal"
                     android:layout_width="match_parent"

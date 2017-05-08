@@ -90,17 +90,13 @@ public class DirectorReporteAsistenciaDetalleAdapter extends RecyclerView.Adapte
         if(holder instanceof MyViewHolder){
             final DirectorReporteAsistenciaDetalleModel lista = list.get(position);
             final MyViewHolder myholder = (MyViewHolder) holder;
-
             myholder.campoFechaDetalle.setText(lista.getFechaAsistencia());
             myholder.campoEntradasHoraDetalle.setText(lista.getEntradaHora());
             myholder.campoEntradasCoordenadasDetalle.setText("Coordenadas: " + lista.getEntradaLatitud() + ", " + lista.getEntradaLongitud());
-
             myholder.campoHoraComidasDetalle.setText(lista.getComidaHora() + " - " + lista.getComidaSalida());
             myholder.campoComidasCoordenadasDetalle.setText("Coordenadas: " + lista.getComidaLatitud() + ", " + lista.getComidaLongitud());
-
             myholder.campoHoraSalidasDetalle.setText(lista.getSalidaHora());
             myholder.campoSalidasCoordenadasDetalle.setText("Coordenadas: " + lista.getSalidaLatitud() + ", " + lista.getSalidaLongitud());
-
         } else{
             ((LoadingViewHolder) holder).progressBar.setIndeterminate(true);
         }

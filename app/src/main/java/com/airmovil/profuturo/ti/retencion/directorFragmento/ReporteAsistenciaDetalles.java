@@ -394,6 +394,9 @@ public class ReporteAsistenciaDetalles extends Fragment {
         adapter.setLoaded();
     }
 
+    /**
+     * Se utiliza para cololar datos recibidos entre una busqueda(por ejemplo: fechas)
+     */
     private void argumentos(){
         if(getArguments() != null){
             tvFecha.setText(getArguments().getString(ARG_PARAM2) + " - " + getArguments().getString(ARG_PARAM3));

@@ -249,16 +249,9 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
             @Override
             public void onClick(View v) {
                 boolean argumentos = (getArguments()!=null);
-                ServicioEmailJSON.enviarEmailReporteClientes(getContext(),
-                        (argumentos)?getArguments().getInt(ARG_PARAM3):0,
-                        (argumentos)?getArguments().getInt(ARG_PARAM1):0,
-                        (argumentos)?getArguments().getInt(ARG_PARAM9):0,
-                        (argumentos)?getArguments().getString(ARG_PARAM2):"",
-                        (argumentos)?getArguments().getInt(ARG_PARAM8):0,
-                        (argumentos)?getArguments().getString(ARG_PARAM5):"",
-                        (argumentos)?getArguments().getString(ARG_PARAM6):Dialogos.fechaActual(),
-                        (argumentos)?getArguments().getString(ARG_PARAM7):Dialogos.fechaSiguiente(),
-                        (argumentos) ? true:false );
+                ServicioEmailJSON.enviarEmailReporteClientes(getContext(), (argumentos)?getArguments().getInt(ARG_PARAM3):0, (argumentos)?getArguments().getInt(ARG_PARAM1):0, (argumentos)?getArguments().getInt(ARG_PARAM9):0,
+                        (argumentos)?getArguments().getString(ARG_PARAM2):"", (argumentos)?getArguments().getInt(ARG_PARAM8):0, (argumentos)?getArguments().getString(ARG_PARAM5):"",
+                        (argumentos)?getArguments().getString(ARG_PARAM6):Dialogos.fechaActual(), (argumentos)?getArguments().getString(ARG_PARAM7):Dialogos.fechaSiguiente(), (argumentos) ? true:false );
             }
         });
 

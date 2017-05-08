@@ -2,6 +2,7 @@ package com.airmovil.profuturo.ti.retencion.helper;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.View;
@@ -104,6 +105,28 @@ public class Dialogos extends Activity{
             public void onClick(DialogInterface dialog, int which) {}
         });
         dialogoAlert.create().show();
+    }
+
+    public  static void dialogoVerificarConexionInternet(Context context){
+        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_sin_wifi));
+        progressDialog.setTitle(context.getResources().getString(R.string.error_conexion));
+        progressDialog.setMessage(context.getResources().getString(R.string.msj_error_conexion_sin_proceso));
+        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog.dismiss();
+                    }
+                });
+        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, context.getResources().getString(R.string.cancelar),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        progressDialog.show();
     }
 
 }

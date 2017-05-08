@@ -218,7 +218,7 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
      */
     public class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView campoLetra, campoNombreCliente, campoCuentaCliente, campoAsesorCliente, campoConCitaCliente, campoSinCitaCliente, campoRetenidoCliente, campoNoRetenidoCliente, campoSucursalCliente;
-        public ImageView btn;
+            public ImageView btn;
         public CardView cardView;
         public MyViewHolder(View view){
             super(view);

@@ -14,10 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Spinner;
-import android.widget.TextView;
-
-//import com.airmovil.profuturo.ti.retencion.Adapter.CitasClientesAdapter;
 import com.airmovil.profuturo.ti.retencion.Adapter.EnviarPendientesAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
@@ -28,144 +24,64 @@ import com.airmovil.profuturo.ti.retencion.model.EnviosPendientesModel;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ProcesoImplicacionesPendientes.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ProcesoImplicacionesPendientes#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ProcesoImplicacionesPendientes extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     private OnFragmentInteractionListener mListener;
-
     private View rootView;
-
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
-    private RecyclerView.Adapter recyclerViewAdapter;
     private EnviarPendientesAdapter adapter;
-
     private Button btnEnviarPendientes;
-
     private List<EnviosPendientesModel> getDatos1;
-
     private SQLiteHandler db;
 
     public ProcesoImplicacionesPendientes() {
-        // Required empty public constructor
+        /* Se requiere un constructor vacio */
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProcesoImplicacionesPendientes.
+     * El sistema lo llama cuando crea el fragmento
+     * @param savedInstanceState, llama las variables en el bundle
      */
-    // TODO: Rename and change types and number of parameters
-    public static ProcesoImplicacionesPendientes newInstance(String param1, String param2) {
-        ProcesoImplicacionesPendientes fragment = new ProcesoImplicacionesPendientes();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = new SQLiteHandler(getContext());
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
+    /**
+     * @param view regresa la vista
+     * @param savedInstanceState parametros a enviar para conservar en el bundle
+     */
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        // TODO: Casteo
         rootView = view;
-
-
         btnEnviarPendientes = (Button) rootView.findViewById(R.id.gfcc_btn_enviar_pendientes);
-
         // TODO: modelos
         Cursor todos = db.getAllPending();
-        Log.d("HOLA","TODOS: "+todos);
         // TODO: Recyc  ler
         recyclerView = (RecyclerView) rootView.findViewById(R.id.grecyclerview_pendientes_envio);
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-
         getDatos1 = new ArrayList<>();
-
-
         try {
             while (todos.moveToNext()) {
                 EnviosPendientesModel getDatos2 = new EnviosPendientesModel();
-
                 getDatos2.setId_tramite(todos.getInt(0));
                 getDatos2.setNombreCliente(todos.getString(1));
                 getDatos2.setNumeroCuenta(todos.getString(2));
                 getDatos2.setHora(todos.getString(3));
-
-                Log.d("HOLA","EL ID : "+todos.getInt(0));
                 getDatos1.add(getDatos2);
             }
         } finally {
             todos.close();
         }
-        /*String [] columns = new String[] {
-                db.FK_ID_TRAMITE,
-                db.KEY_NOMBRE,
-                db.KEY_NUMERO_CUENTA,
-                db.KEY_HORA
-        };
-        int [] widgets = new int[] {
-                R.id.personID,
-                R.id.personName
-        };*/
 
         Connected connected = new Connected();
         final EnviaJSON enviaPrevio = new EnviaJSON();
-        /*
-        if(connected.estaConectado(getContext())){
-            Cursor pendientes = db.getAllPending();
-                            try {
-                                while (pendientes.moveToNext()) {
-                                    //EnviosPendientesModel getDatos2 = new EnviosPendientesModel();
-
-                                    Log.d("HOLA","EL ID : "+pendientes.getString(0));
-                                    //if(){
-                                        Log.d("Eliminado","Exitoso");
-                                        //getDatos1.remove(pendientes.getString(0));
-                                    enviaPrevio.sendPrevios(pendientes.getString(0), getContext());
-                                    //Log.d("Respuesta","AQUI: "+enviaPrevio.sendPrevios(pendientes.getString(0), getContext()));
-                                }
-                            } finally {
-                                pendientes.close();
-                            }
-        }
-        */
-
-
         adapter = new EnviarPendientesAdapter(rootView.getContext(), getDatos1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
-
 
         if(getDatos1.size() < 1)
             return;
@@ -173,7 +89,6 @@ public class ProcesoImplicacionesPendientes extends Fragment {
         btnEnviarPendientes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Connected connected = new Connected();
                 if(connected.estaConectado(getContext())){
                     android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
@@ -186,34 +101,12 @@ public class ProcesoImplicacionesPendientes extends Fragment {
                         public void onClick(DialogInterface dialog, int which) {
                             Log.d("ENVIANDO","Se han enviado todos los pendientes");
                             final EnviaJSON enviaPrevio = new EnviaJSON();
-
-                            //Log.d("Eliminado","Exitoso "+getDatos1);
-
-                            for(int i=0;i<getDatos1.size();i++)
-                            {
+                            for(int i=0;i<getDatos1.size();i++) {
                                 String iT = String.valueOf(getDatos1.get(i).getId_tramite());
-                                Log.d("HOLA","EL ID : "+ iT);
                                 enviaPrevio.sendPrevios(iT, getContext());
                                 getDatos1.remove(i);
                                 adapter.notifyDataSetChanged();
                             }
-
-                            /*Cursor pendientes = db.getAllPending();
-                            try {
-                                while (pendientes.moveToNext()) {
-                                    //EnviosPendientesModel getDatos2 = new EnviosPendientesModel();
-
-                                    Log.d("HOLA","EL ID : "+pendientes.getString(0));
-                                    //if(){
-                                        Log.d("Eliminado","Exitoso");
-                                        //getDatos1.remove(pendientes.getString(0));
-                                    enviaPrevio.sendPrevios(pendientes.getString(0), getContext());
-                                    //Log.d("Respuesta","AQUI: "+enviaPrevio.sendPrevios(pendientes.getString(0), getContext()));
-                                }
-                            } finally {
-                                pendientes.close();
-                            }*/
-
                         }
                     });
                     dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -231,19 +124,28 @@ public class ProcesoImplicacionesPendientes extends Fragment {
         });
     }
 
+    /**
+     * Se lo llama para crear la jerarquía de vistas asociada con el fragmento.
+     * @param inflater inflacion del xml
+     * @param container contenedor del ml
+     * @param savedInstanceState datos guardados
+     * @return el fragmento declarado DIRECTOR INICIO
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.gerente_fragment_proceso_implicaciones_pendientes, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
 
+    /**
+     * Reciba una llamada cuando se asocia el fragmento con la actividad
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -252,6 +154,9 @@ public class ProcesoImplicacionesPendientes extends Fragment {
         }
     }
 
+    /**
+     * Se lo llama cuando se desasocia el fragmento de la actividad.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -259,17 +164,12 @@ public class ProcesoImplicacionesPendientes extends Fragment {
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * Esta interfaz debe ser implementada por actividades que contengan esta
+     * Para permitir que se comunique una interacción en este fragmento
+     * A la actividad y potencialmente otros fragmentos contenidos en ese
+     * actividad.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }
