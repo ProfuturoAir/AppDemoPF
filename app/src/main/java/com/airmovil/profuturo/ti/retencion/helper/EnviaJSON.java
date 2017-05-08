@@ -311,9 +311,7 @@ public class EnviaJSON {
      */
     private void sendJsonFirma(final boolean primerPeticion,final String idTramite,int estatusTramite,String firmaString,Double latitud,Double longitud,final Context context) {
         final ProgressDialog loading;
-
         JSONObject obj = new JSONObject();
-
         // TODO: Formacion del JSON request
         try{
             JSONObject rqt = new JSONObject();
@@ -329,15 +327,11 @@ public class EnviaJSON {
         } catch (JSONException e){
             Config.msj(context, "Error", "Error al formar los datos");
         }
-        // creacion del json object request
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_FIRMA, obj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        //Dismissing progress dialog
                         if (primerPeticion) {
-                            //loading.dismiss();
-                            Log.d(TAG, "RESPONSE: ->" + response);
                             try {
                                 statusRs = response.getInt("status");
                             } catch (JSONException e) {
@@ -374,12 +368,9 @@ public class EnviaJSON {
         MySingleton.getInstance(context).addToRequestQueue(jsonArrayRequest);
     }
 
-
     private void sendJsonDocumento(final boolean primerPeticion,final String idTramite,String fechaHoraFin,int estatusTramite,String ineIfe,String numeroCuenta,String usuario,Double latitud,Double longitud,final Context context) {
         final ProgressDialog loading;
-
         JSONObject obj = new JSONObject();
-
         // TODO: Formacion del JSON request
         try{
             JSONObject rqt = new JSONObject();
@@ -398,7 +389,6 @@ public class EnviaJSON {
         } catch (JSONException e){
             Config.msj(context, "Error", "Error al formar los datos");
         }
-        // Creacion del json array request
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_DOCUMENTO_IFE_INE, obj,
                 new Response.Listener<JSONObject>() {
                     @Override

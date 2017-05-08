@@ -45,15 +45,10 @@ public class DatosAsesor extends Fragment {
 
     public DatosAsesor() {/* Required empty public constructor */}
 
-    public static DatosAsesor newInstance(String param1, String param2) {
-        DatosAsesor fragment = new DatosAsesor();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    /**
+     * El sistema lo llama cuando crea el fragmento
+     * @param savedInstanceState, llama las variables en el bundle
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -181,10 +176,19 @@ public class DatosAsesor extends Fragment {
         mListener = null;
     }
 
+    /**
+     * Esta interfaz debe ser implementada por actividades que contengan esta
+     * Para permitir que se comunique una interacción en este fragmento
+     * A la actividad y potencialmente otros fragmentos contenidos en ese
+     * actividad.
+     */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * Se utiliza este metodo para el control de la tecla de retroceso
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -222,6 +226,9 @@ public class DatosAsesor extends Fragment {
         });
     }
 
+    /**
+     * Se utiliza para cololar datos recibidos entre una busqueda(por ejemplo: fechas)
+     */
     private void argumentos(){
         if(getArguments()!=null){
             idClienteCuenta =getArguments().getString("idClienteCuenta");
@@ -231,6 +238,9 @@ public class DatosAsesor extends Fragment {
         }
     }
 
+    /**
+     * Setear las variables de xml
+     */
     private void variables(){
         tvNombre = (TextView) rootView.findViewById(R.id.gfda_tv_nombre_usuario);
         tvNumeroEmpleado = (TextView) rootView.findViewById(R.id.gfda_tv_numero_empleado);
@@ -240,6 +250,10 @@ public class DatosAsesor extends Fragment {
         connected = new Connected();
     }
 
+    /**
+     * Envio de datos por REST jsonObject
+     * @param primerPeticion valida que el proceso sea true
+     */
     private void sendJson(final boolean primerPeticion) {
         if (primerPeticion)
             loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
@@ -258,6 +272,9 @@ public class DatosAsesor extends Fragment {
         volleySingleton.postDataVolley("primerPaso", Config.URL_CONSULTAR_DATOS_ASESOR, obj);
     }
 
+    /**
+     * @param obj recibe el obj json de la peticion
+     */
     private void primerPaso(JSONObject obj) {
         Log.d(TAG, "-----> >" + obj);
         String nombreCliente = "";

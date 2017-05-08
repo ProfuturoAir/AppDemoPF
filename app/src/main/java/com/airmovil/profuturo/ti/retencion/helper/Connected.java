@@ -7,7 +7,6 @@ import android.net.NetworkInfo;
 public class Connected {
 
     /**
-     *
      * @param context establece el estado actual de la apliacion para hacer uso con esta clase
      * @return el estado de la conecion si es wifi o redMovil
      */
@@ -18,8 +17,7 @@ public class Connected {
     }
 
     /**
-     *
-     * @param context
+     * @param context establece el estado actual de la apliacion para hacer uso con esta clase
      * @return el estado de la conexion wifi
      */
     protected Boolean conectadoWifi(Context context) {
@@ -36,8 +34,7 @@ public class Connected {
     }
 
     /**
-     *
-     * @param context
+     * @param context establece el estado actual de la apliacion para hacer uso con esta clase
      * @return el estado de la conexion movil
      */
     protected Boolean conectadoRedMovil(Context context) {

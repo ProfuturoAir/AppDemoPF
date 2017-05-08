@@ -93,7 +93,6 @@ public class DrawingView extends View {
     }
 
     /**
-     *
      * @return activo si se ha llamado i detenido el drawingView
      */
     public boolean isActive(){
@@ -101,7 +100,6 @@ public class DrawingView extends View {
     }
 
     /**
-     *
      * @param event
      * @return Registrar toques de usuario como acción de dibujo
      */

@@ -43,7 +43,6 @@ import java.util.Map;
 
 public class Login extends AppCompatActivity {
     public static final String TAG = Login.class.getSimpleName();
-//    private SessionManager sessionManager;
     private EditText _numeroEmpleadom, _contrasenia;
     private String numeroEmpleado, password;
     private Button btnIngresar;

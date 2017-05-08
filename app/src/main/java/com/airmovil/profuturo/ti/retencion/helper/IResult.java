@@ -5,7 +5,7 @@ import com.android.volley.VolleyError;
 import org.json.JSONObject;
 
 /**
- * Created by Juan on 5/2/17.
+ * Created by tecnicoAirmovil on 5/2/17.
  */
 
 public interface IResult {

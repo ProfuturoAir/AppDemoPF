@@ -34,10 +34,7 @@ public class Dialogos extends Activity{
         return String.valueOf(dia+1)+"-"+String.valueOf(mes + 1)+"-"+String.valueOf(anio);
     }
 
-
-
     public static void dialogoFechaInicio(final Context context, final TextView textView){
-
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,6 +121,25 @@ public class Dialogos extends Activity{
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
+                    }
+                });
+        progressDialog.show();
+    }
+
+    /**
+     * Muestra mensaje de fechas datos vacios
+     * @param context referencia de la llamada, fragmento o actividad
+     */
+    public static final void dialogoDatosVacios(Context context){
+        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_peligro));
+        progressDialog.setTitle(context.getResources().getString(R.string.error_datos_vacios));
+        progressDialog.setMessage(context.getResources().getString(R.string.msj_error_datos_vacios));
+        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog.dismiss();
                     }
                 });
         progressDialog.show();

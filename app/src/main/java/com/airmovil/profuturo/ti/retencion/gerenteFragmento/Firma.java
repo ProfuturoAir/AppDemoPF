@@ -50,20 +50,9 @@ import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link Firma.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link Firma#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class Firma extends Fragment implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks{
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
     private static final int REQUEST_LOCATION = 0;
     private DrawingView dvFirma;
     private View mView;
@@ -86,9 +75,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
     String numeroDeCuenta;
     String hora;
 
-    public Firma() {
-        // Required empty public constructor
-    }
+    public Firma() {/* Se requiere un constructor vacio */}
 
     /**
      * Use this factory method to create a new instance of
@@ -212,7 +199,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dvFirma.setDrawingCacheEnabled(true);
-                                final String base64 = encodeTobase64(dvFirma.getDrawingCache());
+                                final String base64 = Config.encodeTobase64(getContext(), dvFirma.getDrawingCache());
                                 Bitmap emBit = Bitmap.createBitmap(dvFirma.getWidth(), dvFirma.getHeight(), Bitmap.Config.ARGB_8888);
                                 Log.d("BASE64-->", base64);
                                 dvFirma.setDrawingCacheEnabled(false);
@@ -413,57 +400,6 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
         }*/
     }
 
-    public String encodeTobase64(Bitmap image) {
-        //Bitmap immagex = image;
-        /*ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        immagex.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] b = baos.toByteArray();
-        String imageEncoded = android.util.Base64.encodeToString(b, android.util.Base64.DEFAULT);*/
-
-        float bmW=image.getWidth();
-        float bmH= image.getHeight();
-
-        Log.d("PIXELES", "ORIGINAL ANCHO"+bmW+"Original ALTO:"+bmH );
-
-        int widthPixels = getContext().getResources().getDisplayMetrics().widthPixels;
-
-        Bitmap resize;
-        Log.d("PIXELES", "TELEFONO"+widthPixels );
-        if(bmW>=widthPixels){
-            float newWidth=widthPixels;
-            float newHeight=(bmH/bmW)*widthPixels;
-
-            Log.d("PIXELES", "NUEVO ANCHO" + widthPixels + "NUEVO ALTO:" + newHeight + " W" + bmW + " H" + bmH);
-            //resize the bit map
-            resize = Bitmap.createBitmap(image,0,0,(int)newWidth,(int)newHeight);
-            //resize =Bitmap.createScaledBitmap(image, 200,200, true);
-        }else{
-            Log.d("PIXELES", "PASA SIN CAMBIO" );
-            resize = image;
-        }
-
-        //resize =Bitmap.createScaledBitmap(image, 500,500, true);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        resize.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] b = baos.toByteArray();
-        //String imageEncoded = Base64.encode(b);
-        //String imageEncoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
-
-        //Log.e("LOOK", imageEncoded);
-        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
-        //Log.d("ARRAY","BASE64:"+encImage);
-        imageEncoded = imageEncoded.replace(" ","");
-        String foto="data:image/jpeg;base64,"+imageEncoded;
-
-        int maxLogSize = 1000;
-        for(int i = 0; i <= foto.length() / maxLogSize; i++) {
-            int start = i * maxLogSize;
-            int end = (i+1) * maxLogSize;
-            end = end > foto.length() ? foto.length() : end;
-            Log.d("n-"+i, foto.substring(start, end));
-        }
-        return foto;
-    }
 
     /**
      * This interface must be implemented by activities that contain this

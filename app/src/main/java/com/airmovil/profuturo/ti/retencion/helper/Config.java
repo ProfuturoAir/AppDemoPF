@@ -5,9 +5,13 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.util.Base64;
+import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+
+import java.io.ByteArrayOutputStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -163,26 +167,6 @@ public class Config extends Activity {
         progressDialog.show();
     }
 
-
-    /**
-     * Muestra mensaje de datos vacios
-     * @param context referencia de la llamada, fragmento o actividad
-     */
-    public static final void dialogoDatosVacios1(Context context, String mensaje){
-        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_peligro));
-        progressDialog.setTitle(context.getResources().getString(R.string.error_datos_vacios));
-        progressDialog.setMessage(mensaje);
-        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        progressDialog.dismiss();
-                    }
-                });
-        progressDialog.show();
-    }
-
     /**
      * Muestra mensaje de error, en el documento no existente (INE o IFE)
      * @param context referencia de la llamada, fragmento o actividad
@@ -211,25 +195,6 @@ public class Config extends Activity {
         progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_limpio));
         progressDialog.setTitle(context.getResources().getString(R.string.msj_titulo_limpiar));
         progressDialog.setMessage(context.getResources().getString(R.string.msj_contenido_limpio));
-        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        progressDialog.dismiss();
-                    }
-                });
-        progressDialog.show();
-    }
-
-    /**
-     * Muestra mensaje, muestra mensaje de uso de menu
-     * @param context referencia de la llamada, fragmento o actividad
-     */
-    public static final void dialogoMenu(Context context){
-        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_menu));
-        progressDialog.setTitle(context.getResources().getString(R.string.msj_titulo_menu));
-        progressDialog.setMessage(context.getResources().getString(R.string.msj_contenido_menu));
         progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -448,6 +413,11 @@ public class Config extends Activity {
         return filtroCliente;
     }
 
+    /**
+     * Verifica el estado de la conexion a internet
+     * @param context
+     * @return
+     */
     public static final boolean conexion(Context context){
         boolean estatus;
         Connected connected = new Connected();
@@ -458,4 +428,44 @@ public class Config extends Activity {
         }
         return estatus;
     }
+
+    public static final boolean verificarEmail(String email){
+        boolean valor;
+        String emailPattern = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        if ( (email.matches(emailPattern) && email.length() > 0) ) {
+            valor = true;
+        } else {
+            valor = false;
+        }
+        return  valor;
+    }
+
+    public static final String encodeTobase64(Context context, Bitmap image){
+            float bmW=image.getWidth();
+            float bmH= image.getHeight();
+            int widthPixels = context.getResources().getDisplayMetrics().widthPixels;
+            Bitmap resize;
+            if(bmW>=widthPixels){
+                float newWidth=widthPixels;
+                float newHeight=(bmH/bmW)*widthPixels;
+                resize = Bitmap.createBitmap(image,0,0,(int)newWidth,(int)newHeight);
+            }else{
+                resize = image;
+            }
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            resize.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            byte[] b = baos.toByteArray();
+            String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+            imageEncoded = imageEncoded.replace(" ","");
+            String foto="data:image/jpeg;base64,"+imageEncoded;
+            int maxLogSize = 1000;
+            for(int i = 0; i <= foto.length() / maxLogSize; i++) {
+                int start = i * maxLogSize;
+                int end = (i+1) * maxLogSize;
+                end = end > foto.length() ? foto.length() : end;
+                Log.d("n-"+i, foto.substring(start, end));
+            }
+            return foto;
+    }
+
 }
