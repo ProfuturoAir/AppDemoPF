@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.location.LocationManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
@@ -18,10 +19,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -467,5 +470,29 @@ public class Config extends Activity {
             }
             return foto;
     }
+
+    public static String getHoraActual(){
+        Calendar calendario = Calendar.getInstance();
+        int hora, minutos, segundos;
+        hora =calendario.get(Calendar.HOUR_OF_DAY);
+        minutos = calendario.get(Calendar.MINUTE);
+        segundos = calendario.get(Calendar.SECOND);
+        return hora+":"+minutos+":"+segundos;
+    }
+
+    public static String getFechaFormat(){
+        sdf.setTimeZone(TimeZone.getTimeZone(String.valueOf(Locale.getDefault())));
+        return sdf.format(new Date());
+    }
+
+    public static void habilitadoGPS(Context getContext){
+            Dialogos.dialogoActivarLocalizacion(getContext);
+    }
+
+    public static boolean estahabilitadoGPS(Context getContext){
+        LocationManager mlocManager = (LocationManager) getContext.getSystemService(Context.LOCATION_SERVICE);
+        return mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
 
 }
