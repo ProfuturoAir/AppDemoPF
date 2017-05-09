@@ -1,10 +1,12 @@
 package com.airmovil.profuturo.ti.retencion.helper;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
@@ -143,6 +145,62 @@ public class Dialogos extends Activity{
                     }
                 });
         progressDialog.show();
+    }
+
+    /**
+     * Muestra mensaje de error, seleccion de un apartado de spinner
+     * @param context referencia de la llamada, fragmento o actividad
+     */
+    public static final void dialogoSinSeleccionSpinner(Context context, String apartado){
+        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_lista));
+        progressDialog.setTitle(context.getResources().getString(R.string.msj_titulo_seleccion_spinner));
+        progressDialog.setMessage(context.getResources().getString(R.string.msj_contenido_spinner) + " " + apartado);
+        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog.dismiss();
+                    }
+                });
+        progressDialog.show();
+    }
+
+    /**
+     * @param ctx parametro 1 referencia de la llamada, fragmento o actividad
+     */
+    public static final void dialogoErrorDatos(Context ctx){
+        AlertDialog.Builder dialog  = new AlertDialog.Builder(ctx);
+        dialog.setTitle("Error en datos");
+        dialog.setMessage("Lo sentimos ocurrio un error al formar los datos");
+        dialog.setCancelable(true);
+        dialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        dialog.create().show();
+    }
+
+    public static final void dialogoActivarLocalizacion(final Context ctx){
+        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+        builder.setCancelable(false);
+        builder.setTitle("Enable GPS");
+        builder.setMessage("Please enable GPS");
+        builder.setInverseBackgroundForced(true);
+        builder.setPositiveButton("Habilitar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                ctx.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+            }
+        });
+        builder.setNegativeButton("Ignorar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
 }
