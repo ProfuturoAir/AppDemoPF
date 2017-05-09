@@ -493,6 +493,4 @@ public class Config extends Activity {
         LocationManager mlocManager = (LocationManager) getContext.getSystemService(Context.LOCATION_SERVICE);
         return mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
-
-
 }
