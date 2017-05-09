@@ -37,11 +37,7 @@ import java.util.List;
 
 public class ReporteAsesores extends Fragment {
     private static final String TAG = ReporteAsesores.class.getSimpleName();
-    private static final String ARG_PARAM1 = "idAsesor"; // numero asesor
-    private static final String ARG_PARAM2 = "fechaInicio"; // fecha Inicio
-    private static final String ARG_PARAM3 = "fechaFin"; // fecha final
-    private static final String ARG_PARAM4 = "idGerencia"; // id gerencia
-    private static final String ARG_PARAM5 = "idSucursal"; // id sucursal
+    private static final String ARG_PARAM1 = "idAsesor", ARG_PARAM2 = "fechaInicio", ARG_PARAM3 = "fechaFin", ARG_PARAM4 = "idGerencia", ARG_PARAM5 = "idSucursal";
     private int pagina = 1, numeroMaximoPaginas = 0, filas;
     private GerenteReporteAsesoresAdapter adapter;
     private List<GerenteReporteAsesoresModel> getDatos1;
@@ -63,7 +59,7 @@ public class ReporteAsesores extends Fragment {
     /**
      * Utilice este método de fábrica para crear una nueva instancia de
      * Este fragmento utilizando los parámetros proporcionados.
-     * @param param1 Parameter 1.
+     * @param param1 parametro idAsesor.
      * @param param2 Parameter 2.
      * @return una nueva instancia del fragmento ReporteAsesores.
      */
@@ -273,7 +269,7 @@ public class ReporteAsesores extends Fragment {
             obj.put("rqt", rqt);
             Log.d(TAG, " RQT ->" + obj);
         }catch (JSONException e){
-            e.printStackTrace();
+            Dialogos.dialogoErrorDatos(getContext());
         }
         volleySingleton.postDataVolley("" + primerPeticion, Config.URL_CONSULTAR_REPORTE_RETENCION_ASESORES, obj);
     }
@@ -314,12 +310,12 @@ public class ReporteAsesores extends Fragment {
                     getDatos2.setSaldoEmitido(saldo.getInt("saldoRetenido"));
                     getDatos2.setSaldoNoEmetido(saldo.getInt("saldoNoRetenido"));
                 }catch (JSONException e){
-                    e.printStackTrace();
+                    Dialogos.dialogoErrorDatos(getContext());
                 }
                 getDatos1.add(getDatos2);
             }
         }catch (JSONException e){
-            e.printStackTrace();
+            Dialogos.dialogoErrorDatos(getContext());
         }
 
         tvEmitidas.setText("" + emitidos);
@@ -386,12 +382,12 @@ public class ReporteAsesores extends Fragment {
                     getDatos2.setSaldoEmitido(saldo.getInt("saldoRetenido"));
                     getDatos2.setSaldoNoEmetido(saldo.getInt("saldoNoRetenido"));
                 }catch (JSONException e){
-                    e.printStackTrace();
+                    Dialogos.dialogoErrorDatos(getContext());
                 }
                 getDatos1.add(getDatos2);
             }
         }catch (JSONException e){
-            e.printStackTrace();
+            Dialogos.dialogoErrorDatos(getContext());
         }
         adapter.notifyDataSetChanged();
         adapter.setLoaded();

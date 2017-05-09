@@ -33,10 +33,9 @@ public class ProcesoImplicacionesPendientes extends Fragment {
     private Button btnEnviarPendientes;
     private List<EnviosPendientesModel> getDatos1;
     private SQLiteHandler db;
+    private Connected connected;
 
-    public ProcesoImplicacionesPendientes() {
-        /* Se requiere un constructor vacio */
-    }
+    public ProcesoImplicacionesPendientes() { /* Se requiere un constructor vacio */}
 
     /**
      * El sistema lo llama cuando crea el fragmento
@@ -58,11 +57,13 @@ public class ProcesoImplicacionesPendientes extends Fragment {
         btnEnviarPendientes = (Button) rootView.findViewById(R.id.gfcc_btn_enviar_pendientes);
         // TODO: modelos
         Cursor todos = db.getAllPending();
-        // TODO: Recyc  ler
+        // TODO: Recycler
+        connected = new Connected();
         recyclerView = (RecyclerView) rootView.findViewById(R.id.grecyclerview_pendientes_envio);
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
+
         getDatos1 = new ArrayList<>();
         try {
             while (todos.moveToNext()) {
@@ -77,7 +78,7 @@ public class ProcesoImplicacionesPendientes extends Fragment {
             todos.close();
         }
 
-        Connected connected = new Connected();
+
         final EnviaJSON enviaPrevio = new EnviaJSON();
         adapter = new EnviarPendientesAdapter(rootView.getContext(), getDatos1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -89,7 +90,6 @@ public class ProcesoImplicacionesPendientes extends Fragment {
         btnEnviarPendientes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Connected connected = new Connected();
                 if(connected.estaConectado(getContext())){
                     android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
                     dlgAlert.setTitle("Enviar pendientes");
@@ -116,10 +116,7 @@ public class ProcesoImplicacionesPendientes extends Fragment {
                         }
                     });
                     dlgAlert.create().show();
-                }else{
-
                 }
-
             }
         });
     }

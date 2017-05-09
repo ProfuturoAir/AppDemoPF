@@ -274,11 +274,11 @@ public class Encuesta1 extends Fragment {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                    AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
-                    dialogo1.setTitle("Confirmar");
-                    dialogo1.setMessage("¿Estàs seguro que deseas cancelar y guardar los cambios del proceso 1.1.3.4?");
-                    dialogo1.setCancelable(false);
-                    dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
+                    dialogo.setTitle("Confirmar");
+                    dialogo.setMessage("¿Estás seguro que deseas salir del proceso de implicaciones?");
+                    dialogo.setCancelable(false);
+                    dialogo.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Fragment fragmentoGenerico = new SinCita();
@@ -286,11 +286,11 @@ public class Encuesta1 extends Fragment {
                             fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
                         }
                     });
-                    dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {}
                     });
-                    dialogo1.show();
+                    dialogo.show();
                     return true;
                 }
                 return false;
@@ -340,7 +340,7 @@ public class Encuesta1 extends Fragment {
      */
     private void sendJson(final boolean primerPeticion, boolean opc1, boolean opc2, boolean opc3, String observaciones) {
         if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
+            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Porfavor espera...", false, false);
         else
             loading = null;
 

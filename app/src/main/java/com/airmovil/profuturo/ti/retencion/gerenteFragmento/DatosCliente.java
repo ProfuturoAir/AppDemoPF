@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
@@ -25,7 +24,6 @@ import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.VolleyError;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,11 +31,7 @@ import java.util.Map;
 
 public class DatosCliente extends Fragment {
     public static final String TAG = DatosCliente.class.getSimpleName();
-    private static final String ARG_PARAM1 = "nombre";
-    private static final String ARG_PARAM2 = "numeroDeCuenta";
-    private static final String ARG_PARAM3 = "hora";
-    private String mParam1;
-    private String mParam2;
+    private static final String ARG_PARAM1 = "nombre", ARG_PARAM2 = "numeroDeCuenta", ARG_PARAM3 = "hora";
     private TextView tvClienteNombre, tvClienteNumeroCuenta, tvClienteNSS, tvClienteCURP, tvClienteFecha, tvClienteSaldo;
     private Button btnContinuar, btnCancelar;
     private View rootView;
@@ -59,10 +53,6 @@ public class DatosCliente extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     /**
@@ -125,7 +115,6 @@ public class DatosCliente extends Fragment {
                     dialogo.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            //sendJson(true);
                             if(idTramite!=null){
                                 Fragment fragmentoGenerico = new Encuesta1();
                                 Gerente gerente = (Gerente) getContext();
@@ -135,12 +124,9 @@ public class DatosCliente extends Fragment {
                     });
                     dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
+                        public void onClick(DialogInterface dialog, int which) {}
                     });
                     dialogo.show();
-
                 }
             }
         });
@@ -150,7 +136,7 @@ public class DatosCliente extends Fragment {
             public void onClick(View v) {
                 AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
                 dialogo1.setTitle("Confirmar");
-                dialogo1.setMessage("¿Estás seguro que deseas salir?");
+                dialogo1.setMessage("¿Estás seguro que deseas salir del proceso?");
                 dialogo1.setCancelable(false);
                 dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                     @Override
@@ -158,7 +144,7 @@ public class DatosCliente extends Fragment {
                         Fragment fragmentoGenerico = new SinCita();
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                         fragmentManager
-                                .beginTransaction()//.setCustomAnimations(android.R.anim.slide_out_right,android.R.anim.slide_in_left)
+                                .beginTransaction()
                                 .replace(R.id.content_gerente, fragmentoGenerico).commit();
                     }
                 });
@@ -226,7 +212,7 @@ public class DatosCliente extends Fragment {
                 if(event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
                     AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
                     dialogo.setTitle("Confirmar");
-                    dialogo.setMessage("¿Estás seguro que deseas regresar?");
+                    dialogo.setMessage("¿Estás seguro que deseas salir del proceso de implicaciones?");
                     dialogo.setCancelable(false);
                     dialogo.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override

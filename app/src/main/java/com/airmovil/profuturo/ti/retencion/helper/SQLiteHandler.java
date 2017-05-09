@@ -5,16 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 import java.util.HashMap;
 
 public class SQLiteHandler extends SQLiteOpenHelper{
     private final String TAG = SQLiteHandler.class.getSimpleName();
     private static final int DATABASE_VERSION = 1;
-    // Database nombre
     private static final String DATABASE_NAME = "profuturoApp";
     private static final String TABLE_TRAMITE = "tramite";
-    private static final String KEY_ID = "id_t";
     public static final String FK_ID_TRAMITE = "idTramite";
     public static final String KEY_NOMBRE = "nombre";
     public static final String KEY_HORA = "hora";
@@ -23,20 +20,10 @@ public class SQLiteHandler extends SQLiteOpenHelper{
     public static final String KEY_PREGUNTA1 = "pregunta1";
     public static final String KEY_PREGUNTA2 ="pregunta2";
     public static final String KEY_PREGUNTA3 ="pregunta3";
-    public static final String KEY_PREGUNTA4 ="pregunta4";
-    public static final String KEY_PREGUNTA5 ="pregunta5";
-    public static final String KEY_PREGUNTA6 ="pregunta6";
     public static final String TABLE_OBSERVACIONES_ENCUESTA = "retencion_encuesta_observaciones";
-    public static final String KEY_CLAVE_AFORE = "claveAfore";
     public static final String KEY_EMAIL = "email";
-    public static final String KEY_PREGUNTA7 = "pregunta7";
-    public static final String KEY_PREGUNTA8 ="pregunta8";
-    public static final String KEY_PREGUNTA9 ="pregunta9";
-    public static final String KEY_ESTATUS = "estatus";
     public static final String KEY_ID_MOTIVO = "idMotivo";
-    public static final String KEY_LEY_REGIMEN = "leyRegimen";
     public static final String KEY_OBSERVACION = "observacion";
-    public static final String KEY_REGIMEN = "regimen";
     public static final String KEY_TELEFONO = "telefono";
     public static final String KEY_ID_AFORE = "idAfore";
     public static final String KEY_ID_ESTATUS = "idEstatus";
@@ -53,11 +40,12 @@ public class SQLiteHandler extends SQLiteOpenHelper{
     public static final String KEY_NUMERO_CUENTA = "numeroCuenta";
     public static final String KEY_USUARIO = "usuario";
 
+    // TODO: Constructor
     public SQLiteHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    // Creando tablas
+    // TODO: Creacion de tablas
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_TRAMITE_TABLE = "CREATE TABLE " + TABLE_TRAMITE + "("
@@ -110,7 +98,7 @@ public class SQLiteHandler extends SQLiteOpenHelper{
         db.execSQL(CREATE_DOCUMENTACION_TABLE);
     }
 
-    // Actualizando BD
+    // TODO: Actualizando BD
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRAMITE);
@@ -121,6 +109,13 @@ public class SQLiteHandler extends SQLiteOpenHelper{
         onCreate(db);
     }
 
+    /**
+     * Creacion de registro de tramite
+     * @param idTramite idTramite
+     * @param nombre nombre del cliente
+     * @param numeroDeCuenta numero de cuenta
+     * @param hora hora del tramite
+     */
     public void addIDTramite(String idTramite,String nombre,String numeroDeCuenta,String hora){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -128,14 +123,23 @@ public class SQLiteHandler extends SQLiteOpenHelper{
         values.put(KEY_NOMBRE,nombre);
         values.put(KEY_NUMERO_CUENTA,numeroDeCuenta);
         values.put(KEY_HORA,hora);
-        // insertando filas
+        // TODO: insertando filas
         long id =(int) db.insertWithOnConflict(TABLE_TRAMITE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         if (id == -1) {
             db.update(TABLE_TRAMITE,values, FK_ID_TRAMITE+"=?", new String[] {idTramite});  // number 1 is the _id here, update to variable for your code
         }
-        db.close(); // Closing database connection
+        db.close(); // cerrando la conexion a la base de datos
     }
 
+    /**
+     * Creacion de datos para la encuesta
+     * @param idTramite idTramite
+     * @param statusTramite Estatus del tramite
+     * @param pregunta1 pregunta 1
+     * @param pregunta2 pregunta 2
+     * @param pregunta3 pregunta 3
+     * @param observaciones observaciones
+     */
     public void addEncuesta(String idTramite,int statusTramite,Boolean pregunta1,Boolean pregunta2,Boolean pregunta3,String observaciones) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -147,11 +151,24 @@ public class SQLiteHandler extends SQLiteOpenHelper{
         values.put(KEY_OBSERVACION,observaciones);
         long id =(int) db.insertWithOnConflict(TABLE_RETENCION_ENCUESTA, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         if (id == -1) {
-            db.update(TABLE_RETENCION_ENCUESTA,values, FK_ID_TRAMITE+"=?", new String[] {idTramite});  // number 1 is the _id here, update to variable for your code
+            db.update(TABLE_RETENCION_ENCUESTA,values, FK_ID_TRAMITE+"=?", new String[] {idTramite});
         }
-        db.close(); // Closing database connection
+        db.close();
     }
 
+    /**
+     * Metodo para agregar encuesta 2
+     * @param idTramite idTramite, es generado por la BD
+     * @param idAfore idAfore
+     * @param idMotivo idMotivo
+     * @param idEstatus idEstatus
+     * @param idInstituto idInstituto
+     * @param idRegimenPensionario idRegimenPensionario
+     * @param idDocumentacion idDocumentacion
+     * @param telefono telefonoCliente
+     * @param email emailCliente
+     * @param statusTramite estatusTramite
+     */
     public void addObservaciones(String idTramite,int idAfore,int idMotivo,int idEstatus,int idInstituto,int idRegimenPensionario,int idDocumentacion,String telefono,String email,int statusTramite) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -172,7 +189,14 @@ public class SQLiteHandler extends SQLiteOpenHelper{
         db.close(); // cerrando la conexion bd
     }
 
-
+    /**
+     * Metodo para agregar la firma
+     * @param idTramite idTramite
+     * @param estatusTramite estatusTramite
+     * @param firma firma
+     * @param latitud latitud
+     * @param longitud longitud
+     */
     public void addFirma(String idTramite,int estatusTramite,String firma,double latitud,double longitud) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -181,15 +205,24 @@ public class SQLiteHandler extends SQLiteOpenHelper{
         values.put(KEY_FIRMA,firma);
         values.put(KEY_LATITUD,latitud);
         values.put(KEY_LONGITUD,longitud);
-
         long id =(int) db.insertWithOnConflict(TABLE_FIRMA, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         if (id == -1) {
-            db.update(TABLE_FIRMA,values, FK_ID_TRAMITE+"=?", new String[] {idTramite});  // number 1 is the _id here, update to variable for your code
+            db.update(TABLE_FIRMA,values, FK_ID_TRAMITE+"=?", new String[] {idTramite});
         }
         db.close();
     }
 
-
+    /**
+     * Metodo para guardar datos de INE o IFE
+     * @param idTramite  idTramite
+     * @param fechaHoraFin fechaHoraFin
+     * @param estatusTramite estatusTramite
+     * @param ineIfe ineIfe
+     * @param numeroCuenta numeroCuenta
+     * @param usuario usuario
+     * @param latitud latitud
+     * @param longitud longitud
+     */
     public void addDocumento(String idTramite,String fechaHoraFin,int estatusTramite,String ineIfe,String numeroCuenta,String usuario,double latitud,double longitud) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -203,7 +236,7 @@ public class SQLiteHandler extends SQLiteOpenHelper{
         values.put(KEY_LONGITUD,longitud);
         long id =(int) db.insertWithOnConflict(TABLE_DOCUMENTACION, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         if (id == -1) {
-            db.update(TABLE_DOCUMENTACION,values, FK_ID_TRAMITE+"=?", new String[] {idTramite});  // number 1 is the _id here, update to variable for your code
+            db.update(TABLE_DOCUMENTACION,values, FK_ID_TRAMITE+"=?", new String[] {idTramite});
         }
         db.close();
     }
@@ -218,6 +251,11 @@ public class SQLiteHandler extends SQLiteOpenHelper{
         return cursor;
     }
 
+    /**
+     * Obtiene el tramite
+     * @param idTramite idTramite
+     * @return retirna el estatus del tramite
+     */
     public HashMap<String, String> getTramite(String idTramite) {
         HashMap<String, String> tramite = new HashMap<>();
         String selectQuery = "SELECT  * FROM " + TABLE_TRAMITE + " WHERE " + FK_ID_TRAMITE + "=?";
@@ -235,6 +273,10 @@ public class SQLiteHandler extends SQLiteOpenHelper{
         return tramite;
     }
 
+    /**
+     * @param idTramite tramite de referencia
+     * @return el estado de la encuesta
+     */
     public HashMap<String, String> getEncuesta(String idTramite) {
         HashMap<String, String> encuesta = new HashMap<>();
         String selectQuery = "SELECT  * FROM " + TABLE_RETENCION_ENCUESTA + " WHERE " + FK_ID_TRAMITE + "=?";
@@ -254,6 +296,10 @@ public class SQLiteHandler extends SQLiteOpenHelper{
         return encuesta;
     }
 
+    /**
+     * @param idTramite tramite con el que se guardo el registro
+     * @return los datos guardados en encuesta
+     */
     public HashMap<String, String> getObservaciones(String idTramite) {
         HashMap<String, String> observaciones = new HashMap<>();
         String selectQuery = "SELECT  * FROM " + TABLE_OBSERVACIONES_ENCUESTA + " WHERE " + FK_ID_TRAMITE +"=?";
@@ -277,6 +323,10 @@ public class SQLiteHandler extends SQLiteOpenHelper{
         return observaciones;
     }
 
+    /**
+     * @param idTramite con el que se guardo el registro
+     * @return los datos guardado con idTramite
+     */
     public HashMap<String, String> getfirma(String idTramite) {
         HashMap<String, String> firma = new HashMap<>();
         String selectQuery = "SELECT  * FROM " + TABLE_FIRMA + " WHERE " + FK_ID_TRAMITE +"=?";
@@ -295,6 +345,10 @@ public class SQLiteHandler extends SQLiteOpenHelper{
         return firma;
     }
 
+    /**
+     * @param idTramite con el que se guardo el registro
+     * @return los datos guardado con idTramite
+     */
     public HashMap<String, String> getdocumento(String idTramite) {
         HashMap<String, String> documento = new HashMap<>();
         String selectQuery = "SELECT  * FROM " + TABLE_DOCUMENTACION + " WHERE " + FK_ID_TRAMITE +"=?";
@@ -316,26 +370,46 @@ public class SQLiteHandler extends SQLiteOpenHelper{
         return documento;
     }
 
+    /**
+     * @param idTramite id para eliminar el registro ya procesado
+     * @return la eliminacion del registro
+     */
     public Integer deleteTramite(String idTramite) {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(TABLE_TRAMITE, FK_ID_TRAMITE + " = ? ", new String[] { idTramite });
     }
 
+    /**
+     * @param idTramite id para eliminar el registro ya procesado
+     * @return la eliminacion del registro
+     */
     public Integer deleteEncuesta(String idTramite) {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(TABLE_RETENCION_ENCUESTA, FK_ID_TRAMITE + " = ? ", new String[] { idTramite});
     }
 
+    /**
+     * @param idTramite id para eliminar el registro ya procesado
+     * @return la eliminacion del registro
+     */
     public Integer deleteObservaciones(String idTramite) {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(TABLE_OBSERVACIONES_ENCUESTA, FK_ID_TRAMITE + " = ? ", new String[] { idTramite });
     }
 
+    /**
+     * @param idTramite id para eliminar el registro ya procesado
+     * @return la eliminacion del registro
+     */
     public Integer deleteFirma(String idTramite) {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(TABLE_FIRMA, FK_ID_TRAMITE + " = ? ", new String[] {idTramite});
     }
 
+    /**
+     * @param idTramite id para eliminar el registro ya procesado
+     * @return la eliminacion del registro
+     */
     public Integer deleteDocumentacion(String idTramite) {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(TABLE_DOCUMENTACION, FK_ID_TRAMITE + " = ? ", new String[] { idTramite });

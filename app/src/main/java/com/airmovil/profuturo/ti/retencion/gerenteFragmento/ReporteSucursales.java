@@ -69,6 +69,15 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
 
     public ReporteSucursales() {/*Se requiere un constructor vacio*/}
 
+    /**
+     * @param param1 idGerencia
+     * @param param2 idSucursal
+     * @param param3 numeroEmpleado
+     * @param param4 fechaInicio
+     * @param param5 fechaFin
+     * @param context representa el estado actual de la app, para obtener su estado actual
+     * @return una nueva instancia del fragmento ReporteSucursales.
+     */
     public static ReporteSucursales newInstance(int param1, int param2, String param3, String param4, String param5, Context context) {
         Log.d(TAG, "");
         ReporteSucursales fragment = new ReporteSucursales();
@@ -82,6 +91,10 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         return fragment;
     }
 
+    /**
+     * El sistema lo llama cuando crea el fragmento
+     * @param savedInstanceState, llama las variables en el bundle
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,6 +126,12 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         };
     }
 
+    /**
+     * Se llama inmediatamente después de que onCreateView(LayoutInflater, ViewGroup, Bundle) ha onCreateView(LayoutInflater, ViewGroup, Bundle)
+     * pero antes de que se haya onCreateView(LayoutInflater, ViewGroup, Bundle) estado guardado en la vista.
+     * @param view regresa la vista
+     * @param savedInstanceState parametros a enviar para conservar en el bundle
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // TODO: metodo para calback de volley
@@ -160,10 +179,15 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
                 ServicioEmailJSON.enviarEmailReporteSucursales(getContext(),(argumentos)?getArguments().getInt(ARG_PARAM2): 0, (argumentos)?getArguments().getString(ARG_PARAM4):Dialogos.fechaActual(), (argumentos)?getArguments().getString(ARG_PARAM5):Dialogos.fechaSiguiente(), (argumentos)?true:false);
             }
         });
-
-
     }
 
+    /**
+     * Se lo llama para crear la jerarquía de vistas asociada con el fragmento.
+     * @param inflater inflacion del xml
+     * @param container contenedor del ml
+     * @param savedInstanceState datos guardados
+     * @return el fragmento declarado DIRECTOR INICIO
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.gerente_fragmento_reporte_sucursales, container, false);
@@ -175,6 +199,10 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         }
     }
 
+    /**
+     * Reciba una llamada cuando se asocia el fragmento con la actividad
+     * @param context estado actual de la aplicacion
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -183,12 +211,20 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         }
     }
 
+    /**
+     * Se lo llama cuando se desasocia el fragmento de la actividad.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
+    /**
+     * Esta interfaz debe ser implementada por actividades que contengan esta
+     * Para permitir que se comunique una interacción en este fragmento
+     * A la actividad y potencialmente otros fragmentos contenidos en estaactividad.
+     */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
@@ -308,7 +344,10 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         }
     }
 
-    // TODO: REST
+    /**
+     * Envio de datos por REST jsonObject
+     * @param primerPeticion valida que el proceso sea true
+     */
     private void sendJson(final boolean primerPeticion) {
         if (primerPeticion)
             loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
@@ -330,11 +369,14 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
             obj.put("rqt", rqt);
             Log.d(TAG, "< RQT -> \n" + obj + "\n");
         } catch (JSONException e) {
-            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
+            Dialogos.dialogoErrorDatos(getContext());
         }
         volleySingleton.postDataVolley("" + primerPeticion, Config.URL_CONSULTAR_REPORTE_RETENCION_SUCURSALES, obj);
     }
 
+    /**
+     * @param obj recibe el obj json de la peticion
+     */
     private void primerPaso(JSONObject obj) {
         int emitidos = 0;
         int noEmitido = 0;
@@ -371,7 +413,7 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
                 getDatos1.add(getDatos2);
             }
         }catch (JSONException e){
-            e.printStackTrace();
+            Dialogos.dialogoErrorDatos(getContext());
         }
         tvEmitidas.setText("" + emitidos);
         tvNoEmitidas.setText("" + noEmitido);
@@ -406,6 +448,10 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         });
     }
 
+    /**
+     * Se vuelve a llamaar este metodo para llenar la lista cada 10 contenidos
+     * @param obj jsonObject de respuesta
+     */
     private void segundoPaso(JSONObject obj) {
         try{
             JSONArray array = obj.getJSONArray("Sucursal");
@@ -430,7 +476,7 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
                 getDatos1.add(getDatos2);
             }
         }catch (JSONException e){
-            e.printStackTrace();
+            Dialogos.dialogoErrorDatos(getContext());
         }
         adapter.notifyDataSetChanged();
         adapter.setLoaded();

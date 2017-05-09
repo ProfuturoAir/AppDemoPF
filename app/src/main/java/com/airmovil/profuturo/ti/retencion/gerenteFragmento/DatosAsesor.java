@@ -30,8 +30,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class DatosAsesor extends Fragment {
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     public static final String TAG = DatosAsesor.class.getSimpleName();
     private View rootView;
     private TextView tvNombre, tvNumeroEmpleado, tvSucursal;
@@ -276,7 +274,7 @@ public class DatosAsesor extends Fragment {
      * @param obj recibe el obj json de la peticion
      */
     private void primerPaso(JSONObject obj) {
-        Log.d(TAG, "-----> >" + obj);
+        Log.d(TAG, "<- Response ->" + obj);
         String nombreCliente = "";
         String numeroCuenta = "";
         String status = "";

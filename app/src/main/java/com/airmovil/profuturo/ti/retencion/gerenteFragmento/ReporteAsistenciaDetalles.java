@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteAsistenciaDetalleAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
@@ -44,7 +45,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
     private int filas, pagina = 1, numeroMaximoPaginas = 0;
     private View rootView;
     private Connected connected;
-    private TextView tvFecha, tvLetra, tvNombreAsesor, tvNoEmpleado, tvRangoFechas, tvAtiempo, tvRetardo, tvSinAsistencia, tvRangoFecha1, tvRangoFecha2, tvResultados;
+    private TextView tvFecha, tvLetra, tvNombreAsesor, tvNoEmpleado, tvAtiempo, tvRetardo, tvSinAsistencia, tvRangoFecha1, tvRangoFecha2, tvResultados;
     private Button btnBuscar;
     private List<GerenteReporteAsistenciaDetalleModel> getDatos1;
     private RecyclerView recyclerView;
@@ -63,7 +64,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
      * Este fragmento utilizando los parámetros proporcionados.
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @returnuna nueva instancia del fragmento ReporteAsistenciaDetalles.
+     * @return una nueva instancia del fragmento ReporteAsistenciaDetalles.
      */
     public static ReporteAsistenciaDetalles newInstance(String param1, String param2, String param3, String param4, Context context) {
         ReporteAsistenciaDetalles fragment = new ReporteAsistenciaDetalles();
@@ -99,8 +100,6 @@ public class ReporteAsistenciaDetalles extends Fragment {
         mResultCallback = new IResult() {
             @Override
             public void notifySuccess(String requestType, JSONObject response) {
-                Log.d(TAG, "Volley requester " + requestType);
-                Log.d(TAG, "Volley JSON post" + response);
                 if (requestType.trim().equals("true")) {
                     loading.dismiss();
                     primerPaso(response);
@@ -111,8 +110,6 @@ public class ReporteAsistenciaDetalles extends Fragment {
 
             @Override
             public void notifyError(String requestType, VolleyError error) {
-                Log.d(TAG, "Volley requester " + requestType);
-                Log.d(TAG, "Volley JSON post" + "That didn't work! " + error.toString());
                 if(connected.estaConectado(getContext())){
                     Dialogos.dialogoErrorServicio(getContext());
                 }else{
@@ -125,8 +122,8 @@ public class ReporteAsistenciaDetalles extends Fragment {
     /**
      * Se llama inmediatamente después de que onCreateView(LayoutInflater, ViewGroup, Bundle) ha onCreateView(LayoutInflater, ViewGroup, Bundle)
      * pero antes de que se haya onCreateView(LayoutInflater, ViewGroup, Bundle) estado guardado en la vista.
-     * @param view vista de acceso para el xml
-     * @param savedInstanceState
+     * @param view regresa la vista
+     * @param savedInstanceState parametros a enviar para conservar en el bundle
      */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -271,7 +268,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
             obj.put("rqt", rqt);
             Log.d(TAG, "<- RQT ->" + obj + "\n");
         }catch (JSONException e){
-            e.printStackTrace();
+            Dialogos.dialogoErrorDatos(getContext());
         }
         volleySingleton.postDataVolley("" + primerPeticion, Config.URL_CONSULTAR_REPORTE_ASISTENCIA_DETALLE, obj);
     }
@@ -312,12 +309,12 @@ public class ReporteAsistenciaDetalles extends Fragment {
                     getDatos2.setSalidaLongitud(salida.getString("longitud"));
                     getDatos2.setFechaAsistencia(json.getString("fecha"));
                 }catch (JSONException e){
-                    e.printStackTrace();
+                    Dialogos.dialogoErrorDatos(getContext());
                 }
                 getDatos1.add(getDatos2);
             }
         } catch (JSONException e){
-            e.printStackTrace();
+            Dialogos.dialogoErrorDatos(getContext());
         }
         tvResultados.setText("" + totalFilas);
         tvAtiempo.setText("" + onTime);
@@ -388,7 +385,7 @@ public class ReporteAsistenciaDetalles extends Fragment {
                 getDatos1.add(getDatos2);
             }
         } catch (JSONException e){
-            e.printStackTrace();
+            Dialogos.dialogoErrorDatos(getContext());
         }
         adapter.notifyDataSetChanged();
         adapter.setLoaded();

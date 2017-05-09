@@ -35,20 +35,12 @@ public class ReporteClientesDetalles extends Fragment {
     private static final String ARG_PARAM10 = "nombreEmpleado";
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
-    private String mParam1; // numero cuenta
-    private String mParam2; // cita
-    private String mParam3; // numeroCuenta
-    private int mParam4; // idtramite
-    private String mParam5; // fechaInicio
-    private String mParam6; // fechaFin
-    private String mParam7; // usuario
-    private String mParam8; // usuario
-    private String mParam9;
-    private String mParam10;
-    private int pagina = 1;
+    private String mParam1, mParam2, mParam3, mParam5, mParam6, mParam7, mParam8, mParam9, mParam10;
+    private int pagina = 1, mParam4;
     private TextView tv_nombre, tv_numero_cuenta, tv_nss, tv_curp, tv_estatus, tv_saldo, tv_sucursal, tv_hora_atencion, tv_nombre_asesor, tv_numero_empleado, tv_inicial, tv_fechas;
     private Connected connected;
     private ProgressDialog loading;
+    private View rootView;
     private OnFragmentInteractionListener mListener;
 
     public ReporteClientesDetalles() {/* se requiere un constructor vacio */}
@@ -56,7 +48,6 @@ public class ReporteClientesDetalles extends Fragment {
     /**
      * Utilice este método de fábrica para crear una nueva instancia de
      * Este fragmento utilizando los parámetros proporcionados.
-     *
      * @param param1 parametro 1 idsucursal.
      * @param param2 parametro 2 idTramite.
      * @param param4 parametro 4 fechaInicio.
@@ -127,37 +118,20 @@ public class ReporteClientesDetalles extends Fragment {
     }
 
     /**
-     * El sistema lo llama cuando el fragmento debe diseñar su interfaz de usuario por primera vez
+     * Se llama inmediatamente después de que onCreateView(LayoutInflater, ViewGroup, Bundle) ha onCreateView(LayoutInflater, ViewGroup, Bundle)
+     * pero antes de que se haya onCreateView(LayoutInflater, ViewGroup, Bundle) estado guardado en la vista.
      * @param view accede a la vista del XML
      * @param savedInstanceState fuarda el estado de la instancia
      */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        // TODO: metodo para calback de volley
         initVolleyCallback();
+        rootView = view;
         // TODO: llama clase singleton volley
-        volleySingleton = VolleySingleton.getInstance(mResultCallback, getContext());
-        tv_nombre = (TextView) view.findViewById(R.id.gf_tv_clientes_detalle_nombre);
-        tv_numero_cuenta = (TextView) view.findViewById(R.id.gf_tv_clientes_detalle_numero_cuenta);
-        tv_nss = (TextView) view.findViewById(R.id.gf_tv_clientes_detalle_nss);
-        tv_curp = (TextView) view.findViewById(R.id.gf_tv_clientes_detalle_curp);
-        tv_estatus = (TextView) view.findViewById(R.id.gf_tv_clientes_detalle_estatus);
-        tv_saldo = (TextView) view.findViewById(R.id.gf_tv_clientes_detalle_saldo);
-        tv_sucursal = (TextView) view.findViewById(R.id.gf_tv_clientes_detalle_sucursal);
-        tv_hora_atencion = (TextView) view.findViewById(R.id.gf_tv_clientes_detalle_hora_atencion);
-        tv_nombre_asesor = (TextView) view.findViewById(R.id.gf_tv_nombre_asesor);
-        tv_numero_empleado = (TextView) view.findViewById(R.id.gf_tv_numero_empleado_asesor);
-        tv_inicial = (TextView) view.findViewById(R.id.gf_tv_letra);
-        tv_fechas = (TextView) view.findViewById(R.id.gf_tv_fecha);
-        String nombreAsesor = getArguments().getString("nombreEmpleado");
-        String numeroEmpleado = getArguments().getString("numeroEmpleado");
-        String fechaInicio = getArguments().getString("fechaInicio");
-        String fechaFin = getArguments().getString("fechaFin");
-        tv_numero_empleado.setText("Numero del empleado: " + numeroEmpleado);
-        tv_nombre_asesor.setText("nombre del Asesor:" +nombreAsesor);
-        tv_fechas.setText(fechaInicio + " - "+ fechaFin);
-        tv_inicial.setText(String.valueOf(String.valueOf(nombreAsesor).charAt(0)));
-
-        connected = new Connected();
+        volleySingleton = volleySingleton.getInstance(mResultCallback, rootView.getContext());
+        // TODO: Variables
+        variables();
 
         if(Config.conexion(getContext()))
             sendJson(true);
@@ -186,7 +160,7 @@ public class ReporteClientesDetalles extends Fragment {
 
     /**
      * Reciba una llamada cuando se asocia el fragmento con la actividad
-     * @param context
+     * @param context estado actual de la aplicacion
      */
     @Override
     public void onAttach(Context context) {
@@ -216,11 +190,37 @@ public class ReporteClientesDetalles extends Fragment {
     }
 
     /**
+     * Asignacion de variables e iniciacion de obj
+     */
+    private void variables(){
+        tv_nombre = (TextView) rootView.findViewById(R.id.gf_tv_clientes_detalle_nombre);
+        tv_numero_cuenta = (TextView) rootView.findViewById(R.id.gf_tv_clientes_detalle_numero_cuenta);
+        tv_nss = (TextView) rootView.findViewById(R.id.gf_tv_clientes_detalle_nss);
+        tv_curp = (TextView) rootView.findViewById(R.id.gf_tv_clientes_detalle_curp);
+        tv_estatus = (TextView) rootView.findViewById(R.id.gf_tv_clientes_detalle_estatus);
+        tv_saldo = (TextView) rootView.findViewById(R.id.gf_tv_clientes_detalle_saldo);
+        tv_sucursal = (TextView) rootView.findViewById(R.id.gf_tv_clientes_detalle_sucursal);
+        tv_hora_atencion = (TextView) rootView.findViewById(R.id.gf_tv_clientes_detalle_hora_atencion);
+        tv_nombre_asesor = (TextView) rootView.findViewById(R.id.gf_tv_nombre_asesor);
+        tv_numero_empleado = (TextView) rootView.findViewById(R.id.gf_tv_numero_empleado_asesor);
+        tv_inicial = (TextView) rootView.findViewById(R.id.gf_tv_letra);
+        tv_fechas = (TextView) rootView.findViewById(R.id.gf_tv_fecha);
+        String nombreAsesor = getArguments().getString("nombreEmpleado");
+        String numeroEmpleado = getArguments().getString("numeroEmpleado");
+        String fechaInicio = getArguments().getString("fechaInicio");
+        String fechaFin = getArguments().getString("fechaFin");
+        tv_numero_empleado.setText("Numero del empleado: " + numeroEmpleado);
+        tv_nombre_asesor.setText("nombre del Asesor:" +nombreAsesor);
+        tv_fechas.setText(fechaInicio + " - "+ fechaFin);
+        tv_inicial.setText(String.valueOf(String.valueOf(nombreAsesor).charAt(0)));
+        connected = new Connected();
+    }
+
+    /**
      * Envio de datos por REST jsonObject
      * @param primeraPeticion valida que el proceso sea true
      */
     private void sendJson(final boolean primeraPeticion){
-
         if (primeraPeticion)
             loading = ProgressDialog.show(getActivity(), "Cargando datos", "Porfavor espere...", false, false);
         else
@@ -242,9 +242,9 @@ public class ReporteClientesDetalles extends Fragment {
                 rqt.put("usuario", Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }
-            Log.d("sendJson", " REQUEST -->" + obj);
+            Log.d(TAG, "<- RQT ->\n" + obj + "\n");
         } catch (JSONException e){
-            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
+            Dialogos.dialogoErrorDatos(getContext());
         }
         volleySingleton.postDataVolley("" + primeraPeticion, Config.URL_CONSULTAR_REPORTE_RETENCION_CLIENTE_DETALLE, obj);
     }

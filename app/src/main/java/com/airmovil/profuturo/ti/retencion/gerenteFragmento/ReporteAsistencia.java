@@ -48,22 +48,14 @@ import java.util.Map;
 
 public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelectedListener{
     private static final String TAG = ReporteAsistencia.class.getSimpleName();
-    private static final String ARG_PARAM1 = "idGerencia";
-    private static final String ARG_PARAM2 = "idSucursal";
-    private static final String ARG_PARAM3 = "idAsesor";
-    private static final String ARG_PARAM4 = "fechaInicio";
-    private static final String ARG_PARAM5 = "fechaFin";
-    private int mParam1; //idGerencia
-    private int mParam2; //idSucursal
-    private String mParam3; //idAsesor
-    private String mParam4; //fechaInicio
-    private String mParam5; //fechaFin
+    private static final String ARG_PARAM1 = "idGerencia", ARG_PARAM2 = "idSucursal", ARG_PARAM3 = "idAsesor", ARG_PARAM4 = "fechaInicio", ARG_PARAM5 = "fechaFin";
+    private int mParam1 /*idGerencia*/, mParam2; //idSucursal
+    private String mParam3 /*idAsesor*/, mParam4 /*fechaInicio*/, mParam5 /*fechaFin*/;
     private List<GerenteReporteAsistenciaModel> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private GerenteReporteAsistenciaAdapter adapter;
-    private int pagina = 1, numeroMaximoPaginas = 0, idSucursal = 0, idGerencia = 0;
-    private int filas, totalF;
+    private int pagina = 1, numeroMaximoPaginas = 0, idSucursal = 0, idGerencia = 0, filas;
     private View rootView;
     private OnFragmentInteractionListener mListener;
     private TextView tvFecha, tvATiempo, tvRetardados, tvSinAsistencia, tvRangoFecha1, tvRangoFecha2, tvResultados;
@@ -71,16 +63,13 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
     private EditText etAsesor;
     private Button btnFiltro;
     private Connected connected;
-    private ArrayList<String> sucursales;
-    private ArrayList<String> id_sucursales;
+    private ArrayList<String> sucursales, id_sucursales;
     private Fragment borrar = this;
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
 
-    public ReporteAsistencia() {
-        // Constructor público vacío obligatorio
-    }
+    public ReporteAsistencia() {/* Constructor público vacío obligatorio */ }
 
     /**
      * Utilice este método de fábrica para crear una nueva instancia de
@@ -294,9 +283,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
+    public void onNothingSelected(AdapterView<?> parent) {}
 
     /**
      * Inicia la peticion para el consumo del spinner
@@ -397,9 +384,9 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
             rqt.put("periodo", periodo);
             rqt.put("usuario",Config.usuarioCusp(getContext()));
             obj.put("rqt", rqt);
-            Log.d(TAG, "<-RQT-> \n" + obj + "\n");
+            Log.d(TAG, "<- RQT -> \n" + obj + "\n");
         } catch (JSONException e) {
-            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
+            Dialogos.dialogoErrorDatos(getContext());
         }
         volleySingleton.postDataVolley("" + primerPeticion, Config.URL_CONSULTAR_REPORTE_ASISTENCIA, obj);
     }
@@ -413,7 +400,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         int retardo = 0;
         int inasistencia = 0;
         int totalFilas = 1;
-        int filas = 0;
+        filas = 0;
         try{
             JSONObject asistencia = obj.getJSONObject("asistencia");
             onTime = asistencia.getInt("onTime");
@@ -435,7 +422,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                 getDatos1.add(getDatos2);
             }
         }catch (JSONException e){
-            e.printStackTrace();
+            Dialogos.dialogoErrorDatos(getContext());
         }
 
         tvResultados.setText(totalFilas + " Resulatdos");
@@ -473,7 +460,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                         pagina = Config.pidePagina(getDatos1);
                         sendJson(false);
                     }
-                }, 5000);
+                }, Config.TIME_HANDLER);
             }
         });
     }
@@ -501,7 +488,7 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
                 getDatos1.add(getDatos2);
             }
         }catch (JSONException e){
-            e.printStackTrace();
+            Dialogos.dialogoErrorDatos(getContext());
         }
         adapter.notifyDataSetChanged();
         adapter.setLoaded();

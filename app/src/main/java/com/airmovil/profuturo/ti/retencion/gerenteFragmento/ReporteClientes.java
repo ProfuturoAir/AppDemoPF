@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteClientesAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
@@ -49,16 +50,8 @@ import java.util.Map;
 
 public class ReporteClientes extends Fragment implements  Spinner.OnItemSelectedListener{
     private static final String TAG = ReporteClientes.class.getSimpleName();
-    private static final String ARG_PARAM1 = "idBusqueda";
-    private static final String ARG_PARAM2 = "datosCliente";
-    private static final String ARG_PARAM3 = "idGerencia";
-    private static final String ARG_PARAM4 = "idSucursal";
-    private static final String ARG_PARAM5 = "idAsesor";
-    private static final String ARG_PARAM6 = "fechaInicio";
-    private static final String ARG_PARAM7 = "fechaFin";
-    private static final String ARG_PARAM8 = "idRetenido";
-    private static final String ARG_PARAM9 = "idCita";
-    int idGerencia;
+    private static final String ARG_PARAM1 = "idBusqueda", ARG_PARAM2 = "datosCliente", ARG_PARAM3 = "idGerencia", ARG_PARAM4 = "idSucursal", ARG_PARAM5 = "idAsesor",
+            ARG_PARAM6 = "fechaInicio", ARG_PARAM7 = "fechaFin", ARG_PARAM8 = "idRetenido", ARG_PARAM9 = "idCita";
     private Spinner spinnerId, spinnerSucursales, spinnerIdRetenido, spinnerIdCita, spinnerGerencias;
     private TextView tvResultados, tvRangoFecha1, tvRangoFecha2, tvFecha;
     private Button btnBuscar;
@@ -70,7 +63,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private GerenteReporteClientesAdapter adapter;
-    private int filas, pagina = 1, numeroMaximoPaginas = 0, idSucursal1, idGerencia1, idRetenido1, idCita1, idSucursal, tipoBuscar, spinId = 0;
+    private int filas, pagina = 1, numeroMaximoPaginas = 0, idSucursal1, idGerencia1, idRetenido1, idCita1, idSucursal, tipoBuscar, spinId = 0, idGerencia;
     private String idAsesor1;
     private Fragment borrar = this;
     private OnFragmentInteractionListener mListener;
@@ -85,9 +78,16 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
      * Utilice este método de fábrica para crear una nueva instancia de
      * Este fragmento utilizando los parámetros proporcionados.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ReporteClientes.
+     * @param param1 idBusqueda
+     * @param param2 datosCliente
+     * @param param3 idGerencia
+     * @param param4 idSucursal
+     * @param param5 idAsesor
+     * @param param6 fechaInicio
+     * @param param7 fechaFin
+     * @param param8 idRetenido
+     * @param param9 idCita
+     * @return una nueva instancia del fragmento ReporteClientes.
      */
     public static ReporteClientes newInstance(int param1, String param2, int param3, int param4, String param5, String param6, String param7, int param8, int param9){
         ReporteClientes fragmento = new ReporteClientes();
@@ -141,6 +141,8 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
     }
 
     /**
+     * Se llama inmediatamente después de que onCreateView(LayoutInflater, ViewGroup, Bundle) ha onCreateView(LayoutInflater, ViewGroup, Bundle)
+     * pero antes de que se haya onCreateView(LayoutInflater, ViewGroup, Bundle) estado guardado en la vista.
      * @param view regresa la vista
      * @param savedInstanceState parametros a enviar para conservar en el bundle
      */
@@ -275,7 +277,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
 
     /**
      * Reciba una llamada cuando se asocia el fragmento con la actividad
-     * @param context
+     * @param context estado actual de la aplicacion
      */
     @Override
     public void onAttach(Context context) {
@@ -453,7 +455,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
             json.put("rqt", rqt);
             Log.d(TAG, " <- RQT -> \n" + json + "\n");
         } catch (JSONException e){
-            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
+            Dialogos.dialogoErrorDatos(getContext());
         }
         volleySingleton.postDataVolley("" + primeraPeticion, Config.URL_CONSULTAR_REPORTE_RETENCION_CLIENTES, json);
     }
@@ -488,7 +490,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                 getDatos1.add(getDatos2);
             }
         }catch (JSONException e){
-            e.printStackTrace();
+            Dialogos.dialogoErrorDatos(getContext());
         }
 
         tvResultados.setText(filas + " Registros");
@@ -551,7 +553,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                 getDatos1.add(getDatos2);
             }
         }catch (JSONException e){
-            e.printStackTrace();
+            Dialogos.dialogoErrorDatos(getContext());
         }
         adapter.notifyDataSetChanged();
         adapter.setLoaded();

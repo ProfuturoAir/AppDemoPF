@@ -15,110 +15,67 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
-import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteSinCitaAdapter;
-import com.airmovil.profuturo.ti.retencion.Adapter.GerenteSinCitaAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.activities.Asesor;
-import com.airmovil.profuturo.ti.retencion.activities.Gerente;
-import com.airmovil.profuturo.ti.retencion.asesorFragmento.*;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
-import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
-import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
+import com.airmovil.profuturo.ti.retencion.helper.IResult;
+import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.airmovil.profuturo.ti.retencion.model.GerenteSinCitaModel;
-import com.airmovil.profuturo.ti.retencion.model.GerenteSinCitaModel;
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link SinCita.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link SinCita#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class SinCita extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String TAG = SinCita.class.getSimpleName();
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final String[] ESTADOS_CITAS = new String[]{"Selecciona...","Número de cuenta", "NSS", "CURP"};
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-    private InputMethodManager imm;
-
-    // TODO: XML
     private Spinner spinner;
     private Button btnBuscar;
-    private TextView tvFecha, tvRegistros;
+    private TextView tvFecha;
     private EditText etDatos;
     private View rootView;
-    private LinearLayout ll;
-    private TextView tvNombre, tvCuenta, tvLetra;
-
-    private int mYear;
-    private int mMonth;
-    private int mDay;
-    private String fechaIni = "";
-    private String fechaMostrar = "";
-    private String fechaFin = "";
-    private int posicion;
     private int pagina = 1;
-
     private GerenteSinCitaAdapter adapter;
     private List<GerenteSinCitaModel> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
-    private RecyclerView.Adapter recyclerViewAdapter;
-
+    private String llave = "", valor = "";
+    private boolean procesa = false;
     private OnFragmentInteractionListener mListener;
+    private Fragment borrar = this;
+    private IResult mResultCallback = null;
+    private VolleySingleton volleySingleton;
+    private ProgressDialog loading;
+    private Connected connected;
 
-    public SinCita() {
-        // Required empty public constructor
-    }
+    public SinCita() {/* Se requiere un constructor vacio */}
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment GerenteSinCitaModel.
+     * @param param1 seleccion del campo spinner
+     * @param param2 contenido del campo EditText
+     * @return una nueva instancia del fragmento SinCita.
      */
-    // TODO: Rename and change types and number of parameters
     public static SinCita newInstance(String param1, String param2) {
         SinCita fragment = new SinCita();
         Bundle args = new Bundle();
@@ -131,52 +88,27 @@ public class SinCita extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
+    /**
+     * Se llama inmediatamente después de que onCreateView(LayoutInflater, ViewGroup, Bundle) ha onCreateView(LayoutInflater, ViewGroup, Bundle)
+     * pero antes de que se haya onCreateView(LayoutInflater, ViewGroup, Bundle) estado guardado en la vista.
+     * @param view regresa la vista
+     * @param savedInstanceState parametros a enviar para conservar en el bundle
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        // TODO: Casteo
+        // TODO: metodo para callback de volley
+        initVolleyCallback();
         rootView = view;
-        tvFecha = (TextView) rootView.findViewById(R.id.gfsc_tv_fecha);
-        spinner = (Spinner) rootView.findViewById(R.id.gfsc_spinner_tipo_dato);
-        etDatos = (EditText) rootView.findViewById(R.id.gfsc_et_datos);
-        tvRegistros = (TextView) rootView.findViewById(R.id.gfsc_tv_registros);
-        btnBuscar = (Button) rootView.findViewById(R.id.gfsc_btn_buscar);
-
-        imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-
-        Map<String, Integer> fechaDatos = Config.dias();
-        mYear  = fechaDatos.get("anio");
-        mMonth = fechaDatos.get("mes");
-        mDay   = fechaDatos.get("dia");
-
-        Map<String, String> fechas = Config.fechas(1);
-        fechaFin = fechas.get("fechaFin");
-        fechaIni = fechas.get("fechaIni");
-        fechaMostrar = fechaIni;
-
-        String llave = "";
-        String valor = "";
-        boolean procesa = false;
-        if(getArguments() != null){
-            llave = getArguments().getString(ARG_PARAM1);
-            valor = getArguments().getString(ARG_PARAM2);
-            tvFecha.setText(fechaMostrar);
-            procesa = true;
-        }else {
-            tvFecha.setText(fechaMostrar);
-        }
-
-        etDatos.setFocusable(false);
-        etDatos.setFocusableInTouchMode(false);
-
+        // TODO: llama clase singleton volley
+        volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
+        // TODO: Variables, asignacion de variables
+        variables();
+        // TODO: Argumentos, verifica que existan datos recibidos
+        argumentos();
         if(procesa)
             sendJson(true, llave, valor);
-
 
         // TODO: Spinner
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, ESTADOS_CITAS);
@@ -189,7 +121,6 @@ public class SinCita extends Fragment {
                 switch (position){
                     case 0:
                         etDatos.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-                        //imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                         etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryDark1), PorterDuff.Mode.OVERLAY);
                         etDatos.setFocusable(true);
@@ -198,7 +129,6 @@ public class SinCita extends Fragment {
                         break;
                     case 1:
                         etDatos.setFocusableInTouchMode(true);
-                        //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                         etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
                         etDatos.setInputType(InputType.TYPE_CLASS_PHONE);
@@ -207,7 +137,6 @@ public class SinCita extends Fragment {
                         break;
                     case 2:
                         etDatos.setFocusableInTouchMode(true);
-                        //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                         etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
                         etDatos.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
@@ -216,7 +145,6 @@ public class SinCita extends Fragment {
                         break;
                     case 3:
                         etDatos.setFocusableInTouchMode(true);
-                        //imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                         etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
                         etDatos.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
@@ -232,7 +160,6 @@ public class SinCita extends Fragment {
         });
         spinner.setAdapter(adapter);
 
-        final Fragment borrar = this;
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -240,72 +167,32 @@ public class SinCita extends Fragment {
                 if(connected.estaConectado(getContext())){
                     String valores = etDatos.getText().toString().trim();
                     String seleccion = spinner.getSelectedItem().toString();
-                    Log.d(TAG, "Seleccion: --->" + seleccion);
-
                     if(seleccion.equals("Selecciona...")) {
-
                         Config.dialogoDatosVacios(getContext());
                     }else{
                         if(valores.isEmpty()) {
                             switch (seleccion){
                                 case "Número de cuenta":
-                                    Config.dialogoSinSeleccionSpinner(getContext(), " número de cuenta");
+                                    Dialogos.dialogoSinSeleccionSpinner(getContext(), " número de cuenta");
                                     break;
                                 case "NSS":
-                                    Config.dialogoSinSeleccionSpinner(getContext(), " NSS");
+                                    Dialogos.dialogoSinSeleccionSpinner(getContext(), " NSS");
                                     break;
                                 case "CURP":
-                                    Config.dialogoSinSeleccionSpinner(getContext(), " CURP");
+                                    Dialogos.dialogoSinSeleccionSpinner(getContext(), " CURP");
                                     break;
                             }
                         }else{
                             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                            /*
-                            SinCita clase = SinCita.newInstance(
-                                    valores, rootView.getContext()
-                            );
-                            */
-
-                            SinCita clase = SinCita.newInstance(
-                                    seleccion, valores
-                            );
-
+                            SinCita clase = SinCita.newInstance(seleccion, valores);
                             Config.teclado(getContext(), etDatos);
                             borrar.onDestroy();
-                            ft.remove(borrar);
-                            ft.replace(R.id.content_gerente, clase);
-                            ft.addToBackStack(null);
-                            //sendJson(true, seleccion, valores);
-                            ft.commit();
+                            ft.remove(borrar).replace(R.id.content_gerente, clase).addToBackStack(null).commit();
                         }
                     }
                 }else{
-                    try {
-                        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-                        progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
-                        progressDialog.setTitle(getResources().getString(R.string.error_conexion));
-                        progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion_firma));
-                        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        progressDialog.dismiss();
-                                    }
-                                });
-                        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                    }
-                                });
-                        progressDialog.show();
-                    }catch (Exception e){
-                        Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
-                    }
+                    Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                 }
-
-
             }
         });
         // TODO: model
@@ -317,8 +204,9 @@ public class SinCita extends Fragment {
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
     }
 
-
-
+    /**
+     * Se implementa este metodo, para generar el regreso con clic nativo de android
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -355,30 +243,28 @@ public class SinCita extends Fragment {
         });
     }
 
-    public static SinCita newInstance(String campo, Context ctx){
-        SinCita clase = new SinCita();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, campo);
-        clase.setArguments(args);
-        return clase;
-    }
-
+    /**
+     * Se lo llama para crear la jerarquía de vistas asociada con el fragmento.
+     * @param inflater inflacion del xml
+     * @param container contenedor del ml
+     * @param savedInstanceState datos guardados
+     * @return el fragmento declarado DIRECTOR INICIO
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.gerente_fragmento_sin_cita, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            Toast.makeText(getContext(), "if", Toast.LENGTH_SHORT).show();
             mListener.onFragmentInteraction(uri);
-        }else{
-            Toast.makeText(getContext(), "else", Toast.LENGTH_SHORT).show();
         }
     }
 
+    /**
+     * Reciba una llamada cuando se asocia el fragmento con la actividad
+     * @param context estado actual de la aplicacion
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -387,6 +273,9 @@ public class SinCita extends Fragment {
         }
     }
 
+    /**
+     * Se lo llama cuando se desasocia el fragmento de la actividad.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -394,34 +283,76 @@ public class SinCita extends Fragment {
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * Esta interfaz debe ser implementada por actividades que contengan esta
+     * Para permitir que se comunique una interacción en este fragmento
+     * A la actividad y potencialmente otros fragmentos contenidos en esta actividad.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * Setear las variables de xml
+     */
+    private void variables(){
+        tvFecha = (TextView) rootView.findViewById(R.id.gfsc_tv_fecha);
+        spinner = (Spinner) rootView.findViewById(R.id.gfsc_spinner_tipo_dato);
+        etDatos = (EditText) rootView.findViewById(R.id.gfsc_et_datos);
+        btnBuscar = (Button) rootView.findViewById(R.id.gfsc_btn_buscar);
+        connected = new Connected();
+        tvFecha.setText(Dialogos.fechaActual());
+        etDatos.setFocusable(false);
+        etDatos.setFocusableInTouchMode(false);
+    }
+
+    /**
+     * Se utiliza para cololar datos recibidos entre una busqueda(por ejemplo: fechas)
+     */
+    private void  argumentos(){
+        if(getArguments() != null){
+            llave = getArguments().getString(ARG_PARAM1);
+            valor = getArguments().getString(ARG_PARAM2);
+            procesa = true;
+        }
+    }
+
+    /**
+     *  metodo para callback de volley
+     */
+    void initVolleyCallback() {
+        mResultCallback = new IResult() {
+            @Override
+            public void notifySuccess(String requestType, JSONObject response) {
+                loading.dismiss();
+                primerPaso(response);
+            }
+
+            @Override
+            public void notifyError(String requestType, VolleyError error) {
+                if(connected.estaConectado(getContext())){
+                    Dialogos.dialogoErrorServicio(getContext());
+                }else{
+                    Dialogos.dialogoErrorConexion(getContext());
+                }
+            }
+        };
+    }
+
+    /**
+     * Envio de datos por REST jsonObject
+     * @param primerPeticion valida que el proceso sea true
+     */
     private void sendJson(final boolean primerPeticion, String seleccion, String valores) {
-        final ProgressDialog loading;
         if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
+            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Porfavor espere...", false, false);
         else
             loading = null;
 
-        Log.d(TAG + "DATOS--> JSON", "\nSpinner: " + seleccion + "\nCampo a enviar: " + valores);
         JSONObject obj = new JSONObject();
-        try {
-            // TODO: Formacion del JSON request
-            JSONObject rqt = new JSONObject();
-            JSONObject filtros = new JSONObject();
+        JSONObject rqt = new JSONObject();
+        JSONObject filtros = new JSONObject();
 
+        try {
             switch (seleccion){
                 case "Número de cuenta":
                     filtros.put("curp", "");
@@ -443,41 +374,18 @@ public class SinCita extends Fragment {
             rqt.put("pagina", pagina);
             rqt.put("usuario", Config.usuarioCusp(getContext()));
             obj.put("rqt", rqt);
-            Log.d(TAG, "PETICION VACIA-->" + obj);
+            Log.d(TAG, "<- RQT ->\n" + obj + "\n");
         } catch (JSONException e) {
-            Config.msj(getContext(),"Error json","1 Lo sentimos ocurrio un right_in al formar los datos.");
+            Dialogos.dialogoErrorDatos(getContext());
         }
-        //Creating a json array request
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_CLIENTE_SIN_CITA, obj,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        //Dismissing progress dialog
-                        if (primerPeticion) {
-                            loading.dismiss();
-                            primerPaso(response);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        loading.dismiss();
-                        //Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return Config.credenciales(getContext());
-            }
-        };
-        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+        volleySingleton.postDataVolley("primerPaso", Config.URL_CONSULTAR_CLIENTE_SIN_CITA, obj);
     }
 
+    /**
+     * @param obj recibe el obj json de la peticion
+     */
     private void primerPaso(JSONObject obj) {
-        Log.d(TAG, "-----> >" + obj);
-        String nombreCliente = "";
-        String numeroCuenta = "";
+        Log.d(TAG, "<- Response ->" + obj);
         String status = "";
         String statusText ="";
         try{
@@ -496,7 +404,6 @@ public class SinCita extends Fragment {
                     }
                     getDatos1.add(getDatos2);
                 }
-                Log.d(TAG, "JSON response : ->" + array);
             }else{
                 statusText = obj.getString("statusText");
                 Config.msj(getContext(), "Error", statusText);

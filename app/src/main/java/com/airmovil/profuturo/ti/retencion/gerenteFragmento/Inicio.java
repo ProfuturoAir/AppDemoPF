@@ -2,6 +2,7 @@ package com.airmovil.profuturo.ti.retencion.gerenteFragmento;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -28,8 +29,7 @@ import java.util.Map;
 
 public class Inicio extends Fragment {
     public static final String TAG = Inicio.class.getSimpleName();
-    private static final String ARG_PARAM1 = "fechaInicio";
-    private static final String ARG_PARAM2 = "fechaFin";
+    private static final String ARG_PARAM1 = "fechaInicio", ARG_PARAM2 = "fechaFin";
     private String mParam1; // fecha Inicio
     private String mParam2; // fecha fin
     private OnFragmentInteractionListener mListener;
@@ -57,7 +57,6 @@ public class Inicio extends Fragment {
      * @param param2 parametro 2.
      * @return una nueva instancia del fragmento Inicio.
      */
-    // TODO: Rename and change types and number of parameters
     public static Inicio newInstance(String param1, String param2, Context context) {
         Inicio fragment = new Inicio();
         Bundle args = new Bundle();
@@ -84,7 +83,6 @@ public class Inicio extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // TODO: metodo para callback de volley
         initVolleyCallback();
-        // TODO: Lineas para ocultar el teclado virtual (Hide keyboard)
         rootView = view;
         // TODO: llama clase singleton volley
         volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
@@ -140,7 +138,7 @@ public class Inicio extends Fragment {
 
     /**
      * Reciba una llamada cuando se asocia el fragmento con la actividad
-     * @param context
+     * @param context estado actual de la aplicacion
      */
     @Override
     public void onAttach(Context context) {
@@ -159,11 +157,18 @@ public class Inicio extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onResume() {
+        if(!Config.estahabilitadoGPS(getContext())){
+            Dialogos.dialogoActivarLocalizacion(getContext());
+        }
+        super.onResume();
+    }
+
     /**
      * Esta interfaz debe ser implementada por actividades que contengan esta
      * Para permitir que se comunique una interacción en este fragmento
-     * A la actividad y potencialmente otros fragmentos contenidos en ese
-     * actividad.
+     * A la actividad y potencialmente otros fragmentos contenidos en estaactividad.
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
@@ -195,6 +200,8 @@ public class Inicio extends Fragment {
         }
     }
 
+
+
     /**
      * Obteniendo los valores del apartado superior, nombre
      */
@@ -209,14 +216,14 @@ public class Inicio extends Fragment {
     }
 
     /**
-     *
-     * @param
+     * Envio de datos por REST jsonObject
+     * @param primerPeticion valida que el proceso sea true
      */
     public void sendJson(final boolean primerPeticion){
-        /*if (primerPeticion)
+        if (primerPeticion)
             loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
         else
-            loading = null;*/
+            loading = null;
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
         JSONObject periodo = new JSONObject();
@@ -239,14 +246,12 @@ public class Inicio extends Fragment {
      *  metodo para callback de volley
      */
     void initVolleyCallback() {
-
         mResultCallback = new IResult() {
             @Override
             public void notifySuccess(String requestType, JSONObject response) {
-                //loading.dismiss();
+                loading.dismiss();
                 primerPaso(response);
             }
-
             @Override
             public void notifyError(String requestType, VolleyError error) {
                 if(connected.estaConectado(getContext())){
@@ -266,7 +271,7 @@ public class Inicio extends Fragment {
             if (rootView != null)
                 tvRetenidos = (TextView) rootView.findViewById(R.id.gfi_tv_retenidos);
         } catch (Exception e) {
-            Log.e("-->es error:", e.toString());
+            Dialogos.dialogoErrorDatos(getContext());
         }
         try {
             JSONObject infoConsulta = obj.getJSONObject("infoConsulta");
@@ -277,7 +282,7 @@ public class Inicio extends Fragment {
             iSaldoRetenido = (Integer) saldos.get("saldoRetenido");
             iSaldoNoRetenido = (Integer) saldos.get("saldoNoRetenido");
         } catch (JSONException e) {
-            Config.msj(getContext(), "Error", "Lo sentimos ocurrio un error con los datos");
+            Dialogos.dialogoErrorDatos(getContext());
         }
         tvRetenidos.setText("" + iRetenidos);
         tvNoRetenidos.setText("" + iNoRetenidos);
