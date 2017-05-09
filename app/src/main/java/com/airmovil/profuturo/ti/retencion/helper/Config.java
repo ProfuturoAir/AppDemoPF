@@ -489,6 +489,11 @@ public class Config extends Activity {
             Dialogos.dialogoActivarLocalizacion(getContext);
     }
 
+    /**
+     *
+     * @param getContext
+     * @return
+     */
     public static boolean estahabilitadoGPS(Context getContext){
         LocationManager mlocManager = (LocationManager) getContext.getSystemService(Context.LOCATION_SERVICE);
         return mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
