@@ -25,7 +25,9 @@ import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
+import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.AsesorReporteClientesModel;
 import com.android.volley.AuthFailureError;
@@ -67,15 +69,20 @@ public class ReporteClientes extends Fragment {
     private int numeroMaximoPaginas = 0;
     private Fragment borrar = this;
     private OnFragmentInteractionListener mListener;
+    private IResult mResultCallback = null;
+    private VolleySingleton volleySingleton;
+    private ProgressDialog loading;
 
-    public ReporteClientes() {
-        // Requiere un constructor vacio
-    }
+    public ReporteClientes() { /* Requiere un constructor vacio */ }
 
     /**
-     * Se utilizan los parámetros proporcionados.
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * Utilice este método de fábrica para crear una nueva instancia de
+     * Este fragmento utilizando los parámetros proporcionados.
+     * @param param1 parametro 1 idSeleccion.
+     * @param param2 parametro 2 idDatoAsesor.
+     * @param param3 parametro 3 fechaInicio
+     * @param param4 parametro 4 fechaFin
+     * @param param5 parametro 5 idStatus
      * @return una nueva instancia del fragmento ReporteClientes.
      */
     public static ReporteClientes newInstance(int param1, String param2, String param3, String param4, int param5, Context context) {
@@ -91,8 +98,9 @@ public class ReporteClientes extends Fragment {
     }
 
     /**
-     *
-     * @param savedInstanceState
+     * Utilice este método de fábrica para crear una nueva instancia de
+     * Este fragmento utilizando los parámetros proporcionados.
+     * @param savedInstanceState parametros a enviar para conservar en el bundle
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -107,14 +115,20 @@ public class ReporteClientes extends Fragment {
     }
 
     /**
-     *
-     * @param view
-     * @param savedInstanceState
+     * Se llama inmediatamente después de que onCreateView(LayoutInflater, ViewGroup, Bundle) ha onCreateView(LayoutInflater, ViewGroup, Bundle)
+     * pero antes de que se haya onCreateView(LayoutInflater, ViewGroup, Bundle) estado guardado en la vista.
+     * @param view regresa la vista
+     * @param savedInstanceState parametros a enviar para conservar en el bundle
      */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        // TODO: metodo para callback de volley
+        initVolleyCallback();
         rootView = view;
-        primeraPeticion();
+        // TODO: llama clase singleton volley
+        volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
+
+        sendJson(true);
         variables();
         argumentos();
         Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha1);
@@ -157,7 +171,6 @@ public class ReporteClientes extends Fragment {
     }
 
     /**
-     *
      * @param inflater se utiliza para inflar el XML
      * @param container contiene los elementos de la vista
      * @param savedInstanceState guarda los datos enviados
@@ -168,10 +181,6 @@ public class ReporteClientes extends Fragment {
         return inflater.inflate(R.layout.asesor_fragmento_reporte_clientes, container, false);
     }
 
-    /**
-     *
-     * @param uri
-     */
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -179,8 +188,8 @@ public class ReporteClientes extends Fragment {
     }
 
     /**
-     *
-     * @param context
+     * Reciba una llamada cuando se asocia el fragmento con la actividad
+     * @param context estado actual de la aplicacion
      */
     @Override
     public void onAttach(Context context) {
@@ -191,7 +200,7 @@ public class ReporteClientes extends Fragment {
     }
 
     /**
-     *
+     * Se implementa este metodo, para generar el regreso con clic nativo de android
      */
     @Override
     public void onDetach() {
@@ -200,7 +209,9 @@ public class ReporteClientes extends Fragment {
     }
 
     /**
-     *
+     * Esta interfaz debe ser implementada por actividades que contengan esta
+     * Para permitir que se comunique una interacción en este fragmento
+     * A la actividad y potencialmente otros fragmentos contenidos en esta actividad.
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
@@ -208,25 +219,8 @@ public class ReporteClientes extends Fragment {
     }
 
     /**
-     *
-     */
-    private void primeraPeticion(){
-        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIcon(R.drawable.icono_abrir);
-        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
-        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
-        progressDialog.show();
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        progressDialog.dismiss();
-                        sendJson(true);
-                    }
-                }, Config.TIME_HANDLER);
-    }
-
-    /**
-     *
+     * Asignacion de las variables
+     * declaracion de objetos
      */
     private void variables(){
         tvFecha = (TextView) rootView.findViewById(R.id.afrc_tv_fecha);
@@ -245,7 +239,8 @@ public class ReporteClientes extends Fragment {
     }
 
     /**
-     *
+     *  Espera el regreso de fechas incial (hoy y el dia siguiente)
+     *  y cuando se realiza una nueva busqueda, retorna las fechas seleccionadas
      */
     private void argumentos(){
         if(getArguments() != null){
@@ -259,10 +254,41 @@ public class ReporteClientes extends Fragment {
     }
 
     /**
-     *
-     * @param primerPeticion
+     * metodo para callback de volley
+     */
+    void initVolleyCallback() {
+        mResultCallback = new IResult() {
+            @Override
+            public void notifySuccess(String requestType, JSONObject response) {
+                if (requestType.trim().equals("true")) {
+                    loading.dismiss();
+                    primerPaso(response);
+                } else {
+                    segundoPaso(response);
+                }
+            }
+
+            @Override
+            public void notifyError(String requestType, VolleyError error) {
+                if(connected.estaConectado(getContext())){
+                    Dialogos.dialogoErrorServicio(getContext());
+                }else{
+                    Dialogos.dialogoErrorConexion(getContext());
+                }
+            }
+        };
+    }
+
+    /**
+     * Envio de datos por REST jsonObject
+     * @param primerPeticion valida que el proceso sea true
      */
     private void sendJson(final boolean primerPeticion) {
+        if (primerPeticion)
+            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
+        else
+            loading = null;
+
         JSONObject obj = new JSONObject();
         JSONObject rqt = new JSONObject();
         JSONObject filtros = new JSONObject();
@@ -303,38 +329,12 @@ public class ReporteClientes extends Fragment {
         }catch (JSONException e){
             e.printStackTrace();
         }
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_GENERAR_REPORTE_CLIENTE, obj,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        if (primerPeticion) {
-                            primerPaso(response);
-                        } else {
-                            segundoPaso(response);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if(connected.estaConectado(getContext())){
-                            Dialogos.dialogoErrorServicio(getContext());
-                        }else{
-                            Dialogos.dialogoErrorConexion(getContext());
-                        }
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return Config.credenciales(getContext());
-            }
-        };
-        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+        volleySingleton.postDataVolley("" + primerPeticion, Config.URL_GENERAR_REPORTE_CLIENTE, obj);
     }
 
     /**
-     *
-     * @param obj
+     * Inicia este metodo para llenar la lista de elementos, cada 10, inicia solamente con 10, despues inicia el metodo segundoPaso
+     * @param obj jsonObject
      */
     private void primerPaso(JSONObject obj) {
         Log.d(TAG + "<- RQT ->\n", obj.toString() + "\n");

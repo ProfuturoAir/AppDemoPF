@@ -108,6 +108,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
     /**
      * Utilice este método de fábrica para crear una nueva instancia de
      * Este fragmento utilizando los parámetros proporcionados.
+     * @param savedInstanceState parametros a enviar para conservar en el bundle
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -299,8 +300,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
     /**
      * Esta interfaz debe ser implementada por actividades que contengan esta
      * Para permitir que se comunique una interacción en este fragmento
-     * A la actividad y potencialmente otros fragmentos contenidos en ese
-     * actividad.
+     * A la actividad y potencialmente otros fragmentos contenidos en esta actividad.
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
