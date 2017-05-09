@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
@@ -186,15 +187,15 @@ public class Dialogos extends Activity{
     public static final void dialogoActivarLocalizacion(final Context ctx){
         AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
         builder.setCancelable(false);
-        builder.setTitle("Enable GPS");
-        builder.setMessage("Please enable GPS");
+        builder.setTitle("No se pudo acceder a las coordenadas de su localización");
+        builder.setMessage("¿Decea habílitar su localización?");
         builder.setInverseBackgroundForced(true);
-        builder.setPositiveButton("Habilitar", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 ctx.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
             }
         });
-        builder.setNegativeButton("Ignorar", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
@@ -202,5 +203,4 @@ public class Dialogos extends Activity{
         AlertDialog alert = builder.create();
         alert.show();
     }
-
 }
