@@ -188,7 +188,7 @@ public class Dialogos extends Activity{
         AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
         builder.setCancelable(false);
         builder.setTitle("No se pudo acceder a las coordenadas de su localización");
-        builder.setMessage("¿Decea habílitar su localización?");
+        builder.setMessage("¿Desea habílitar su localización?");
         builder.setInverseBackgroundForced(true);
         builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {

@@ -1,84 +1,52 @@
 package com.airmovil.profuturo.ti.retencion.asesorFragmento;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.DrawingView;
-import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
-import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
+import com.airmovil.profuturo.ti.retencion.helper.IResult;
+import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
-
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link AsistenciaEntrada.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link AsistenciaEntrada#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks{
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks{
+    /*inicializacion de los paramentros del fragmento*/
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final int REQUEST_LOCATION = 0;
     private GoogleApiClient apiClient;
     private boolean firsStarted = true;
+    private Connected connected;
     private DrawingView dvFirma;
 
     private TextView tvLongitud, tvLatitud;
@@ -89,22 +57,22 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
     private String mParam2;
     // TODO: DATOS
     View rootView;
+    private IResult mResultCallback = null;
+    private VolleySingleton volleySingleton;
+    private ProgressDialog loading;
 
     private OnFragmentInteractionListener mListener;
 
     public AsistenciaComidaSalida() {
-        // Required empty public constructor
+        // contructor vacio es requerido
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AsistenciaEntrada.
+     * al crear una nueva instancia recibe como paramentros
+     * @param param1 Parametro 1.
+     * @param param2 Parametro 2.
+     * @return un objeto AsistenciaEntrada.
      */
-    // TODO: Rename and change types and number of parameters
     public static AsistenciaEntrada newInstance(String param1, String param2) {
         AsistenciaEntrada fragment = new AsistenciaEntrada();
         Bundle args = new Bundle();
@@ -125,25 +93,22 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        // TODO: metodo para callback de volley
+        initVolleyCallback();
+        // TODO: Lineas para ocultar el teclado virtual (Hide keyboard)
         rootView = view;
+        // TODO: llama clase singleton volley
+        volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
         tvLongitud = (TextView) rootView.findViewById(R.id.textViewLogintud2);
         tvLatitud = (TextView) rootView.findViewById(R.id.textViewLatitud2);
         btnLimpiar = (Button) rootView.findViewById(R.id.buttonLimpiar2);
         btnGuardar = (Button) rootView.findViewById(R.id.buttonGuardar2);
         btnCancelar = (Button) rootView.findViewById(R.id.buttonCancelar2);
-
         dvFirma = (DrawingView) view.findViewById(R.id.drawinView2);
-
         dvFirma.setBrushSize(5);
         dvFirma.setColor("#000000");
         dvFirma.setFocusable(true);
-
-        apiClient = new GoogleApiClient.Builder(getActivity())
-                .enableAutoManage(getActivity(),this)
-                .addConnectionCallbacks(this)
-                .addApi(LocationServices.API)
-                .build();
-
+        apiClient = new GoogleApiClient.Builder(getActivity()).enableAutoManage(getActivity(),this).addConnectionCallbacks(this).addApi(LocationServices.API).build();
         btnLimpiar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -188,7 +153,6 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
                                         dvFirma.startNew();
                                         dvFirma.setDrawingCacheEnabled(true);
                                         sendJson(true);
-
                                     }
                                 });
                         progressDialog.show();
@@ -265,11 +229,10 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        /* infla la vista del fragmento */
         return inflater.inflate(R.layout.asesor_fragmento_asistencia_comida_salida, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -304,16 +267,10 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
             updateUI(lastLocation);
         }
     }
-
     @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
+    public void onConnectionSuspended(int i) {}
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
 
     @Override
     public void onStop() {
@@ -321,6 +278,16 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
             apiClient.disconnect();
         firsStarted = true;
         super.onStop();
+    }
+
+    @Override
+    public void onResume() {
+        LocationManager mlocManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        boolean enable = mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if(!enable){
+            Dialogos.dialogoActivarLocalizacion(getContext());
+        }
+        super.onResume();
     }
 
     @Override
@@ -332,25 +299,19 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
                 Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(apiClient);
                 updateUI(lastLocation);
             } else {
-                //Permiso denegado:
-                //Deberíamos deshabilitar toda la funcionalidad relativa a la localización.
+                //Permiso denegado deberíamos deshabilitar toda la funcionalidad relativa a la localización.
                 Log.e("LOGTAG", "Permiso denegado");
             }
         }
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * esta clase debe ser implementada en las actividades que contengan
+     * fragmentos para que exista la comunicacion entre los fragmentos
+     * para mas informacion ver http://developer.android.com/training/basics/fragments/communicating.html
+     * Comunicaciòn entre fragmentos
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
@@ -358,18 +319,42 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
         if (loc != null){
             tvLongitud.setText(String.valueOf(loc.getLatitude()));
             tvLongitud.setText(String.valueOf(loc.getLongitude()));
-            Log.d("------->", "\n" + loc.getLongitude());
-            Log.d("------->", "\n" + loc.getLatitude());
         }
     }
 
-    private void sendJson(final boolean primeraPeticion){
+    /**
+     *  metodo para callback de volley
+     */
+    void initVolleyCallback() {
 
-        Map<String, String> usuarioDatos = Config.datosUsuario(getContext());
-        Map<String, String> fechaActual = Config.fechas(1);
-        String fecha = fechaActual.get("fechaIni");
-        String longitud = tvLongitud.getText().toString();
-        String latitud = tvLatitud.getText().toString();
+        mResultCallback = new IResult() {
+            @Override
+            public void notifySuccess(String requestType, JSONObject response) {
+                loading.dismiss();
+                primerPaso(response);
+            }
+
+            @Override
+            public void notifyError(String requestType, VolleyError error) {
+                if(connected.estaConectado(getContext())){
+                    Dialogos.dialogoErrorServicio(getContext());
+                }else{
+                    Dialogos.dialogoErrorConexion(getContext());
+                }
+            }
+        };
+    }
+
+    /**
+     * Método para generar el proceso REST
+     * @param primeraPeticion identifica si el metodo será procesado, debe llegar en true
+     */
+    private void sendJson(final boolean primeraPeticion){
+        if (primeraPeticion)
+            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
+        else
+            loading = null;
+
         double w, z;
 
         try {
@@ -381,7 +366,7 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
         try {
             w = new Double(tvLongitud.getText().toString());
         } catch (NumberFormatException e) {
-            w = 0; // your default value
+            w = 0;
         }
 
         JSONObject json = new JSONObject();
@@ -390,9 +375,7 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
 
         String fechaN = "";
         try {
-            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-            f.setTimeZone(TimeZone.getTimeZone("America/Mexico_City"));
-            String fechaS = f.format(new Date());
+            String fechaS = Config.getFechaFormat();
             fechaN = fechaS.substring(0, fechaS.length() - 2) + ":00";
             System.out.println(fechaN);
             Log.d("TAG fecha ->", "" + fechaN);
@@ -412,91 +395,16 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
         } catch (JSONException e){
             Config.msj(getContext(),"Error","Existe un error al formar la peticion");
         }
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_REGISTRAR_ASISTENCIA, json,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        if(primeraPeticion){
-                            primerPaso(response);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        try{
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                        Connected connected = new Connected();
-                        if(connected.estaConectado(getContext())){
-                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                            dlgAlert.setTitle("Error");
-                            dlgAlert.setMessage("Se ha encontrado un problema, deseas volver intentarlo");
-                            dlgAlert.setCancelable(true);
-                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    //sendJson(true);
-                                }
-                            });
-                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                            dlgAlert.create().show();
-                        }else{
-                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                            dlgAlert.setTitle("Error de conexión");
-                            dlgAlert.setMessage("Se ha encontrado un problema, debes revisar tu conexión a internet");
-                            dlgAlert.setCancelable(true);
-                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    //sendJson(true, f1, f2);
-                                }
-                            });
-                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                            dlgAlert.create().show();
-                        }
-                    }
-                })
-        {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return Config.credenciales(getContext());
-            }
-        };
-        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+        volleySingleton.postDataVolley("primerPaso", Config.URL_REGISTRAR_ASISTENCIA, json);
     }
 
     private void primerPaso(JSONObject obj){
-        Log.d("TAG", "primerPaso: "  + obj );
-        Map<String, String> fechaActual = Config.fechas(1);
-        String fecha = fechaActual.get("fechaIni");
-        Calendar calendario = Calendar.getInstance();
-        int hora, minutos, segundos;
-
-
-        hora =calendario.get(Calendar.HOUR_OF_DAY);
-        minutos = calendario.get(Calendar.MINUTE);
-        segundos = calendario.get(Calendar.SECOND);
-
-
-        String status = "";
-        String statusText = "";
+        Log.d("TAG", "primerPaso: "  + obj);
         try{
-            status = obj.getString("status");
-            statusText = obj.getString("statusText");
+            String status = obj.getString("status");
+            String statusText = obj.getString("statusText");
             if(Integer.parseInt(status) == 200){
-                Config.msj(getContext(), "Envio correcto", "Se ha registrado, la salida de comida.\nFecha:" + fecha + " \nhora: " + hora+":"+minutos+":"+segundos);
+                Config.msj(getContext(), "Envio correcto", "Se ha registrado, la salida de comida.\nFecha:" + Dialogos.fechaActual() + " \nhora: " +Config.getHoraActual());
             }else{
                 Config.msj(getContext(), "Error: " + status, statusText);
             }

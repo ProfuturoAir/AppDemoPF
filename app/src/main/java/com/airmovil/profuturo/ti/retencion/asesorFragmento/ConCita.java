@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -27,36 +28,24 @@ import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
-import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.airmovil.profuturo.ti.retencion.helper.IResult;
+import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.CitasClientesModel;
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ConCita extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
+    /*inicializacion de los parametros */
     private static final String TAG = ConCita.class.getSimpleName();
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: paramentros
-    private String mParam1;
-    private String mParam2;
-    private int mYear;
-    private int mMonth;
-    private int mDay;
-    private String fechaIni = "";
-    private String fechaFin = "";
-    private String fechaMostrar = "";
     private static final String[] ESTADOS_CITAS = new String[]{"Atendido", "Sin Atender", "Ambos"};
 
     private List<CitasClientesModel> getDatos1;
@@ -71,36 +60,33 @@ public class ConCita extends Fragment {
     private CitasClientesAdapter adapter;
     private int pagina = 1;
     private int numeroMaximoPaginas = 0;
-    private int totalF;
-
     private OnFragmentInteractionListener mListener;
+    private int spinnerOpcion;
 
     // TODO: XML
     private Spinner spinner;
     private Button btnAplicar, btnClienteSinCita;
     private TextView tvFecha, tvRegistros;
     private View rootView;
+    private IResult mResultCallback = null;
+    private VolleySingleton volleySingleton;
+    private ProgressDialog loading;
     private Connected connected;
     final Fragment borrar = this;
 
     public ConCita() {
-        // Required empty public constructor
+        // constructor vacio requerido
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ConCita.
+     * al crear una instancia recibe los parametros:
+     * @param param1 Parametro 1.
+     * @return un objeto ConCita.
      */
-    // TODO: Rename and change types and number of parameters
-    public static ConCita newInstance(String param1, String param2, Context context) {
+    public static ConCita newInstance(int param1, Context context) {
         ConCita fragment = new ConCita();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putInt(ARG_PARAM1, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -108,29 +94,23 @@ public class ConCita extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        // TODO: Casteo
+        // TODO: metodo para callback de volley
+        initVolleyCallback();
         rootView = view;
-
+        // TODO: llama clase singleton volley
+        volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
         connected = new Connected();
-
         spinner = (Spinner) rootView.findViewById(R.id.afcc_spinner_estados);
         btnAplicar = (Button) rootView.findViewById(R.id.afcc_btn_aplicar);
         btnClienteSinCita = (Button) rootView.findViewById(R.id.afcc_btn_sin_cita);
         tvFecha = (TextView) rootView.findViewById(R.id.afcc_tv_fecha);
         tvRegistros = (TextView) rootView.findViewById(R.id.afcc_tv_registros);
-
-        primeraPeticion();
+        sendJson(true);
         fechas();
-
-        //<editor-fold desc="SPINNER">
         // TODO: Spinner
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.CITAS){
             @Override
@@ -139,15 +119,11 @@ public class ConCita extends Fragment {
                     return false;
                 else
                     return true;
-
             }
         };
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinner.setSelection(Adapter.NO_SELECTION,false);
         spinner.setAdapter(adapter);
-        //</editor-fold>
-
-        //<editor-fold desc="RecyclerView">
         // TODO: modelos
         getDatos1 = new ArrayList<>();
         // TODO: Recycler
@@ -155,16 +131,13 @@ public class ConCita extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-        //</editor-fold>
-
-
         btnAplicar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                spinnerOpcion = spinner.getSelectedItemPosition();
                 if(connected.estaConectado(getContext())){
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    ConCita newInstance = ConCita.newInstance(Dialogos.fechaActual(), "", rootView.getContext());
+                    ConCita newInstance = ConCita.newInstance(spinnerOpcion, rootView.getContext());
                     borrar.onDestroy();
                     ft.remove(borrar);
                     ft.replace(R.id.content_asesor, newInstance);
@@ -195,12 +168,10 @@ public class ConCita extends Fragment {
 
             }
         });
-
         btnClienteSinCita.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(connected.estaConectado(getContext())){
-
                 }else{
                     final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
                     progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
@@ -227,19 +198,17 @@ public class ConCita extends Fragment {
                 Fragment fragmentoGenerico = new SinCita();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 fragmentManager
-                        .beginTransaction()//.setCustomAnimations(android.R.anim.slide_out_right,android.R.anim.slide_in_left
-                        .replace(R.id.content_asesor, fragmentoGenerico).commit();
+                        .beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
             }
         });
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        /* infla la vista del fragmento */
         return inflater.inflate(R.layout.asesor_fragmento_con_cita, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -280,118 +249,62 @@ public class ConCita extends Fragment {
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * esta clase debe ser implementada en las actividades que contengan fragmentos
+     * para que exista comunicacion entre los fragmentos
+     * Para mas informacion http://developer.android.com/training/basics/fragments/communicating.html
+     * Comunicacion entre fragmentos
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
+    private void fechas(){tvFecha.setText(Dialogos.fechaActual());}
 
-    private void primeraPeticion(){
-        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIcon(R.drawable.icono_abrir);
-        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
-        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
-        progressDialog.show();
-        // TODO: Implement your own authentication logic here.
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        progressDialog.dismiss();
-                        sendJson(true);
-                    }
-                }, Config.TIME_HANDLER);
-    }
-
-    private void fechas(){
-        tvFecha.setText(Dialogos.fechaActual());
+    /**
+     * metodo para callback de volley
+     */
+    void initVolleyCallback() {
+        mResultCallback = new IResult() {
+            @Override
+            public void notifySuccess(String requestType, JSONObject response) {
+                if (requestType.trim().equals("true")) {
+                    loading.dismiss();
+                    primerPaso(response);
+                } else {
+                    segundoPaso(response);
+                }
+            }
+            @Override
+            public void notifyError(String requestType, VolleyError error) {
+                if(connected.estaConectado(getContext())){
+                    Dialogos.dialogoErrorServicio(getContext());
+                }else{
+                    Dialogos.dialogoErrorConexion(getContext());
+                }
+            }
+        };
     }
 
     // TODO: REST
     private void sendJson(final boolean primerPeticion) {
+        if (primerPeticion)
+            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
+        else
+            loading = null;
+
         final JSONObject obj = new JSONObject();
         try {
-            // TODO: Formacion del JSON request
+            boolean arg = (getArguments()!=null);
             JSONObject rqt = new JSONObject();
-            rqt.put("estatusCita", spinner.getSelectedItemId());
+            rqt.put("estatusCita",(arg)? getArguments().getInt(ARG_PARAM1):0);
             rqt.put("pagina", pagina);
-            rqt.put("usuario", /*Config.usuarioCusp(getContext())*/ Config.idUsuario);
+            rqt.put("usuario", Config.usuarioCusp(getContext()));
             obj.put("rqt", rqt);
             Log.d(TAG, "Primera peticion-->" + obj);
         } catch (JSONException e) {
             Config.msj(getContext(),"Error json","Lo sentimos ocurrio un right_in al formar los datos.");
         }
-        //Creating a json array request
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_RESUMEN_CITAS, obj,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        //Dismissing progress dialog
-                        if (primerPeticion) {
-                            primerPaso(response);
-                        } else {
-                            segundoPaso(response);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        try{
-                            //loading.dismiss();
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                        Connected connected = new Connected();
-                        if(connected.estaConectado(getContext())){
-                            android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
-                            dlgAlert.setTitle("Error");
-                            dlgAlert.setMessage("Se ha encontrado un problema, deseas volver intentarlo");
-                            dlgAlert.setCancelable(true);
-                            dlgAlert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    //sendJson(true);
-                                }
-                            });
-                            dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                            dlgAlert.create().show();
-                        }else{
-                            final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-                            progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
-                            progressDialog.setTitle(getResources().getString(R.string.error_conexion));
-                            progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion));
-                            progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            progressDialog.dismiss();
-                                            //sendJson(true);
-                                        }
-                                    });
-                            progressDialog.show();
-                        }
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return Config.credenciales(getContext());
-            }
-        };
-        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+        volleySingleton.postDataVolley("" + primerPeticion, Config.URL_CONSULTAR_RESUMEN_CITAS, obj);
     }
 
     private void primerPaso(JSONObject obj) {
@@ -400,7 +313,6 @@ public class ConCita extends Fragment {
             JSONArray array = obj.getJSONArray("citas");
             filas = obj.getInt(JSON_FILAS_TOTAL);
             totalFilas = obj.getInt(JSON_FILAS_TOTAL);
-            Log.d(TAG, "*******->" + filas + totalFilas);
             String status = obj.getString("status");
             String statusText = obj.getString("statusText");
             if(Integer.parseInt(status) == 200){
@@ -409,7 +321,6 @@ public class ConCita extends Fragment {
                     JSONObject json = null;
                     try{
                         json = array.getJSONObject(i);
-                        Log.d("OBJETO","PTR: "+json);
                         getDatos2.setHora(json.getString(JSON_HORA));
                         getDatos2.setNombreCliente(json.getString(JSON_NOMBRE_CLIENTE));
                         getDatos2.setNumeroCuenta(json.getString(JSON_NUMERO_CUENTA));
@@ -437,32 +348,23 @@ public class ConCita extends Fragment {
             Log.d(TAG, e.toString());
         }
 
-
-
         adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-                Log.d(TAG, "pagina->" + pagina + "numeroMaximo" + numeroMaximoPaginas);
                 if (pagina >= numeroMaximoPaginas) {
                     return;
                 }
                 getDatos1.add(null);
                 adapter.notifyItemInserted(getDatos1.size() - 1);
-                //Load more data for reyclerview
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Log.e("haint", "Load More 2");
-                        //Remove loading itm
                         getDatos1.remove(getDatos1.size() - 1);
                         adapter.notifyItemRemoved(getDatos1.size());
-                        //Load data
-                        Log.d("EnvioIndex", getDatos1.size() + "");
                         pagina = Config.pidePagina(getDatos1);
-                        Log.d("Dato pagina 2", " - > " + pagina);
                         sendJson(false);
                     }
-                }, 5000);
+                }, 1000);
             }
         });
     }
