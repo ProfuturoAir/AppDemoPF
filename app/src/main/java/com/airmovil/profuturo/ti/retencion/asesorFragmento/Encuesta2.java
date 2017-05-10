@@ -3,20 +3,17 @@ package com.airmovil.profuturo.ti.retencion.asesorFragmento;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
-import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,41 +23,22 @@ import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.EnviaJSON;
-import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.SQLiteHandler;
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
+import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link Encuesta2.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link Encuesta2#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class Encuesta2 extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    /* inicializacion de los parametros del fragmento*/
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG = Encuesta2.class.getSimpleName();
     private SQLiteHandler db;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     int iParam1IdGerencia;
     int iParam2IdMotivos;
     int iParam3IdEstatus;
@@ -69,24 +47,26 @@ public class Encuesta2 extends Fragment {
     int iParam6IdDocumentacion;
     String iParam7Telefono;
     String iParam8Email;
-
     String idTramite;
     String nombre;
     String numeroDeCuenta;
     String hora;
+    private View rootView;
+    private IResult mResultCallback = null;
+    private VolleySingleton volleySingleton;
+    private ProgressDialog loading;
 
     // TODO: XML
     private ArrayAdapter arrayAdapterAfores, arrayAdapterMotivo, arrayAdapterEstatus, arrayAdapterInstituto, arrayAdapterRegimen, arrayAdapterDocumentos;
     private Spinner spinnerAfores, spinnerMotivos, spinnerEstatus, spinnerInstituto, spinnerRegimen, spinnerDocumentos;
     private Button btnContinuar, btnCancelar;
     private EditText etTelefono, etEmail;
-
     private Connected connected;
 
     private OnFragmentInteractionListener mListener;
 
     public Encuesta2() {
-        // Required empty public constructor
+        /* el constructor vacio es requerido*/
     }
 
     /**
@@ -111,25 +91,26 @@ public class Encuesta2 extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = new SQLiteHandler(getContext());
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        // TODO: CASTEO
-        spinnerAfores = (Spinner) view.findViewById(R.id.afe2_spinner_afores);
-        spinnerMotivos = (Spinner) view.findViewById(R.id.afe2_spinner_motivo);
-        spinnerEstatus = (Spinner) view.findViewById(R.id.afe2_spinner_estatus);
-        spinnerInstituto = (Spinner) view.findViewById(R.id.afe2_spinner_instituto);
-        spinnerRegimen = (Spinner) view.findViewById(R.id.afe2_spinner_regimen);
-        spinnerDocumentos = (Spinner) view.findViewById(R.id.afe2_spinner_documentos);
-        btnContinuar = (Button) view.findViewById(R.id.afe2_btn_continuar);
-        btnCancelar = (Button) view.findViewById(R.id.afe2_btn_cancelar);
-        etTelefono = (EditText) view.findViewById(R.id.afe2_et_telefono);
-        etEmail = (EditText) view.findViewById(R.id.afe2_et_email);
+        // TODO: metodo para callback de volley
+        initVolleyCallback();
+        // TODO: Lineas para ocultar el teclado virtual (Hide keyboard)
+        rootView = view;
+        // TODO: llama clase singleton volley
+        volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
+        spinnerAfores = (Spinner) rootView.findViewById(R.id.afe2_spinner_afores);
+        spinnerMotivos = (Spinner) rootView.findViewById(R.id.afe2_spinner_motivo);
+        spinnerEstatus = (Spinner) rootView.findViewById(R.id.afe2_spinner_estatus);
+        spinnerInstituto = (Spinner) rootView.findViewById(R.id.afe2_spinner_instituto);
+        spinnerRegimen = (Spinner) rootView.findViewById(R.id.afe2_spinner_regimen);
+        spinnerDocumentos = (Spinner) rootView.findViewById(R.id.afe2_spinner_documentos);
+        btnContinuar = (Button) rootView.findViewById(R.id.afe2_btn_continuar);
+        btnCancelar = (Button) rootView.findViewById(R.id.afe2_btn_cancelar);
+        etTelefono = (EditText) rootView.findViewById(R.id.afe2_et_telefono);
+        etEmail = (EditText) rootView.findViewById(R.id.afe2_et_email);
 
         connected = new Connected();
 
@@ -155,7 +136,6 @@ public class Encuesta2 extends Fragment {
         spinnerDocumentos.setAdapter(arrayAdapterDocumentos);
 
         final Fragment borrar = this;
-        //<editor-fold desc="btn continuar">
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -188,7 +168,6 @@ public class Encuesta2 extends Fragment {
                             Config.teclado(getContext(), etTelefono);
                             Config.teclado(getContext(), etEmail);
                             sendJson(true, iParam1IdGerencia, iParam2IdMotivos, iParam3IdEstatus, iParam4IdTitulo, iParam5IdRegimentPensionario, iParam6IdDocumentacion, iParam7Telefono, iParam8Email);
-                            //enviaPrevio.sendPrevios(idTramite,getContext());
                             Fragment fragmentoGenerico = new Firma();
                             Asesor asesor = (Asesor) getContext();
                             asesor.switchFirma(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
@@ -225,9 +204,6 @@ public class Encuesta2 extends Fragment {
                 }
             }
         });
-        //</editor-fold>
-
-        //<editor-fold desc="Boton cancelar">
         btnCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -252,8 +228,6 @@ public class Encuesta2 extends Fragment {
                 dialogo1.show();
             }
         });
-        //</editor-fold>
-
     }
 
     public static boolean verificarEmail(String email){
@@ -271,11 +245,10 @@ public class Encuesta2 extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        /* infla la vista del fragmento */
         return inflater.inflate(R.layout.asesor_fragmento_encuesta2, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -336,33 +309,50 @@ public class Encuesta2 extends Fragment {
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * esta clase debe ser implementada en las actividades
+     * que contengan fragmentos para que exista la
+     * comunicacion entre fragmentos
+     * para mas informacion ver http://developer.android.com/training/basics/fragments/communicating.html
+     * Comunicacion entre fragmentos
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
-    // TODO: REST
-    private void sendJson(final boolean primerPeticion, int idGerencia, int idMotivo, int IdEstatus,
-                          int idTitulo, int idRegimentPensionario, int idDocumentacion, String telefono, String email) {
-        final ProgressDialog loading;
+    /**
+     *  metodo para callback de volley
+     */
+    void initVolleyCallback() {
+
+        mResultCallback = new IResult() {
+            @Override
+            public void notifySuccess(String requestType, JSONObject response) {
+                loading.dismiss();
+            }
+
+            @Override
+            public void notifyError(String requestType, VolleyError error) {
+                if(connected.estaConectado(getContext())){
+                    Dialogos.dialogoErrorServicio(getContext());
+                }else{
+                    Dialogos.dialogoErrorConexion(getContext());
+                }
+            }
+        };
+    }
+
+    /**
+     * Método para generar el proceso REST
+     * @param primerPeticion identifica si el metodo será procesado, debe llegar en true
+     */
+    private void sendJson(final boolean primerPeticion, int idGerencia, int idMotivo, int IdEstatus, int idTitulo, int idRegimentPensionario, int idDocumentacion, String telefono, String email) {
         if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
+            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
         else
             loading = null;
 
         idTramite = getArguments().getString("idTramite");
-
         JSONObject obj = new JSONObject();
-        // TODO: Formacion del JSON request
         try{
             JSONObject rqt = new JSONObject();
             rqt.put("idAfore", idGerencia);
@@ -380,32 +370,6 @@ public class Encuesta2 extends Fragment {
         } catch (JSONException e){
             Config.msj(getContext(), "Error", "Error al formar los datos");
         }
-        //<editor-fold desc="Creating a json array request">
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_ENCUESTA_2, obj,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        //Dismissing progress dialog
-                        if (primerPeticion) {
-                            Log.d("URL", "URL a consumir" + Config.URL_ENVIAR_ENCUESTA_2);
-                            loading.dismiss();
-                            //primerPaso(response);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        loading.dismiss();
-                        //Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return Config.credenciales(getContext());
-            }
-        };
-        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
-        //</editor-fold>
+        volleySingleton.postDataVolley("primerPaso", Config.URL_ENVIAR_ENCUESTA_2, obj);
     }
 }

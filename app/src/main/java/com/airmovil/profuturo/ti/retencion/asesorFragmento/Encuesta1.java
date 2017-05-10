@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
-import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -19,29 +18,20 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Toast;
-
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
-import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
+import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.SQLiteHandler;
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
+import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Encuesta1 extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    // inicializacion de los parametros del fragmento
     public static final String TAG = Encuesta1.class.getSimpleName();
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -50,11 +40,14 @@ public class Encuesta1 extends Fragment {
     String nombre;
     String numeroDeCuenta;
     String hora;
+    private IResult mResultCallback = null;
+    private VolleySingleton volleySingleton;
+    private ProgressDialog loading;
+    private Connected connected;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
     private OnFragmentInteractionListener mListener;
     // TODO: XML
     private View rootView;
@@ -67,7 +60,7 @@ public class Encuesta1 extends Fragment {
     private int estatusTramite = 1134;
 
     public Encuesta1() {
-        // Required empty public constructor
+        // contructor vacio es requerido
     }
 
     /**
@@ -99,8 +92,12 @@ public class Encuesta1 extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        // TODO: metodo para callback de volley
+        initVolleyCallback();
+        // TODO: Lineas para ocultar el teclado virtual (Hide keyboard)
         rootView = view;
-
+        // TODO: llama clase singleton volley
+        volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
         variables();
 
         if(getArguments()!= null){
@@ -249,7 +246,7 @@ public class Encuesta1 extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // infla la vista del fragmento
+        /* infla la vista del fragmento */
         return inflater.inflate(R.layout.asesor_fragmento_encuesta1, container, false);
     }
 
@@ -312,7 +309,6 @@ public class Encuesta1 extends Fragment {
         });
     }
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
@@ -328,16 +324,39 @@ public class Encuesta1 extends Fragment {
         etObservaciones = (EditText) rootView.findViewById(R.id.afe1_et_observaciones);
     }
 
-    // TODO: REST
+    /**
+     *  metodo para callback de volley
+     */
+    void initVolleyCallback() {
+        mResultCallback = new IResult() {
+            @Override
+            public void notifySuccess(String requestType, JSONObject response) {
+                loading.dismiss();
+                primerPaso(response);
+            }
+
+            @Override
+            public void notifyError(String requestType, VolleyError error) {
+                if(connected.estaConectado(getContext())){
+                    Dialogos.dialogoErrorServicio(getContext());
+                }else{
+                    Dialogos.dialogoErrorConexion(getContext());
+                }
+            }
+        };
+    }
+
+    /**
+     * Método para generar el proceso REST
+     * @param primerPeticion identifica si el metodo será procesado, debe llegar en true
+     */
     private void sendJson(final boolean primerPeticion, boolean opc1, boolean opc2, boolean opc3, String observaciones) {
-        final ProgressDialog loading;
         if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Loading Data", "Please wait...", false, false);
+            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
         else
             loading = null;
         idTramite = getArguments().getString("idTramite");
         JSONObject obj = new JSONObject();
-        // TODO: Formacion del JSON request
         try{
             JSONObject rqt = new JSONObject();
             JSONObject encuesta = new JSONObject();
@@ -353,31 +372,7 @@ public class Encuesta1 extends Fragment {
         } catch (JSONException e){
             Config.msj(getContext(), "Error", "Error al formar los datos");
         }
-        //Creating a json array request
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_ENCUESTA, obj,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        //Dismissing progress dialog
-                        if (primerPeticion) {
-                            loading.dismiss();
-                            primerPaso(response);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        loading.dismiss();
-                        //Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un right_in, puedes intentar revisando tu conexión.");
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return Config.credenciales(getContext());
-            }
-        };
-        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+        volleySingleton.postDataVolley("primerPaso", Config.URL_ENVIAR_ENCUESTA, obj);
     }
 
     private void primerPaso(JSONObject obj){

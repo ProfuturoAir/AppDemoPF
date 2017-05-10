@@ -3,6 +3,7 @@ package com.airmovil.profuturo.ti.retencion.asesorFragmento;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,9 +21,11 @@ import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
+import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
+import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -44,6 +47,9 @@ public class Inicio extends Fragment {
     private TextView tvInicial, tvNombre, tvFecha, tvRetenidos, tvNoRetenidos, tvSaldoRetenido, tvSaldoNoRetenido, tvRangoFecha1, tvRangoFecha2;
     private Button btnFiltro;
     private Fragment borrar = this;
+    private IResult mResultCallback = null;
+    private VolleySingleton volleySingleton;
+    private ProgressDialog loading;
 
     MySharePreferences mySharePreferences;
 
@@ -81,14 +87,42 @@ public class Inicio extends Fragment {
     }
 
     /**
+     *  metodo para callback de volley
+     */
+    void initVolleyCallback() {
+
+        mResultCallback = new IResult() {
+            @Override
+            public void notifySuccess(String requestType, JSONObject response) {
+                loading.dismiss();
+                primerPaso(response);
+            }
+
+            @Override
+            public void notifyError(String requestType, VolleyError error) {
+                if(connected.estaConectado(getContext())){
+                    Dialogos.dialogoErrorServicio(getContext());
+                }else{
+                    Dialogos.dialogoErrorConexion(getContext());
+                }
+            }
+        };
+    }
+
+    /**
      * El sistema lo llama para iniciar los procesos que estaran dentro del flujo de la vista
      * @param view accede a la vista del xml
      * @param savedInstanceState guarda el estado de la aplicacion en un paquete
      */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        rootView = view; // Se iguala para hacer lo, general
-        primeraPeticion();
+        // TODO: metodo para callback de volley
+        initVolleyCallback();
+        // TODO: Lineas para ocultar el teclado virtual (Hide keyboard)
+        rootView = view;
+        // TODO: llama clase singleton volley
+        volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
+        sendJson(true);
         variables();
         detalleSuperior();
         argumentos();
@@ -165,7 +199,7 @@ public class Inicio extends Fragment {
     }
 
     /**
-     *
+     *Se lo llama cuando se desasocia el fragmento de la actividad.
      */
     @Override
     public void onDetach() {
@@ -178,6 +212,10 @@ public class Inicio extends Fragment {
      */
     @Override
     public void onResume() {
+        if(!Config.estahabilitadoGPS(getContext())){
+            Dialogos.dialogoActivarLocalizacion(getContext());
+        }
+
         super.onResume();
         getView().setFocusableInTouchMode(true);
         getView().requestFocus();
@@ -208,27 +246,14 @@ public class Inicio extends Fragment {
         });
     }
 
+    /**
+     * Esta interfaz debe ser implementada por actividades que contengan esta
+     * Para permitir que se comunique una interacción en este fragmento
+     * A la actividad y potencialmente otros fragmentos contenidos en ese
+     * actividad.
+     */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
-    }
-
-    /**
-     * Muestra en primer proceso un dialogo. Se envia de primera peticion al metodo sendJson.
-     */
-    private void primeraPeticion(){
-        final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIcon(R.drawable.icono_abrir);
-        progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
-        progressDialog.setMessage(getResources().getString(R.string.msj_espera));
-        progressDialog.show();
-        // TODO: Implement your own authentication logic here.
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        progressDialog.dismiss();
-                        sendJson(true);
-                    }
-                }, Config.TIME_HANDLER);
     }
 
     /**
@@ -283,6 +308,10 @@ public class Inicio extends Fragment {
      * @param primeraPeticion identifica si el metodo será procesado, debe llegar en true
      */
     private void sendJson(final boolean primeraPeticion){
+        if (primeraPeticion)
+            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
+        else
+            loading = null;
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
         JSONObject periodo = new JSONObject();
@@ -297,33 +326,7 @@ public class Inicio extends Fragment {
         } catch (JSONException e){
             Config.msj(getContext(),"Error","Existe un error al formar la peticion");
         }
-
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CONSULTAR_RESUMEN_RETENCIONES, json,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        if(primeraPeticion){
-                            primerPaso(response);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if(connected.estaConectado(getContext())){
-                            Dialogos.dialogoErrorServicio(getContext());
-                        }else{
-                            Dialogos.dialogoErrorConexion(getContext());
-                        }
-                    }
-                })
-        {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return Config.credenciales(getContext());
-            }
-        };
-        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+        volleySingleton.postDataVolley("primerPaso", Config.URL_CONSULTAR_RESUMEN_RETENCIONES, json);
     }
 
     /**

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,27 +14,21 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.DrawingView;
-import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
-import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
+import com.airmovil.profuturo.ti.retencion.helper.IResult;
+import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -42,52 +37,37 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TimeZone;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link AsistenciaComidaEntrada.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link AsistenciaComidaEntrada#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks{
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
+    // inicializacion de los paramentros del fragmento
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final int REQUEST_LOCATION = 0;
     private GoogleApiClient apiClient;
     private boolean firsStarted = true;
+    private Connected connected;
     private DrawingView dvFirma;
     private TextView tvLongitud, tvLatitud;
     private Button btnLimpiar, btnGuardar, btnCancelar;
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private View rootView;
+    private IResult mResultCallback = null;
+    private VolleySingleton volleySingleton;
+    private ProgressDialog loading;
 
     private OnFragmentInteractionListener mListener;
 
     public AsistenciaComidaEntrada() {
-        // Required empty public constructor
+        /*contructor vacio es requerido*/
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AsistenciaComidaEntrada.
+     * al crear una nueva instancia recibe como paramentros
+     * @param param1 Parametro 1.
+     * @param param2 Parametro 2.
+     * @return un objeto AsistenciaComidaEntrada.
      */
-    // TODO: Rename and change types and number of parameters
     public static AsistenciaComidaEntrada newInstance(String param1, String param2) {
         AsistenciaComidaEntrada fragment = new AsistenciaComidaEntrada();
         Bundle args = new Bundle();
@@ -100,16 +80,16 @@ public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        // TODO: metodo para callback de volley
+        initVolleyCallback();
+        // TODO: Lineas para ocultar el teclado virtual (Hide keyboard)
         rootView = view;
-
+        // TODO: llama clase singleton volley
+        volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
         tvLongitud = (TextView) rootView.findViewById(R.id.textViewLogintud3);
         tvLatitud = (TextView) rootView.findViewById(R.id.textViewLatitud3);
         btnLimpiar = (Button) rootView.findViewById(R.id.buttonLimpiar3);
@@ -121,11 +101,7 @@ public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient
         dvFirma.setColor("#000000");
         dvFirma.setFocusable(true);
 
-        apiClient = new GoogleApiClient.Builder(getActivity())
-                .enableAutoManage(getActivity(),this)
-                .addConnectionCallbacks(this)
-                .addApi(LocationServices.API)
-                .build();
+        apiClient = new GoogleApiClient.Builder(getActivity()).enableAutoManage(getActivity(), this).addConnectionCallbacks(this).addApi(LocationServices.API).build();
 
         btnLimpiar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,9 +117,9 @@ public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient
             public void onClick(View v) {
                 String getLongitud1 = tvLongitud.getText().toString();
                 String getLatitud1 = tvLatitud.getText().toString();
-                if(!dvFirma.isActive()) {
+                if (!dvFirma.isActive()) {
                     Config.dialogoRequiereFirma(getContext());
-                }else if(getLatitud1.isEmpty() && getLongitud1.isEmpty()){
+                } else if (getLatitud1.isEmpty() && getLongitud1.isEmpty()) {
                     final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
                     progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_coordenadas));
                     progressDialog.setTitle(getResources().getString(R.string.msj_titulo_sin_coordenadas));
@@ -156,9 +132,9 @@ public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient
                                 }
                             });
                     progressDialog.show();
-                }else {
+                } else {
                     Connected connected = new Connected();
-                    if(connected.estaConectado(getContext())){
+                    if (connected.estaConectado(getContext())) {
                         final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
                         progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_ok));
                         progressDialog.setTitle(getResources().getString(R.string.msj_titulo_confirmacion));
@@ -171,7 +147,6 @@ public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient
                                         dvFirma.startNew();
                                         dvFirma.setDrawingCacheEnabled(true);
                                         sendJson(true);
-
                                     }
                                 });
                         progressDialog.show();
@@ -234,11 +209,10 @@ public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        /* infla la vista del fragmento */
         return inflater.inflate(R.layout.asesor_fragmento_asistencia_comida_entrada, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -287,6 +261,16 @@ public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient
     }
 
     @Override
+    public void onResume() {
+        LocationManager mlocManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        boolean enable = mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if(!enable){
+            Dialogos.dialogoActivarLocalizacion(getContext());
+        }
+        super.onResume();
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_LOCATION) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -295,8 +279,7 @@ public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient
                 Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(apiClient);
                 updateUI(lastLocation);
             } else {
-                //Permiso denegado:
-                //Deberíamos deshabilitar toda la funcionalidad relativa a la localización.
+                //Permiso denegado deberíamos deshabilitar toda la funcionalidad relativa a la localización.
                 Log.e("LOGTAG", "Permiso denegado");
             }
         }
@@ -323,17 +306,12 @@ public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * esta interface debe ser implementada por las actividades que contengan
+     * fragmentos para que exista interaccion entre los fragmento.
+     * Para mas informacion ver la leccion http://developer.android.com/training/basics/fragments/communicating.html
+     * Comunicacion entre fragmentos
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
@@ -341,19 +319,43 @@ public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient
         if (loc != null){
             tvLongitud.setText(String.valueOf(loc.getLatitude()));
             tvLatitud.setText(String.valueOf(loc.getLongitude()));
-            Log.d("------->", "\n" + loc.getLongitude());
-            Log.d("------->", "\n" + loc.getLatitude());
         }
     }
 
-    // TODO: REST
-    private void sendJson(final boolean primerPeticion) {
-        Map<String, String> usuarioDatos = Config.datosUsuario(getContext());
-        Map<String, String> fechaActual = Config.fechas(1);
-        String fecha = fechaActual.get("fechaIni");
-        //String idUsuario = usuarioDatos.get(SessionManager.USUARIO_USER_ID);
+    /**
+     *  metodo para callback de volley
+     */
+    void initVolleyCallback() {
 
+        mResultCallback = new IResult() {
+            @Override
+            public void notifySuccess(String requestType, JSONObject response) {
+                loading.dismiss();
+                primerPaso(response);
+            }
+
+            @Override
+            public void notifyError(String requestType, VolleyError error) {
+                if(connected.estaConectado(getContext())){
+                    Dialogos.dialogoErrorServicio(getContext());
+                }else{
+                    Dialogos.dialogoErrorConexion(getContext());
+                }
+            }
+        };
+    }
+
+    /**
+     * Método para generar el proceso REST
+     * @param primerPeticion identifica si el metodo será procesado, debe llegar en true
+     */
+    private void sendJson(final boolean primerPeticion) {
         double w, z;
+        if (primerPeticion)
+            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
+        else
+            loading = null;
+
         try {
             z = new Double(tvLatitud.getText().toString());
             w = new Double(tvLongitud.getText().toString());
@@ -361,22 +363,15 @@ public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient
             z = 0;
             w = 0;
         }
-
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
         JSONObject ubicacion = new JSONObject();
-
         String fechaN = "";
         try {
-            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-            f.setTimeZone(TimeZone.getTimeZone("America/Mexico_City"));
-            String fechaS = f.format(new Date());
+            String fechaS = Config.getFechaFormat();
             fechaN = fechaS.substring(0, fechaS.length() - 2) + ":00";
-            System.out.println(fechaN);
-            Log.d("TAG fecha ->", "" + fechaN);
         }catch (Exception e){
             e.printStackTrace();
-            Log.d("TAG e: ", "" + e);
         }
         try{
             rqt.put("fechaHoraCheck", fechaN);
@@ -390,51 +385,16 @@ public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient
         } catch (JSONException e){
             Config.msj(getContext(),"Error","Existe un error al formar la peticion");
         }
-        //Creating a json array request
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_REGISTRAR_ASISTENCIA, json,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        //Dismissing progress dialog
-                        if (primerPeticion) {
-                            primerPaso(response);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Config.msj(getContext(),"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return Config.credenciales(getContext());
-            }
-        };
-        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+        volleySingleton.postDataVolley("primerPaso", Config.URL_REGISTRAR_ASISTENCIA, json);
     }
 
     private void primerPaso(JSONObject obj){
         Log.d("TAG", "primerPaso: "  + obj );
-        Map<String, String> fechaActual = Config.fechas(1);
-        String fecha = fechaActual.get("fechaIni");
-        Calendar calendario = Calendar.getInstance();
-        int hora, minutos, segundos;
-
-
-        hora =calendario.get(Calendar.HOUR_OF_DAY);
-        minutos = calendario.get(Calendar.MINUTE);
-        segundos = calendario.get(Calendar.SECOND);
-
-
-        String status = "";
-        String statusText = "";
         try{
-            status = obj.getString("status");
-            statusText = obj.getString("statusText");
+            String status = obj.getString("status");
+            String statusText = obj.getString("statusText");
             if(Integer.parseInt(status) == 200){
-                Config.msj(getContext(), "Envio correcto", "Se ha registrado, la entrada de comida.\nFecha:" + fecha + " \nhora: " + hora+":"+minutos+":"+segundos);
+                Config.msj(getContext(), "Envio correcto", "Se ha registrado, la salida de comida.\nFecha:" + Dialogos.fechaActual() + " \nhora: " + Config.getHoraActual());
             }else{
                 Config.msj(getContext(), "Error: " + status, statusText);
             }

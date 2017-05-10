@@ -9,7 +9,7 @@
         android:id="@+id/textViewLogintud3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="texto1" />
+        android:text="texto1"/>
 
     <TextView
         android:textColor="@color/colorWhite"
