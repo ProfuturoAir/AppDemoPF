@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
@@ -24,19 +26,11 @@ import org.json.JSONObject;
 
 public class ReporteClientesDetalles extends Fragment {
     private static final String TAG = ReporteClientesDetalles.class.getSimpleName();
-    private static final String ARG_PARAM1 = "numeroCuenta"; // curp
-    private static final String ARG_PARAM2 = "cita"; // nss
-    private static final String ARG_PARAM4 = "idTramite"; // idTramite
-    private static final String ARG_PARAM5 = "fechaInicio"; // fecha inicio
-    private static final String ARG_PARAM6 = "fechaFin"; // fecha fin
-    private static final String ARG_PARAM7 = "hora"; // hora
-    private static final String ARG_PARAM8 = "usuario";
-    private static final String ARG_PARAM9 = "numeroEmpleado";
-    private static final String ARG_PARAM10 = "nombreEmpleado";
+    private static final String ARG_PARAM1 = "numeroCuenta", ARG_PARAM2 = "cita", ARG_PARAM4 = "idTramite", ARG_PARAM5 = "fechaInicio", ARG_PARAM6 = "fechaFin", ARG_PARAM7 = "hora", ARG_PARAM8 = "usuario", ARG_PARAM9 = "numeroEmpleado", ARG_PARAM10 = "nombreEmpleado";
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
     private String mParam1; // numero cuenta
-    private String mParam2; // cita
+    private boolean mParam2; // cita
     private String mParam3; // numeroCuenta
     private int mParam4; // idtramite
     private String mParam5; // fechaInicio
@@ -50,6 +44,7 @@ public class ReporteClientesDetalles extends Fragment {
     private Connected connected;
     private ProgressDialog loading;
     private OnFragmentInteractionListener mListener;
+    private int idSucursal;
 
     public ReporteClientesDetalles() {/* se requiere un constructor vacio */}
 
@@ -91,7 +86,7 @@ public class ReporteClientesDetalles extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mParam2 = getArguments().getBoolean(ARG_PARAM2);
             mParam4 = getArguments().getInt(ARG_PARAM4);
             mParam5 = getArguments().getString(ARG_PARAM5);
             mParam6 = getArguments().getString(ARG_PARAM6);
@@ -99,6 +94,7 @@ public class ReporteClientesDetalles extends Fragment {
             mParam8 = getArguments().getString(ARG_PARAM8);
             mParam9 = getArguments().getString(ARG_PARAM9);
             mParam10 = getArguments().getString(ARG_PARAM10);
+            Log.d(TAG, "<- ** -> " +getArguments().toString());
         }
     }
 
@@ -203,6 +199,31 @@ public class ReporteClientesDetalles extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    /**
+     * Envio de parametros de retroceso de ReporteClientesDetalle a ReporteClientes
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                    if(getArguments()!=null){
+                        ReporteClientes fragmento = new ReporteClientes();
+                        Director d1 = (Director) getContext();
+                        //fragment 1. fechaInicio 2. fechaFin 3.idGerencia 4.idSucursal 5.idAsesor 6.numeroEmpleado 7.nombreEmpleado 8.numeroCuenta 9.cita 10.hora 11.idTramite
+                        d1.envioParametros(fragmento, getArguments().getString(ARG_PARAM5), getArguments().getString(ARG_PARAM6), 0, 0,  getArguments().getString(ARG_PARAM9), "","", "", false, getArguments().getString(ARG_PARAM10), 0);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     /**

@@ -12,6 +12,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteAsistenciaDetalleAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
@@ -99,8 +101,6 @@ public class ReporteAsistenciaDetalles extends Fragment {
         mResultCallback = new IResult() {
             @Override
             public void notifySuccess(String requestType, JSONObject response) {
-                Log.d(TAG, "Volley requester " + requestType);
-                Log.d(TAG, "Volley JSON post" + response);
                 if (requestType.trim().equals("true")) {
                     loading.dismiss();
                     primerPaso(response);
@@ -111,8 +111,6 @@ public class ReporteAsistenciaDetalles extends Fragment {
 
             @Override
             public void notifyError(String requestType, VolleyError error) {
-                Log.d(TAG, "Volley requester " + requestType);
-                Log.d(TAG, "Volley JSON post" + "That didn't work! " + error.toString());
                 if(connected.estaConectado(getContext())){
                     Dialogos.dialogoErrorServicio(getContext());
                 }else{
@@ -214,6 +212,31 @@ public class ReporteAsistenciaDetalles extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    /**
+     * Envio de parametros de retroceso de ReporteAsistenciaDetalles a ReporteAsistencia
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                    if(getArguments()!=null){
+                        ReporteAsistencia fragmento = new ReporteAsistencia();
+                        Director d1 = (Director) getContext();
+                        //fragment 1. fechaInicio 2. fechaFin 3.idGerencia 4.idSucursal 5.idAsesor 6.numeroEmpleado 7.nombreEmpleado 8.numeroCuenta 9.cita 10.hora 11.idTramite
+                        d1.envioParametros(fragmento, getArguments().getString(ARG_PARAM2), getArguments().getString(ARG_PARAM3), 0, 0, "", getArguments().getString(ARG_PARAM1),getArguments().getString(ARG_PARAM4), "", false, "", 0);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     /**
@@ -339,8 +362,14 @@ public class ReporteAsistenciaDetalles extends Fragment {
                     return;
                 }
                 getDatos1.add(null);
-                adapter.notifyItemInserted(getDatos1.size() - 1);
-
+                Handler handler = new Handler();
+                final Runnable r =new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyItemInserted(getDatos1.size() - 1);
+                    }
+                };
+                handler.post(r);
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {

@@ -440,7 +440,14 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
                     return;
                 }
                 getDatos1.add(null);
-                adapter.notifyItemInserted(getDatos1.size() - 1);
+                Handler handler = new Handler();
+                final Runnable r = new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyItemInserted(getDatos1.size() - 1);
+                    }
+                };
+                handler.post(r);
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {

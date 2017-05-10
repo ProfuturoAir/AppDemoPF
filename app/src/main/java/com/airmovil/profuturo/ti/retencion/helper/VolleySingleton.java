@@ -67,7 +67,7 @@ public class VolleySingleton {
     public void getDataVolley(final String requestType, String url){
         try {
 
-            JsonObjectRequest jsonObj = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+                JsonObjectRequest jsonObj = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     if(mResultCallback != null)

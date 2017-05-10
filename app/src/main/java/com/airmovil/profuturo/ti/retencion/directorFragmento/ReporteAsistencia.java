@@ -130,8 +130,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
         mResultCallback = new IResult() {
             @Override
             public void notifySuccess(String requestType, JSONObject response) {
-                Log.d(TAG, "Volley requester " + requestType);
-                Log.d(TAG, "Volley JSON post" + response);
                 if (requestType.trim().equals("true")) {
                     loading.dismiss();
                     primerPaso(response);
@@ -142,8 +140,6 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
 
             @Override
             public void notifyError(String requestType, VolleyError error) {
-                Log.d(TAG, "Volley requester " + requestType);
-                Log.d(TAG, "Volley JSON post" + "That didn't work! " + error.toString());
                 if(connected.estaConectado(getContext())){
                     Dialogos.dialogoErrorServicio(getContext());
                 }else{
@@ -309,9 +305,13 @@ public class ReporteAsistencia extends Fragment implements Spinner.OnItemSelecte
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
+    public void onNothingSelected(AdapterView<?> parent) {}
 
+    public interface OnBackPressedListener {
+        void onBackPressed();
     }
+
+
 
     /**
      * Inicia la peticion para el consumo del spinner

@@ -14,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteClientesAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
@@ -122,8 +124,6 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         mResultCallback = new IResult() {
             @Override
             public void notifySuccess(String requestType, JSONObject response) {
-                Log.d(TAG, "Volley requester " + requestType);
-                Log.d(TAG, "Volley JSON post" + response);
                 if (requestType.trim().equals("true")) {
                     loading.dismiss();
                     primerPaso(response);
@@ -134,8 +134,6 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
 
             @Override
             public void notifyError(String requestType, VolleyError error) {
-                Log.d(TAG, "Volley requester " + requestType);
-                Log.d(TAG, "Volley JSON post" + "That didn't work! " + error.toString());
                 if(connected.estaConectado(getContext())){
                     Dialogos.dialogoErrorServicio(getContext());
                 }else{
@@ -249,9 +247,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
             @Override
             public void onClick(View v) {
                 boolean argumentos = (getArguments()!=null);
-                ServicioEmailJSON.enviarEmailReporteClientes(getContext(), (argumentos)?getArguments().getInt(ARG_PARAM3):0, (argumentos)?getArguments().getInt(ARG_PARAM1):0, (argumentos)?getArguments().getInt(ARG_PARAM9):0,
-                        (argumentos)?getArguments().getString(ARG_PARAM2):"", (argumentos)?getArguments().getInt(ARG_PARAM8):0, (argumentos)?getArguments().getString(ARG_PARAM5):"",
-                        (argumentos)?getArguments().getString(ARG_PARAM6):Dialogos.fechaActual(), (argumentos)?getArguments().getString(ARG_PARAM7):Dialogos.fechaSiguiente(), (argumentos) ? true:false );
+                ServicioEmailJSON.enviarEmailReporteClientes(getContext(), (argumentos)?getArguments().getInt(ARG_PARAM3):0, (argumentos)?getArguments().getInt(ARG_PARAM1):0, (argumentos)?getArguments().getInt(ARG_PARAM9):0, (argumentos)?getArguments().getString(ARG_PARAM2):"", (argumentos)?getArguments().getInt(ARG_PARAM8):0, (argumentos)?getArguments().getString(ARG_PARAM5):"", (argumentos)?getArguments().getString(ARG_PARAM6):Dialogos.fechaActual(), (argumentos)?getArguments().getString(ARG_PARAM7):Dialogos.fechaSiguiente(), (argumentos) ? true:false );
             }
         });
 
@@ -294,6 +290,23 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     /**
@@ -529,6 +542,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
      * @param obj jsonObject
      */
     private void primerPaso(JSONObject obj){
+        Log.d(TAG, "Response: \n" + obj.toString() + "\n");
         int totalFilas = 1;
         try{
             JSONArray array = obj.getJSONArray("Cliente");
@@ -575,8 +589,14 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
                     return;
                 }
                 getDatos1.add(null);
-                adapter.notifyItemInserted(getDatos1.size() - 1);
-
+                Handler handler = new Handler();
+                final Runnable r = new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyItemInserted(getDatos1.size() - 1);
+                    }
+                };
+                handler.post(r  );
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {

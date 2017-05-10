@@ -104,32 +104,6 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
     }
 
     /**
-     * metodo para callback de volley
-     */
-    void initVolleyCallback() {
-        mResultCallback = new IResult() {
-            @Override
-            public void notifySuccess(String requestType, JSONObject response) {
-                if (requestType.trim().equals("true")) {
-                    loading.dismiss();
-                    primerPaso(response);
-                } else {
-                    segundoPaso(response);
-                }
-            }
-
-            @Override
-            public void notifyError(String requestType, VolleyError error) {
-                if(connected.estaConectado(getContext())){
-                    Dialogos.dialogoErrorServicio(getContext());
-                }else{
-                    Dialogos.dialogoErrorConexion(getContext());
-                }
-            }
-        };
-    }
-
-    /**
      * El sistema lo llama cuando el fragmento debe diseñar su interfaz de usuario por primera vez
      * @param view accede a la vista del XML
      * @param savedInstanceState fuarda el estado de la instancia
@@ -238,9 +212,7 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
+    public void onNothingSelected(AdapterView<?> parent) {}
 
     /**
      * Se implementa este metodo, para generar el regreso con clic nativo de android
@@ -248,22 +220,13 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
     @Override
     public void onResume() {
         super.onResume();
-        getView().setFocusableInTouchMode(true);
-        getView().requestFocus();
-        getView().setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                    //Fragment fragmentoGenerico = new Inicio();
-                    //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    //fragmentManager.beginTransaction().replace(R.id.content_director, fragmentoGenerico).commit();
-                    return true;
-                }
-                return false;
-            }
-        });
     }
 
+    /**
+     * Esta interfaz debe ser implementada por actividades que contengan esta
+     * Para permitir que se comunique una interacción en este fragmento
+     * A la actividad y potencialmente otros fragmentos contenidos en esta actividad.
+     */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
@@ -344,6 +307,32 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
     }
 
     /**
+     * metodo para callback de volley
+     */
+    void initVolleyCallback() {
+        mResultCallback = new IResult() {
+            @Override
+            public void notifySuccess(String requestType, JSONObject response) {
+                if (requestType.trim().equals("true")) {
+                    loading.dismiss();
+                    primerPaso(response);
+                } else {
+                    segundoPaso(response);
+                }
+            }
+
+            @Override
+            public void notifyError(String requestType, VolleyError error) {
+                if(connected.estaConectado(getContext())){
+                    Dialogos.dialogoErrorServicio(getContext());
+                }else{
+                    Dialogos.dialogoErrorConexion(getContext());
+                }
+            }
+        };
+    }
+
+    /**
      * Envio de datos por REST jsonObject
      * @param primerPeticion valida que el proceso sea true
      */
@@ -369,7 +358,6 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         } catch (JSONException e) {
             Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
         }
-
         volleySingleton.postDataVolley("" + primerPeticion, Config.URL_CONSULTAR_REPORTE_RETENCION_GERENCIAS, obj);
     }
 

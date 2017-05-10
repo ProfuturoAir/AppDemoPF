@@ -4,42 +4,25 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.asesorFragmento.ConCita;
-import com.airmovil.profuturo.ti.retencion.gerenteFragmento.SinCita;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
-import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
-import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
-import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 public class Login extends AppCompatActivity {
     public static final String TAG = Login.class.getSimpleName();
@@ -58,15 +41,16 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.login);
         // TODO: Mantener el estado de la pantalla Vertical
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-        //metodo para callback de volley
+        // TODO: metodo para callback de volley
         initVolleyCallback();
-
         mySharePreferences = MySharePreferences.getInstance(getApplicationContext());
-
         _numeroEmpleadom = (EditText) findViewById(R.id.login_et_usuario);
         _contrasenia = (EditText) findViewById(R.id.login_et_contrasenia);
         btnIngresar = (Button) findViewById(R.id.login_btn_ingresar);
+
+        if(_numeroEmpleadom.requestFocus() || _contrasenia.requestFocus()) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        }
 
         try{
             if (mySharePreferences.isLoggedIn()) {
@@ -85,10 +69,10 @@ public class Login extends AppCompatActivity {
 
         }
 
-        //llama clase singleton volley
+        // TODO: llama clase singleton volley
         volleySingleton = VolleySingleton.getInstance(mResultCallback, getApplicationContext());
 
-        btnIngresar.performClick();
+        // btnIngresar.performClick();
         btnIngresar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,34 +94,51 @@ public class Login extends AppCompatActivity {
         });
     }
 
-    /*
-     *@see metodo para callback de volley
+    @Override
+    public void onBackPressed() {
+        return;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    /**
+     *  metodo para callback de volley
      */
     void initVolleyCallback() {
 
         mResultCallback = new IResult() {
             @Override
             public void notifySuccess(String requestType, JSONObject response) {
-                Log.d(TAG, "Volley requester " + requestType);
-                Log.d(TAG, "Volley JSON post" + response);
                 if(requestType.equals("primerPaso"))
                     primerPaso(response, numeroEmpleado);
 
                 if(requestType.equals("obtencionDatos"))
                     obtencionDatos(response, cusp);
+
+                if(requestType.equals("Gerencias"))
+                    try {
+                        Gerencias(response.getJSONArray("Gerencias"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                if(requestType.equals("Sucursales"))
+                    try {
+                        Sucursales(response.getJSONArray("Sucursales"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
             }
 
             @Override
             public void notifyError(String requestType, VolleyError error) {
-                Log.d(TAG, "Volley requester " + requestType);
-                Log.d(TAG, "Volley JSON post" + "That didn't work! " + error.toString());
+                // Log.d(TAG, "Volley requester " + requestType);
+                // Log.d(TAG, "Volley JSON post" + "That didn't work! " + error.toString());
             }
         };
-    }
-
-    @Override
-    public void onBackPressed() {
-        return;
     }
 
     private void sendJson(final boolean primeraPeticion, final String numeroEmpleado, String password) {
@@ -169,7 +170,6 @@ public class Login extends AppCompatActivity {
                 numeroEmpleado = obj.getString("numeroEmpleado");
                 validacionCorrecta(numeroEmpleado, sNumeroEmpleado);
             }else{
-                Log.d("123123", "else");
                 exception = obj.getString("Exception");
                 validactionIncorrecta("Error en login", exception);
             }
@@ -204,6 +204,14 @@ public class Login extends AppCompatActivity {
         progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
         progressDialog.setMessage(getResources().getString(R.string.msj_verificando));
         progressDialog.show();
+        _numeroEmpleadom.setText("");
+        _contrasenia.setText("");
+
+        if(_numeroEmpleadom.requestFocus()) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        }
+
         // TODO: Implement your own authentication logic here.
         new android.os.Handler().postDelayed(
                 new Runnable() {
@@ -232,7 +240,6 @@ public class Login extends AppCompatActivity {
 
     public void redireccionSesiones(int rPerfil){
         mySharePreferences.setLogin(true);
-
         switch (rPerfil){
             case 3:
                 startActivity(new Intent(Login.this, Director.class));
@@ -265,21 +272,9 @@ public class Login extends AppCompatActivity {
     }
 
     private void obtencionDatos(JSONObject obj, String CUSP){
-
-        Log.d("TAG --> response", " * *  * * *" + obj);
-        String apellidoMaterno = "";
-        String apellidoPaterno = "";
-        int centroCosto = 0;
-        String claveConsar = "";
-        String curp = "";
-        String email = "";
-        String fechaAltaConsar = "";
-        int idRolEmpleado = 0;
-        String nombre = "";
-        String numeroEmpleado = "";
-        String rolEmpleado = "";
-        String userId = "";
-
+        Log.d(TAG,"<-Response->\n" + obj + "\n");
+        String apellidoMaterno = "", apellidoPaterno = "", claveConsar = "", curp = "", email = "", fechaAltaConsar = "", nombre = "", numeroEmpleado = "", rolEmpleado = "", userId = "";
+        int centroCosto = 0, idRolEmpleado = 0;
         try{
             apellidoMaterno = obj.getString("apellidoMaterno");
             apellidoPaterno = obj.getString("apellidoPaterno");
@@ -295,23 +290,46 @@ public class Login extends AppCompatActivity {
             numeroEmpleado = obj.getString("numeroEmpleado");
             rolEmpleado = obj.getString("rolEmpleado");
             userId = obj.getString("userId");
-
             Config.idUsuario = CUSP;
-
             Log.d("DATOS A RECOLECTAR ->", " " + apellidoMaterno + " " + apellidoPaterno + " " + centroCosto + " " + claveConsar + " " + curp + " " + email + " " +
                     fechaAltaConsar + " idRolEmpleado" + idRolEmpleado + " " + nombre + " " + numeroEmpleado + " rolEmpleado" + rolEmpleado + " userId" + userId + " " );
             mySharePreferences.createLoginSession(apellidoMaterno, apellidoPaterno, sCentroCosto, claveConsar,curp, email, fechaAltaConsar, sIdRolEmpleado,nombre, numeroEmpleado, rolEmpleado, userId, CUSP);
         }catch (JSONException e){
             e.printStackTrace();
         }
-
-
         redireccionSesiones(idRolEmpleado);
+        volleySingleton.getDataVolley("Gerencias", Config.URL_GERENCIAS);
+        volleySingleton.getDataVolley("Sucursales", Config.URL_SUCURSALES);
+
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    private void Gerencias(JSONArray j){
+        Log.d(TAG, j.toString() + "\n");
+        int idGerencia = 0;
+        String nombreGerencia = "";
+        for(int i=0;i<j.length();i++){
+            try {
+                JSONObject json = j.getJSONObject(i);
+                idGerencia = json.getInt("idGerencia");
+                nombreGerencia = json.getString("nombre");
+                Log.d(TAG, "***\n" + idGerencia);
+                Log.d(TAG, "***\n" + nombreGerencia);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
+        Log.d(TAG, "***\n" + idGerencia);
+    }
+
+    private void Sucursales(JSONArray j){
+        Log.d(TAG, j.toString() + "\n");
+        for(int i=0;i<j.length();i++){
+            try {
+                JSONObject json = j.getJSONObject(i);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

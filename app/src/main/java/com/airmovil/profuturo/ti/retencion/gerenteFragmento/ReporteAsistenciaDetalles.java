@@ -12,6 +12,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.Adapter.GerenteReporteAsistenciaDetalleAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
@@ -211,6 +213,31 @@ public class ReporteAsistenciaDetalles extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    /**
+     * Envio de parametros de retroceso de ReporteAsistenciaDetalles a ReporteAsistencia
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                    if(getArguments()!=null){
+                        ReporteAsistencia fragmento = new ReporteAsistencia();
+                        Gerente g1 = (Gerente) getContext();
+                        //fragment 1. fechaInicio 2. fechaFin 3.idGerencia 4.idSucursal 5.idAsesor 6.numeroEmpleado 7.nombreEmpleado 8.numeroCuenta 9.cita 10.hora 11.idTramite
+                        g1.envioParametros(fragmento, getArguments().getString(ARG_PARAM2), getArguments().getString(ARG_PARAM3), 0, 0, "", getArguments().getString(ARG_PARAM1),getArguments().getString(ARG_PARAM4), "", false, "", 0);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     /**

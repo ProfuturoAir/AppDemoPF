@@ -41,8 +41,6 @@ public class Director extends AppCompatActivity{
     private MySharePreferences sessionManager;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
-    private Boolean checkMapsFragment = false;
-    private Boolean checkProccess = false;
     private DriveId mFileId;
     private NavigationView navigationView;
     private static final  int REQUEST_CODE_OPENER = 2;
@@ -66,6 +64,9 @@ public class Director extends AppCompatActivity{
 
     }
 
+    /**
+     * Mensaje dialogo al presionar clic en boton retroceso
+     */
     @Override
     public void onBackPressed() {
         final ProgressDialog progressDialog = new ProgressDialog(this, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
