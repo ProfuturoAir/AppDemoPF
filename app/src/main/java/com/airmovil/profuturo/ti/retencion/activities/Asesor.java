@@ -571,4 +571,19 @@ public class Asesor extends AppCompatActivity{
         ft.commit();
 
     }
+
+    /**
+     * Metodo para recibir los parametros y enviarlos entre fragmentos. Ejemplo enviar datos de filtros de Fragmento ReporteGerencias a ReporteClientes
+     * @param fragment fragmento al cual se enviara la informacion
+     * @param fechaInicio rango de la fecha inicial
+     * @param fechaFin rango de la fecha final
+     */
+    public void envioParametros(Fragment fragment, String fechaInicio, String fechaFin){
+        Bundle bundle = new Bundle();
+        bundle.putString("param3", fechaInicio);
+        bundle.putString("param4", fechaFin);
+        fragment.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_asesor, fragment, fragment.toString()).addToBackStack(null).commit();
+    }
 }
