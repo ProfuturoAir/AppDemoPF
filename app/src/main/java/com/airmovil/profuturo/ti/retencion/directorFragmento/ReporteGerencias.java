@@ -41,8 +41,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.LinkedHashMap;
 
 public class ReporteGerencias extends Fragment implements Spinner.OnItemSelectedListener{
     public static final String TAG = ReporteGerencias.class.getSimpleName();
@@ -249,8 +252,15 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         btnBuscar = (Button) rootView.findViewById(R.id.dfrg_btn_buscar);
         tvResultados = (TextView) rootView.findViewById(R.id.dfrg_tv_registros);
         tvMail = (TextView) rootView.findViewById(R.id.dfrg_tv_mail);
-        spinnerGerencias.setOnItemSelectedListener(this);
-        getData();
+
+//        ArrayAdapter<String> adapterRetenido = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.getFiltros());
+
+        ArrayAdapter<Map<Integer, String>> adapterRetenido = new ArrayAdapter<Map<Integer, String>>(getContext(), R.layout.spinner_item,Config.getFiltros());
+        adapterRetenido.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinnerGerencias.setAdapter(adapterRetenido);
+
+        //spinnerGerencias.setOnItemSelectedListener(this);
+        //getData();
     }
 
     private void getData(){

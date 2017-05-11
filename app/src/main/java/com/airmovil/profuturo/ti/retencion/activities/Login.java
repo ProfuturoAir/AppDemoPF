@@ -24,6 +24,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 public class Login extends AppCompatActivity {
     public static final String TAG = Login.class.getSimpleName();
     private EditText _numeroEmpleadom, _contrasenia;
@@ -32,6 +39,9 @@ public class Login extends AppCompatActivity {
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
     private String cusp;
+    private ArrayList gerenciasList = new ArrayList();
+    private ArrayList<Map> gerenciaContenedor = new ArrayList<Map>();
+    private Map<String, Object> gerenciaNodo = new HashMap<String, Object>();
 
     MySharePreferences mySharePreferences;
 
@@ -307,23 +317,30 @@ public class Login extends AppCompatActivity {
         Log.d(TAG, j.toString() + "\n");
         int idGerencia = 0;
         String nombreGerencia = "";
+        ArrayList<String> arryNombreGerencias = new ArrayList<String>();
         for(int i=0;i<j.length();i++){
             try {
                 JSONObject json = j.getJSONObject(i);
                 idGerencia = json.getInt("idGerencia");
                 nombreGerencia = json.getString("nombre");
-                Log.d(TAG, "***\n" + idGerencia);
-                Log.d(TAG, "***\n" + nombreGerencia);
+                arryNombreGerencias.add("Selecciona una genrencia");
+                arryNombreGerencias.add(nombreGerencia.toString());
+
+                Map<Integer, String> gerenciaNodo = new HashMap<Integer, String>();
+                gerenciaNodo.put(idGerencia, nombreGerencia);
+
+                gerenciasList.add(gerenciaNodo);
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-
-        Log.d(TAG, "***\n" + idGerencia);
+        Log.e(TAG, "--->" + gerenciasList);
+        Config.filtros = gerenciasList;
     }
 
     private void Sucursales(JSONArray j){
-        Log.d(TAG, j.toString() + "\n");
+       // Log.d(TAG, j.toString() + "\n");
         for(int i=0;i<j.length();i++){
             try {
                 JSONObject json = j.getJSONObject(i);
