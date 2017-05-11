@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.database.MatrixCursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -30,11 +31,20 @@ import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteSucursales;
 import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
 import com.airmovil.profuturo.ti.retencion.fragmento.Calculadora;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
+import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
+import com.android.volley.VolleyError;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Director extends AppCompatActivity{
     private static final String TAG = Asesor.class.getSimpleName();
@@ -46,6 +56,8 @@ public class Director extends AppCompatActivity{
     private static final  int REQUEST_CODE_OPENER = 2;
     private String url;
     public static Fragment itemMenu = null;
+    private IResult mResultCallback = null;
+    private VolleySingleton volleySingleton;
 
     /**
      * Se utiliza para iniciar la actividad
@@ -62,6 +74,44 @@ public class Director extends AppCompatActivity{
         // TODO: Validacion de la sesion del usuario
         validateSession();
 
+        initVolleyCallback();
+        // TODO: llama clase singleton volley
+        volleySingleton = VolleySingleton.getInstance(mResultCallback, getApplicationContext());
+
+        volleySingleton.getDataVolley("Gerencias", Config.URL_GERENCIAS);
+        volleySingleton.getDataVolley("Sucursales", Config.URL_SUCURSALES);
+    }
+
+    /**
+     *  metodo para callback de volley
+     */
+    void initVolleyCallback() {
+
+        mResultCallback = new IResult() {
+            @Override
+            public void notifySuccess(String requestType, JSONObject response) {
+
+                if(requestType.equals("Gerencias"))
+                    try {
+                        Gerencias(response.getJSONArray("Gerencias"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                if(requestType.equals("Sucursales"))
+                    try {
+                        Sucursales(response.getJSONArray("Sucursales"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+            }
+
+            @Override
+            public void notifyError(String requestType, VolleyError error) {
+                // Log.d(TAG, "Volley requester " + requestType);
+                // Log.d(TAG, "Volley JSON post" + "That didn't work! " + error.toString());
+            }
+        };
     }
 
     /**
@@ -312,5 +362,50 @@ public class Director extends AppCompatActivity{
         fragment.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_director, fragment, fragment.toString()).addToBackStack(null).commit();
+    }
+
+    private void Gerencias(JSONArray j){
+        Log.e(TAG, j.toString() + "\n");
+        int idGerencia = 0;
+        String nombreGerencia = "";
+        ArrayList<String> arrayNombreGerencias = new ArrayList<String>();
+        ArrayList<Integer> arrayIdgerencia = new ArrayList<Integer>();
+
+        for(int i=0;i<j.length();i++){
+            try {
+                JSONObject json = j.getJSONObject(i);
+                idGerencia = json.getInt("idGerencia");
+                nombreGerencia = json.getString("nombre");
+
+
+
+                arrayNombreGerencias.add(nombreGerencia.toString());
+                arrayIdgerencia.add(idGerencia);
+
+                Map<Integer, String> gerenciaNodo = new HashMap<Integer, String>();
+                gerenciaNodo.put(idGerencia, nombreGerencia);
+
+                // gerenciasList.add(gerenciaNodo);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+//        Log.e(TAG, "--->" + gerenciasList);
+
+        Config.columns = new String[]{"_id","nombre"};
+
+        Config.nombreGerencia = arrayNombreGerencias;
+        Config.idGerencia = arrayIdgerencia;
+    }
+
+    private void Sucursales(JSONArray j){
+        // Log.d(TAG, j.toString() + "\n");
+        for(int i=0;i<j.length();i++){
+            try {
+                JSONObject json = j.getJSONObject(i);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

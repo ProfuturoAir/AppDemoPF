@@ -127,20 +127,6 @@ public class Login extends AppCompatActivity {
 
                 if(requestType.equals("obtencionDatos"))
                     obtencionDatos(response, cusp);
-
-                if(requestType.equals("Gerencias"))
-                    try {
-                        Gerencias(response.getJSONArray("Gerencias"));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                if(requestType.equals("Sucursales"))
-                    try {
-                        Sucursales(response.getJSONArray("Sucursales"));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
             }
 
             @Override
@@ -317,14 +303,15 @@ public class Login extends AppCompatActivity {
         Log.d(TAG, j.toString() + "\n");
         int idGerencia = 0;
         String nombreGerencia = "";
-        ArrayList<String> arryNombreGerencias = new ArrayList<String>();
+        ArrayList<String> arrayNombreGerencias = new ArrayList<String>();
+        ArrayList<Integer> arrayIdgerencia = new ArrayList<Integer>();
         for(int i=0;i<j.length();i++){
             try {
                 JSONObject json = j.getJSONObject(i);
                 idGerencia = json.getInt("idGerencia");
                 nombreGerencia = json.getString("nombre");
-                arryNombreGerencias.add("Selecciona una genrencia");
-                arryNombreGerencias.add(nombreGerencia.toString());
+                arrayNombreGerencias.add(nombreGerencia.toString());
+                arrayIdgerencia.add(idGerencia);
 
                 Map<Integer, String> gerenciaNodo = new HashMap<Integer, String>();
                 gerenciaNodo.put(idGerencia, nombreGerencia);
@@ -336,7 +323,8 @@ public class Login extends AppCompatActivity {
             }
         }
         Log.e(TAG, "--->" + gerenciasList);
-        Config.filtros = gerenciasList;
+        //Config.filtros = arrayNombreGerencias;
+        //Config.idGerencia = arrayIdgerencia;
     }
 
     private void Sucursales(JSONArray j){

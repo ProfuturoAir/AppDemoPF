@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.MatrixCursor;
 import android.graphics.Bitmap;
 import android.location.LocationManager;
 import android.util.Base64;
@@ -84,11 +85,18 @@ public class Config extends Activity {
     public static final String[] GERENCIAS = new String[]{"´erenci 1","2","3"};
     public static final String[] SUCURSALES = new String[]{};
     //public static List<String> filtros = Arrays.asList("test1","test2","test3");
-    public static List filtros = null;
+    public static List nombreGerencia = null;
+    public static List idGerencia = null;
 
-    public static List getFiltros() {
-        return filtros;
+    public static List getNombreGerencia() {
+        return nombreGerencia;
     }
+
+    public static List getIdGerencia(){
+        return idGerencia;
+    }
+
+    public static String[] columns;
 
     public static final String[] MOTIVOS = new String[]{"Selecciona el motivo", "Por mal servicio","Por falta de seguimiento ventas", "Promesas incumplidas", "Rendimiento", "Llevarse sus cuentas a la misma institución", "No da explicación", "Familiares o amigos en afore de la competencia"};
     public static final String[] AFORES = new String[]{"Selecciona una AFORE","Azteca", "Banamex", "Coppel", "Inbursa", "Invercap", "Metlife", "PensionISSSTE", "Principal", "Profuturo", "SURA", "XXI-Banorte"};
@@ -501,5 +509,17 @@ public class Config extends Activity {
     public static boolean estahabilitadoGPS(Context getContext){
         LocationManager mlocManager = (LocationManager) getContext.getSystemService(Context.LOCATION_SERVICE);
         return mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
+    public static MatrixCursor getCursor(){
+        MatrixCursor matrixCursor= new MatrixCursor(columns);
+        //startManagingCursor(matrixCursor);
+        List id = getIdGerencia();
+        List nombre = getNombreGerencia();
+        for (int i=0; i<id.size(); i++){
+            matrixCursor.addRow(new Object[] { id.get(i).toString(), nombre.get(i)});
+        }
+
+        return matrixCursor;
     }
 }

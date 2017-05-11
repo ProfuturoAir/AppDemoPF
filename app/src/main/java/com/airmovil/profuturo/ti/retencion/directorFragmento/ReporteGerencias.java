@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +22,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.airmovil.profuturo.ti.retencion.Adapter.DirectorReporteGerenciasAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
@@ -204,10 +207,14 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Log.d("id",String.valueOf(id));
         switch (parent.getId()) {
             case R.id.dfrg_spinner_gerencias:
-                String sim = id_gerencias.get(position);
+                //String sim = id_gerencias.get(position);
+                //idGerencia = Integer.valueOf(sim);
+                String sim = (String) Config.nombreGerencia.get(position);
                 idGerencia = Integer.valueOf(sim);
+                Log.e(TAG, "**++>>" + position);
                 break;
             default:
                 break;
@@ -253,11 +260,33 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         tvResultados = (TextView) rootView.findViewById(R.id.dfrg_tv_registros);
         tvMail = (TextView) rootView.findViewById(R.id.dfrg_tv_mail);
 
-//        ArrayAdapter<String> adapterRetenido = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.getFiltros());
 
-        ArrayAdapter<Map<Integer, String>> adapterRetenido = new ArrayAdapter<Map<Integer, String>>(getContext(), R.layout.spinner_item,Config.getFiltros());
-        adapterRetenido.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerGerencias.setAdapter(adapterRetenido);
+        //ArrayAdapter<Map<Integer, String>> adapterRetenido = new ArrayAdapter<Map<Integer, String>>(getContext(), R.layout.spinner_item, Config.idGerencia);
+        //adapterRetenido.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        //spinnerGerencias.setAdapter(adapterRetenido);
+
+        SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(
+                getContext(),
+                R.layout.spinner_dropdown_item,
+                Config.getCursor(),
+                new String[] {"nombre"},
+                new int[] {android.R.id.text1},
+                0);
+
+        spinnerGerencias.setAdapter(mAdapter);
+        spinnerGerencias.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getContext(), "" + id, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
 
         //spinnerGerencias.setOnItemSelectedListener(this);
         //getData();

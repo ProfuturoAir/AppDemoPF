@@ -24,8 +24,13 @@ import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.VolleyError;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Inicio extends Fragment {
@@ -252,8 +257,8 @@ public class Inicio extends Fragment {
         mResultCallback = new IResult() {
             @Override
             public void notifySuccess(String requestType, JSONObject response) {
-                loading.dismiss();
-                primerPaso(response);
+                    loading.dismiss();
+                    primerPaso(response);
             }
             @Override
             public void notifyError(String requestType, VolleyError error) {
@@ -292,5 +297,7 @@ public class Inicio extends Fragment {
         tvSaldoRetenido.setText("" + Config.nf.format(iSaldoRetenido));
         tvSaldoNoRetenido.setText("" + Config.nf.format(iSaldoNoRetenido));
     }
+
+
 
 }
