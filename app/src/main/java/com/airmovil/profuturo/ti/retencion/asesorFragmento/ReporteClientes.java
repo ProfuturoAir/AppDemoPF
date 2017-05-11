@@ -112,6 +112,8 @@ public class ReporteClientes extends Fragment {
             sParam4 = getArguments().getString(ARG_PARAM_4);
             sParam5 = getArguments().getInt(ARG_PARAM_5);
         }
+
+
     }
 
     /**
@@ -291,33 +293,11 @@ public class ReporteClientes extends Fragment {
 
         JSONObject obj = new JSONObject();
         JSONObject rqt = new JSONObject();
-        JSONObject filtros = new JSONObject();
         JSONObject periodo = new JSONObject();
         boolean argumentos = (getArguments()!=null);
         try{
-            rqt.put("filtro", filtros);
-            switch ((argumentos) ? getArguments().getInt(ARG_PARAM_1) : 0){
-                case 1:
-                    filtros.put("curp", "");
-                    filtros.put("nss", "");
-                    filtros.put("numeroCuenta", (argumentos) ? getArguments().getString(ARG_PARAM_2) : "");
-                    break;
-                case 2:
-                    filtros.put("curp", "");
-                    filtros.put("nss", (argumentos) ? getArguments().getString(ARG_PARAM_2) : "");
-                    filtros.put("numeroCuenta", "");
-                    break;
-                case 3:
-                    filtros.put("curp", (argumentos) ? getArguments().getString(ARG_PARAM_2) : "");
-                    filtros.put("nss", "");
-                    filtros.put("numeroCuenta", "");
-                    break;
-                case 0:
-                    filtros.put("curp", "");
-                    filtros.put("nss", "");
-                    filtros.put("numeroCuenta", "");
-                    break;
-            }
+            /* filtro clientes que devuelve un JSON */
+            rqt.put("filtro", Config.filtroClientes((argumentos) ? getArguments().getInt(ARG_PARAM_1) : 0,(argumentos) ? getArguments().getString(ARG_PARAM_2) : ""));
             rqt.put("filtroRetenido", (argumentos) ? getArguments().getInt(ARG_PARAM_5) : 0);
             rqt.put("pagina", pagina);
             periodo.put("fechaInicio", (argumentos) ? getArguments().getString(ARG_PARAM_3) : Dialogos.fechaActual());
@@ -421,6 +401,7 @@ public class ReporteClientes extends Fragment {
                     getDatos2.setNombreCliente(json.getString("nombre"));
                     getDatos2.setNumeroCuenta(json.getString("numeroCuenta"));
                     getDatos2.setConCita(json.getString("cita"));
+                    getDatos2.setHora(json.getString("hora"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

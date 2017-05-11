@@ -51,10 +51,6 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
 
     private TextView tvLongitud, tvLatitud;
     private Button btnLimpiar, btnGuardar, btnCancelar;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     // TODO: DATOS
     View rootView;
     private IResult mResultCallback = null;
@@ -85,10 +81,6 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override

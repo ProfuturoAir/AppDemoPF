@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Asesor;
+import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
@@ -45,7 +47,6 @@ public class ReporteClientesDetalle extends Fragment {
     }
 
     /**
-     *
      * @param savedInstanceState
      */
     @Override
@@ -54,7 +55,6 @@ public class ReporteClientesDetalle extends Fragment {
     }
 
     /**
-     *
      * @param view
      * @param savedInstanceState
      */
@@ -135,9 +135,12 @@ public class ReporteClientesDetalle extends Fragment {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                    Fragment fragmentoGenerico = new ReporteClientes();
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                    if(getArguments()!=null){
+                        Log.d("arg",getArguments().toString());
+                        Asesor d1 = (Asesor) getContext();
+                        ReporteClientes reporte = new ReporteClientes();
+                        d1.envioParametros(reporte, getArguments().getString(ARG_PARAM4), getArguments().getString(ARG_PARAM5));
+                    }
                     return true;
                 }
                 return false;
