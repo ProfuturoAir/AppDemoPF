@@ -365,47 +365,42 @@ public class Director extends AppCompatActivity{
     }
 
     private void Gerencias(JSONArray j){
-        Log.e(TAG, j.toString() + "\n");
         int idGerencia = 0;
         String nombreGerencia = "";
-        ArrayList<String> arrayNombreGerencias = new ArrayList<String>();
-        ArrayList<Integer> arrayIdgerencia = new ArrayList<Integer>();
-
+        ArrayList<String> arrayListNombreGerencia = new ArrayList<String>();
+        ArrayList<Integer> arrayListIdGerencia = new ArrayList<Integer>();
         for(int i=0;i<j.length();i++){
             try {
                 JSONObject json = j.getJSONObject(i);
                 idGerencia = json.getInt("idGerencia");
                 nombreGerencia = json.getString("nombre");
-
-
-
-                arrayNombreGerencias.add(nombreGerencia.toString());
-                arrayIdgerencia.add(idGerencia);
-
-                Map<Integer, String> gerenciaNodo = new HashMap<Integer, String>();
-                gerenciaNodo.put(idGerencia, nombreGerencia);
-
-                // gerenciasList.add(gerenciaNodo);
+                arrayListNombreGerencia.add(nombreGerencia.toString());
+                arrayListIdGerencia.add(idGerencia);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-//        Log.e(TAG, "--->" + gerenciasList);
-
-        Config.columns = new String[]{"_id","nombre"};
-
-        Config.nombreGerencia = arrayNombreGerencias;
-        Config.idGerencia = arrayIdgerencia;
+        Config.nombreGerencia = arrayListNombreGerencia;
+        Config.idGerencia = arrayListIdGerencia;
     }
 
     private void Sucursales(JSONArray j){
-        // Log.d(TAG, j.toString() + "\n");
+        int idSucursal = 0;
+        String nombreSucursal;
+        ArrayList<Integer> arrayListIdGerencia = new ArrayList<Integer>();
+        ArrayList<String> arrayListNombreGerencia = new ArrayList<String>();
         for(int i=0;i<j.length();i++){
             try {
                 JSONObject json = j.getJSONObject(i);
+                idSucursal = json.getInt("idSucursal");
+                nombreSucursal = json.getString("nombre");
+                arrayListIdGerencia.add(idSucursal);
+                arrayListNombreGerencia.add(nombreSucursal);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            Config.nombreSucursal = arrayListNombreGerencia;
+            Config.idSucusal = arrayListIdGerencia;
         }
     }
 }

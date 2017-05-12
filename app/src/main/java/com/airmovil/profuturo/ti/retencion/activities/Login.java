@@ -20,16 +20,8 @@ import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.VolleyError;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 public class Login extends AppCompatActivity {
     public static final String TAG = Login.class.getSimpleName();
@@ -39,9 +31,6 @@ public class Login extends AppCompatActivity {
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
     private String cusp;
-    private ArrayList gerenciasList = new ArrayList();
-    private ArrayList<Map> gerenciaContenedor = new ArrayList<Map>();
-    private Map<String, Object> gerenciaNodo = new HashMap<String, Object>();
 
     MySharePreferences mySharePreferences;
 
@@ -297,44 +286,5 @@ public class Login extends AppCompatActivity {
         volleySingleton.getDataVolley("Gerencias", Config.URL_GERENCIAS);
         volleySingleton.getDataVolley("Sucursales", Config.URL_SUCURSALES);
 
-    }
-
-    private void Gerencias(JSONArray j){
-        Log.d(TAG, j.toString() + "\n");
-        int idGerencia = 0;
-        String nombreGerencia = "";
-        ArrayList<String> arrayNombreGerencias = new ArrayList<String>();
-        ArrayList<Integer> arrayIdgerencia = new ArrayList<Integer>();
-        for(int i=0;i<j.length();i++){
-            try {
-                JSONObject json = j.getJSONObject(i);
-                idGerencia = json.getInt("idGerencia");
-                nombreGerencia = json.getString("nombre");
-                arrayNombreGerencias.add(nombreGerencia.toString());
-                arrayIdgerencia.add(idGerencia);
-
-                Map<Integer, String> gerenciaNodo = new HashMap<Integer, String>();
-                gerenciaNodo.put(idGerencia, nombreGerencia);
-
-                gerenciasList.add(gerenciaNodo);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        Log.e(TAG, "--->" + gerenciasList);
-        //Config.filtros = arrayNombreGerencias;
-        //Config.idGerencia = arrayIdgerencia;
-    }
-
-    private void Sucursales(JSONArray j){
-       // Log.d(TAG, j.toString() + "\n");
-        for(int i=0;i<j.length();i++){
-            try {
-                JSONObject json = j.getJSONObject(i);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
