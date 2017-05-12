@@ -242,7 +242,6 @@ public class ReporteGerencias extends Fragment{
                     segundoPaso(response);
                 }
             }
-
             @Override
             public void notifyError(String requestType, VolleyError error) {
                 if(connected.estaConectado(getContext())){

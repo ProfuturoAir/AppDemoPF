@@ -172,7 +172,7 @@ public class ReporteSucursales extends Fragment{
             }
         });
 
-        SpinnerDatos.spinnerSucursales(getContext(), spinnerSucursales);
+        SpinnerDatos.spinnerSucursales(getContext(), spinnerSucursales, (getArguments()!=null) ? Config.ID_SUCURSAL_POSICION : 0);
     }
 
     /**
@@ -254,10 +254,6 @@ public class ReporteSucursales extends Fragment{
             idSucursal = getArguments().getInt("idSucursal");
             idGerencia = getArguments().getInt("idGerencia");
             numeroEmpleado = getArguments().getString("numeroEmpleado");
-
-            /*if(idSucursal!=0){
-                int size = id_sucursales.size();
-            }*/
         }else{
             tvFecha.setText(Dialogos.fechaActual() + " - " + Dialogos.fechaSiguiente());
         }
