@@ -158,12 +158,11 @@ public class ReporteSucursales extends Fragment{
                     Config.dialogoFechasVacias(getContext());
                 }else {
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    ReporteSucursales fragmento = ReporteSucursales.newInstance(0, idSucursal, "", tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), rootView.getContext());
+                    ReporteSucursales fragmento = ReporteSucursales.newInstance(0, Config.ID_SUCURSAL, "", tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), rootView.getContext());
                     borrar.onDestroy();ft.remove(borrar).replace(R.id.content_director, fragmento).addToBackStack(null).commit();
                 }
             }
         });
-
         tvResultados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -239,7 +238,6 @@ public class ReporteSucursales extends Fragment{
         spinnerSucursales = (Spinner) rootView.findViewById(R.id.dfrs_spinner_sucursales);
         btnBuscar = (Button) rootView.findViewById(R.id.dfrs_btn_buscar);
         tvResultados = (TextView) rootView.findViewById(R.id.dfsc_tv_registros);
-
     }
 
     /**
@@ -270,16 +268,15 @@ public class ReporteSucursales extends Fragment{
             loading = null;
         JSONObject obj = new JSONObject();
         try {
-            boolean argumentos = (getArguments()!=null);
             JSONObject rqt = new JSONObject();
-            rqt.put("idGerencia", idGerencia);
-            rqt.put("idSucursal", idSucursal);
-            rqt.put("numeroEmpleado", (argumentos)?numeroEmpleado:"");
+            rqt.put("idGerencia", (getArguments()!=null)? idGerencia:0);
+            rqt.put("idSucursal", (getArguments()!=null)? idSucursal:0);
+            rqt.put("numeroEmpleado", (getArguments()!=null)?numeroEmpleado:"");
             rqt.put("pagina", pagina);
             JSONObject periodo = new JSONObject();
             rqt.put("periodo", periodo);
-            periodo.put("fechaInicio", (argumentos)?getArguments().getString(ARG_PARAM4):Dialogos.fechaActual());
-            periodo.put("fechaFin", (argumentos)?getArguments().getString(ARG_PARAM5):Dialogos.fechaSiguiente());
+            periodo.put("fechaInicio", (getArguments()!=null)?getArguments().getString(ARG_PARAM4):Dialogos.fechaActual());
+            periodo.put("fechaFin", (getArguments()!=null)?getArguments().getString(ARG_PARAM5):Dialogos.fechaSiguiente());
             rqt.put("usuario", Config.usuarioCusp(getContext()));
             obj.put("rqt", rqt);
             Log.d(TAG, "< RQT -> \n" + obj + "\n");
@@ -402,9 +399,7 @@ public class ReporteSucursales extends Fragment{
         }catch (JSONException e){
             e.printStackTrace();
         }
-
         adapter.notifyDataSetChanged();
         adapter.setLoaded();
     }
-
 }

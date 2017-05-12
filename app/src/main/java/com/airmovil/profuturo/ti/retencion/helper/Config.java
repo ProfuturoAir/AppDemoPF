@@ -19,10 +19,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -78,40 +76,22 @@ public class Config extends Activity {
     public static final String URL_SEND_MAIL_REPORTE_CLIENTE = URL_GENERAL + "mb/premium/rest/enviarEmailReporteCliente";
     public static final String URL_SEND_MAIL_REPORTE_SUCURSAL = URL_GENERAL + "mb/premium/rest/enviarEmailReporteSucursal";
     public static final String URL_SEND_MAIL_REPORTE_ASISTENCIA_DETALLE = URL_GENERAL + "mb/premium/rest/enviarEmailReporteAsistenciaDetalle";
-    // TODO: SUCURSALES LISTA
+    // TODO: GERENCIAS y SUCURSALES LISTA
     public static final String URL_SUCURSALES = URL_GENERAL + "mb/premium/rest/seleccionSucursales";
     public static final String URL_GERENCIAS = URL_GENERAL + "mb/premium/rest/seleccionGerencias";
-    // TODO: definicion de campos fijos para el envio de datos de encuestas
-
-    public static final String[] GERENCIAS = new String[]{"´erenci 1","2","3"};
-    public static final String[] SUCURSALES = new String[]{};
-    //public static List<String> filtros = Arrays.asList("test1","test2","test3");
     public static List nombreGerencia = null;
     public static List idGerencia = null;
     public static List nombreSucursal = null;
     public static List idSucusal = null;
-
-    public static List getNombreGerencia() {
-        return nombreGerencia;
-    }
-
-    public static List getIdGerencia(){
-        return idGerencia;
-    }
-
-    public static List getNombreSucursal(){
-        return nombreSucursal;
-    }
-
-    public static List getIdSucusal(){
-        return idSucusal;
-    }
-
+    public static List getNombreGerencia() {return nombreGerencia;}
+    public static List getIdGerencia(){return idGerencia;}
+    public static List getNombreSucursal(){return nombreSucursal;}
+    public static List getIdSucusal(){return idSucusal;}
     public static int ID_GERENCIA = 0;
     public static int ID_SUCURSAL = 0;
     public static int ID_GERENCIA_POSICION = 0;
     public static int ID_SUCURSAL_POSICION = 0;
-
+    // TODO: definicion de campos fijos para el envio de datos de encuestas
     public static final String[] MOTIVOS = new String[]{"Selecciona el motivo", "Por mal servicio","Por falta de seguimiento ventas", "Promesas incumplidas", "Rendimiento", "Llevarse sus cuentas a la misma institución", "No da explicación", "Familiares o amigos en afore de la competencia"};
     public static final String[] AFORES = new String[]{"Selecciona una AFORE","Azteca", "Banamex", "Coppel", "Inbursa", "Invercap", "Metlife", "PensionISSSTE", "Principal", "Profuturo", "SURA", "XXI-Banorte"};
     public static final String[] ESTATUS = new String[]{"Selecciona un estatus", "Activo", "Inactivo"};
@@ -133,7 +113,6 @@ public class Config extends Activity {
     private static Timer mTimer = new Timer();
     private static ProgressDialog dialog;
     public static final int numVistaPagina = 10;
-
     // TODO: formato para convertir (int) a valor monetario
     public static final NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.getDefault()); // formato para convertir variables int a formato pesos
     public static final DecimalFormat df = new DecimalFormat("0.00"); // formato para implimer solo dos decimales en variable double de mas de 3 decimales
@@ -141,8 +120,6 @@ public class Config extends Activity {
     public static Context context; // Context
     public static String idUsuario = "";
     public static RequestQueue mRequestQueue = null;
-
-    public static String  test = "";
 
     /**
      * @param ctx parametro 1 referencia de la llamada, fragmento o actividad
@@ -181,9 +158,6 @@ public class Config extends Activity {
                     }
                 });
         progressDialog.show();
-
-
-
     }
 
     /**
@@ -349,7 +323,7 @@ public class Config extends Activity {
     }
 
     /**
-     * @param context
+     * @param context referencia de la llamada, fragmento o actividad
      * @return map retorna las variables del usuairo logeado
      */
     public static final Map<String, String> usuario(Context context){
@@ -362,7 +336,7 @@ public class Config extends Activity {
 
     /**
      * Consulta la informacion existente en el sharePreference
-     * @param context
+     * @param context referencia de la llamada, fragmento o actividad
      * @return datos del usuario a iniciar sesion
      */
     public static final Map<String, String> datosUsuario(Context context){
@@ -382,7 +356,7 @@ public class Config extends Activity {
     }
 
     /**
-     * @param context
+     * @param context referencia de la llamada, fragmento o actividad
      * @return regresa un Map para usuarlo en el metodo de peticion requerido, REST de JsonObjectRequest
      */
     public static final Map<String, String> credenciales(Context context){
@@ -395,7 +369,7 @@ public class Config extends Activity {
     }
 
     /**
-     * @param numero
+     * @param numero cantidad total de items
      * @return el numero entre el que se generara el listado
      */
     public static final int maximoPaginas(int numero){
@@ -403,7 +377,7 @@ public class Config extends Activity {
     }
 
     /**
-     * @param list
+     * @param list de paginas del servicio
      * @return numero de lista de la vita del listado
      */
     public static final int pidePagina(List list){
@@ -412,8 +386,8 @@ public class Config extends Activity {
 
     /**
      * Estable la minimizacion de teclado, dependiendo del elemento editText a disminuir
-     * @param context
-     * @param editText
+     * @param context referencia de la llamada, fragmento o actividad
+     * @param editText elemento Xml asisgnado a variable en java
      */
     public static final void teclado(Context context, EditText editText){
         InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -421,7 +395,7 @@ public class Config extends Activity {
     }
 
     /**
-     * @param context
+     * @param context referencia de la llamada, fragmento o actividad
      * @return el usuario de inicio de sesion, ya que se hace uso de este usuario en distintas peticiones
      */
     public static final String usuarioCusp(Context context){
@@ -453,8 +427,8 @@ public class Config extends Activity {
 
     /**
      * Verifica el estado de la conexion a internet
-     * @param context
-     * @return
+     * @param context referencia de la llamada, fragmento o actividad
+     * @return el estado de la conexion
      */
     public static final boolean conexion(Context context){
         boolean estatus;
@@ -467,6 +441,10 @@ public class Config extends Activity {
         return estatus;
     }
 
+    /**
+     * @param email String de campo email
+     * @return si el String es una cadena de email valida
+     */
     public static final boolean verificarEmail(String email){
         boolean valor;
         String emailPattern = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
@@ -478,6 +456,11 @@ public class Config extends Activity {
         return  valor;
     }
 
+    /**
+     * @param context referencia de la llamada, fragmento o actividad
+     * @param image mapa de bits de imagen EditText
+     * @return formato base64 para envio de imagen por json
+     */
     public static final String encodeTobase64(Context context, Bitmap image){
             float bmW=image.getWidth();
             float bmH= image.getHeight();
@@ -506,6 +489,9 @@ public class Config extends Activity {
             return foto;
     }
 
+    /**
+     * @return la hora actual del dispositivo
+     */
     public static String getHoraActual(){
         Calendar calendario = Calendar.getInstance();
         int hora, minutos, segundos;
@@ -515,30 +501,36 @@ public class Config extends Activity {
         return hora+":"+minutos+":"+segundos;
     }
 
+    /**
+     * @return fecha actual del dispositivo
+     */
     public static String getFechaFormat(){
         sdf.setTimeZone(TimeZone.getTimeZone(String.valueOf(Locale.getDefault())));
         return sdf.format(new Date());
     }
 
+    /**
+     * @param getContext referencia de la llamada, fragmento o actividad
+     * @return el estatus del GPS
+     */
     public static boolean estahabilitadoGPS(Context getContext){
         LocationManager mlocManager = (LocationManager) getContext.getSystemService(Context.LOCATION_SERVICE);
         return mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
+    /**
+     * @param getContext referencia de la llamada, fragmento o actividad
+     * @param columns columnas con llaves de refencia
+     * @param id idGerencia o idSucursal
+     * @param nombre nombreGerencia o nombreSucursal
+     * @return listas para procesar dentro de adapter
+     */
     public static SimpleCursorAdapter getAdapter(Context getContext, String[] columns,List id,List nombre){
         MatrixCursor matrixCursor= new MatrixCursor(columns);
-        //startManagingCursor(matrixCursor);
         for (int i=0; i<id.size(); i++){
             matrixCursor.addRow(new Object[] { id.get(i).toString(), nombre.get(i)});
         }
-        SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(
-                getContext,
-                //R.layout.spinner_dropdown_item,
-                R.layout.spinner_item,
-                matrixCursor,
-                new String[] {"nombre"},
-                new int[] {android.R.id.text1},
-                0);
+        SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(getContext, R.layout.spinner_item, matrixCursor, new String[] {"nombre"}, new int[] {android.R.id.text1}, 0);
         mAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         return mAdapter;
     }

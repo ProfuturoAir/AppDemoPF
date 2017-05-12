@@ -369,6 +369,8 @@ public class Director extends AppCompatActivity{
         String nombreGerencia = "";
         ArrayList<String> arrayListNombreGerencia = new ArrayList<String>();
         ArrayList<Integer> arrayListIdGerencia = new ArrayList<Integer>();
+        arrayListIdGerencia.add(-1);
+        arrayListNombreGerencia.add("Selecciona una Gerencia");
         for(int i=0;i<j.length();i++){
             try {
                 JSONObject json = j.getJSONObject(i);
@@ -387,20 +389,22 @@ public class Director extends AppCompatActivity{
     private void Sucursales(JSONArray j){
         int idSucursal = 0;
         String nombreSucursal;
-        ArrayList<Integer> arrayListIdGerencia = new ArrayList<Integer>();
-        ArrayList<String> arrayListNombreGerencia = new ArrayList<String>();
+        ArrayList<Integer> arrayListIdSucursal = new ArrayList<Integer>();
+        ArrayList<String> arrayListNombreSucursal = new ArrayList<String>();
+        arrayListIdSucursal.add(-1);
+        arrayListNombreSucursal.add("Selecciona una Sucursal");
         for(int i=0;i<j.length();i++){
             try {
                 JSONObject json = j.getJSONObject(i);
                 idSucursal = json.getInt("idSucursal");
                 nombreSucursal = json.getString("nombre");
-                arrayListIdGerencia.add(idSucursal);
-                arrayListNombreGerencia.add(nombreSucursal);
+                arrayListIdSucursal.add(idSucursal);
+                arrayListNombreSucursal.add(nombreSucursal);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Config.nombreSucursal = arrayListNombreGerencia;
-            Config.idSucusal = arrayListIdGerencia;
+            Config.nombreSucursal = arrayListNombreSucursal;
+            Config.idSucusal = arrayListIdSucursal;
         }
     }
 }

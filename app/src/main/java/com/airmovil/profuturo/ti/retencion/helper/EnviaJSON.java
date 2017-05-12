@@ -26,9 +26,6 @@ public class EnviaJSON {
     private SQLiteHandler db;
     private static final String TAG = "ENCUESTA";
     private static final String TAG2 = "ENCUESTA 2";
-
-    private String tramite;
-    private String id_t;
     private String idTramite;
 
     private String retencion_encuesta;
@@ -57,10 +54,6 @@ public class EnviaJSON {
     private int idInstituto;
     private int idRegimenPensionario;
     private int idDocumentacion;
-
-
-    private String retencion_firma;
-    private String firmaCliente;
     private Double longitud;
     private Double latitud;
 

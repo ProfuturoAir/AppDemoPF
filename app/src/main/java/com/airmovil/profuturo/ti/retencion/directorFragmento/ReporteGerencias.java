@@ -90,7 +90,7 @@ public class ReporteGerencias extends Fragment{
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
-            idGerencia = getArguments().getInt(ARG_PARAM3);
+            mParam3 = getArguments().getInt(ARG_PARAM3);
         }
     }
 
@@ -267,7 +267,7 @@ public class ReporteGerencias extends Fragment{
         JSONObject periodo = new JSONObject();
         boolean argumentos = (getArguments()!=null);
         try {
-            rqt.put("idGerencia", (argumentos == true) ? mParam3: 0);
+            rqt.put("idGerencia", (getArguments()!=null) ? mParam3: 0);
             rqt.put("idSucursal", 0);
             rqt.put("pagina", pagina);
             periodo.put("fechaFin", (argumentos) ? mParam1 : Dialogos.fechaSiguiente());

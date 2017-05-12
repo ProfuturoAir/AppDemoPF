@@ -53,80 +53,6 @@ public class ServicioEmailJSON {
         spinner.setAdapter(adapter);
     }
 
-    public static final void enviarEmailReporteAsistenciaDetalles1(final Context context, TextView textViewEmail, final String numeroEmpleado, final String fechaInicio, final String fechaFin){
-        textViewEmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Dialog dialog = new Dialog(context);
-                dialog.setContentView(R.layout.custom_layout);
-                Button btn = (Button) dialog.findViewById(R.id.dialog_btn_enviar);
-                final Spinner spinner = (Spinner) dialog.findViewById(R.id.dialog_spinner_mail);
-                // TODO: Spinner
-                ArrayAdapter<String> adapterSucursal = new ArrayAdapter<String>(context, R.layout.spinner_item_azul, Config.EMAIL);
-                adapterSucursal.setDropDownViewResource(R.layout.spinner_dropdown_item);
-                spinner.setAdapter(adapterSucursal);
-                btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        final EditText editText = (EditText) dialog.findViewById(R.id.dialog_et_mail);
-                        final String datoEditText = editText.getText().toString();
-                        final String datoSpinner = spinner.getSelectedItem().toString();
-                        if(datoEditText == "" || datoSpinner == "Seleciona un email"){
-                            Config.msj(context, "Error", "Ingresa email valido");
-                        }else{
-                            String email = datoEditText+"@"+datoSpinner;
-                            Connected connected = new Connected();
-                            final InputMethodManager imm = (InputMethodManager) context.getSystemService(Service.INPUT_METHOD_SERVICE);
-                            if(connected.estaConectado(context)){
-                                JSONObject obj = new JSONObject();
-                                try {
-                                    JSONObject rqt = new JSONObject();
-                                    rqt.put("correo", email);
-                                    rqt.put("numeroEmpleado", numeroEmpleado);
-                                    JSONObject periodo = new JSONObject();
-                                    periodo.put("fechaFin", fechaInicio);
-                                    periodo.put("fechaInicio", fechaFin);
-                                    rqt.put("periodo", periodo);
-                                    obj.put("rqt", rqt);
-                                    Log.d(TAG, "<- RQT ->" + obj);
-                                } catch (JSONException e) {
-                                    Config.msj(context, "Error", "Error al formar los datos");
-                                }
-                                EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_ASISTENCIA_DETALLE,context,new EnviaMail.VolleyCallback() {
-                                    @Override
-                                    public void onSuccess(JSONObject result) {
-                                        int status;
-                                        try {
-                                            status = result.getInt("status");
-                                        }catch(JSONException error){
-                                            status = 400;
-                                        }
-                                        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-                                        if(status == 200) {
-                                            Config.msj(context, "Enviando", "Se ha enviado el mensaje al destino");
-                                            dialog.dismiss();
-                                        }else{
-                                            Config.msj(context, "Error", "Ups algo salio mal =(");
-                                            dialog.dismiss();
-                                        }
-                                    }
-                                    @Override
-                                    public void onError(String result) {
-                                        Log.d("RESPUESTA ERROR", result);
-                                        Config.msj(context, "Error en conexión", "Por favor, revisa tu conexión a internet ++");
-                                    }
-                                });
-                            }else{
-                                Config.msj(context, "Error en conexión", "Por favor, revisa tu conexión a internet");
-                            }
-                        }
-                    }
-                });
-                dialog.show();
-            }
-        });
-    }
-
     /**
      * Envio de datos del fragmento y detalle ReporteGerencia
      * @param context referencia de fragmento
@@ -500,7 +426,13 @@ public class ServicioEmailJSON {
         dialog.show();
     }
 
-
+    /**
+     * Envio de datos del fragmento y detalle ReporteClientes
+     * @param context referencia del fragmento
+     * @param numeroEmpleado id numeroEmpleado
+     * @param fechaInicio rango de fecha incial
+     * @param fechaFin rango de fecha final
+     */
     public static final void enviarEmailReporteAsistenciaDetalles(final Context context, final String numeroEmpleado, final String fechaInicio, final String fechaFin){
         dialogo(context);
         btn.setOnClickListener(new View.OnClickListener() {
@@ -539,9 +471,9 @@ public class ServicioEmailJSON {
                                 }catch(JSONException error){
                                     status = 400;
                                 }
-                                imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
                                 if(status == 200) {
                                     Config.msj(context, "Enviando", "Se ha enviado el mensaje al destino");
+                                    Config.teclado(context, editText);
                                     dialog.dismiss();
                                 }else{
                                     Config.msj(context, "Error", "Ups algo salio mal =(");
