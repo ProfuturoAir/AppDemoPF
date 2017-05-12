@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
@@ -85,7 +86,6 @@ public class Biblioteca extends Fragment implements GoogleApiClient.ConnectionCa
                     .addOnConnectionFailedListener(this)
                     .build();
         }
-
         mGoogleApiClient.connect();
     }
 
@@ -157,10 +157,12 @@ public class Biblioteca extends Fragment implements GoogleApiClient.ConnectionCa
      *  Abrir la lista de carpetas y archivos de Google Drive
      */
     public void OpenFileFromGoogleDrive(){
-        IntentSender intentSender = Drive.DriveApi.newOpenFileActivityBuilder().build(mGoogleApiClient);
-        try {
-            getActivity().startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER, null, 0, 0, 0);
-        } catch (IntentSender.SendIntentException e) {}
+            IntentSender intentSender = Drive.DriveApi.newOpenFileActivityBuilder().build(mGoogleApiClient);
+            try {
+                getActivity().startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER, null, 0, 0, 0);
+            } catch (IntentSender.SendIntentException e) {
+            }
+
     }
 
     /**

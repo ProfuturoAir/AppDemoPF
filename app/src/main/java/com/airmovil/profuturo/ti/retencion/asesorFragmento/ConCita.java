@@ -109,7 +109,10 @@ public class ConCita extends Fragment {
         btnClienteSinCita = (Button) rootView.findViewById(R.id.afcc_btn_sin_cita);
         tvFecha = (TextView) rootView.findViewById(R.id.afcc_tv_fecha);
         tvRegistros = (TextView) rootView.findViewById(R.id.afcc_tv_registros);
-        sendJson(true);
+        if(Config.conexion(getContext()))
+            sendJson(true);
+        else
+            Dialogos.dialogoErrorConexion(getContext());
         fechas();
         // TODO: Spinner
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.CITAS){
@@ -355,7 +358,13 @@ public class ConCita extends Fragment {
                     return;
                 }
                 getDatos1.add(null);
-                adapter.notifyItemInserted(getDatos1.size() - 1);
+                Handler handler = new Handler();
+                final Runnable r = new Runnable() {
+                    public void run() {
+                        adapter.notifyItemInserted(getDatos1.size() - 1);
+                    }
+                };
+                handler.post(r);
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -377,7 +386,6 @@ public class ConCita extends Fragment {
                 JSONObject json = null;
                 try{
                     json = array.getJSONObject(i);
-                    Log.d("OBJETO","PTR: "+json);
                     getDatos2.setHora(json.getString(JSON_HORA));
                     getDatos2.setNombreCliente(json.getString(JSON_NOMBRE_CLIENTE));
                     getDatos2.setNumeroCuenta(json.getString(JSON_NUMERO_CUENTA));

@@ -111,9 +111,7 @@ public class Encuesta1 extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 cb1no.setChecked(false);
-                if(b == true) r1 = true;
-                else if(b == false) r1 = null;
-                Log.d("CheckBox 1 si", "" + r1);
+                r1 = (b) ? true : false;
             }
         });
 
@@ -121,9 +119,7 @@ public class Encuesta1 extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 cb1si.setChecked(false);
-                if(b == true) r1 = false;
-                else if(b == false) r1 = null;
-                Log.d("CheckBox 1 no", "" + r1);
+                r1 = (b) ? false : null;
             }
         });
 
@@ -131,9 +127,7 @@ public class Encuesta1 extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 cb2no.setChecked(false);
-                if(b == true) r2 = true;
-                else if(b == false) r2 = null;
-                Log.d("CheckBox 2 si", "" + r2);
+                r2 = (b) ? true : null;
             }
         });
 
@@ -141,9 +135,7 @@ public class Encuesta1 extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 cb2si.setChecked(false);
-                if(b == true) r2 = false;
-                else if(b == false) r2 = null;
-                Log.d("CheckBox 2 no", "" + r2);
+                r2 = (b) ? false : null;
             }
         });
 
@@ -151,9 +143,7 @@ public class Encuesta1 extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 cb3no.setChecked(false);
-                if(b == true) r3 = true;
-                else if(b == false) r3 = null;
-                Log.d("CheckBox 3 si", "" + r3);
+                r3 = (b) ? true : null;
             }
         });
 
@@ -161,9 +151,7 @@ public class Encuesta1 extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 cb3si.setChecked(false);
-                if(b == true) r3 = false;
-                else if(b == false) r3 = null;
-                Log.d("CheckBox 3 no", "" + r3);
+                r3 = (b) ? false : null;
             }
         });
 
@@ -322,6 +310,7 @@ public class Encuesta1 extends Fragment {
         cb3si = (CheckBox) rootView.findViewById(R.id.afe1_cb_pregunta3_si);
         cb3no = (CheckBox) rootView.findViewById(R.id.afe1_cb_pregunta3_no);
         etObservaciones = (EditText) rootView.findViewById(R.id.afe1_et_observaciones);
+        connected = new Connected();
     }
 
     /**

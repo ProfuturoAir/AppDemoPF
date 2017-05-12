@@ -122,7 +122,10 @@ public class Inicio extends Fragment {
         rootView = view;
         // TODO: llama clase singleton volley
         volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
-        sendJson(true);
+        if(Config.conexion(getContext()))
+            sendJson(true);
+        else
+            Dialogos.dialogoErrorConexion(getContext());
         variables();
         detalleSuperior();
         argumentos();

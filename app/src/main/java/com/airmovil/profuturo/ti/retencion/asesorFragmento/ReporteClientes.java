@@ -130,7 +130,10 @@ public class ReporteClientes extends Fragment {
         // TODO: llama clase singleton volley
         volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
 
-        sendJson(true);
+        if(Config.conexion(getContext()))
+            sendJson(true);
+        else
+            Dialogos.dialogoErrorConexion(getContext());
         variables();
         argumentos();
         Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha1);

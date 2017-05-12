@@ -31,7 +31,6 @@ public class SpinnerDatos {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(view.getContext(), "idSucursal: " + id, Toast.LENGTH_SHORT).show();
                 Config.ID_SUCURSAL= (int) id;
                 Config.ID_SUCURSAL_POSICION = position;
             }
