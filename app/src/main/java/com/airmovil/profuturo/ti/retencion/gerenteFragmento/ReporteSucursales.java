@@ -28,6 +28,7 @@ import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.ServicioEmailJSON;
+import com.airmovil.profuturo.ti.retencion.helper.SpinnerDatos;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.GerenteReporteSucursalesModel;
@@ -43,19 +44,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelectedListener {
+public class ReporteSucursales extends Fragment{
     private static final String TAG = ReporteSucursales.class.getSimpleName();
-    private static final String ARG_PARAM1 = "idGerencia";
-    private static final String ARG_PARAM2 = "idSucursal";
-    private static final String ARG_PARAM3 = "numeroEmpleado";
-    private static final String ARG_PARAM4 = "fechaInicio";
-    private static final String ARG_PARAM5 = "fechaFin";
+    private static final String ARG_PARAM1 = "idGerencia", ARG_PARAM2 = "idSucursal", ARG_PARAM3 = "numeroEmpleado", ARG_PARAM4 = "fechaInicio", ARG_PARAM5 = "fechaFin";
+    private String numeroEmpleado = null;
     private GerenteReporteSucursalesAdapter adapter;
     private List<GerenteReporteSucursalesModel> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private View rootView;
-    private int pagina = 1, numeroMaximoPaginas = 0, filas, idSucursal = 0,idGerencia = 0, numeroEmpleado;
+    private int pagina = 1, numeroMaximoPaginas = 0, filas, idSucursal = 0,idGerencia = 0;
     private TextView tvFecha, tvEmitidas, tvNoEmitidas, tvSaldoEmitido, tvSaldoNoEmitido, tvResultados, tvRangoFecha1, tvRangoFecha2;
     private Spinner spinnerSucursales;
     private ArrayList<String> sucursales, id_sucursales;
@@ -79,7 +77,6 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
      * @return una nueva instancia del fragmento ReporteSucursales.
      */
     public static ReporteSucursales newInstance(int param1, int param2, String param3, String param4, String param5, Context context) {
-        Log.d(TAG, "");
         ReporteSucursales fragment = new ReporteSucursales();
         Bundle args = new Bundle();
         args.putInt(ARG_PARAM1, param1);
@@ -166,7 +163,7 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
                     Config.dialogoFechasVacias(getContext());
                 }else {
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    ReporteSucursales fragmento = ReporteSucursales.newInstance(0, idSucursal, "", tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), rootView.getContext());
+                    ReporteSucursales fragmento = ReporteSucursales.newInstance(0, Config.ID_SUCURSAL, "", tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), rootView.getContext());
                     borrar.onDestroy();ft.remove(borrar).replace(R.id.content_gerente, fragmento).addToBackStack(null).commit();
                 }
             }
@@ -244,83 +241,7 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         spinnerSucursales = (Spinner) rootView.findViewById(R.id.gfrs_spinner_sucursales);
         btnBuscar = (Button) rootView.findViewById(R.id.gfrs_btn_buscar);
         tvResultados = (TextView) rootView.findViewById(R.id.gfrs_tv_registros);
-        spinnerSucursales.setOnItemSelectedListener(this);
-        getData();
-
-        sucursales = new ArrayList<String>();
-        id_sucursales = new ArrayList<String>();
-        idSucursal = 0;
-        numeroEmpleado = 0;
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        switch (parent.getId()) {
-            case R.id.gfrs_spinner_sucursales:
-                String sim = id_sucursales.get(position);
-                idSucursal = Integer.valueOf(sim);
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {}
-
-    private void getData(){
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_SUCURSALES,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        JSONArray j = null;
-                        try {
-                            j = response.getJSONArray("Sucursales");
-                            getSucursales(j);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {}
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return Config.credenciales(getContext());
-            }
-        };
-        MySingleton.getInstance(getContext()).addToRequestQueue(jsonArrayRequest);
-    }
-
-    private void getSucursales(JSONArray j){
-        sucursales.add("Selecciona una sucursal");
-        id_sucursales.add("0");
-        for(int i=0;i<j.length();i++){
-            try {
-                JSONObject json = j.getJSONObject(i);
-                sucursales.add(json.getString("nombre"));
-                id_sucursales.add(json.getString("idSucursal"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        int position=0;
-        if(idSucursal!=0){
-            int size = id_sucursales.size();
-            for(int i=0; i < id_sucursales.size(); i++) {
-                if(Integer.valueOf(id_sucursales.get(i)) == idSucursal){
-                    Log.d("SELE","SIZE ->: "+position);
-                    position = i;
-                    break;
-                }
-            }
-        }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, sucursales);
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerSucursales.setAdapter(adapter);
-        spinnerSucursales.setSelection(position);
+        SpinnerDatos.spinnerSucursales(getContext(),spinnerSucursales, (getArguments()!=null)? Config.ID_SUCURSAL_POSICION:0);
     }
 
     /**
@@ -334,11 +255,7 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
             tvRangoFecha2.setText(getArguments().getString(ARG_PARAM5));
             idSucursal = getArguments().getInt("idSucursal");
             idGerencia = getArguments().getInt("idGerencia");
-            numeroEmpleado = getArguments().getInt("numeroEmpleado");
-
-            if(idSucursal!=0){
-                int size = id_sucursales.size();
-            }
+            numeroEmpleado = getArguments().getString("numeroEmpleado");
         }else{
             tvFecha.setText(Dialogos.fechaActual() + " - " + Dialogos.fechaSiguiente());
         }
@@ -357,8 +274,8 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
         try {
             boolean argumentos = (getArguments()!=null);
             JSONObject rqt = new JSONObject();
-            rqt.put("idGerencia", idGerencia);
-            rqt.put("idSucursal", idSucursal);
+            rqt.put("idGerencia", (getArguments()!=null)? getArguments().getInt(ARG_PARAM1):0);
+            rqt.put("idSucursal", (getArguments()!=null)? getArguments().getInt(ARG_PARAM2):0);
             rqt.put("numeroEmpleado", (argumentos)?numeroEmpleado:"");
             rqt.put("pagina", pagina);
             JSONObject periodo = new JSONObject();
@@ -434,7 +351,14 @@ public class ReporteSucursales extends Fragment implements  Spinner.OnItemSelect
                     return;
                 }
                 getDatos1.add(null);
-                adapter.notifyItemInserted(getDatos1.size() - 1);
+                Handler handler = new Handler();
+                final Runnable r = new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyItemInserted(getDatos1.size() - 1);
+                    }
+                };
+                handler.post(r);
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {

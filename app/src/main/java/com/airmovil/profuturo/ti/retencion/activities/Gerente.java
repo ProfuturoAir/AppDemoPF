@@ -41,16 +41,27 @@ import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteSucursales;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
+import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
 import com.airmovil.profuturo.ti.retencion.helper.ServicioJSON;
+import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
+import com.android.volley.VolleyError;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Gerente extends AppCompatActivity{
     private static final String TAG = Gerente.class.getSimpleName();
     private MySharePreferences sessionManager;
+    private VolleySingleton volleySingleton;
+    private IResult mResultCallback = null;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private Boolean checkMapsFragment = false;
@@ -76,10 +87,44 @@ public class Gerente extends AppCompatActivity{
         sessionManager = MySharePreferences.getInstance(getApplicationContext());
         // TODO: Validacion de la sesion del usuario
         validateSession();
+        initVolleyCallback();
+        // TODO: llama clase singleton volley
+        volleySingleton = VolleySingleton.getInstance(mResultCallback, getApplicationContext());
 
         try {
             startService(new Intent(this, ServicioJSON.class));
         }catch (Exception e){}
+        volleySingleton.getDataVolley("Gerencias", Config.URL_GERENCIAS);
+        volleySingleton.getDataVolley("Sucursales", Config.URL_SUCURSALES);
+    }
+
+    /**
+     *  metodo para callback de volley
+     */
+    void initVolleyCallback() {
+
+        mResultCallback = new IResult() {
+            @Override
+            public void notifySuccess(String requestType, JSONObject response) {
+
+                if(requestType.equals("Gerencias"))
+                    try {
+                        Gerencias(response.getJSONArray("Gerencias"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                if(requestType.equals("Sucursales"))
+                    try {
+                        Sucursales(response.getJSONArray("Sucursales"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+            }
+
+            @Override
+            public void notifyError(String requestType, VolleyError error) {}
+        };
     }
 
     @Override
@@ -539,5 +584,52 @@ public class Gerente extends AppCompatActivity{
         fragment.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_gerente, fragment, fragment.toString()).addToBackStack(null).commit();
+    }
+
+    private void Gerencias(JSONArray j){
+        Log.e(TAG, j.toString() + "\n");
+        int idGerencia = 0;
+        String nombreGerencia = "";
+        ArrayList<String> arrayNombreGerencias = new ArrayList<String>();
+        ArrayList<Integer> arrayIdgerencia = new ArrayList<Integer>();
+
+        for(int i=0;i<j.length();i++){
+            try {
+                JSONObject json = j.getJSONObject(i);
+                idGerencia = json.getInt("idGerencia");
+                nombreGerencia = json.getString("nombre");
+                arrayNombreGerencias.add(nombreGerencia.toString());
+                arrayIdgerencia.add(idGerencia);
+                Map<Integer, String> gerenciaNodo = new HashMap<Integer, String>();
+                gerenciaNodo.put(idGerencia, nombreGerencia);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        Config.nombreGerencia = arrayNombreGerencias;
+        Config.idGerencia = arrayIdgerencia;
+    }
+
+    private void Sucursales(JSONArray j){
+        int idSucursal = 0;
+        String nombreSucursal = "";
+        ArrayList<String> arrayNombreSucursal = new ArrayList<String>();
+        ArrayList<Integer> arrayIdSucursal = new ArrayList<Integer>();
+        arrayNombreSucursal.add("Selecciona una sucursal");
+        arrayIdSucursal.add(-1);
+        for(int i=0;i<j.length();i++){
+            try {
+                JSONObject json = j.getJSONObject(i);
+                Log.e("sucursal","JSON Sucursal::::::::>"+json);
+                idSucursal = json.getInt("idSucursal");
+                nombreSucursal = json.getString("nombre");
+                arrayNombreSucursal.add(nombreSucursal.toString());
+                arrayIdSucursal.add(idSucursal);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Config.nombreSucursal = arrayNombreSucursal;
+            Config.idSucusal = arrayIdSucursal;
+        }
     }
 }

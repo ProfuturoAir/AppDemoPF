@@ -33,6 +33,7 @@ import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.ServicioEmailJSON;
+import com.airmovil.profuturo.ti.retencion.helper.SpinnerDatos;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.GerenteReporteClientesModel;
@@ -48,7 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ReporteClientes extends Fragment implements  Spinner.OnItemSelectedListener{
+public class ReporteClientes extends Fragment{
     private static final String TAG = ReporteClientes.class.getSimpleName();
     private static final String ARG_PARAM1 = "idBusqueda", ARG_PARAM2 = "datosCliente", ARG_PARAM3 = "idGerencia", ARG_PARAM4 = "idSucursal", ARG_PARAM5 = "idAsesor",
             ARG_PARAM6 = "fechaInicio", ARG_PARAM7 = "fechaFin", ARG_PARAM8 = "idRetenido", ARG_PARAM9 = "idCita";
@@ -204,8 +205,7 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
 
             }
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
         boolean argumentos = (getArguments()!=null);
         spinnerId.setAdapter(adapterId);
@@ -322,82 +322,11 @@ public class ReporteClientes extends Fragment implements  Spinner.OnItemSelected
         tvResultados = (TextView) rootView.findViewById(R.id.ggfrc_tv_registros);
         etDatosCliente = (EditText) rootView.findViewById(R.id.ggfrc_et_id);
         etIdAsesor = (EditText) rootView.findViewById(R.id.ggfrc_et_asesor);
-        spinnerSucursales.setOnItemSelectedListener(this);
-        spinnerSucursales.setSelection(idSucursal);
         sucursales = new ArrayList<String>();
         id_sucursales = new ArrayList<String>();
         idSucursal = 0;
-        getData();
+        SpinnerDatos.spinnerSucursales(getContext(),spinnerSucursales,Config.ID_SUCURSAL_POSICION);
         connected = new Connected();
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        switch (parent.getId()) {
-            case R.id.ggfrc_spinner_sucursal:
-                String s = id_sucursales.get(position);
-                idSucursal = Integer.valueOf(s);
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {}
-
-    private void getData(){
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_SUCURSALES,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        JSONArray j = null;
-                        try {
-                            j = response.getJSONArray("Sucursales");
-                            getSucursales(j);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {}
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return Config.credenciales(getContext());
-            }
-        };
-        MySingleton.getInstance(getContext()).addToRequestQueue(jsonArrayRequest);
-    }
-
-    private void getSucursales(JSONArray j){
-        sucursales.add("Selecciona una sucursal");
-        id_sucursales.add("0");
-        for(int i=0;i<j.length();i++){
-            try {
-                JSONObject json = j.getJSONObject(i);
-                sucursales.add(json.getString("nombre"));
-                id_sucursales.add(json.getString("idSucursal"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        int position=0;
-        if(idSucursal1!=0){
-            for(int i=0; i < id_sucursales.size(); i++) {
-                if(Integer.valueOf(id_sucursales.get(i)) == idSucursal1){
-                    position = i;
-                    break;
-                }
-            }
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, sucursales);
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerSucursales.setAdapter(adapter);
-        spinnerSucursales.setSelection(position);
     }
 
     /**
