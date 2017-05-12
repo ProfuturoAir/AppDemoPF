@@ -12,32 +12,33 @@ import android.widget.Toast;
 
 public class SpinnerDatos {
 
-    public static void spinnerGerencias(Context context, Spinner spinner){
+    public static void spinnerGerencias(Context context, Spinner spinner, int mPosicion){
         spinner.setAdapter(Config.getAdapter(context,new String[]{"_id","nombre"},Config.getIdGerencia(),Config.getNombreGerencia()));
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(view.getContext(), "id" + id, Toast.LENGTH_SHORT).show();
-               Config.ID_GERENCIA = (int) id;
+                Config.ID_GERENCIA = (int) id;
+                Config.ID_GERENCIA_POSICION = position;
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
+        spinner.setSelection(mPosicion);
     }
 
-    public static void spinnerSucursales(Context context, Spinner spinner){
-        spinner.setAdapter(Config.getAdapter(context,new String[]{"_id","nombre"},Config.getIdGerencia(),Config.getNombreGerencia()));
+    public static void spinnerSucursales(Context context, Spinner spinner, int mPosicion){
+        spinner.setAdapter(Config.getAdapter(context,new String[]{"_id","nombre"},Config.getIdSucusal(),Config.getNombreSucursal()));
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(view.getContext(), "id" + id, Toast.LENGTH_SHORT).show();
-                //
                 Config.ID_SUCURSAL= (int) id;
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
+        spinner.setSelection(mPosicion);
     }
-
 
 }

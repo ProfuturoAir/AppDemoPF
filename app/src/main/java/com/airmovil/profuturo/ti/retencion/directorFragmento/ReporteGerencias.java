@@ -149,8 +149,7 @@ public class ReporteGerencias extends Fragment{
                 ServicioEmailJSON.enviarEmailReporteGerencias(getContext(), (argumentos==true) ? true : false, (argumentos==true) ? mParam3 : 0, (argumentos==true) ? mParam1 : Dialogos.fechaActual(), (argumentos==true) ? mParam2 : Dialogos.fechaSiguiente());
             }
         });
-
-        SpinnerDatos.spinnerGerencias(getContext(), spinnerGerencias);
+        SpinnerDatos.spinnerGerencias(getContext(), spinnerGerencias, (getArguments()!=null) ? Config.ID_GERENCIA_POSICION : 0);
     }
 
     /**

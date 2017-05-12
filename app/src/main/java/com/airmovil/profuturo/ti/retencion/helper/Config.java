@@ -109,6 +109,8 @@ public class Config extends Activity {
 
     public static int ID_GERENCIA = 0;
     public static int ID_SUCURSAL = 0;
+    public static int ID_GERENCIA_POSICION = 0;
+    public static int ID_SUCURSAL_POSICION = 0;
 
     public static final String[] MOTIVOS = new String[]{"Selecciona el motivo", "Por mal servicio","Por falta de seguimiento ventas", "Promesas incumplidas", "Rendimiento", "Llevarse sus cuentas a la misma institución", "No da explicación", "Familiares o amigos en afore de la competencia"};
     public static final String[] AFORES = new String[]{"Selecciona una AFORE","Azteca", "Banamex", "Coppel", "Inbursa", "Invercap", "Metlife", "PensionISSSTE", "Principal", "Profuturo", "SURA", "XXI-Banorte"};
