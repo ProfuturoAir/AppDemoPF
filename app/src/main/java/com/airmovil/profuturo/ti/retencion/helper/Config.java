@@ -88,6 +88,8 @@ public class Config extends Activity {
     //public static List<String> filtros = Arrays.asList("test1","test2","test3");
     public static List nombreGerencia = null;
     public static List idGerencia = null;
+    public static List nombreSucursal = null;
+    public static List idSucusal = null;
 
     public static List getNombreGerencia() {
         return nombreGerencia;
@@ -97,7 +99,13 @@ public class Config extends Activity {
         return idGerencia;
     }
 
-    public static String[] columns;
+    public static List getNombreSucursal(){
+        return nombreSucursal;
+    }
+
+    public static List getIdSucusal(){
+        return idSucusal;
+    }
 
     public static final String[] MOTIVOS = new String[]{"Selecciona el motivo", "Por mal servicio","Por falta de seguimiento ventas", "Promesas incumplidas", "Rendimiento", "Llevarse sus cuentas a la misma institución", "No da explicación", "Familiares o amigos en afore de la competencia"};
     public static final String[] AFORES = new String[]{"Selecciona una AFORE","Azteca", "Banamex", "Coppel", "Inbursa", "Invercap", "Metlife", "PensionISSSTE", "Principal", "Profuturo", "SURA", "XXI-Banorte"};
