@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.database.MatrixCursor;
 import android.graphics.Bitmap;
 import android.location.LocationManager;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Base64;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
@@ -511,15 +512,21 @@ public class Config extends Activity {
         return mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
-    public static MatrixCursor getCursor(){
+    public static SimpleCursorAdapter getAdapter(Context getContext, String[] columns,List id,List nombre){
         MatrixCursor matrixCursor= new MatrixCursor(columns);
         //startManagingCursor(matrixCursor);
-        List id = getIdGerencia();
-        List nombre = getNombreGerencia();
         for (int i=0; i<id.size(); i++){
             matrixCursor.addRow(new Object[] { id.get(i).toString(), nombre.get(i)});
         }
-
-        return matrixCursor;
+        SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(
+                getContext,
+                //R.layout.spinner_dropdown_item,
+                R.layout.spinner_item,
+                matrixCursor,
+                new String[] {"nombre"},
+                new int[] {android.R.id.text1},
+                0);
+        mAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        return mAdapter;
     }
 }

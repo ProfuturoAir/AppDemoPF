@@ -260,20 +260,7 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
         tvResultados = (TextView) rootView.findViewById(R.id.dfrg_tv_registros);
         tvMail = (TextView) rootView.findViewById(R.id.dfrg_tv_mail);
 
-
-        //ArrayAdapter<Map<Integer, String>> adapterRetenido = new ArrayAdapter<Map<Integer, String>>(getContext(), R.layout.spinner_item, Config.idGerencia);
-        //adapterRetenido.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        //spinnerGerencias.setAdapter(adapterRetenido);
-
-        SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(
-                getContext(),
-                R.layout.spinner_dropdown_item,
-                Config.getCursor(),
-                new String[] {"nombre"},
-                new int[] {android.R.id.text1},
-                0);
-
-        spinnerGerencias.setAdapter(mAdapter);
+        spinnerGerencias.setAdapter(Config.getAdapter(getContext(),new String[]{"_id","nombre"},Config.getIdGerencia(),Config.getNombreGerencia()));
         spinnerGerencias.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -281,15 +268,8 @@ public class ReporteGerencias extends Fragment implements Spinner.OnItemSelected
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
-
-
-
-        //spinnerGerencias.setOnItemSelectedListener(this);
-        //getData();
     }
 
     private void getData(){
