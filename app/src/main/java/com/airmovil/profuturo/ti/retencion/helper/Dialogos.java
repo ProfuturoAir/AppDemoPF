@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.support.v7.app.AlertDialog.Builder;
 
 import java.util.Calendar;
+import java.util.Timer;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.Inicio;
@@ -27,6 +28,8 @@ import com.airmovil.profuturo.ti.retencion.asesorFragmento.Inicio;
 public class Dialogos extends Activity{
 
     Activity activity = this;
+    private static Timer mTimer = new Timer();
+    private static ProgressDialog dialog;
 
     public static String fechaActual(){
         Calendar calendar = Calendar.getInstance();
@@ -308,5 +311,38 @@ public class Dialogos extends Activity{
                     }
                 });
         progressDialog.show();
+    }
+
+    /**
+     * Muestra mensaje de error, en el documento no existente (INE o IFE)
+     * @param context referencia de la llamada, fragmento o actividad
+     */
+    public static final void dialogoNoExisteUnDocumento(Context context){
+        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_peligro));
+        progressDialog.setTitle(context.getResources().getString(R.string.error_en_documento));
+        progressDialog.setMessage(context.getResources().getString(R.string.msj_error_documento));
+        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog.dismiss();
+                    }
+                });
+        progressDialog.show();
+    }
+
+    /**
+     * @param context referencia de la llamada, fragmento o actividad
+     * @param title titulo del dialogo
+     * @param message mensaje del dialogo
+     * @param time tiempo de disminucion del dialogo
+     * @return el mensja e de dialogo
+     */
+    public static ProgressDialog msjTime(Context context, CharSequence title, CharSequence message, int time) {
+        Config.MyTask task = new Config.MyTask();
+        mTimer.schedule(task, 0, time);
+        dialog = ProgressDialog.show(context, title, message);
+        return dialog;
     }
 }
