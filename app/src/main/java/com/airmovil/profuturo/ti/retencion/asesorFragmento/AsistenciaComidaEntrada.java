@@ -344,10 +344,9 @@ public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
 
     /**
-     * esta interface debe ser implementada por las actividades que contengan
-     * fragmentos para que exista interaccion entre los fragmento.
-     * Para mas informacion ver la leccion http://developer.android.com/training/basics/fragments/communicating.html
-     * Comunicacion entre fragmentos
+     * Esta interfaz debe ser implementada por actividades que contengan esta
+     * Para permitir que se comunique una interacción en este fragmento
+     * A la actividad y potencialmente otros fragmentos contenidos en esa actividad.
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);

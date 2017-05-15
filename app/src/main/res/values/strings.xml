@@ -83,8 +83,6 @@
     <string name="error_en_documento">Error en documento</string>
     <string name="error_email_incorrecto">Error en email</string>
     <string name="msj_error_documento">No existe un documento(IFE o INE), favor de tomar captura</string>
-    <string name="msj_error_conexion">Por favor, revisa tu conexión a internet</string>
-    <string name="msj_error_conexion_sin_proceso">Por favor, revisa tu conexión a internet, lamentablemente no es posible continuar el proceso de implicaiones, hasta tener conexión a internet</string>
     <string name="msj_error_json">Los datos no se han podido formar</string>
     <string name="msj_error_fechas">Por favor, rellena los campos de fecha</string>
     <string name="msj_error_datos_vacios">Debes rellenar todos los campos</string>
@@ -133,5 +131,15 @@
     <string name="titulo_salida_app">Alerta de mensaje</string>
     <string name="msj_salida_app">¿Estás seguro que deseas salir de la aplicación?</string>
     <!-- TODO: String para mensaje de dialogo, regreso a inicio -->
-    <string name="titulo"></string>
+    <string name="titulo_regreso_inicio">Regreso</string>
+    <string name="msj_regreso_inicio">Serás direccionado al Inicio</string>
+    <!-- TODO: String para mensaje de dialogo, confirmacion de cancelacion -->
+    <string name="titulo_confirmacion">Confirmar</string>
+    <string name="msj_confirmacion">¿Estás seguro que deseas salir?</string>
+    <!-- TODO: Strings para el mensaje de dialogo, error en conexion a internet... -->
+    <string name="msj_error_conexion">Por favor, revisa tu conexión a internet</string>
+    <string name="msj_error_conexion_sin_proceso">Por favor, revisa tu conexión a internet, lamentablemente no es posible continuar el proceso de implicaiones, hasta tener conexión a internet</string>
+    <!-- TODO: Strings para el mensaje de dialogo, cancelacion del proceso de implicaciones -->
+    <string name="titulo_cancelacion_implicaciones">Cancelar proceso</string>
+    <string name="msj_cancelacion_implicaciones">¿Deseas cancelar el proceso de implicaiones?</string>
 </resources>

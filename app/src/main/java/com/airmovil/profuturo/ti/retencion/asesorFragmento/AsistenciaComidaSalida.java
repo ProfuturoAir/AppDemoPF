@@ -40,9 +40,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks{
-    /*inicializacion de los paramentros del fragmento*/
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM1 = "param1", ARG_PARAM2 = "param2";
     private static final int REQUEST_LOCATION = 0;
     private GoogleApiClient apiClient;
     private boolean firsStarted = true;
@@ -437,7 +435,7 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
             json.put("rqt", rqt);
             Log.d("TAG", "REQUEST -->" + json);
         } catch (JSONException e){
-            Dialogos.msj(getContext(),"Error","Existe un error al formar la peticion");
+            Dialogos.dialogoErrorDatos(getContext());
         }
         volleySingleton.postDataVolley("primerPaso", Config.URL_REGISTRAR_ASISTENCIA, json);
     }

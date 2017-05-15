@@ -16,6 +16,7 @@ import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.DatosAsesor;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.SinCitaModel;
 
@@ -125,11 +126,11 @@ public class SinCitaAdapter extends RecyclerView.Adapter{
 
             final Connected conected = new Connected();
             if(conected.estaConectado(view.getContext())) {
-
+                asesor.switchContent(fragmento, idClienteCuenta);
             }else{
-                Config.msj(view.getContext(),"Error conexión", "Sin Conexion por el momento.Cliente P-1.1.3");
+                Dialogos.dialogoErrorConexion(mContext);
             }
-            asesor.switchContent(fragmento, idClienteCuenta);
+
         }
     }
 

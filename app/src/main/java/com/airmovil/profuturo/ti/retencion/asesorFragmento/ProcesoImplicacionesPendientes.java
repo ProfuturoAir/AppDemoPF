@@ -34,16 +34,11 @@ public class ProcesoImplicacionesPendientes extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private EnviarPendientesAdapter adapter;
-
     private Button btnEnviarPendientes;
-
     private List<EnviosPendientesModel> getDatos1;
-
     private SQLiteHandler db;
 
-    public ProcesoImplicacionesPendientes() {
-        /* constructor vacio es requerido*/
-    }
+    public ProcesoImplicacionesPendientes() {/* constructor vacio es requerido*/}
 
     /**
      * al crear una nueva instancia
@@ -61,12 +56,21 @@ public class ProcesoImplicacionesPendientes extends Fragment {
         return fragment;
     }
 
+    /**
+     * El sistema realiza esta llamada cuando crea tu actividad
+     * @param savedInstanceState guarda el estado de la aplicacion en un paquete
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = new SQLiteHandler(getContext());
     }
 
+    /**
+     * El sistema lo llama para iniciar los procesos que estaran dentro del flujo de la vista
+     * @param view accede a la vista del xml
+     * @param savedInstanceState guarda el estado de la aplicacion en un paquete
+     */
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         // TODO: Casteo
@@ -134,6 +138,12 @@ public class ProcesoImplicacionesPendientes extends Fragment {
         });
     }
 
+    /**
+     * @param inflater infla la vista XML
+     * @param container muestra el contenido
+     * @param savedInstanceState guarda los datos en el estado de la instancia
+     * @return la vista con los elemetos del XML y metodos
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         /* infla la vista del fragmento */
@@ -146,6 +156,10 @@ public class ProcesoImplicacionesPendientes extends Fragment {
         }
     }
 
+    /**
+     * Reciba una llamada cuando se asocia el fragmento con la actividad
+     * @param context estado actual de la aplicacion
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -154,6 +168,9 @@ public class ProcesoImplicacionesPendientes extends Fragment {
         }
     }
 
+    /**
+     *Se lo llama cuando se desasocia el fragmento de la actividad.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -161,11 +178,9 @@ public class ProcesoImplicacionesPendientes extends Fragment {
     }
 
     /**
-     * esta clase debe ser implementada en las actividades
-     * que contengan fragmentos para que exista la
-     * comunicacion entre fragmentos
-     * para mas informacion ver http://developer.android.com/training/basics/fragments/communicating.html
-     * Comunicacion entre fragmentos
+     * Esta interfaz debe ser implementada por actividades que contengan esta
+     * Para permitir que se comunique una interacción en este fragmento
+     * A la actividad y potencialmente otros fragmentos contenidos en esta actividad.
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);

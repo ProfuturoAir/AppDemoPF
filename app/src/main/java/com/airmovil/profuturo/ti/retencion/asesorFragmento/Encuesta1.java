@@ -31,65 +31,39 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Encuesta1 extends Fragment {
-    // inicializacion de los parametros del fragmento
     public static final String TAG = Encuesta1.class.getSimpleName();
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     private SQLiteHandler db;
-    private String idTramite;
-    String nombre;
-    String numeroDeCuenta;
-    String hora;
+    private String idTramite, nombre, numeroDeCuenta, hora;
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
     private Connected connected;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private OnFragmentInteractionListener mListener;
-    // TODO: XML
     private View rootView;
     private CheckBox cb1si, cb1no, cb2si, cb2no, cb3si, cb3no;
     private EditText etObservaciones;
     private Button btnContinuar, btnCancelar;
-    private boolean respuesta1, respuesta2, respuesta3;
     private Boolean r1, r2, r3;
-    private String observaciones;
     private int estatusTramite = 1134;
+    private Fragment borrar = this;
 
-    public Encuesta1() {
-        // contructor vacio es requerido
-    }
+    public Encuesta1() {/* contructor vacio es requerido */}
 
     /**
-     * Utilice este método de fábrica para crear una nueva instancia de
-     * Este fragmento utilizando los parámetros proporcionados.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return un nuevo fragmento de Encuesta1.
+     * El sistema realiza esta llamada cuando crea tu actividad
+     * @param savedInstanceState guarda el estado de la aplicacion en un paquete
      */
-    public static Encuesta1 newInstance(String param1, String param2) {
-        Encuesta1 fragment = new Encuesta1();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = new SQLiteHandler(getContext());
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
+    /**
+     * El sistema lo llama para iniciar los procesos que estaran dentro del flujo de la vista
+     * @param view accede a la vista del xml
+     * @param savedInstanceState guarda el estado de la aplicacion en un paquete
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // TODO: metodo para callback de volley
@@ -99,19 +73,14 @@ public class Encuesta1 extends Fragment {
         // TODO: llama clase singleton volley
         volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
         variables();
-
-        if(getArguments()!= null){
-            idTramite = getArguments().getString("idTramite");
-            nombre = getArguments().getString("nombre");
-            numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-            hora = getArguments().getString("hora");
-        }
+        // TODO: Argumentos
+        argumentos();
 
         cb1si.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 cb1no.setChecked(false);
-                r1 = (b) ? true : false;
+                r1 = (b) ? false : null;
             }
         });
 
@@ -155,19 +124,15 @@ public class Encuesta1 extends Fragment {
             }
         });
 
-        final Fragment borrar = this;
-
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (r1 == null || r2 == null || r3 == null || etObservaciones.getText().toString().trim().isEmpty()) {
-                    Config.dialogoDatosVacios(getContext());
+                    Dialogos.dialogoDatosVacios(getContext());
                 }else {
                     final Connected conectado = new Connected();
                     if(conectado.estaConectado(getContext())){
-                        String o = etObservaciones.getText().toString();
-
-                        sendJson(true, r1, r2, r3, o);
+                        sendJson(true, r1, r2, r3, etObservaciones.getText().toString());
                         Config.teclado(getContext(), etObservaciones);
                         Fragment fragmentoGenerico = new Encuesta2();
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
@@ -183,7 +148,6 @@ public class Encuesta1 extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Config.teclado(getContext(), etObservaciones);
-                                Log.d("Respuesta sin conexion:" , "Respuesta 1" + r1 + "Respuesta 2" + r2 + "Respuesta 3" + r3 );
                                 db.addEncuesta(idTramite,estatusTramite,r1,r2,r3,etObservaciones.getText().toString().trim());
                                 db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
                                 Fragment fragmentoGenerico = new Encuesta2();
@@ -193,10 +157,7 @@ public class Encuesta1 extends Fragment {
                         });
                         dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-
-                            }
+                            public void onClick(DialogInterface dialog, int which) {}
                         });
                         dialogo.show();
                     }
@@ -208,11 +169,11 @@ public class Encuesta1 extends Fragment {
         btnCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
-                dialogo1.setTitle("Confirmar");
-                dialogo1.setMessage("¿Estás seguro que deseas cancelar y guardar los cambios del proceso 1.1.3.4?");
-                dialogo1.setCancelable(false);
-                dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
+                dialogo.setTitle(getResources().getString(R.string.titulo_confirmacion));
+                dialogo.setMessage(getResources().getString(R.string.msj_confirmacion));
+                dialogo.setCancelable(false);
+                dialogo.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Fragment fragmentoGenerico = new ConCita();
@@ -220,21 +181,26 @@ public class Encuesta1 extends Fragment {
                         fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                     }
                 });
-                dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
                 });
-                dialogo1.show();
+                dialogo.show();
             }
         });
 
     }
 
+    /**
+     * @param inflater infla la vista XML
+     * @param container muestra el contenido
+     * @param savedInstanceState guarda los datos en el estado de la instancia
+     * @return la vista con los elemetos del XML y metodos
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        /* infla la vista del fragmento */
         return inflater.inflate(R.layout.asesor_fragmento_encuesta1, container, false);
     }
 
@@ -244,6 +210,10 @@ public class Encuesta1 extends Fragment {
         }
     }
 
+    /**
+     * Reciba una llamada cuando se asocia el fragmento con la actividad
+     * @param context estado actual de la aplicacion
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -252,12 +222,18 @@ public class Encuesta1 extends Fragment {
         }
     }
 
+    /**
+     *Se lo llama cuando se desasocia el fragmento de la actividad.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
+    /**
+     * Se implementa este metodo, para generar el regreso con clic nativo de android
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -266,13 +242,12 @@ public class Encuesta1 extends Fragment {
         getView().setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                    AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
-                    dialogo1.setTitle("Confirmar");
-                    dialogo1.setMessage("¿Estàs seguro que deseas cancelar y guardar los cambios del proceso 1.1.3.4?");
-                    dialogo1.setCancelable(false);
-                    dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
+                    dialogo.setTitle(getResources().getString(R.string.titulo_cancelacion_implicaciones));
+                    dialogo.setMessage(getResources().getString(R.string.msj_cancelacion_implicaciones));
+                    dialogo.setCancelable(false);
+                    dialogo.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Fragment fragmentoGenerico = new ConCita();
@@ -280,18 +255,15 @@ public class Encuesta1 extends Fragment {
                             fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                         }
                     });
-                    dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
                         }
                     });
-                    dialogo1.show();
-
+                    dialogo.show();
                     return true;
-
                 }
-
                 return false;
             }
         });
@@ -300,6 +272,9 @@ public class Encuesta1 extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * Casteo de variables, nueva instancia para la conexion a internet Connected
+     */
     private void variables(){
         btnContinuar = (Button) rootView.findViewById(R.id.afe1_btn_continuar);
         btnCancelar = (Button) rootView.findViewById(R.id.afe1_btn_cancelar);
@@ -314,6 +289,19 @@ public class Encuesta1 extends Fragment {
     }
 
     /**
+     *  Espera el regreso de fechas incial (hoy y el dia siguiente)
+     *  y cuando se realiza una nueva busqueda, retorna las fechas seleccionadas
+     */
+    private void argumentos(){
+        if(getArguments()!= null){
+            idTramite = getArguments().getString("idTramite");
+            nombre = getArguments().getString("nombre");
+            numeroDeCuenta = getArguments().getString("numeroDeCuenta");
+            hora = getArguments().getString("hora");
+        }
+    }
+
+    /**
      *  metodo para callback de volley
      */
     void initVolleyCallback() {
@@ -323,7 +311,6 @@ public class Encuesta1 extends Fragment {
                 loading.dismiss();
                 primerPaso(response);
             }
-
             @Override
             public void notifyError(String requestType, VolleyError error) {
                 if(connected.estaConectado(getContext())){
@@ -357,14 +344,18 @@ public class Encuesta1 extends Fragment {
             rqt.put("estatusTramite", 1134);
             rqt.put("idTramite", Integer.parseInt(idTramite));
             obj.put("rqt", rqt);
-            Log.d(TAG, "REQUEST-->" + obj);
+            Log.d(TAG, "<- RQT ->" + obj);
         } catch (JSONException e){
-            Config.msj(getContext(), "Error", "Error al formar los datos");
+            Dialogos.dialogoErrorDatos(getContext());
         }
         volleySingleton.postDataVolley("primerPaso", Config.URL_ENVIAR_ENCUESTA, obj);
     }
 
+    /**
+     * Obtiene el objeto json(Response), se obtiene cada elemento a parsear
+     * @param obj json objeto
+     */
     private void primerPaso(JSONObject obj){
-        Log.d(TAG, "RESPONSE: ->" + obj);
+        Log.d(TAG, "<- RESPONSE ->" + obj);
     }
 }

@@ -41,7 +41,6 @@ import java.util.List;
 public class ConCita extends Fragment {
     private static final String TAG = ConCita.class.getSimpleName();
     private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     private List<CitasClientesModel> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
@@ -208,6 +207,9 @@ public class ConCita extends Fragment {
         mListener = null;
     }
 
+    /**
+     * Se implementa este metodo, para generar el regreso con clic nativo de android
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -227,12 +229,17 @@ public class ConCita extends Fragment {
         });
     }
 
+    /**
+     * Esta interfaz debe ser implementada por actividades que contengan esta
+     * Para permitir que se comunique una interacción en este fragmento
+     * A la actividad y potencialmente otros fragmentos contenidos en esa actividad.
+     */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
 
     /**
-     *
+     * Casteo de variables, nueva instancia para la conexion a internet Connected
      */
     private void variables(){
         connected = new Connected();
@@ -243,6 +250,9 @@ public class ConCita extends Fragment {
         tvRegistros = (TextView) rootView.findViewById(R.id.afcc_tv_registros);
     }
 
+    /**
+     * Inicio la fecha actual
+     */
     private void fechas(){tvFecha.setText(Dialogos.fechaActual());}
 
     /**
@@ -270,7 +280,10 @@ public class ConCita extends Fragment {
         };
     }
 
-    // TODO: REST
+    /**
+     * Método para generar el proceso REST
+     * @param primerPeticion identifica si el metodo será procesado, debe llegar en true
+     */
     private void sendJson(final boolean primerPeticion) {
         if (primerPeticion)
             loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
@@ -287,11 +300,15 @@ public class ConCita extends Fragment {
             obj.put("rqt", rqt);
             Log.d(TAG, "Primera peticion-->" + obj);
         } catch (JSONException e) {
-            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un right_in al formar los datos.");
+            Dialogos.dialogoErrorDatos(getContext());
         }
         volleySingleton.postDataVolley("" + primerPeticion, Config.URL_CONSULTAR_RESUMEN_CITAS, obj);
     }
 
+    /**
+     * Obtiene el objeto json(Response), se obtiene cada elemento a parsear
+     * @param obj json objeto
+     */
     private void primerPaso(JSONObject obj) {
         int totalFilas = 1;
         try{
@@ -315,7 +332,7 @@ public class ConCita extends Fragment {
                     getDatos1.add(getDatos2);
                 }
             }else{
-                Config.msj(getContext(), status, statusText);
+                Dialogos.dialogoErrorRespuesta(getContext(), status, statusText);
             }
         }catch (JSONException e){
             e.printStackTrace();
@@ -360,6 +377,10 @@ public class ConCita extends Fragment {
         });
     }
 
+    /**
+     * Corre este metodo cuando hay mas de 10 contenido a mostrar en la lista
+     * @param obj objeto json
+     */
     private void segundoPaso(JSONObject obj) {
         try{
             JSONArray array = obj.getJSONArray("citas");

@@ -273,7 +273,7 @@ public class ReporteAsesores extends Fragment {
             obj.put("rqt", rqt);
             Log.d(TAG, " RQT ->" + obj);
         }catch (JSONException e){
-            e.printStackTrace();
+            Dialogos.dialogoErrorConexion(getContext());
         }
         volleySingleton.postDataVolley("" + primerPeticion, Config.URL_CONSULTAR_REPORTE_RETENCION_ASESORES, obj);
     }
@@ -319,7 +319,7 @@ public class ReporteAsesores extends Fragment {
                 getDatos1.add(getDatos2);
             }
         }catch (JSONException e){
-            e.printStackTrace();
+            Dialogos.dialogoErrorConexion(getContext());
         }
 
         tvEmitidas.setText("" + emitidos);
@@ -391,7 +391,7 @@ public class ReporteAsesores extends Fragment {
                 getDatos1.add(getDatos2);
             }
         }catch (JSONException e){
-            e.printStackTrace();
+            Dialogos.dialogoErrorConexion(getContext());
         }
         adapter.notifyDataSetChanged();
         adapter.setLoaded();

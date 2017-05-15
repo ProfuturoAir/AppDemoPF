@@ -160,25 +160,6 @@ public class Config extends Activity {
     }
 
     /**
-     * Muestra mensaje de error, seleccion de un apartado de spinner
-     * @param context referencia de la llamada, fragmento o actividad
-     */
-    public static final void dialogoSinSeleccionSpinner(Context context, String apartado){
-        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_lista));
-        progressDialog.setTitle(context.getResources().getString(R.string.msj_titulo_seleccion_spinner));
-        progressDialog.setMessage(context.getResources().getString(R.string.msj_contenido_spinner) + " " + apartado);
-        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        progressDialog.dismiss();
-                    }
-                });
-        progressDialog.show();
-    }
-
-    /**
      * Clase statica para extender el timerTask y usar lo despues del tiempo apliacado,
      * se usa en la actividad splash
      */
@@ -462,44 +443,6 @@ public class Config extends Activity {
             }
         });
         dialog.create().show();
-    }
-
-    /**
-     * Muestra mensaje, aviso de contenido limpio en firma
-     * @param context referencia de la llamada, fragmento o actividad
-     */
-    public static final void dialogoContenidoLimpio(Context context){
-        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_limpio));
-        progressDialog.setTitle(context.getResources().getString(R.string.msj_titulo_limpiar));
-        progressDialog.setMessage(context.getResources().getString(R.string.msj_contenido_limpio));
-        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        progressDialog.dismiss();
-                    }
-                });
-        progressDialog.show();
-    }
-
-    /**
-     * Muestra mensaje de error, se requiere una firma
-     * @param context referencia de la llamada, fragmento o actividad
-     */
-    public static final void dialogoRequiereFirma(Context context){
-        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_firma));
-        progressDialog.setTitle(context.getResources().getString(R.string.msj_titulo_firma));
-        progressDialog.setMessage(context.getResources().getString(R.string.msj_contenido_vacio_firma));
-        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        progressDialog.dismiss();
-                    }
-                });
-        progressDialog.show();
     }
 
     /**

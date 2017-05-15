@@ -34,35 +34,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Encuesta2 extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    /* inicializacion de los parametros del fragmento*/
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM1 = "param1",  ARG_PARAM2 = "param2";
     private static final String TAG = Encuesta2.class.getSimpleName();
     private SQLiteHandler db;
-    int iParam1IdGerencia;
-    int iParam2IdMotivos;
-    int iParam3IdEstatus;
-    int iParam4IdTitulo;
-    int iParam5IdRegimentPensionario;
-    int iParam6IdDocumentacion;
-    String iParam7Telefono;
-    String iParam8Email;
-    String idTramite;
-    String nombre;
-    String numeroDeCuenta;
-    String hora;
+    private int iParam1IdGerencia, iParam2IdMotivos, iParam3IdEstatus, iParam4IdTitulo, iParam5IdRegimentPensionario, iParam6IdDocumentacion;
+    private String iParam7Telefono, iParam8Email, idTramite, nombre, numeroDeCuenta, hora;
     private View rootView;
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
-
-    // TODO: XML
     private ArrayAdapter arrayAdapterAfores, arrayAdapterMotivo, arrayAdapterEstatus, arrayAdapterInstituto, arrayAdapterRegimen, arrayAdapterDocumentos;
     private Spinner spinnerAfores, spinnerMotivos, spinnerEstatus, spinnerInstituto, spinnerRegimen, spinnerDocumentos;
     private Button btnContinuar, btnCancelar;
     private EditText etTelefono, etEmail;
     private Connected connected;
+    private Fragment borrar = this;
 
     private OnFragmentInteractionListener mListener;
 
@@ -88,32 +74,30 @@ public class Encuesta2 extends Fragment {
         return fragment;
     }
 
+    /**
+     * El sistema realiza esta llamada cuando crea tu actividad
+     * @param savedInstanceState guarda el estado de la aplicacion en un paquete
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = new SQLiteHandler(getContext());
     }
 
+    /**
+     * El sistema lo llama para iniciar los procesos que estaran dentro del flujo de la vista
+     * @param view accede a la vista del xml
+     * @param savedInstanceState guarda el estado de la aplicacion en un paquete
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // TODO: metodo para callback de volley
         initVolleyCallback();
-        // TODO: Lineas para ocultar el teclado virtual (Hide keyboard)
         rootView = view;
         // TODO: llama clase singleton volley
         volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
-        spinnerAfores = (Spinner) rootView.findViewById(R.id.afe2_spinner_afores);
-        spinnerMotivos = (Spinner) rootView.findViewById(R.id.afe2_spinner_motivo);
-        spinnerEstatus = (Spinner) rootView.findViewById(R.id.afe2_spinner_estatus);
-        spinnerInstituto = (Spinner) rootView.findViewById(R.id.afe2_spinner_instituto);
-        spinnerRegimen = (Spinner) rootView.findViewById(R.id.afe2_spinner_regimen);
-        spinnerDocumentos = (Spinner) rootView.findViewById(R.id.afe2_spinner_documentos);
-        btnContinuar = (Button) rootView.findViewById(R.id.afe2_btn_continuar);
-        btnCancelar = (Button) rootView.findViewById(R.id.afe2_btn_cancelar);
-        etTelefono = (EditText) rootView.findViewById(R.id.afe2_et_telefono);
-        etEmail = (EditText) rootView.findViewById(R.id.afe2_et_email);
-
-        connected = new Connected();
+        // TODO: Asignacion de variables
+        variables();
 
         if(getArguments()!=null){
             idTramite = getArguments().getString("idTramite");
@@ -122,53 +106,13 @@ public class Encuesta2 extends Fragment {
             hora = getArguments().getString("hora");
         }
 
-        arrayAdapterAfores = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.AFORES);
-        arrayAdapterMotivo = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.MOTIVOS);
-        arrayAdapterEstatus = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.ESTATUS);
-        arrayAdapterInstituto = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.INSTITUCIONES);
-        arrayAdapterRegimen = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.REGIMEN);
-        arrayAdapterDocumentos = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.DOCUMENTOS);
-
-        spinnerAfores.setAdapter(arrayAdapterAfores);
-        spinnerMotivos.setAdapter(arrayAdapterMotivo);
-        spinnerEstatus.setAdapter(arrayAdapterEstatus);
-        spinnerInstituto.setAdapter(arrayAdapterInstituto);
-        spinnerRegimen.setAdapter(arrayAdapterRegimen);
-        spinnerDocumentos.setAdapter(arrayAdapterDocumentos);
-
-        /* Se asignan los eventos para que el primer Item del Spinner sea de color Gris */
-        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerAfores);
-        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerMotivos);
-        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerEstatus);
-        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerInstituto);
-        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerRegimen);
-        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerDocumentos);
-
-        final Fragment borrar = this;
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                iParam1IdGerencia = spinnerAfores.getSelectedItemPosition();
-                iParam2IdMotivos = spinnerMotivos.getSelectedItemPosition();
-                iParam3IdEstatus = spinnerEstatus.getSelectedItemPosition();
-                iParam4IdTitulo = spinnerInstituto.getSelectedItemPosition();
-                iParam5IdRegimentPensionario = spinnerRegimen.getSelectedItemPosition();
-                iParam6IdDocumentacion = spinnerDocumentos.getSelectedItemPosition();
-                iParam7Telefono = etTelefono.getText().toString();
-                iParam8Email = etEmail.getText().toString();
-                boolean val;
 
-                if(verificarEmail(iParam8Email) == true){
-                    val = true;
-                }else{
-                    val = false;
-                }
-
-                Log.d("Variable email ", "" + iParam8Email);
-                Log.d(" Retorno de email: ", " " + val);
-
-                if(iParam1IdGerencia == 0 || iParam2IdMotivos == 0 || iParam3IdEstatus == 0 || iParam4IdTitulo == 0 ||
-                        iParam5IdRegimentPensionario == 0 || iParam6IdDocumentacion == 0 || iParam7Telefono.isEmpty() || iParam8Email.isEmpty() ){
+                boolean val = (Config.verificarEmail(etEmail.getText().toString())) ? true : false;
+                if(spinnerAfores.getSelectedItemPosition() == 0 || spinnerMotivos.getSelectedItemPosition() == 0 || spinnerEstatus.getSelectedItemPosition() == 0 ||  spinnerInstituto.getSelectedItemPosition() == 0 ||
+                        spinnerRegimen.getSelectedItemPosition() == 0 || spinnerDocumentos.getSelectedItemPosition() == 0 || etTelefono.getText().toString().isEmpty() || etEmail.getText().toString().isEmpty()  ){
                     Config.dialogoDatosVacios(getContext());
                 }else {
                     if(val == true){
@@ -200,10 +144,7 @@ public class Encuesta2 extends Fragment {
                             });
                             dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                                 @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-
-                                }
+                                public void onClick(DialogInterface dialog, int which) {}
                             });
                             dialogo.show();
                         }
@@ -239,22 +180,14 @@ public class Encuesta2 extends Fragment {
         });
     }
 
-    public static boolean verificarEmail(String email){
-        Log.d("DATOS: ", "-->" +email);
-        boolean valor;
-        String emailPattern = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-        if ( (email.matches(emailPattern) && email.length() > 0) ) {
-            valor = true;
-            return valor;
-        } else {
-            valor = false;
-            return valor;
-        }
-    }
-
+    /**
+     * @param inflater infla la vista XML
+     * @param container muestra el contenido
+     * @param savedInstanceState guarda los datos en el estado de la instancia
+     * @return la vista con los elemetos del XML y metodos
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        /* infla la vista del fragmento */
         return inflater.inflate(R.layout.asesor_fragmento_encuesta2, container, false);
     }
 
@@ -264,6 +197,10 @@ public class Encuesta2 extends Fragment {
         }
     }
 
+    /**
+     * Reciba una llamada cuando se asocia el fragmento con la actividad
+     * @param context estado actual de la aplicacion
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -272,12 +209,18 @@ public class Encuesta2 extends Fragment {
         }
     }
 
+    /**
+     *Se lo llama cuando se desasocia el fragmento de la actividad.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
+    /**
+     * Se implementa este metodo, para generar el regreso con clic nativo de android
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -286,13 +229,12 @@ public class Encuesta2 extends Fragment {
         getView().setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                    AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
-                    dialogo1.setTitle("Confirmar");
-                    dialogo1.setMessage("¿Estàs seguro que deseas cancelar y guardar los cambios del proceso 1.1.3.5?");
-                    dialogo1.setCancelable(false);
-                    dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
+                    dialogo.setTitle(getResources().getString(R.string.titulo_cancelacion_implicaciones));
+                    dialogo.setMessage(getResources().getString(R.string.msj_cancelacion_implicaciones));
+                    dialogo.setCancelable(false);
+                    dialogo.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Fragment fragmentoGenerico = new ConCita();
@@ -300,29 +242,22 @@ public class Encuesta2 extends Fragment {
                             fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                         }
                     });
-                    dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
+                        public void onClick(DialogInterface dialog, int which) {}
                     });
-                    dialogo1.show();
-
+                    dialogo.show();
                     return true;
-
                 }
-
                 return false;
             }
         });
     }
 
     /**
-     * esta clase debe ser implementada en las actividades
-     * que contengan fragmentos para que exista la
-     * comunicacion entre fragmentos
-     * para mas informacion ver http://developer.android.com/training/basics/fragments/communicating.html
-     * Comunicacion entre fragmentos
+     * Esta interfaz debe ser implementada por actividades que contengan esta
+     * Para permitir que se comunique una interacción en este fragmento
+     * A la actividad y potencialmente otros fragmentos contenidos en esa actividad.
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
@@ -351,12 +286,50 @@ public class Encuesta2 extends Fragment {
     }
 
     /**
+     * Casteo de variables, nueva instancia para la conexion a internet Connected
+     */
+    private void variables(){
+        spinnerAfores = (Spinner) rootView.findViewById(R.id.afe2_spinner_afores);
+        spinnerMotivos = (Spinner) rootView.findViewById(R.id.afe2_spinner_motivo);
+        spinnerEstatus = (Spinner) rootView.findViewById(R.id.afe2_spinner_estatus);
+        spinnerInstituto = (Spinner) rootView.findViewById(R.id.afe2_spinner_instituto);
+        spinnerRegimen = (Spinner) rootView.findViewById(R.id.afe2_spinner_regimen);
+        spinnerDocumentos = (Spinner) rootView.findViewById(R.id.afe2_spinner_documentos);
+        btnContinuar = (Button) rootView.findViewById(R.id.afe2_btn_continuar);
+        btnCancelar = (Button) rootView.findViewById(R.id.afe2_btn_cancelar);
+        etTelefono = (EditText) rootView.findViewById(R.id.afe2_et_telefono);
+        etEmail = (EditText) rootView.findViewById(R.id.afe2_et_email);
+        connected = new Connected();
+
+        arrayAdapterAfores = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.AFORES);
+        arrayAdapterMotivo = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.MOTIVOS);
+        arrayAdapterEstatus = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.ESTATUS);
+        arrayAdapterInstituto = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.INSTITUCIONES);
+        arrayAdapterRegimen = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.REGIMEN);
+        arrayAdapterDocumentos = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.DOCUMENTOS);
+
+        spinnerAfores.setAdapter(arrayAdapterAfores);
+        spinnerMotivos.setAdapter(arrayAdapterMotivo);
+        spinnerEstatus.setAdapter(arrayAdapterEstatus);
+        spinnerInstituto.setAdapter(arrayAdapterInstituto);
+        spinnerRegimen.setAdapter(arrayAdapterRegimen);
+        spinnerDocumentos.setAdapter(arrayAdapterDocumentos);
+        /* Se asignan los eventos para que el primer Item del Spinner sea de color Gris */
+        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerAfores);
+        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerMotivos);
+        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerEstatus);
+        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerInstituto);
+        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerRegimen);
+        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerDocumentos);
+    }
+
+    /**
      * Método para generar el proceso REST
      * @param primerPeticion identifica si el metodo será procesado, debe llegar en true
      */
     private void sendJson(final boolean primerPeticion, int idGerencia, int idMotivo, int IdEstatus, int idTitulo, int idRegimentPensionario, int idDocumentacion, String telefono, String email) {
         if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
+            loading = ProgressDialog.show(getActivity(), getResources().getString(R.string.titulo_carga_datos), getResources().getString(R.string.msj_carga_datos), false, false);
         else
             loading = null;
 

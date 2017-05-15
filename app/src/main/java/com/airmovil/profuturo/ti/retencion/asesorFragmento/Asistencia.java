@@ -51,7 +51,10 @@ public class Asistencia extends Fragment {
         }
     }
 
-
+    /**
+     * Reciba una llamada cuando se asocia el fragmento con la actividad
+     * @param context estado actual de la aplicacion
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -60,6 +63,9 @@ public class Asistencia extends Fragment {
         }
     }
 
+    /**
+     *Se lo llama cuando se desasocia el fragmento de la actividad.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -73,7 +79,6 @@ public class Asistencia extends Fragment {
      * Ver la lección de formación de Android
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }

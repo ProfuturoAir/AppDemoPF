@@ -112,7 +112,7 @@ public class Encuesta2 extends Fragment {
                 boolean val = (Config.verificarEmail(etEmail.getText().toString())) ? true : false;
                 if(spinnerAfores.getSelectedItemPosition() == 0 || spinnerMotivos.getSelectedItemPosition() == 0 || spinnerEstatus.getSelectedItemPosition() == 0 ||  spinnerInstituto.getSelectedItemPosition() == 0 ||
                         spinnerRegimen.getSelectedItemPosition() == 0 || spinnerDocumentos.getSelectedItemPosition() == 0 || etTelefono.getText().toString().isEmpty() || etEmail.getText().toString().isEmpty() ){
-                    Config.dialogoDatosVacios(getContext());
+                    Dialogos.dialogoDatosVacios(getContext());
                 }else {
                     if(val == true){
                         if(connected.estaConectado(getContext())){
@@ -324,7 +324,7 @@ public class Encuesta2 extends Fragment {
      */
     private void sendJson(final boolean primerPeticion, int idGerencia, int idMotivo, int IdEstatus, int idTitulo, int idRegimentPensionario, int idDocumentacion, String telefono, String email) {
         if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Espere un momento porfavor...", false, false);
+            loading = ProgressDialog.show(getActivity(), getResources().getString(R.string.titulo_carga_datos), getResources().getString(R.string.msj_carga_datos), false, false);
         else
             loading = null;
 

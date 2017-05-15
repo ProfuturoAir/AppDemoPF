@@ -444,7 +444,7 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
             json.put("rqt", rqt);
             Log.d("TAG", "REQUEST -->" + json);
         } catch (JSONException e){
-            Dialogos.msj(getContext(),"Error","Existe un error al formar la peticion");
+            Dialogos.dialogoErrorDatos(getContext());
         }
         volleySingleton.postDataVolley("primerPaso", Config.URL_REGISTRAR_ASISTENCIA, json);
     }

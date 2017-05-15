@@ -33,14 +33,9 @@ import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.EnviaJSON;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
-import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.SQLiteHandler;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -52,12 +47,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-public class
-Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
-    /* inicializacion de los paramentros del fragmento*/
+public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
     private View rootView;
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
@@ -74,17 +66,11 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
     private TextView lblLongitud;
     private Connected connected;
     private SQLiteHandler db;
-
+    private Fragment borrar = this;
     private OnFragmentInteractionListener mListener;
+    private String idTramite, nombre, numeroDeCuenta, hora;
 
-    String idTramite;
-    String nombre;
-    String numeroDeCuenta;
-    String hora;
-
-    public Escaner() {
-        /* constructor vacio es requerido */
-    }
+    public Escaner() {/* constructor vacio es requerido */}
 
     /**
      * al crear una nueva instancia
@@ -102,12 +88,21 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
         return fragment;
     }
 
+    /**
+     * El sistema realiza esta llamada cuando crea tu actividad
+     * @param savedInstanceState guarda el estado de la aplicacion en un paquete
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = new SQLiteHandler(getContext());
     }
 
+    /**
+     * El sistema lo llama para iniciar los procesos que estaran dentro del flujo de la vista
+     * @param view accede a la vista del xml
+     * @param savedInstanceState guarda el estado de la aplicacion en un paquete
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // TODO: metodo para callback de volley
@@ -154,9 +149,6 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
                 launchIntent.putExtras(bundle);
                 startActivityForResult (launchIntent, PHOTO_FILE);
                 Log.d("PHOTO_FILE", "" + PHOTO_FILE);
-
-
-
             }
         });
         btnCancelar.setOnClickListener(new View.OnClickListener() {
@@ -169,10 +161,8 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
                 dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
                         Fragment fragmentoGenerico = null;
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        final Fragment borrarFragmento;
                         fragmentoGenerico = new ConCita();
                         if (fragmentoGenerico != null){
                             fragmentManager.beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right).replace(R.id.content_asesor, fragmentoGenerico).addToBackStack("F_MAIN").commit();
@@ -188,7 +178,7 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
             }
         });
 
-        final Fragment borrar = this;
+
 
         btnFinalizar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -206,7 +196,7 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
                         public void onClick(DialogInterface dialog, int which) {
 
                             imageView.setDrawingCacheEnabled(true);
-                            final String base64 = encodeTobase64(imageView.getDrawingCache());
+                            final String base64 = Config.encodeTobase64(getContext(), imageView.getDrawingCache());
                             Log.d("BASE64-->", base64);
                             imageView.setDrawingCacheEnabled(false);
 
@@ -280,13 +270,24 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
         });
     }
 
-
+    /**
+     * @param inflater infla la vista XML
+     * @param container muestra el contenido
+     * @param savedInstanceState guarda los datos en el estado de la instancia
+     * @return la vista con los elemetos del XML y metodos
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         /* infla la vista del fragmento */
         return inflater.inflate(R.layout.asesor_fragmento_escaner, container, false);
     }
 
+    /**
+     * Metodo utilizado para obtencion de parametros de aplicaion externa
+     * @param requestCode codigo
+     * @param resultCode resultado de respuesta
+     * @param data datos
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PHOTO_FILE) {
@@ -300,7 +301,6 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
                     String nombre1 = data.getStringExtra("rutaImagen");
                     // En nuesto caso se utiliza la libreria Picasso para mostrar la imagen
                     File imgFile = new  File(nombre);
-
                     if(imgFile.exists()){
                         Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
                         imageView.setImageBitmap(myBitmap);
@@ -319,6 +319,10 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
         }
     }
 
+    /**
+     * Reciba una llamada cuando se asocia el fragmento con la actividad
+     * @param context estado actual de la aplicacion
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -327,12 +331,18 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
         }
     }
 
+    /**
+     *Se lo llama cuando se desasocia el fragmento de la actividad.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
+    /**
+     * Destruccion de la vista
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -340,6 +350,9 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
         apiClient.disconnect();
     }
 
+    /**
+     *  Indica que la actividad está a punto de ser lanzada a segundo plano
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -347,11 +360,17 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
         apiClient.disconnect();
     }
 
+    /**
+     * Nos indica que la actividad está a punto de ser mostrada al usuario.
+     */
     @Override
     public void onStart() {
         super.onStart();
     }
 
+    /**
+     *  La actividad ya no va a ser visible para el usuario
+     */
     @Override
     public void onStop() {
         if(apiClient.isConnected())
@@ -360,7 +379,9 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
         super.onStop();
     }
 
-
+    /**
+     * Se implementa este metodo, para generar el regreso con clic nativo de android
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -371,11 +392,11 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
             public boolean onKey(View v, int keyCode, KeyEvent event) {
 
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                    AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
-                    dialogo1.setTitle("Confirmar");
-                    dialogo1.setMessage("¿Estás seguro que deseas cancelar y guardar los cambios del proceso 1.1.3.8?");
-                    dialogo1.setCancelable(false);
-                    dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
+                    dialogo.setTitle(getResources().getString(R.string.titulo_cancelacion_implicaciones));
+                    dialogo.setMessage(getResources().getString(R.string.msj_cancelacion_implicaciones));
+                    dialogo.setCancelable(false);
+                    dialogo.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Fragment fragmentoGenerico = new ConCita();
@@ -384,11 +405,11 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
 
                         }
                     });
-                    dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {}
                     });
-                    dialogo1.show();
+                    dialogo.show();
                     return true;
                 }
                 return false;
@@ -396,6 +417,10 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
         });
     }
 
+    /**
+     * Metodo para verificar la conexion a la red
+     * @param bundle envio de parametros
+     */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -406,6 +431,12 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
         }
     }
 
+    /**
+     * Metodo para obtencion de permiso del dispositivo
+     * @param requestCode codigo de respuesta
+     * @param permissions permiso
+     * @param grantResults resultado
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_LOCATION) {
@@ -421,6 +452,10 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
         }
     }
 
+    /**
+     * Metodo para obtener la localizacion del dispositivo
+     * @param loc accede a las coordenadas del dispositivo
+     */
     private void updateUI(Location loc){
         if (loc != null){
             lblLatitud.setText(String.valueOf(loc.getLatitude()));
@@ -428,18 +463,24 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
         }
     }
 
+    /**
+     * Metodo con el estado de la conexion suspendida
+     * @param i captura el valor de la conexion
+     */
     @Override
     public void onConnectionSuspended(int i) {}
 
+    /**
+     * Metodo, cuando la conexion a fallado
+     * @param connectionResult estatus de la conexion
+     */
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
 
     /**
-     * esta clase debe ser implementada en las actividades
-     * que contengan fragmentos para que exista la
-     * comunicacion entre fragmentos
-     * para mas informacion ver http://developer.android.com/training/basics/fragments/communicating.html
-     * Comunicacion entre fragmentos
+     * Esta interfaz debe ser implementada por actividades que contengan esta
+     * Para permitir que se comunique una interacción en este fragmento
+     * A la actividad y potencialmente otros fragmentos contenidos en esta actividad.
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
@@ -474,7 +515,7 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
      */
     private void sendJson(final boolean primerPeticion, String base64) {
         if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
+            loading = ProgressDialog.show(getActivity(), getResources().getString(R.string.titulo_carga_datos), getResources().getString(R.string.msj_carga_datos), false, false);
         else
             loading = null;
 
@@ -498,10 +539,8 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
             String fechaS = f.format(new Date());
             fechaN = fechaS.substring(0, fechaS.length() - 2) + ":00";
             System.out.println(fechaN);
-            Log.d("TAG fecha ->", "" + fechaN);
         }catch (Exception e){
             e.printStackTrace();
-            Log.d("TAG e: ", "" + e);
         }
         try{
             if(getArguments() != null){
@@ -526,6 +565,10 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
         volleySingleton.postDataVolley("primerPaso", Config.URL_ENVIAR_DOCUMENTO_IFE_INE, obj);
     }
 
+    /**
+     * Corre este metodo cuando hay mas de 10 contenido a mostrar en la lista
+     * @param obj objeto json
+     */
     private void primerPaso(JSONObject obj){
         String status = "";
         try{
@@ -581,39 +624,4 @@ Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, 
         }
     }
 
-    public String encodeTobase64(Bitmap image) {
-        float bmW=image.getWidth();
-        float bmH= image.getHeight();
-
-        Log.d("PIXELES", "ORIGINAL ANCHO"+bmW+"Original ALTO:"+bmH );
-        int widthPixels = getContext().getResources().getDisplayMetrics().widthPixels;
-        Bitmap resize;
-        Log.d("PIXELES", "TELEFONO"+widthPixels );
-        if(bmW>=widthPixels){
-            float newWidth=widthPixels;
-            float newHeight=(bmH/bmW)*widthPixels;
-
-            Log.d("PIXELES", "NUEVO ANCHO" + widthPixels + "NUEVO ALTO:" + newHeight + " W" + bmW + " H" + bmH);
-            //resize the bit map
-            resize = Bitmap.createBitmap(image,0,0,(int)newWidth,(int)newHeight);
-        }else{
-            Log.d("PIXELES", "PASA SIN CAMBIO" );
-            resize = image;
-        }
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        resize.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] b = baos.toByteArray();
-        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
-        imageEncoded = imageEncoded.replace(" ","");
-        String foto="data:image/jpeg;base64,"+imageEncoded;
-
-        int maxLogSize = 1000;
-        for(int i = 0; i <= foto.length() / maxLogSize; i++) {
-            int start = i * maxLogSize;
-            int end = (i+1) * maxLogSize;
-            end = end > foto.length() ? foto.length() : end;
-            Log.d("n-"+i, foto.substring(start, end));
-        }
-        return foto;
-    }
 }

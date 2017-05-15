@@ -48,27 +48,26 @@ import java.util.List;
 
 public class SinCita extends Fragment {
     public static final String TAG = SinCita.class.getSimpleName();
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM1 = "param1",  ARG_PARAM2 = "param2";
     private static final String[] ESTADOS_CITAS = new String[]{"Selecciona...","Número de cuenta", "NSS", "CURP"};
     private Spinner spinner;
     private Button btnBuscar;
     private TextView tvFecha;
     private EditText etDatos;
     private View rootView;
-    private String fechaIni = "";
     private String fechaMostrar = "";
     private SinCitaAdapter adapter;
     private List<SinCitaModel> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private OnFragmentInteractionListener mListener;
-    SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences;
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
     private Connected connected;
     private int pagina = 1;
+    private Fragment borrar = this;
 
     public SinCita() { /* constructor vacio es requerido */}
 
@@ -87,11 +86,20 @@ public class SinCita extends Fragment {
         return fragment;
     }
 
+    /**
+     * El sistema realiza esta llamada cuando crea tu actividad
+     * @param savedInstanceState guarda el estado de la aplicacion en un paquete
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * El sistema lo llama para iniciar los procesos que estaran dentro del flujo de la vista
+     * @param view accede a la vista del xml
+     * @param savedInstanceState guarda el estado de la aplicacion en un paquete
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // TODO: metodo para callback de volley
@@ -124,7 +132,7 @@ public class SinCita extends Fragment {
         if(procesa)
             sendJson(true, llave, valor);
         // TODO: Spinner
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, ESTADOS_CITAS);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.IDS);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -169,7 +177,7 @@ public class SinCita extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
         spinner.setAdapter(adapter);
-        final Fragment borrar = this;
+
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -177,13 +185,11 @@ public class SinCita extends Fragment {
                 if(connected.estaConectado(getContext())){
                     String valores = etDatos.getText().toString().trim();
                     int seleccion = spinner.getSelectedItemPosition();
-                    if(spinner.getSelectedItem().toString().equals("Selecciona...")) {
-                        Config.dialogoDatosVacios(getContext());
+                    if(spinner.getSelectedItem().toString().equals("Selecciona el tipo de ID a buscar")) {
+                        Dialogos.dialogoDatosVacios(getContext());
                     }else{
                             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                            SinCita clase = SinCita.newInstance(
-                                    seleccion, valores
-                            );
+                            SinCita clase = SinCita.newInstance(seleccion, valores);
                             Config.teclado(getContext(), etDatos);
                             borrar.onDestroy();
                             ft.remove(borrar).replace(R.id.content_asesor, clase).addToBackStack(null).commit();
@@ -202,6 +208,9 @@ public class SinCita extends Fragment {
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
     }
 
+    /**
+     * Se implementa este metodo, para generar el regreso con clic nativo de android
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -212,8 +221,8 @@ public class SinCita extends Fragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
                     AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
-                    dialogo1.setTitle("");
-                    dialogo1.setMessage("Serás direccionado al Inicio");
+                    dialogo1.setTitle(getResources().getString(R.string.titulo_regreso_inicio));
+                    dialogo1.setMessage(getResources().getString(R.string.msj_regreso_inicio));
                     dialogo1.setCancelable(false);
                     dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
@@ -237,14 +246,12 @@ public class SinCita extends Fragment {
         });
     }
 
-    public static SinCita newInstance(String campo, Context ctx){
-        SinCita clase = new SinCita();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, campo);
-        clase.setArguments(args);
-        return clase;
-    }
-
+    /**
+     * @param inflater infla la vista XML
+     * @param container muestra el contenido
+     * @param savedInstanceState guarda los datos en el estado de la instancia
+     * @return la vista con los elemetos del XML y metodos
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.asesor_fragmento_sin_cita, container, false);
@@ -256,6 +263,10 @@ public class SinCita extends Fragment {
         }
     }
 
+    /**
+     * Reciba una llamada cuando se asocia el fragmento con la actividad
+     * @param context estado actual de la aplicacion
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -264,6 +275,9 @@ public class SinCita extends Fragment {
         }
     }
 
+    /**
+     *Se lo llama cuando se desasocia el fragmento de la actividad.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -271,10 +285,9 @@ public class SinCita extends Fragment {
     }
 
     /**
-     * esta clase debe ser implementada en las actividades que contengan
-     * fragmentos para que exista la comunicacion entre los fragmentos
-     * para mas informacion ver http://developer.android.com/training/basics/fragments/communicating.html
-     * Comunicaciòn entre fragmentos
+     * Esta interfaz debe ser implementada por actividades que contengan esta
+     * Para permitir que se comunique una interacción en este fragmento
+     * A la actividad y potencialmente otros fragmentos contenidos en esa actividad.
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
@@ -302,6 +315,10 @@ public class SinCita extends Fragment {
         };
     }
 
+    /**
+     * Método para generar el proceso REST
+     * @param primerPeticion identifica si el metodo será procesado, debe llegar en true
+     */
     private void sendJson(final boolean primerPeticion, int seleccion, String valores) {
         if (primerPeticion)
             loading = ProgressDialog.show(getActivity(), getResources().getString(R.string.titulo_carga_datos), getResources().getString(R.string.msj_carga_datos), false, false);
@@ -322,6 +339,10 @@ public class SinCita extends Fragment {
         volleySingleton.postDataVolley("primerPaso", Config.URL_CONSULTAR_CLIENTE_SIN_CITA, obj);
     }
 
+    /**
+     * Inicia este metodo para llenar la lista de elementos, cada 10, inicia solamente con 10, despues inicia el metodo segundoPaso
+     * @param obj jsonObject
+     */
     private void primerPaso(JSONObject obj) {
         Log.d(TAG, "<- RESPONSE -> \n" + obj + "\n");
         try{
@@ -340,10 +361,9 @@ public class SinCita extends Fragment {
                     }
                     getDatos1.add(getDatos2);
                 }
-                Log.d(TAG, "JSON response : ->" + array);
             }else{
                 String statusText = obj.getString("statusText");
-                Config.msj(getContext(), "Error", statusText);
+                Dialogos.dialogoErrorRespuesta(getContext(), status, statusText);
             }
         }catch (JSONException e){
             e.printStackTrace();
