@@ -122,26 +122,6 @@ public class Config extends Activity {
     public static RequestQueue mRequestQueue = null;
 
     /**
-     * @param ctx parametro 1 referencia de la llamada, fragmento o actividad
-     * @param titulo parametro 2 titulo del dialogo
-     * @param msj parametro 3 mensaje del dialogo
-     */
-    public static final void msj(Context ctx, String titulo, String msj){
-        AlertDialog.Builder dialog  = new AlertDialog.Builder(ctx);
-        dialog.setTitle(titulo);
-        dialog.setMessage(msj);
-        dialog.setCancelable(true);
-        dialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        dialog.create().show();
-    }
-
-
-    /**
      * Muestra mensaje de fechas vacias
      * @param context referencia de la llamada, fragmento o actividad
      */
@@ -188,44 +168,6 @@ public class Config extends Activity {
         progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_peligro));
         progressDialog.setTitle(context.getResources().getString(R.string.error_en_documento));
         progressDialog.setMessage(context.getResources().getString(R.string.msj_error_documento));
-        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        progressDialog.dismiss();
-                    }
-                });
-        progressDialog.show();
-    }
-
-    /**
-     * Muestra mensaje, aviso de contenido limpio en firma
-     * @param context referencia de la llamada, fragmento o actividad
-     */
-    public static final void dialogoContenidoLimpio(Context context){
-        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_limpio));
-        progressDialog.setTitle(context.getResources().getString(R.string.msj_titulo_limpiar));
-        progressDialog.setMessage(context.getResources().getString(R.string.msj_contenido_limpio));
-        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        progressDialog.dismiss();
-                    }
-                });
-        progressDialog.show();
-    }
-
-    /**
-     * Muestra mensaje de error, se requiere una firma
-     * @param context referencia de la llamada, fragmento o actividad
-     */
-    public static final void dialogoRequiereFirma(Context context){
-        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_firma));
-        progressDialog.setTitle(context.getResources().getString(R.string.msj_titulo_firma));
-        progressDialog.setMessage(context.getResources().getString(R.string.msj_contenido_vacio_firma));
         progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
                 new DialogInterface.OnClickListener() {
                     @Override
