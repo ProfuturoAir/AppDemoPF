@@ -339,6 +339,14 @@ public class ReporteAsistenciaDetalles extends Fragment {
                     Dialogos.dialogoErrorDatos(getContext());
                 }
                 getDatos1.add(getDatos2);
+                Handler handler = new Handler();
+                final Runnable r = new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyItemInserted(getDatos1.size() - 1);
+                    }
+                };
+                handler.post(r);
             }
         } catch (JSONException e){
             Dialogos.dialogoErrorDatos(getContext());

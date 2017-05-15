@@ -620,7 +620,6 @@ public class Gerente extends AppCompatActivity{
         for(int i=0;i<j.length();i++){
             try {
                 JSONObject json = j.getJSONObject(i);
-                Log.e("sucursal","JSON Sucursal::::::::>"+json);
                 idSucursal = json.getInt("idSucursal");
                 nombreSucursal = json.getString("nombre");
                 arrayNombreSucursal.add(nombreSucursal.toString());

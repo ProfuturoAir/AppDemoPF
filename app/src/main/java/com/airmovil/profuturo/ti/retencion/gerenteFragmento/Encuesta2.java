@@ -25,6 +25,7 @@ import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.SQLiteHandler;
+import com.airmovil.profuturo.ti.retencion.helper.SpinnerDatos;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.VolleyError;
 
@@ -289,13 +290,20 @@ public class Encuesta2 extends Fragment {
         arrayAdapterInstituto = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.INSTITUCIONES);
         arrayAdapterRegimen = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.REGIMEN);
         arrayAdapterDocumentos = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, Config.DOCUMENTOS);
-
         spinnerAfores.setAdapter(arrayAdapterAfores);
         spinnerMotivos.setAdapter(arrayAdapterMotivo);
         spinnerEstatus.setAdapter(arrayAdapterEstatus);
         spinnerInstituto.setAdapter(arrayAdapterInstituto);
         spinnerRegimen.setAdapter(arrayAdapterRegimen);
         spinnerDocumentos.setAdapter(arrayAdapterDocumentos);
+
+        /* Se asignan los eventos para que el primer Item del Spinner sea de color Gris */
+        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerAfores);
+        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerMotivos);
+        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerEstatus);
+        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerInstituto);
+        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerRegimen);
+        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerDocumentos);
     }
 
     /**

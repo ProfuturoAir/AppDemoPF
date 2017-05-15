@@ -366,7 +366,6 @@ public class ReporteClientes extends Fragment{
 
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
-        JSONObject filtroCliente = new JSONObject();
         JSONObject periodo = new JSONObject();
         try{
             boolean argumentos = (getArguments()!= null);
@@ -417,6 +416,14 @@ public class ReporteClientes extends Fragment{
                     e.printStackTrace();
                 }
                 getDatos1.add(getDatos2);
+                Handler handler = new Handler();
+                final Runnable r = new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyItemInserted(getDatos1.size() - 1);
+                    }
+                };
+                handler.post(r);
             }
         }catch (JSONException e){
             Dialogos.dialogoErrorDatos(getContext());
@@ -440,8 +447,6 @@ public class ReporteClientes extends Fragment{
                     return;
                 }
                 getDatos1.add(null);
-                adapter.notifyItemInserted(getDatos1.size() - 1);
-
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {

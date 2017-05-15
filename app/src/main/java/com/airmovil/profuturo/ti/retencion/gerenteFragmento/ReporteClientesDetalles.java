@@ -28,19 +28,12 @@ import org.json.JSONObject;
 
 public class ReporteClientesDetalles extends Fragment {
     private static final String TAG = ReporteClientesDetalles.class.getSimpleName();
-    private static final String ARG_PARAM1 = "numeroCuenta"; // curp
-    private static final String ARG_PARAM2 = "cita"; // nss
-    private static final String ARG_PARAM4 = "idTramite"; // idTramite
-    private static final String ARG_PARAM5 = "fechaInicio"; // fecha inicio
-    private static final String ARG_PARAM6 = "fechaFin"; // fecha fin
-    private static final String ARG_PARAM7 = "hora"; // hora
-    private static final String ARG_PARAM8 = "usuario";
-    private static final String ARG_PARAM9 = "numeroEmpleado";
-    private static final String ARG_PARAM10 = "nombreEmpleado";
+    private static final String ARG_PARAM1 = "numeroCuenta"/*curp*/,ARG_PARAM2 = "cita" /*nss*/,ARG_PARAM4 = "idTramite" /*idTramite*/,ARG_PARAM5 = "fechaInicio" /*fecha inicio*/,ARG_PARAM6 = "fechaFin" /*fecha fin*/,ARG_PARAM7 = "hora" /*hora*/,ARG_PARAM8 = "usuario",ARG_PARAM9 = "numeroEmpleado",ARG_PARAM10 = "nombreEmpleado";
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
-    private String mParam1, mParam2, mParam3, mParam5, mParam6, mParam7, mParam8, mParam9, mParam10;
-    private int pagina = 1, mParam4;
+    private String mParam1, mParam3, mParam5, mParam6, mParam7, mParam8, mParam9, mParam10;
+    Boolean mParam2;
+    private int mParam4;
     private TextView tv_nombre, tv_numero_cuenta, tv_nss, tv_curp, tv_estatus, tv_saldo, tv_sucursal, tv_hora_atencion, tv_nombre_asesor, tv_numero_empleado, tv_inicial, tv_fechas;
     private Connected connected;
     private ProgressDialog loading;
@@ -60,11 +53,11 @@ public class ReporteClientesDetalles extends Fragment {
      * @return una nueva instancia del frgmento ReporteClientesDetalles.
      */
     // TODO: Rename and change types and number of parameters
-    public static ReporteClientesDetalles newInstance(String param1, String param2,int param4, String param5, String param6, String param7, String param8,String param9,String param10) {
+    public static ReporteClientesDetalles newInstance(String param1, Boolean param2,int param4, String param5, String param6, String param7, String param8,String param9,String param10) {
         ReporteClientesDetalles fragment = new ReporteClientesDetalles();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putBoolean(ARG_PARAM2, param2);
         args.putInt(ARG_PARAM4, param4);
         args.putString(ARG_PARAM5, param5);
         args.putString(ARG_PARAM6, param6);
@@ -86,7 +79,7 @@ public class ReporteClientesDetalles extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mParam2 = getArguments().getBoolean(ARG_PARAM2);
             mParam4 = getArguments().getInt(ARG_PARAM4);
             mParam5 = getArguments().getString(ARG_PARAM5);
             mParam6 = getArguments().getString(ARG_PARAM6);
@@ -284,7 +277,6 @@ public class ReporteClientesDetalles extends Fragment {
      */
     private void primerPaso(JSONObject obj){
         String curp = "", horaAtencion = "", nombre = "", nombreSucursal = "", nss = "", numeroCuenta = "", rfc = "", saldo = "";
-        int idTramite = 0;
         boolean retenido = false;
         try{
             JSONObject cliente = obj.getJSONObject("cliente");

@@ -27,6 +27,7 @@ import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.EnviaJSON;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.SQLiteHandler;
+import com.airmovil.profuturo.ti.retencion.helper.SpinnerDatos;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.VolleyError;
 import org.json.JSONException;
@@ -134,6 +135,14 @@ public class Encuesta2 extends Fragment {
         spinnerInstituto.setAdapter(arrayAdapterInstituto);
         spinnerRegimen.setAdapter(arrayAdapterRegimen);
         spinnerDocumentos.setAdapter(arrayAdapterDocumentos);
+
+        /* Se asignan los eventos para que el primer Item del Spinner sea de color Gris */
+        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerAfores);
+        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerMotivos);
+        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerEstatus);
+        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerInstituto);
+        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerRegimen);
+        SpinnerDatos.spinnerEncuesta2(getContext(),spinnerDocumentos);
 
         final Fragment borrar = this;
         btnContinuar.setOnClickListener(new View.OnClickListener() {
