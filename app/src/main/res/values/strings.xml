@@ -116,9 +116,22 @@
     <string name="titulo_espera">Espere un momento</string>
     <string name="texto_pendientes">Pendientes</string>
     <string name="texto">tex</string>
+    <!-- TODO: datos de mensaje de carga de datos json -->
+    <string name="titulo_carga_datos">Cargando datos</string>
+    <string name="msj_carga_datos">Por favor espere un momento...</string>
     <!-- TODO: nuevas cadenas en dialogos -->
     <string name="msj_error_datos_servicio">Se ha encontrado un problema, con los datos a procesar</string>
     <string name="msj_error_conexion_internet">Se ha encontrado un problema, debes revisar tu conexion a internet</string>
-
     <string name="titulo_error">Error</string>
+    <!-- TODO: mensaje de dialogo error en datos -->
+    <string name="titulo_error_datos">Error en datos</string>
+    <string name="msj_error_datos">Lo sentimos ocurrio un error al formar los datos</string>
+    <!-- TODO: mensaje de dialogo de activacion de coordenadas GPS -->
+    <string name="titulo_activacion_gps">No se pudo acceder a las coordenadas de su localización</string>
+    <string name="msj_activacion_gps">¿Desea habílitar su localización?</string>
+    <!-- TODO: String para mensaje de dialogo, salida de la aplicacion -->
+    <string name="titulo_salida_app">Alerta de mensaje</string>
+    <string name="msj_salida_app">¿Estás seguro que deseas salir de la aplicación?</string>
+    <!-- TODO: String para mensaje de dialogo, regreso a inicio -->
+    <string name="titulo"></string>
 </resources>

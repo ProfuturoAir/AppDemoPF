@@ -36,10 +36,6 @@ import com.google.android.gms.location.LocationServices;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-
 public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     // inicializacion de los paramentros del fragmento
     private static final String ARG_PARAM1 = "param1";
@@ -55,12 +51,9 @@ public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
-
     private OnFragmentInteractionListener mListener;
 
-    public AsistenciaComidaEntrada() {
-        /*contructor vacio es requerido*/
-    }
+    public AsistenciaComidaEntrada() {/*contructor vacio es requerido*/}
 
     /**
      * al crear una nueva instancia recibe como paramentros

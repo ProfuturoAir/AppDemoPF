@@ -3,7 +3,6 @@ package com.airmovil.profuturo.ti.retencion.asesorFragmento;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,14 +22,8 @@ import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
-import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
-import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.Map;
@@ -51,12 +44,7 @@ public class Inicio extends Fragment {
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
 
-    MySharePreferences mySharePreferences;
-
-
-    public Inicio() {
-        // Se requiere un constructor vacio
-    }
+    public Inicio() {/* Se requiere un constructor vacio */}
 
     /**
      * este fragmento se crea para el envio de parametros.
@@ -90,14 +78,12 @@ public class Inicio extends Fragment {
      *  metodo para callback de volley
      */
     void initVolleyCallback() {
-
         mResultCallback = new IResult() {
             @Override
             public void notifySuccess(String requestType, JSONObject response) {
                 loading.dismiss();
                 primerPaso(response);
             }
-
             @Override
             public void notifyError(String requestType, VolleyError error) {
                 if(connected.estaConectado(getContext())){
@@ -126,9 +112,14 @@ public class Inicio extends Fragment {
             sendJson(true);
         else
             Dialogos.dialogoErrorConexion(getContext());
+
+        // TODO: Asignacion de variables
         variables();
+        // TODO: Detalle superios de datos de usuario
         detalleSuperior();
+        // TODO: Verificacion de datos recibidos
         argumentos();
+        // TODO: Dialogos de fechas
         Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha1); // Dialogo de muestra de fecha
         Dialogos.dialogoFechaFin(getContext(), tvRangoFecha2); // Dialogo de muestra de fecha
         btnFiltro.setOnClickListener(new View.OnClickListener() {
@@ -136,7 +127,7 @@ public class Inicio extends Fragment {
             public void onClick(View v) {
                 if(connected.estaConectado(getContext())){
                     if (tvRangoFecha1.getText().toString().isEmpty() || tvRangoFecha2.getText().toString().isEmpty() ) {
-                        Config.dialogoFechasVacias(getContext());
+                        Dialogos.dialogoFechasVacias(getContext());
                     } else {
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         Inicio fragmento = Inicio.newInstance(mParam1 = tvRangoFecha1.getText().toString(), mParam2 = tvRangoFecha2.getText().toString(), rootView.getContext());
@@ -144,25 +135,7 @@ public class Inicio extends Fragment {
                         ft.remove(borrar).replace(R.id.content_asesor, fragmento).addToBackStack(null).commit();
                     }
                 }else{
-                    final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-                    progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
-                    progressDialog.setTitle(getResources().getString(R.string.error_conexion));
-                    progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion));
-                    progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    progressDialog.dismiss();
-                                }
-                            });
-                    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                    progressDialog.show();
+                    Dialogos.dialogoErrorConexion(getContext());
                 }
             }
         });
@@ -179,10 +152,6 @@ public class Inicio extends Fragment {
         return inflater.inflate(R.layout.asesor_fragmento_inicio, container, false);
     }
 
-    /**
-     *
-     * @param uri
-     */
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -190,8 +159,8 @@ public class Inicio extends Fragment {
     }
 
     /**
-     *
-     * @param context
+     * Reciba una llamada cuando se asocia el fragmento con la actividad
+     * @param context estado actual de la aplicacion
      */
     @Override
     public void onAttach(Context context) {
@@ -218,7 +187,6 @@ public class Inicio extends Fragment {
         if(!Config.estahabilitadoGPS(getContext())){
             Dialogos.dialogoActivarLocalizacion(getContext());
         }
-
         super.onResume();
         getView().setFocusableInTouchMode(true);
         getView().requestFocus();
@@ -227,8 +195,8 @@ public class Inicio extends Fragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
                     AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
-                    dialogo1.setTitle("Mensaje");
-                    dialogo1.setMessage("¿Estás seguro que deseas salir de la aplicación?");
+                    dialogo1.setTitle(getResources().getString(R.string.titulo_salida_app));
+                    dialogo1.setMessage(getResources().getString(R.string.msj_salida_app));
                     dialogo1.setCancelable(false);
                     dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
@@ -252,8 +220,7 @@ public class Inicio extends Fragment {
     /**
      * Esta interfaz debe ser implementada por actividades que contengan esta
      * Para permitir que se comunique una interacción en este fragmento
-     * A la actividad y potencialmente otros fragmentos contenidos en ese
-     * actividad.
+     * A la actividad y potencialmente otros fragmentos contenidos en esa actividad.
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
@@ -281,13 +248,9 @@ public class Inicio extends Fragment {
      */
     public void detalleSuperior(){
         Map<String, String> usuario = Config.datosUsuario(getContext());
-        String nombre = usuario.get(MySharePreferences.NOMBRE);
-        String apePaterno = usuario.get(MySharePreferences.APELLIDO_PATERNO);
-        String apeMaterno = usuario.get(MySharePreferences.APELLIDO_MATERNO);
-        tvNombre.setText("" + nombre + " " + apePaterno + " " + apeMaterno);
-        char letra = nombre.charAt(0);
-        String inicial = Character.toString(letra);
-        tvInicial.setText(inicial);
+        tvNombre.setText("" + String.valueOf(usuario.get(MySharePreferences.NOMBRE)) + " " + String.valueOf(usuario.get(MySharePreferences.APELLIDO_PATERNO)) + " " + String.valueOf(usuario.get(MySharePreferences.APELLIDO_MATERNO)));
+        char letra = String.valueOf(usuario.get(MySharePreferences.NOMBRE)).charAt(0);
+        tvInicial.setText(String.valueOf(Character.toString(letra)));
     }
 
     /**
@@ -312,22 +275,22 @@ public class Inicio extends Fragment {
      */
     private void sendJson(final boolean primeraPeticion){
         if (primeraPeticion)
-            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
+            loading = ProgressDialog.show(getActivity(), getResources().getString(R.string.titulo_carga_datos), getResources().getString(R.string.msj_carga_datos), false, false);
         else
             loading = null;
+
         JSONObject json = new JSONObject();
         JSONObject rqt = new JSONObject();
         JSONObject periodo = new JSONObject();
         try{
-            boolean argumentos = (getArguments()!=null);
             rqt.put("periodo", periodo);
-            periodo.put("fechaInicio", (argumentos) ? getArguments().getString(ARG_PARAM1) : Dialogos.fechaActual());
-            periodo.put("fechaFin", (argumentos) ? getArguments().getString(ARG_PARAM2) : Dialogos.fechaSiguiente());
+            periodo.put("fechaInicio", (getArguments()!=null) ? getArguments().getString(ARG_PARAM1) : Dialogos.fechaActual());
+            periodo.put("fechaFin", (getArguments()!=null) ? getArguments().getString(ARG_PARAM2) : Dialogos.fechaSiguiente());
             rqt.put("usuario", Config.usuarioCusp(getContext()));
             json.put("rqt", rqt);
             Log.d(TAG, "<-- RQT --> \n " + json + "\n");
         } catch (JSONException e){
-            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
+            Dialogos.dialogoErrorDatos(getContext());
         }
         volleySingleton.postDataVolley("primerPaso", Config.URL_CONSULTAR_RESUMEN_RETENCIONES, json);
     }
@@ -340,10 +303,7 @@ public class Inicio extends Fragment {
         Log.d(TAG, "<- Response ->\n"  + obj +"\n");
         JSONObject retenidos = null;
         JSONObject saldos = null;
-        int iRetenidos = 0;
-        int iNoRetenidos = 0;
-        int iSaldoRetenido = 0;
-        int iSaldoNoRetenido = 0;
+        int iRetenidos = 0, iNoRetenidos = 0, iSaldoRetenido = 0, iSaldoNoRetenido = 0;
         String status = "";
         try{
             status = obj.getString("status");
@@ -360,10 +320,10 @@ public class Inicio extends Fragment {
                 Log.d("JSON", retenidos.toString());
             }else{
                 statusText = obj.getString("statusText");
-                Config.msj(getContext(), "Error: " + i, statusText);
+                Dialogos.dialogoErrorRespuesta(getContext(), String.valueOf(i), statusText);
             }
         }catch (JSONException e){
-            Config.msj(getContext(), "Error", "Lo sentimos ocurrio un error con los datos");
+            Dialogos.dialogoErrorDatos(getContext());
         }
         tvRetenidos.setText("" + iRetenidos);
         tvNoRetenidos.setText("" + iNoRetenidos);

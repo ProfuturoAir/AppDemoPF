@@ -18,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -40,30 +39,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ConCita extends Fragment {
-    /*inicializacion de los parametros */
     private static final String TAG = ConCita.class.getSimpleName();
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    // TODO: paramentros
-    private static final String[] ESTADOS_CITAS = new String[]{"Atendido", "Sin Atender", "Ambos"};
-
     private List<CitasClientesModel> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
-    private RecyclerView.Adapter recyclerViewAdapter;
-    private String JSON_HORA = "hora";
-    private String JSON_NOMBRE_CLIENTE = "nombreCliente";
-    private String JSON_NUMERO_CUENTA = "numeroCuenta";
-    private String JSON_FILAS_TOTAL = "filasTotal";
-    private int filas;
     private CitasClientesAdapter adapter;
-    private int pagina = 1;
-    private int numeroMaximoPaginas = 0;
+    private String JSON_HORA = "hora", JSON_NOMBRE_CLIENTE = "nombreCliente", JSON_NUMERO_CUENTA = "numeroCuenta", JSON_FILAS_TOTAL = "filasTotal";
+    private int filas, pagina = 1, numeroMaximoPaginas = 0, spinnerOpcion;
     private OnFragmentInteractionListener mListener;
-    private int spinnerOpcion;
-
-    // TODO: XML
     private Spinner spinner;
     private Button btnAplicar, btnClienteSinCita;
     private TextView tvFecha, tvRegistros;
@@ -72,11 +57,9 @@ public class ConCita extends Fragment {
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
     private Connected connected;
-    final Fragment borrar = this;
+    private Fragment borrar = this;
 
-    public ConCita() {
-        // constructor vacio requerido
-    }
+    public ConCita() {/* constructor vacio requerido */}
 
     /**
      * al crear una instancia recibe los parametros:
@@ -91,11 +74,20 @@ public class ConCita extends Fragment {
         return fragment;
     }
 
+    /**
+     * El sistema realiza esta llamada cuando crea tu actividad
+     * @param savedInstanceState guarda el estado de la aplicacion en un paquete
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * El sistema lo llama para iniciar los procesos que estaran dentro del flujo de la vista
+     * @param view accede a la vista del xml
+     * @param savedInstanceState guarda el estado de la aplicacion en un paquete
+     */
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         // TODO: metodo para callback de volley
@@ -103,16 +95,13 @@ public class ConCita extends Fragment {
         rootView = view;
         // TODO: llama clase singleton volley
         volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
-        connected = new Connected();
-        spinner = (Spinner) rootView.findViewById(R.id.afcc_spinner_estados);
-        btnAplicar = (Button) rootView.findViewById(R.id.afcc_btn_aplicar);
-        btnClienteSinCita = (Button) rootView.findViewById(R.id.afcc_btn_sin_cita);
-        tvFecha = (TextView) rootView.findViewById(R.id.afcc_tv_fecha);
-        tvRegistros = (TextView) rootView.findViewById(R.id.afcc_tv_registros);
+        // TODO: Asisgnacion de variables
+        variables();
         if(Config.conexion(getContext()))
             sendJson(true);
         else
             Dialogos.dialogoErrorConexion(getContext());
+        // TODO: fecha de citas
         fechas();
         // TODO: Spinner
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, Config.CITAS){
@@ -141,11 +130,7 @@ public class ConCita extends Fragment {
                 if(connected.estaConectado(getContext())){
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                     ConCita newInstance = ConCita.newInstance(spinnerOpcion, rootView.getContext());
-                    borrar.onDestroy();
-                    ft.remove(borrar);
-                    ft.replace(R.id.content_asesor, newInstance);
-                    ft.addToBackStack(null);
-                    ft.commit();
+                    borrar.onDestroy();ft.remove(borrar).replace(R.id.content_asesor, newInstance).addToBackStack(null).commit();
                 }else{
                     final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
                     progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
@@ -176,39 +161,23 @@ public class ConCita extends Fragment {
             public void onClick(View v) {
                 if(connected.estaConectado(getContext())){
                 }else{
-                    final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-                    progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
-                    progressDialog.setTitle(getResources().getString(R.string.error_conexion));
-                    progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion));
-                    progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    progressDialog.dismiss();
-                                }
-                            });
-                    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                    progressDialog.show();
+                    Dialogos.dialogoErrorConexion(getContext());
                 }
-
-
                 Fragment fragmentoGenerico = new SinCita();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager
-                        .beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
             }
         });
     }
 
+    /**
+     * @param inflater infla la vista XML
+     * @param container muestra el contenido
+     * @param savedInstanceState guarda los datos en el estado de la instancia
+     * @return la vista con los elemetos del XML y metodos
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        /* infla la vista del fragmento */
         return inflater.inflate(R.layout.asesor_fragmento_con_cita, container, false);
     }
 
@@ -218,6 +187,10 @@ public class ConCita extends Fragment {
         }
     }
 
+    /**
+     * Reciba una llamada cuando se asocia el fragmento con la actividad
+     * @param context estado actual de la aplicacion
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -226,6 +199,9 @@ public class ConCita extends Fragment {
         }
     }
 
+    /**
+     *Se lo llama cuando se desasocia el fragmento de la actividad.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -251,14 +227,20 @@ public class ConCita extends Fragment {
         });
     }
 
-    /**
-     * esta clase debe ser implementada en las actividades que contengan fragmentos
-     * para que exista comunicacion entre los fragmentos
-     * Para mas informacion http://developer.android.com/training/basics/fragments/communicating.html
-     * Comunicacion entre fragmentos
-     */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+    /**
+     *
+     */
+    private void variables(){
+        connected = new Connected();
+        spinner = (Spinner) rootView.findViewById(R.id.afcc_spinner_estados);
+        btnAplicar = (Button) rootView.findViewById(R.id.afcc_btn_aplicar);
+        btnClienteSinCita = (Button) rootView.findViewById(R.id.afcc_btn_sin_cita);
+        tvFecha = (TextView) rootView.findViewById(R.id.afcc_tv_fecha);
+        tvRegistros = (TextView) rootView.findViewById(R.id.afcc_tv_registros);
     }
 
     private void fechas(){tvFecha.setText(Dialogos.fechaActual());}
@@ -373,7 +355,7 @@ public class ConCita extends Fragment {
                         pagina = Config.pidePagina(getDatos1);
                         sendJson(false);
                     }
-                }, 1000);
+                }, Config.TIME_HANDLER);
             }
         });
     }

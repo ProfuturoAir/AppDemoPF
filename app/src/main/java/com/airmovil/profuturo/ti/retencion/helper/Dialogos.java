@@ -8,18 +8,25 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.support.v7.app.AlertDialog.Builder;
 
 import java.util.Calendar;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.Inicio;
+
 /**
  * Created by tecnicoairmovil on 25/04/17.
  */
 
 public class Dialogos extends Activity{
+
+    Activity activity = this;
 
     public static String fechaActual(){
         Calendar calendar = Calendar.getInstance();
@@ -172,8 +179,8 @@ public class Dialogos extends Activity{
      */
     public static final void dialogoErrorDatos(Context ctx){
         AlertDialog.Builder dialog  = new AlertDialog.Builder(ctx);
-        dialog.setTitle("Error en datos");
-        dialog.setMessage("Lo sentimos ocurrio un error al formar los datos");
+        dialog.setTitle(ctx.getResources().getString(R.string.titulo_error_datos));
+        dialog.setMessage(ctx.getResources().getString(R.string.msj_error_datos));
         dialog.setCancelable(true);
         dialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             @Override
@@ -184,11 +191,15 @@ public class Dialogos extends Activity{
         dialog.create().show();
     }
 
+    /**
+     * Dialogo de geolocalizacion
+     * @param ctx referencia de llamada del fragmento o actividad
+     */
     public static final void dialogoActivarLocalizacion(final Context ctx){
         AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
         builder.setCancelable(false);
-        builder.setTitle("No se pudo acceder a las coordenadas de su localización");
-        builder.setMessage("¿Desea habílitar su localización?");
+        builder.setTitle(ctx.getResources().getString(R.string.titulo_activacion_gps));
+        builder.setMessage(ctx.getResources().getString(R.string.msj_activacion_gps));
         builder.setInverseBackgroundForced(true);
         builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -203,4 +214,45 @@ public class Dialogos extends Activity{
         AlertDialog alert = builder.create();
         alert.show();
     }
+
+    /**
+     * Muestra mensaje de fechas vacias
+     * @param context referencia de la llamada, fragmento o actividad
+     */
+    public static final void dialogoFechasVacias(Context context){
+        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_peligro));
+        progressDialog.setTitle(context.getResources().getString(R.string.error_fechas_vacias));
+        progressDialog.setMessage(context.getResources().getString(R.string.msj_error_fechas));
+        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog.dismiss();
+                    }
+                });
+        progressDialog.show();
+    }
+
+    /**
+     * @param ctx parametro 1 referencia de la llamada, fragmento o actividad
+     * @param titulo parametro 2 titulo del dialogo
+     * @param msj parametro 3 mensaje del dialogo
+     */
+    public static final void dialogoErrorRespuesta(Context ctx, String titulo, String msj){
+        AlertDialog.Builder dialog  = new AlertDialog.Builder(ctx);
+        dialog.setTitle("Error: " + titulo);
+        dialog.setMessage(msj);
+        dialog.setCancelable(true);
+        dialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        dialog.create().show();
+    }
+
+
+
 }

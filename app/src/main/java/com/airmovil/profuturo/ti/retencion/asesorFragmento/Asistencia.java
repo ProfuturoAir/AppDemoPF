@@ -11,34 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.airmovil.profuturo.ti.retencion.R;
 public class Asistencia extends Fragment {
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-
-    private String mParam1;
-    private String mParam2;
     private FragmentTabHost mTabHost;
     private OnFragmentInteractionListener mListener;
 
-    public Asistencia() {
-        // contructor vacio es requerido
-    }
-
-    /**
-     * Se envian los parametros
-     * @param param1
-     * @param param2
-     * para enviarlos al fragmento Asistencia
-     * @return
-     */
-    public static Asistencia newInstance(String param1, String param2) {
-        Asistencia fragment = new Asistencia();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    public Asistencia() {/* contructor vacio es requerido */}
 
     /**
      * El sistema lo llama cuando crea el fragmento
@@ -47,10 +23,6 @@ public class Asistencia extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -94,8 +66,6 @@ public class Asistencia extends Fragment {
      * Para permitir que se comunique este fragmento con
      * la actividad y potencialmente otros fragmentos contenidos en esta actividad.
      * Ver la lección de formación de Android
-     * <a href ="Http://developer.android.com/training/basics/fragments/communicating.html">
-     * Comunicarse con otros fragmentos </a> para obtener más información.
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
