@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Asesor;
-import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
@@ -28,12 +27,7 @@ import org.json.JSONObject;
 import java.util.Map;
 
 public class ReporteClientesDetalle extends Fragment {
-    private static final String TAG = ReporteClientesDetalle.class.getSimpleName();
-    private static final String ARG_PARAM1 = "curp";
-    private static final String ARG_PARAM2 = "idTramite";
-    private static final String ARG_PARAM3 = "hora";
-    private static final String ARG_PARAM4 = "fechaInicio";
-    private static final String ARG_PARAM5 = "fechaFin";
+    private static final String TAG = ReporteClientesDetalle.class.getSimpleName(), ARG_PARAM1 = "curp", ARG_PARAM2 = "idTramite", ARG_PARAM3 = "hora", ARG_PARAM4 = "fechaInicio", ARG_PARAM5 = "fechaFin";
     private TextView tvInicial, tvNombreAsesor, tvNumeroEmpleado, tvFecha, tvNombreCliente, tvNumeroCuentaCliente, tvNSS, tvEstatus, tvSaldo, tvSucursales, tvHoraAtencion, tvCurp;
     private View rootView;
     private IResult mResultCallback = null;
@@ -47,7 +41,9 @@ public class ReporteClientesDetalle extends Fragment {
     }
 
     /**
-     * @param savedInstanceState
+     * Utilice este método de fábrica para crear una nueva instancia de
+     * Este fragmento utilizando los parámetros proporcionados.
+     * @param savedInstanceState parametros a enviar para conservar en el bundle
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,8 +51,10 @@ public class ReporteClientesDetalle extends Fragment {
     }
 
     /**
-     * @param view
-     * @param savedInstanceState
+     * Se llama inmediatamente después de que onCreateView(LayoutInflater, ViewGroup, Bundle) ha onCreateView(LayoutInflater, ViewGroup, Bundle)
+     * pero antes de que se haya onCreateView(LayoutInflater, ViewGroup, Bundle) estado guardado en la vista.
+     * @param view regresa la vista
+     * @param savedInstanceState parametros a enviar para conservar en el bundle
      */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -84,21 +82,16 @@ public class ReporteClientesDetalle extends Fragment {
     }
 
     /**
-     *
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
+     * @param inflater se utiliza para inflar el XML
+     * @param container contiene los elementos de la vista
+     * @param savedInstanceState guarda los datos enviados
+     * @return la vista con elemdntos
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.asesor_fragmento_reporte_clientes_detalle, container, false);
     }
 
-    /**
-     *
-     * @param uri
-     */
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -106,8 +99,8 @@ public class ReporteClientesDetalle extends Fragment {
     }
 
     /**
-     *
-     * @param context
+     * Reciba una llamada cuando se asocia el fragmento con la actividad
+     * @param context estado actual de la aplicacion
      */
     @Override
     public void onAttach(Context context) {
@@ -118,7 +111,7 @@ public class ReporteClientesDetalle extends Fragment {
     }
 
     /**
-     *
+     * Se implementa este metodo, para generar el regreso con clic nativo de android
      */
     @Override
     public void onDetach() {
@@ -126,6 +119,9 @@ public class ReporteClientesDetalle extends Fragment {
         mListener = null;
     }
 
+    /**
+     * Método que se ejecuta al accionar la opcion de regreso
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -219,14 +215,15 @@ public class ReporteClientesDetalle extends Fragment {
             }
             Log.d(TAG, "<- RQT ->\n" + json + "\n");
         } catch (JSONException e){
-            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
+            Dialogos.msj(getContext(),"Error","Existe un error al formar la peticion");
         }
 
         volleySingleton.postDataVolley("primerPaso", Config.URL_GENERAL_REPORTE_CLIENTE, json);
     }
 
     /**
-     * @param obj
+     * Inicia este metodo para llenar la lista de elementos, cada 10, inicia solamente con 10, despues inicia el metodo segundoPaso
+     * @param obj jsonObject
      */
     private void primerPaso(JSONObject obj){
         Log.d(TAG, "<- Response -> \n"  + obj + "\n");

@@ -26,24 +26,13 @@ import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.DrawingView;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
-import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
-import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Map;
-import java.util.TimeZone;
 
 public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks{
     /*inicializacion de los paramentros del fragmento*/
@@ -85,6 +74,10 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
         return fragment;
     }
 
+    /**
+     * Método principal onCreate
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +87,12 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
         }
     }
 
+    /**
+     * Método donde se castea los Views del layout
+     * y agrega los eventos a los Layout
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // TODO: metodo para callback de volley
@@ -127,7 +126,7 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
             public void onClick(View v) {
                 dvFirma.startNew();
                 dvFirma.setDrawingCacheEnabled(true);
-                Config.dialogoContenidoLimpio(getContext());
+                Dialogos.dialogoContenidoLimpio(getContext());
             }
         });
 
@@ -137,7 +136,7 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
                 String getLongitud1 = tvLongitud.getText().toString();
                 String getLatitud1 = tvLatitud.getText().toString();
                 if(!dvFirma.isActive()) {
-                    Config.dialogoRequiereFirma(getContext());
+                    Dialogos.dialogoRequiereFirma(getContext());
                 }else if(getLatitud1.isEmpty() && getLongitud1.isEmpty()){
                     final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
                     progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_coordenadas));
@@ -225,7 +224,13 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
         });
     }
 
-
+    /**
+     * Método que infla la vista del fragmento
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         /* infla la vista del fragmento */
@@ -238,6 +243,10 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
         }
     }
 
+    /**
+     * Método que se encarga de superponer los fragmentos en el activity
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -246,12 +255,18 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
         }
     }
 
+    /**
+     * Método que elimina el fragmento al desasociarlo de la activity
+     */
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
+    /**
+     * Método que destruye el fragmento
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -259,6 +274,9 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
         apiClient.disconnect();
     }
 
+    /**
+     * Método donde se pausa el fragmento
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -266,11 +284,17 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
         apiClient.disconnect();
     }
 
+    /**
+     * Método que se ejecuta para iniciar el fragmento
+     */
     @Override
     public void onStart() {
         super.onStart();
     }
 
+    /**
+     * Método que se ejecuta para detener el fragmento
+     */
     @Override
     public void onStop() {
         if(apiClient.isConnected())
@@ -279,6 +303,9 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
         super.onStop();
     }
 
+    /**
+     * Método que se ejecuta al accionar la opcion de regreso
+     */
     @Override
     public void onResume() {
         LocationManager mlocManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
@@ -289,6 +316,14 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
         super.onResume();
     }
 
+    /**
+     * Método que verifica si tiene activado el permiso
+     * de la localización
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_LOCATION) {
@@ -304,6 +339,10 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
         }
     }
 
+    /**
+     * Método que sirve para conectar la aplicacion al GPS
+     * @param bundle
+     */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -331,6 +370,10 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * Método que actualiza las coordenadas del GPS
+     * @param loc
+     */
     private void updateUI(Location loc){
         if (loc != null){
             tvLongitud.setText(String.valueOf(loc.getLatitude()));
@@ -401,20 +444,24 @@ public class AsistenciaEntrada extends Fragment implements GoogleApiClient.OnCon
             json.put("rqt", rqt);
             Log.d("TAG", "REQUEST -->" + json);
         } catch (JSONException e){
-            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
+            Dialogos.msj(getContext(),"Error","Existe un error al formar la peticion");
         }
         volleySingleton.postDataVolley("primerPaso", Config.URL_REGISTRAR_ASISTENCIA, json);
     }
 
+    /**
+     * Método donde se obtiene el response
+     * @param obj
+     */
     private void primerPaso(JSONObject obj){
         Log.d("TAG", "primerPaso: "  + obj );
         try{
             String status = obj.getString("status");
             String statusText = obj.getString("statusText");
             if(Integer.parseInt(status) == 200){
-                Config.msj(getContext(), "Envio correcto", "Se ha registrado, la entrada de hoy \nFecha:" + Dialogos.fechaActual() + " \nhora: " +Config.getHoraActual());
+                Dialogos.msj(getContext(), "Envio correcto", "Se ha registrado, la entrada de hoy \nFecha:" + Dialogos.fechaActual() + " \nhora: " +Config.getHoraActual());
             }else{
-                Config.msj(getContext(), "Error: " + status, statusText);
+                Dialogos.msj(getContext(), "Error: " + status, statusText);
             }
         }catch (JSONException e){
             e.printStackTrace();

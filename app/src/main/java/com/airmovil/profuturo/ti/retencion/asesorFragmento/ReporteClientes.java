@@ -26,34 +26,18 @@ import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
-import com.airmovil.profuturo.ti.retencion.helper.MySingleton;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.AsesorReporteClientesModel;
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ReporteClientes extends Fragment {
-    public static final String TAG = ReporteClientes.class.getSimpleName();
-    private static final String ARG_PARAM_1 = "param1";
-    private static final String ARG_PARAM_2 = "param2";
-    private static final String ARG_PARAM_3 = "param3";
-    private static final String ARG_PARAM_4 = "param4";
-    private static final String ARG_PARAM_5 = "param5";
-    private int sParam1; // ids
-    private String sParam2; // Id dato
-    private String sParam3; // fecha Inicio
-    private String sParam4; // fecha fin
-    private int sParam5; // Emitidos
+    public static final String TAG = ReporteClientes.class.getSimpleName(), ARG_PARAM_1 = "param1", ARG_PARAM_2 = "param2", ARG_PARAM_3 = "param3", ARG_PARAM_4 = "param4", ARG_PARAM_5 = "param5";
     private View rootView;
     private TextView tvFecha, tvEmitidos, tvNoEmitidos, tvSaldoEmitido, tvSaldoNoEmitido, tvRangoFecha1, tvRangoFecha2, tvRegistros;
     private Spinner spinnerIds, spinnerEmitidos;
@@ -64,7 +48,6 @@ public class ReporteClientes extends Fragment {
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private AsesorReporteClientesAdapter adapter;
     private Connected connected;
-    private int filas;
     private int pagina = 1;
     private int numeroMaximoPaginas = 0;
     private Fragment borrar = this;
@@ -73,7 +56,9 @@ public class ReporteClientes extends Fragment {
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
 
-    public ReporteClientes() { /* Requiere un constructor vacio */ }
+    public ReporteClientes() {
+        /* Requiere un constructor vacio */
+    }
 
     /**
      * Utilice este método de fábrica para crear una nueva instancia de
@@ -105,15 +90,6 @@ public class ReporteClientes extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            sParam1 = getArguments().getInt(ARG_PARAM_1);
-            sParam2 = getArguments().getString(ARG_PARAM_2);
-            sParam3 = getArguments().getString(ARG_PARAM_3);
-            sParam4 = getArguments().getString(ARG_PARAM_4);
-            sParam5 = getArguments().getInt(ARG_PARAM_5);
-        }
-
-
     }
 
     /**
@@ -159,14 +135,14 @@ public class ReporteClientes extends Fragment {
             @Override
             public void onClick(View v) {
                 if(tvRangoFecha1.getText().toString().isEmpty() || tvRangoFecha2.getText().toString().isEmpty()){
-                    Config.dialogoFechasVacias(getContext());
+                    Dialogos.dialogoFechasVacias(getContext());
                 }
                 else {
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                     ReporteClientes procesoDatosFiltroInicio = ReporteClientes.newInstance(
-                            sParam1 = spinnerIds.getSelectedItemPosition(), sParam2 = etIngresar.getText().toString(),
-                            sParam3 = tvRangoFecha1.getText().toString(), sParam4 = tvRangoFecha2.getText().toString(),
-                            sParam5 = spinnerEmitidos.getSelectedItemPosition(), rootView.getContext());
+                            spinnerIds.getSelectedItemPosition(), etIngresar.getText().toString(),
+                            tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(),
+                            spinnerEmitidos.getSelectedItemPosition(), rootView.getContext());
                     borrar.onDestroy();
                     ft.remove(borrar).replace(R.id.content_asesor, procesoDatosFiltroInicio).addToBackStack(null).commit();
                     Config.teclado(getContext(), etIngresar);
@@ -219,7 +195,6 @@ public class ReporteClientes extends Fragment {
      * A la actividad y potencialmente otros fragmentos contenidos en esta actividad.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
@@ -410,7 +385,6 @@ public class ReporteClientes extends Fragment {
                 }
                 getDatos1.add(getDatos2);
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
         }

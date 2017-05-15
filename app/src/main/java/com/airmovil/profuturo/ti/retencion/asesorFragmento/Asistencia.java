@@ -35,6 +35,10 @@ public class Asistencia extends Fragment {
         mTabHost.addTab(mTabHost.newTabSpec("Entrada comida").setIndicator("Salida"), AsistenciaSalida.class, null);
     }
 
+    /**
+     * Método principal onCreate
+     * @param savedInstanceState
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         /* infla la vista del fragmento */
@@ -47,6 +51,10 @@ public class Asistencia extends Fragment {
         }
     }
 
+    /**
+     * Método que se encarga de superponer los fragmentos en el activity
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -55,6 +63,9 @@ public class Asistencia extends Fragment {
         }
     }
 
+    /**
+     * Método que elimina el fragmento al desasociarlo de la activity
+     */
     @Override
     public void onDetach() {
         super.onDetach();

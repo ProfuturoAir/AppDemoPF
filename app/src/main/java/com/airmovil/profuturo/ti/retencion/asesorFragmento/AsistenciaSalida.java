@@ -53,7 +53,6 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
     private Connected connected;
-
     private OnFragmentInteractionListener mListener;
 
     public AsistenciaSalida() {
@@ -76,11 +75,21 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
         return fragment;
     }
 
+    /**
+     * Método principal onCreate
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * Método donde se castea los Views del layout
+     * y agrega los eventos a los Layout
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // TODO: metodo para callback de volley
@@ -94,19 +103,11 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
         btnLimpiar = (Button) rootView.findViewById(R.id.buttonLimpiar4);
         btnGuardar = (Button) rootView.findViewById(R.id.buttonGuardar4);
         btnCancelar = (Button) rootView.findViewById(R.id.buttonCancelar4);
-
         dvFirma = (DrawingView) view.findViewById(R.id.drawinView4);
         dvFirma.setBrushSize(5);
         dvFirma.setColor("#000000");
         dvFirma.setFocusable(true);
-
-        apiClient = new GoogleApiClient.Builder(getActivity())
-                .enableAutoManage(getActivity(),this)
-                .addConnectionCallbacks(this)
-                .addApi(LocationServices.API)
-                .build();
-
-
+        apiClient = new GoogleApiClient.Builder(getActivity()).enableAutoManage(getActivity(),this).addConnectionCallbacks(this).addApi(LocationServices.API).build();
         new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ") {
             @Override
             public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition pos) {
@@ -127,7 +128,7 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
             public void onClick(View v) {
                 dvFirma.startNew();
                 dvFirma.setDrawingCacheEnabled(true);
-                Config.dialogoContenidoLimpio(getContext());
+                Dialogos.dialogoContenidoLimpio(getContext());
             }
         });
 
@@ -137,7 +138,7 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
                 String getLongitud1 = tvLongitud.getText().toString();
                 String getLatitud1 = tvLatitud.getText().toString();
                 if(!dvFirma.isActive()) {
-                    Config.dialogoRequiereFirma(getContext());
+                    Dialogos.dialogoRequiereFirma(getContext());
                 }else if(getLatitud1.isEmpty() && getLongitud1.isEmpty()){
                     final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
                     progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_coordenadas));
@@ -227,10 +228,15 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
         });
     }
 
-
+    /**
+     * Método que infla la vista del fragmento
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        /* infla la vista del fragmento */
         return inflater.inflate(R.layout.asesor_fragmento_asistencia_salida, container, false);
     }
 
@@ -240,6 +246,10 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
         }
     }
 
+    /**
+     * Método que se encarga de superponer los fragmentos en el activity
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -248,12 +258,18 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
         }
     }
 
+    /**
+     * Método que elimina el fragmento al desasociarlo de la activity
+     */
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
+    /**
+     * Método que destruye el fragmento
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -261,6 +277,9 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
         apiClient.disconnect();
     }
 
+    /**
+     * Método donde se pausa el fragmento
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -268,11 +287,17 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
         apiClient.disconnect();
     }
 
+    /**
+     * Método que se ejecuta para iniciar el fragmento
+     */
     @Override
     public void onStart() {
         super.onStart();
     }
 
+    /**
+     * Método que se ejecuta para detener el fragmento
+     */
     @Override
     public void onStop() {
         if(apiClient.isConnected())
@@ -281,6 +306,9 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
         super.onStop();
     }
 
+    /**
+     * Método que se ejecuta al accionar la opcion de regreso
+     */
     @Override
     public void onResume() {
         LocationManager mlocManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
@@ -288,6 +316,14 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
         super.onResume();
     }
 
+    /**
+     * Método que verifica si tiene activado el permiso
+     * de la localización
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_LOCATION) {
@@ -304,6 +340,10 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
         }
     }
 
+    /**
+     * Método que sirve para conectar la aplicacion al GPS
+     * @param bundle
+     */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -315,14 +355,10 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
-
-    }
+    public void onConnectionSuspended(int i) {}
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
 
     /**
      * esta clase debe ser implementada en las actividades
@@ -335,6 +371,10 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * Método que actualiza las coordenadas del GPS
+     * @param loc
+     */
     private void updateUI(Location loc){
         if (loc != null){
             tvLongitud.setText(String.valueOf(loc.getLatitude()));
@@ -403,20 +443,24 @@ public class AsistenciaSalida extends Fragment implements GoogleApiClient.OnConn
             json.put("rqt", rqt);
             Log.d("TAG", "REQUEST -->" + json);
         } catch (JSONException e){
-            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
+            Dialogos.msj(getContext(),"Error","Existe un error al formar la peticion");
         }
         volleySingleton.postDataVolley("primerPaso", Config.URL_REGISTRAR_ASISTENCIA, json);
     }
 
+    /**
+     * Método donde se obtiene el response
+     * @param obj
+     */
     private void primerPaso(JSONObject obj){
         Log.d("TAG", "primerPaso: "  + obj );
         try{
             String status = obj.getString("status");
             String statusText = obj.getString("statusText");
             if(Integer.parseInt(status) == 200){
-                Config.msj(getContext(), "Envio correcto", "Se ha registrado, la salida.\nFecha:" + Dialogos.fechaActual()+ " \nhora: " + Config.getHoraActual());
+                Dialogos.msj(getContext(), "Envio correcto", "Se ha registrado, la salida.\nFecha:" + Dialogos.fechaActual()+ " \nhora: " + Config.getHoraActual());
             }else{
-                Config.msj(getContext(), "Error: " + status, statusText);
+                Dialogos.msj(getContext(), "Error: " + status, statusText);
             }
         }catch (JSONException e){
             e.printStackTrace();
