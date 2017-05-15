@@ -107,7 +107,7 @@ public class Inicio extends Fragment {
                 final String fechaIncial = tvRangoFecha1.getText().toString();
                 final String fechaFinal = tvRangoFecha2.getText().toString();
                 if(fechaIncial.equals("") || fechaFinal.equals("")){
-                    Config.dialogoFechasVacias(getContext());
+                    Dialogos.dialogoFechasVacias(getContext());
                 }else {
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                     Fragment procesoDatosFiltroInicio = Inicio.newInstance(fechaIncial, fechaFinal, rootView.getContext());
@@ -236,7 +236,7 @@ public class Inicio extends Fragment {
             json.put("rqt", rqt);
             Log.d(TAG, "RQT -->" + json);
         } catch (JSONException e){
-            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
+            Dialogos.msj(getContext(),"Error","Existe un error al formar la peticion");
         }
         volleySingleton.postDataVolley("primerPaso", Config.URL_CONSULTAR_RESUMEN_RETENCIONES, json);
     }

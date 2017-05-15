@@ -192,7 +192,7 @@ public class ReporteClientesDetalle extends Fragment {
      */
     private void sendJson(final boolean primeraPeticion){
         if (primeraPeticion)
-            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
+            loading = ProgressDialog.show(getActivity(), getResources().getString(R.string.titulo_carga_datos), getResources().getString(R.string.msj_carga_datos), false, false);
         else
             loading = null;
 

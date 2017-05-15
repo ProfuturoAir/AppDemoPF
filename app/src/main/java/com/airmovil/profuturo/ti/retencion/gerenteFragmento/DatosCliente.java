@@ -297,7 +297,7 @@ public class DatosCliente extends Fragment {
             obj.put("rqt", rqt);
             Log.d(TAG, "Primera peticion-->" + obj);
         } catch (JSONException e) {
-            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
+            Dialogos.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
         }
         volleySingleton.postDataVolley("primerPaso", Config.URL_CUNSULTAR_DATOS_CLIENTE, obj);
     }
@@ -335,7 +335,7 @@ public class DatosCliente extends Fragment {
                 tvClienteFecha.setText("" + fechaConsulta);
                 tvClienteSaldo.setText("" + Config.nf.format(saldo));
             }else{
-                Config.msj(getContext(), "Error: " + status, statusText);
+                Dialogos.dialogoErrorDatos(getContext());
             }
         }catch (JSONException e){
             e.printStackTrace();

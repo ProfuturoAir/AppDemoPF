@@ -168,7 +168,7 @@ public class SinCita extends Fragment {
                     String valores = etDatos.getText().toString().trim();
                     String seleccion = spinner.getSelectedItem().toString();
                     if(seleccion.equals("Selecciona...")) {
-                        Config.dialogoDatosVacios(getContext());
+                        Dialogos.dialogoDatosVacios(getContext());
                     }else{
                         if(valores.isEmpty()) {
                             switch (seleccion){
@@ -191,7 +191,7 @@ public class SinCita extends Fragment {
                         }
                     }
                 }else{
-                    Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
+                    Dialogos.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                 }
             }
         });
@@ -406,7 +406,7 @@ public class SinCita extends Fragment {
                 }
             }else{
                 statusText = obj.getString("statusText");
-                Config.msj(getContext(), "Error", statusText);
+                Dialogos.msj(getContext(), "Error", statusText);
             }
         }catch (JSONException e){
             e.printStackTrace();
@@ -415,6 +415,4 @@ public class SinCita extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
     }
-
-
 }

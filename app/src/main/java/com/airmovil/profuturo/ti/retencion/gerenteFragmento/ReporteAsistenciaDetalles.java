@@ -38,11 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReporteAsistenciaDetalles extends Fragment {
-    private static final String TAG = ReporteAsistenciaDetalles.class.getSimpleName();
-    private static final String ARG_PARAM1 = "numeroEmpleado";
-    private static final String ARG_PARAM2 = "fechaInicio";
-    private static final String ARG_PARAM3 = "fechaFin";
-    private static final String ARG_PARAM4 = "nombreEmpleado";
+    private static final String TAG = ReporteAsistenciaDetalles.class.getSimpleName(), ARG_PARAM1 = "numeroEmpleado", ARG_PARAM2 = "fechaInicio", ARG_PARAM3 = "fechaFin", ARG_PARAM4 = "nombreEmpleado";
     private String mParam1 = "" /*NumeroEmpleado*/, mParam2 = ""/*FechaInicio*/, mParam3 = "" /*fechaFinal*/, mParam4 = "" /*nombreEmpleado*/;
     private int filas, pagina = 1, numeroMaximoPaginas = 0;
     private View rootView;
@@ -156,14 +152,14 @@ public class ReporteAsistenciaDetalles extends Fragment {
             public void onClick(View v) {
                 if(connected.estaConectado(getContext())){
                     if(tvRangoFecha1.getText().toString().isEmpty() || tvRangoFecha2.getText().toString().isEmpty()){
-                        Config.dialogoFechasVacias(getContext());
+                        Dialogos.dialogoFechasVacias(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         ReporteAsistenciaDetalles fragmento = ReporteAsistenciaDetalles.newInstance(mParam1,  tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), mParam4, rootView.getContext());
                         borrar.onDestroy();ft.remove(borrar).replace(R.id.content_gerente, fragmento).addToBackStack(null).commit();
                     }
                 }else{
-                    Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
+                    Dialogos.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                 }
             }
         });

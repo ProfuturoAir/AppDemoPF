@@ -302,8 +302,7 @@ public class DatosAsesor extends Fragment {
                 });
                 dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
+                    public void onClick(DialogInterface dialog, int which) {}
                 });
                 dlgAlert.create().show();
             }

@@ -82,7 +82,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
             public void onClick(View v) {
                 dvFirma.startNew();
                 dvFirma.setDrawingCacheEnabled(true);
-                Config.msjTime(v.getContext(), "Mensaje", "Limpiando contenido", 2000);
+                Dialogos.msjTime(v.getContext(), "Mensaje", "Limpiando contenido", 2000);
             }
         });
 
@@ -119,7 +119,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                 final String latitud = (String) lblLatitud.getText();
                 final String longitud = (String) lblLongitud.getText();
                 if(!dvFirma.isActive()) {
-                    Config.msj(v.getContext(),"Error", "Se requiere una firma");
+                    Dialogos.msj(v.getContext(),"Error", "Se requiere una firma");
                 }else if(latitud.equals("(desconocida)")||longitud.equals("(desconocida)")){
                     Log.d("Coordenadas", "nulas");
                 }else{

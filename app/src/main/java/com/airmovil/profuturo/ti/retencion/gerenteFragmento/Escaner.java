@@ -26,7 +26,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
@@ -38,10 +37,8 @@ import com.android.volley.VolleyError;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -174,7 +171,7 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
             @Override
             public void onClick(View v) {
                 if(imageView.getDrawable() == null){
-                    Config.dialogoNoExisteUnDocumento(getContext());
+                    Dialogos.dialogoNoExisteUnDocumento(getContext());
                 }else {
                     AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
                     dialogo1.setTitle("Finalizando");
@@ -545,7 +542,7 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
             }
             Log.d("datos", "REQUEST-->" + obj);
         } catch (JSONException e){
-            Config.msj(getContext(), "Error", "Error al formar los datos");
+            Dialogos.msj(getContext(), "Error", "Error al formar los datos");
         }
         volleySingleton.postDataVolley("primerPaso", Config.URL_ENVIAR_DOCUMENTO_IFE_INE, obj);
     }

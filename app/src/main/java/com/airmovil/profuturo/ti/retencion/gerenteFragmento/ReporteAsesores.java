@@ -143,7 +143,7 @@ public class ReporteAsesores extends Fragment {
             public void onClick(View v) {
                 if(connected.estaConectado(getContext())){
                     if(tvRangoFecha1.getText().toString().isEmpty() ||  tvRangoFecha2.getText().toString().isEmpty()){
-                        Config.dialogoFechasVacias(getContext());
+                        Dialogos.dialogoFechasVacias(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         ReporteAsesores fragmento = ReporteAsesores.newInstance(etAsesor.getText().toString(),tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), rootView.getContext());
@@ -152,7 +152,7 @@ public class ReporteAsesores extends Fragment {
                     // TODO: ocultar teclado
                     Config.teclado(getContext(), etAsesor);
                 }else{
-                    Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
+                    Dialogos.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                 }
             }
         });

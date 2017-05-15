@@ -359,7 +359,7 @@ public class Encuesta1 extends Fragment {
             obj.put("rqt", rqt);
             Log.d(TAG, "REQUEST-->" + obj);
         } catch (JSONException e){
-            Config.msj(getContext(), "Error", "Error al formar los datos");
+            Dialogos.msj(getContext(), "Error", "Error al formar los datos");
         }
         volleySingleton.postDataVolley("primerPaso", Config.URL_ENVIAR_ENCUESTA, obj);
     }
