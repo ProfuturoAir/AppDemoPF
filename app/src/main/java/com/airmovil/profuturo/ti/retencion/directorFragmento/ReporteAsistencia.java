@@ -169,7 +169,7 @@ public class ReporteAsistencia extends Fragment{
             public void onClick(View v) {
                 if(connected.estaConectado(getContext())){
                     if(tvRangoFecha1.getText().toString().isEmpty() || tvRangoFecha2.getText().toString().isEmpty()){
-                        Config.dialogoFechasVacias(getContext());
+                        Dialogos.dialogoFechasVacias(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         ReporteAsistencia fragmento = ReporteAsistencia.newInstance(mParam1 = Config.ID_GERENCIA, mParam2 = Config.ID_SUCURSAL, etAsesor.getText().toString(), tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), rootView.getContext());
@@ -177,7 +177,7 @@ public class ReporteAsistencia extends Fragment{
                         Config.teclado(getContext(), etAsesor);
                     }
                 }else{
-                    Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
+                    Dialogos.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                 }
             }
         });
@@ -304,7 +304,7 @@ public class ReporteAsistencia extends Fragment{
             obj.put("rqt", rqt);
             Log.d(TAG, "<-RQT-> \n" + obj + "\n");
         } catch (JSONException e) {
-            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
+            Dialogos.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
         }
         volleySingleton.postDataVolley("" + primerPeticion, Config.URL_CONSULTAR_REPORTE_ASISTENCIA, obj);
     }

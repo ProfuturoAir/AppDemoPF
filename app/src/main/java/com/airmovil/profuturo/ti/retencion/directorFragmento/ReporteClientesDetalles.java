@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
@@ -94,7 +93,6 @@ public class ReporteClientesDetalles extends Fragment {
             mParam8 = getArguments().getString(ARG_PARAM8);
             mParam9 = getArguments().getString(ARG_PARAM9);
             mParam10 = getArguments().getString(ARG_PARAM10);
-            Log.d(TAG, "<- ** -> " +getArguments().toString());
         }
     }
 
@@ -241,7 +239,6 @@ public class ReporteClientesDetalles extends Fragment {
      * @param primeraPeticion valida que el proceso sea true
      */
     private void sendJson(final boolean primeraPeticion){
-
         if (primeraPeticion)
             loading = ProgressDialog.show(getActivity(), "Cargando datos", "Porfavor espere...", false, false);
         else
@@ -265,7 +262,7 @@ public class ReporteClientesDetalles extends Fragment {
             }
             Log.d("sendJson", " REQUEST -->" + obj);
         } catch (JSONException e){
-            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
+            Dialogos.msj(getContext(),"Error","Existe un error al formar la peticion");
         }
         volleySingleton.postDataVolley("" + primeraPeticion, Config.URL_CONSULTAR_REPORTE_RETENCION_CLIENTE_DETALLE, obj);
     }

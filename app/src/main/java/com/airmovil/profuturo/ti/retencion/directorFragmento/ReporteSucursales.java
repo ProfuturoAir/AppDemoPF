@@ -155,7 +155,7 @@ public class ReporteSucursales extends Fragment{
             @Override
             public void onClick(View v) {
                 if(tvRangoFecha1.getText().toString().equals("") || tvRangoFecha2.getText().toString().equals("")){
-                    Config.dialogoFechasVacias(getContext());
+                    Dialogos.dialogoFechasVacias(getContext());
                 }else {
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                     ReporteSucursales fragmento = ReporteSucursales.newInstance(0, Config.ID_SUCURSAL, "", tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), rootView.getContext());
@@ -281,7 +281,7 @@ public class ReporteSucursales extends Fragment{
             obj.put("rqt", rqt);
             Log.d(TAG, "< RQT -> \n" + obj + "\n");
         } catch (JSONException e) {
-            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
+            Dialogos.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
         }
         volleySingleton.postDataVolley("" + primerPeticion, Config.URL_CONSULTAR_REPORTE_RETENCION_SUCURSALES, obj);
     }

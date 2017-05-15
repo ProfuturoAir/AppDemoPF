@@ -425,7 +425,7 @@ public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient
             json.put("rqt", rqt);
             Log.d("TAG", "REQUEST -->" + json);
         } catch (JSONException e){
-            Dialogos.msj(getContext(),"Error","Existe un error al formar la peticion");
+            Dialogos.dialogoErrorDatos(getContext());
         }
         volleySingleton.postDataVolley("primerPaso", Config.URL_REGISTRAR_ASISTENCIA, json);
     }
@@ -442,7 +442,7 @@ public class AsistenciaComidaEntrada extends Fragment implements GoogleApiClient
             if(Integer.parseInt(status) == 200){
                 Dialogos.msj(getContext(), "Envio correcto", "Se ha registrado, la salida de comida.\nFecha:" + Dialogos.fechaActual() + " \nhora: " + Config.getHoraActual());
             }else{
-                Dialogos.msj(getContext(), "Error: " + status, statusText);
+                Dialogos.dialogoErrorRespuesta(getContext(),status, statusText);
             }
         }catch (JSONException e){
             e.printStackTrace();

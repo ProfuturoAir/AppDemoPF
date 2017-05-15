@@ -131,14 +131,14 @@ public class ReporteGerencias extends Fragment{
                 Connected connected = new Connected();
                 if(connected.estaConectado(getContext())){
                     if(tvRangoFecha1.getText().toString().isEmpty() || tvRangoFecha2.getText().toString().isEmpty()){
-                        Config.dialogoFechasVacias(getContext());
+                        Dialogos.dialogoFechasVacias(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         ReporteGerencias fragmento = ReporteGerencias.newInstance(tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), Config.ID_GERENCIA, rootView.getContext());
                         borrar.onDestroy();ft.remove(borrar).replace(R.id.content_director, fragmento).addToBackStack(null).commit();
                     }
                 }else{
-                    Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
+                    Dialogos.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                 }
             }
         });
@@ -277,7 +277,7 @@ public class ReporteGerencias extends Fragment{
             obj.put("rqt", rqt);
             Log.d(TAG, " <-RQT->" + linea + obj + linea);
         } catch (JSONException e) {
-            Config.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
+            Dialogos.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
         }
         volleySingleton.postDataVolley("" + primerPeticion, Config.URL_CONSULTAR_REPORTE_RETENCION_GERENCIAS, obj);
     }

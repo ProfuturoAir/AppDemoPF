@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
@@ -24,13 +22,8 @@ import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.VolleyError;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 public class Inicio extends Fragment {
@@ -116,7 +109,7 @@ public class Inicio extends Fragment {
                 final String fechaIncial = tvRangoFecha1.getText().toString();
                 final String fechaFinal = tvRangoFecha2.getText().toString();
                 if(fechaIncial.equals("") || fechaFinal.equals("")){
-                    Config.dialogoFechasVacias(getContext());
+                    Dialogos.dialogoFechasVacias(getContext());
                 }else {
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                     Fragment procesoDatosFiltroInicio = Inicio.newInstance(fechaIncial, fechaFinal, rootView.getContext());
@@ -244,7 +237,7 @@ public class Inicio extends Fragment {
             json.put("rqt", rqt);
             Log.d(TAG, "RQT -->" + json);
         } catch (JSONException e){
-            Config.msj(getContext(),"Error","Existe un error al formar la peticion");
+            Dialogos.dialogoErrorDatos(getContext());
         }
         volleySingleton.postDataVolley("primerPaso", Config.URL_CONSULTAR_RESUMEN_RETENCIONES, json);
     }
@@ -290,7 +283,7 @@ public class Inicio extends Fragment {
             iSaldoRetenido = (Integer) saldos.get("saldoRetenido");
             iSaldoNoRetenido = (Integer) saldos.get("saldoNoRetenido");
         } catch (JSONException e) {
-            Config.msj(getContext(), "Error", "Lo sentimos ocurrio un error con los datos");
+            Dialogos.dialogoErrorDatos(getContext());
         }
         tvRetenidos.setText("" + iRetenidos);
         tvNoRetenidos.setText("" + iNoRetenidos);

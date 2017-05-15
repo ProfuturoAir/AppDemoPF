@@ -156,7 +156,7 @@ public class ReporteAsesores extends Fragment {
                     // TODO: ocultar teclado
                     Config.teclado(getContext(), etAsesor);
                 }else{
-                    Config.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
+                    Dialogos.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));
                 }
             }
         });

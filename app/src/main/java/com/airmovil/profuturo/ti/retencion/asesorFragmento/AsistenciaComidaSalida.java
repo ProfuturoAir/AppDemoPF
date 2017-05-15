@@ -454,7 +454,7 @@ public class AsistenciaComidaSalida extends Fragment implements GoogleApiClient.
             if(Integer.parseInt(status) == 200){
                 Dialogos.msj(getContext(), "Envio correcto", "Se ha registrado, la salida de comida.\nFecha:" + Dialogos.fechaActual() + " \nhora: " +Config.getHoraActual());
             }else{
-                Dialogos.msj(getContext(), "Error: " + status, statusText);
+                Dialogos.dialogoErrorRespuesta(getContext(),status, statusText);
             }
         }catch (JSONException e){
             e.printStackTrace();

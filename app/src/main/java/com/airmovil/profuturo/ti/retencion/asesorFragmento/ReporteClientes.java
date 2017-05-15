@@ -285,7 +285,7 @@ public class ReporteClientes extends Fragment {
             obj.put("rqt", rqt);
             Log.d(TAG, "<- RQT ->\n" + obj + "\n");
         }catch (JSONException e){
-            e.printStackTrace();
+            Dialogos.msj(getContext(),"Error","Existe un error al formar la peticion");
         }
         volleySingleton.postDataVolley("" + primerPeticion, Config.URL_GENERAR_REPORTE_CLIENTE, obj);
     }
