@@ -79,6 +79,9 @@ public class ConCita extends Fragment {
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        if(getArguments() != null){
+            Log.e(TAG, "argumentos->" + getArguments().toString());
+        }
         super.onCreate(savedInstanceState);
     }
 

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Asesor;
@@ -19,6 +20,7 @@ import com.airmovil.profuturo.ti.retencion.asesorFragmento.DatosCliente;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.Inicio;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.CitasClientesModel;
 
@@ -99,7 +101,12 @@ public class CitasClientesAdapter extends RecyclerView.Adapter {
             myholder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    fragmentJumpDatosUsuario(pLetra, v,lista.getNombreCliente(),lista.getNumeroCuenta(),lista.getHora());
+
+                    if(lista.getNumeroCuenta().isEmpty()){
+                        Dialogos.dialogoNoExisteDato(mContext);
+                    }else{
+                        fragmentJumpDatosUsuario(pLetra, v,lista.getNombreCliente(),lista.getNumeroCuenta(),lista.getHora());
+                    }
                 }
             });
 
@@ -126,10 +133,6 @@ public class CitasClientesAdapter extends RecyclerView.Adapter {
         this.mOnLoadMoreListener = mOnLoadMoreListener;
     }
 
-    public void envioDatos(View view){
-
-    }
-
     public void fragmentJumpDatosUsuario(String idClienteCuenta, View view,String nombre,String numeroDeCuenta,String hora) {
         Fragment fragmento = new DatosAsesor();
         if (view.getContext() == null)
@@ -138,11 +141,6 @@ public class CitasClientesAdapter extends RecyclerView.Adapter {
             Asesor asesor = (Asesor) view.getContext();
 
             final Connected conected = new Connected();
-            /*if(conected.estaConectado(view.getContext())) {
-
-            }else{
-                Config.msj(view.getContext(),"Error conexión", "Sin Conexion por el momento.Cliente P-1.1.3");
-            }*/
             asesor.switchDatosAsesor(fragmento, idClienteCuenta,nombre,numeroDeCuenta,hora);
         }
     }

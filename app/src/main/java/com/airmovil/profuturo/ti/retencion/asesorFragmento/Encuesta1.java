@@ -80,7 +80,7 @@ public class Encuesta1 extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 cb1no.setChecked(false);
-                r1 = (b) ? false : null;
+                r1 = (b) ? true : null;
             }
         });
 

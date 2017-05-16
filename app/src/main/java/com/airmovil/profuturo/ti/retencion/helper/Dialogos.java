@@ -345,4 +345,19 @@ public class Dialogos extends Activity{
         dialog = ProgressDialog.show(context, title, message);
         return dialog;
     }
+
+    public static void dialogoNoExisteDato(Context context){
+        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_error));
+        progressDialog.setTitle(context.getResources().getString(R.string.titulo_no_existe_parametro));
+        progressDialog.setMessage(context.getResources().getString(R.string.msj_no_existe_parametro));
+        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog.dismiss();
+                    }
+                });
+        progressDialog.show();
+    }
 }
