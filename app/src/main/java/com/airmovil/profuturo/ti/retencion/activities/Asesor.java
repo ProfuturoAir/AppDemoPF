@@ -1,7 +1,5 @@
 package com.airmovil.profuturo.ti.retencion.activities;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,8 +20,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.Asistencia;
@@ -40,11 +38,9 @@ import com.airmovil.profuturo.ti.retencion.asesorFragmento.ReporteClientes;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.SinCita;
 import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
 import com.airmovil.profuturo.ti.retencion.fragmento.Calculadora;
-import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
 import com.airmovil.profuturo.ti.retencion.helper.ServicioJSON;
-import com.airmovil.profuturo.ti.retencion.helper.SessionManager;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
 
@@ -52,7 +48,6 @@ import java.util.HashMap;
 
 public class Asesor extends AppCompatActivity{
     private static final String TAG = Asesor.class.getSimpleName();
-    //private SessionManager mySharePreferences;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private Boolean checkMapsFragment = false;
@@ -77,7 +72,6 @@ public class Asesor extends AppCompatActivity{
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         // TODO: nueva instancia para el sharePreference
         mySharePreferences = MySharePreferences.getInstance(getApplicationContext());
-        //mySharePreferences = new SessionManager(getApplicationContext());
         // TODO: Validacion de la sesion del usuario
         validateSession();
 
@@ -90,6 +84,9 @@ public class Asesor extends AppCompatActivity{
 
     }
 
+    /**
+     *
+     */
     @Override
     public void onBackPressed() {
         final ProgressDialog progressDialog = new ProgressDialog(this, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
@@ -128,6 +125,12 @@ public class Asesor extends AppCompatActivity{
             setNavigationView();
             // TODO: mostrar informacion del usuairo en la navegacion
             setInformacionDrawer();
+
+            View view = this.getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
         }
     }
 
@@ -170,7 +173,6 @@ public class Asesor extends AppCompatActivity{
         NavigationView navigationView = (NavigationView) findViewById(R.id.asesor_nav_view);
         assert navigationView != null;
         navigationView.setItemIconTintList(null);
-
         if (navigationView != null) {
             //añadir caracteristicas
             setupDrawerContent(navigationView);
@@ -192,13 +194,8 @@ public class Asesor extends AppCompatActivity{
         navigationView.getMenu().hasVisibleItems();
         // TODO: obteniendo datos del sharePreference
         HashMap<String,String> datosUsuario = mySharePreferences.getUserDetails();
-        String apePaterno = datosUsuario.get(MySharePreferences.APELLIDO_PATERNO);
-        String apeMaterno = datosUsuario.get(MySharePreferences.APELLIDO_MATERNO);
-        String nombre = datosUsuario.get(MySharePreferences.NOMBRE);
-        char letra = nombre.charAt(0);
-        String inicial = Character.toString(letra);
-        navPrimeraLetra.setText(inicial);
-        navDatosGerente.setText(nombre + " " + apePaterno + " " + apeMaterno + "\nNúmero empleado: " + Config.usuarioCusp(getApplicationContext()));
+        navPrimeraLetra.setText(Character.toString(datosUsuario.get(MySharePreferences.NOMBRE).charAt(0)));
+        navDatosGerente.setText(datosUsuario.get(MySharePreferences.NOMBRE) + " " + datosUsuario.get(MySharePreferences.APELLIDO_PATERNO) + " " + datosUsuario.get(MySharePreferences.APELLIDO_MATERNO) + "\nNúmero empleado: " + Config.usuarioCusp(getApplicationContext()));
     }
 
     /**
@@ -213,7 +210,6 @@ public class Asesor extends AppCompatActivity{
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         menuItem.setChecked(true);
                         seleccionarItem(menuItem);
-                        Log.d(TAG,"DRAWER SELECCION");
                         drawerLayout.closeDrawers();
                         return true;
                     }
@@ -228,44 +224,26 @@ public class Asesor extends AppCompatActivity{
     private void seleccionarItem(MenuItem itemDrawer){
         Fragment fragmentoGenerico = null;
         FragmentManager fragmentManager = getSupportFragmentManager();
-        final Fragment borrarFragmento;
-
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.content_asesor);
         if(f instanceof DatosAsesor){
             checkProccess = true;
         }else if(f instanceof DatosCliente){
-            Log.d("Envia","a patir datos Cliente");
             global = "1.1.3.3";
             checkProccess = true;
         }else if(f instanceof Encuesta1){
-            Log.d("Envia","a patir Encuesta 1");
             global = "1.1.3.4";
             checkProccess = true;
         }else if(f instanceof Encuesta2){
-            Log.d("Envia","a patir Encuesta 2");
             global = "1.1.3.5";
             checkProccess = true;
         }else if(f instanceof Firma){
-            Log.d("Envia","a patir Aviso de Privacidad");
             global = "1.1.3.6";
             checkProccess = true;
         }else if(f instanceof Escaner){
-            //Log.d("Envia","a patir Firma");
-            //global = "1.1.3.7";
             checkProccess = true;
-        }/*else if(f instanceof Documento){
-            Log.d("Envia","a patir Documento");
-            global = "1.1.3.8";
-            checkProccess = true;
-        }else{
-            checkProccess = false;
-        }*/
+        }
         if (fragmentoGenerico != null){
-            fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.content_asesor, fragmentoGenerico)
-                    .addToBackStack("F_MAIN")
-                    .commit();
+            fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).addToBackStack("F_MAIN").commit();
         }
 
         //<editor-fold desc="Cambio de fragmentos">
@@ -301,7 +279,6 @@ public class Asesor extends AppCompatActivity{
                 if(checkProccess == false) {
                     checkMapsFragment = false;
                     fragmentoGenerico = new ConCita();
-                    //fragmentoGenerico = new Firma();
                     Asesor.itemMenu= new ConCita();
                 }else{
                     salirFragment(getApplicationContext());
@@ -310,7 +287,6 @@ public class Asesor extends AppCompatActivity{
             case R.id.asesor_nav_asistencia:
                 if(checkProccess == false) {
                     checkMapsFragment = false;
-                    //fragmentoGenerico = new ProcesoImplicacionesPendientes();
                     fragmentoGenerico = new Asistencia();
                 }else{
                     Asesor.itemMenu = new Asistencia();
@@ -342,12 +318,7 @@ public class Asesor extends AppCompatActivity{
         }
         //</editor-fold>
         if (fragmentoGenerico != null){
-
-            fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.content_asesor, fragmentoGenerico)
-                    .addToBackStack("F_MAIN")
-                    .commit();
+            fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).addToBackStack("F_MAIN").commit();
         }
     }
 
@@ -374,6 +345,12 @@ public class Asesor extends AppCompatActivity{
         dialogo1.show();
     }
 
+    /**
+     * Este es el manejador de resultados del contenido del Drive.
+     * Este método callback llama al método CreateFileOnGoogleDrive ()
+     * Y también llamado OpenFileFromGoogleDrive () método,
+     * Enviar método onActivityResult () para manejar el resultado.
+     */
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         switch (requestCode) {
@@ -393,10 +370,14 @@ public class Asesor extends AppCompatActivity{
         }
     }
 
+    /**
+     * envio de parametros a otro fragmento
+     * @param frag fragmento de cambio
+     * @param idClienteCuenta idClienteCuenta
+     */
     public void switchContent(Fragment frag, String idClienteCuenta) {
         Bundle bundle=new Bundle();
         bundle.putString("idClienteCuenta",idClienteCuenta);
-
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_asesor, frag, frag.toString());
@@ -404,14 +385,12 @@ public class Asesor extends AppCompatActivity{
         ft.commit();
     }
 
-    public void switchContent1(Fragment fragment, String datos){
-
-    }
-
+    /**
+     * Inicia este metodo cuando el usuario quiere salir del proceso de implicaciones
+     * @param context contexto
+     */
     public void salirFragment(Context context){
         AlertDialog.Builder dialogo1 = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppTheme));
-
-        /*AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getApplicationContext());*/
         dialogo1.setTitle("Confirmar");
         dialogo1.setMessage("\"¿Estás seguro que deseas cancelar el proceso " + global + " ?");
         dialogo1.setCancelable(false);
@@ -458,105 +437,133 @@ public class Asesor extends AppCompatActivity{
         dialogo1.show();
     }
 
+    /**
+     * Metodo para envio  de parametro al fragmnto
+     * @param frag
+     * @param idClienteCuenta
+     * @param nombre
+     * @param numeroDeCuenta
+     * @param hora
+     */
     public void switchDatosAsesor(Fragment frag, String idClienteCuenta,String nombre,String numeroDeCuenta,String hora) {
         Bundle bundle=new Bundle();
         bundle.putString("idClienteCuenta",idClienteCuenta);
         bundle.putString("nombre",nombre);
         bundle.putString("numeroDeCuenta",numeroDeCuenta);
         bundle.putString("hora",hora);
-
-        Log.d("NOMBRES ASE", "1" + nombre + " numero" + numeroDeCuenta);
-
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_asesor, frag, frag.toString());
-        ft.addToBackStack(null);
-        ft.commit();
+        ft.replace(R.id.content_asesor, frag, frag.toString()).addToBackStack(null).commit();
     }
 
+    /**
+     * metodo para envio de datos a fragmento datosCliente
+     * @param frag direccion del fragmento
+     * @param nombre nombre del cliente
+     * @param numeroDeCuenta numero de cuenta cliente
+     * @param hora hora de atencion del cliente
+     */
     public void switchDatosCliente(Fragment frag,String nombre,String numeroDeCuenta,String hora) {
         Bundle bundle=new Bundle();
         bundle.putString("nombre",nombre);
         bundle.putString("numeroDeCuenta",numeroDeCuenta);
         bundle.putString("hora",hora);
-
         frag.setArguments(bundle);
-        Log.d("NOMBRES PRE ", "1" + nombre + " numero" + numeroDeCuenta);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_asesor, frag, frag.toString());
-        ft.addToBackStack(null);
-        ft.commit();
+        ft.replace(R.id.content_asesor, frag, frag.toString()).addToBackStack(null).commit();
     }
 
+    /**
+     * Metodo para envio de datos a fragmento Encuesta1
+     * @param frag direccion del fragmento
+     * @param idTramite idTramite del cliente
+     * @param borrar borrar datos del fragmento
+     * @param nombre nombre del cliente
+     * @param numeroDeCuenta numeroCuenta clinete
+     * @param hora hora de atencion del cliente
+     */
     public void switchEncuesta1(Fragment frag,String idTramite,Fragment borrar,String nombre,String numeroDeCuenta,String hora) {
         Bundle bundle=new Bundle();
         bundle.putString("idTramite",idTramite);
         bundle.putString("nombre",nombre);
         bundle.putString("numeroDeCuenta",numeroDeCuenta);
         bundle.putString("hora",hora);
-
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_asesor, frag);
-        ft.remove(borrar);
-        ft.addToBackStack(null);
-        ft.commit();
-        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();
+        ft.replace(R.id.content_asesor, frag).remove(borrar).addToBackStack(null).commit();
     }
 
+    /**
+     * Metodo para enviar parametros a fragmeto
+     * @param frag direccion del fragmento envio
+     * @param idTramite idTramite del cliente
+     * @param borrar borrar datos del fragmento
+     * @param nombre nombre del cliente
+     * @param numeroDeCuenta numeroDeCuenta del cliente
+     * @param hora hora de atencion del cliente
+     */
     public void switchEncuesta2(Fragment frag,String idTramite,Fragment borrar,String nombre,String numeroDeCuenta,String hora) {
         Bundle bundle=new Bundle();
         bundle.putString("idTramite",idTramite);
         bundle.putString("nombre",nombre);
         bundle.putString("numeroDeCuenta",numeroDeCuenta);
         bundle.putString("hora",hora);
-
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_asesor, frag);
-        ft.remove(borrar);
-        ft.addToBackStack(null);
-        ft.commit();
-        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();
+        ft.replace(R.id.content_asesor, frag).remove(borrar).addToBackStack(null).commit();
     }
 
+    /**
+     * Metodo para enviar parametros a fragmento
+     * @param frag direccion del fragmento para envio
+     * @param idTramite idTramite del cliente
+     * @param borrar borrar datos del fragmento
+     * @param nombre nombre del cliente
+     * @param numeroDeCuenta numeroDeCuenta del cliente
+     * @param hora hora de atencion del cliente
+     */
     public void switchFirma(Fragment frag,String idTramite,Fragment borrar,String nombre,String numeroDeCuenta,String hora) {
         Bundle bundle=new Bundle();
         bundle.putString("idTramite",idTramite);
         bundle.putString("nombre",nombre);
         bundle.putString("numeroDeCuenta",numeroDeCuenta);
         bundle.putString("hora",hora);
-
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_asesor, frag);
-        ft.remove(borrar);
-        ft.addToBackStack(null);
-        ft.commit();
-        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();
+        ft.replace(R.id.content_asesor, frag).remove(borrar).addToBackStack(null).commit();
     }
 
-
+    /**
+     * Metodo para enviar parametros a fragmento
+     * @param frag direccion del fragmento para envio
+     * @param idTramite idTramite del cliente
+     * @param borrar borrar datos del fragmento
+     * @param nombre nombre del cliente
+     * @param numeroDeCuenta numeroDeCuenta del cliente
+     * @param hora hora de atencion del cliente
+     */
     public void switchDocumento(Fragment frag,String idTramite,Fragment borrar,String nombre,String numeroDeCuenta,String hora) {
         Bundle bundle=new Bundle();
         bundle.putString("idTramite",idTramite);
         bundle.putString("nombre",nombre);
         bundle.putString("numeroDeCuenta",numeroDeCuenta);
         bundle.putString("hora",hora);
-
         frag.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_asesor, frag);
         ft.remove(borrar);
         ft.addToBackStack(null);
         ft.commit();
-        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        //fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).remove(borrar).commit();
     }
 
+    /**
+     * Metodo para enviar parametros a fragmento
+     * @param fragment direccion del fragmento para envio
+     * @param idTramite idTramite del cliente
+     * @param fechaInicio fechaInicio
+     * @param fechaFin fechaFin
+     * @param hora hora de atencion del cliente
+     */
     public void switchDetalleCliente(Fragment fragment, String curp, int idTramite, String hora, String fechaInicio, String fechaFin) {
         Bundle bundle = new Bundle();
         bundle.putString("curp", curp);
@@ -569,7 +576,6 @@ public class Asesor extends AppCompatActivity{
         ft.replace(R.id.content_asesor, fragment);
         ft.addToBackStack(null);
         ft.commit();
-
     }
 
     /**

@@ -4,14 +4,12 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.database.MatrixCursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -44,7 +42,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class Director extends AppCompatActivity{
     private static final String TAG = Asesor.class.getSimpleName();
@@ -73,11 +70,9 @@ public class Director extends AppCompatActivity{
         sessionManager = MySharePreferences.getInstance(getApplicationContext());
         // TODO: Validacion de la sesion del usuario
         validateSession();
-
         initVolleyCallback();
         // TODO: llama clase singleton volley
         volleySingleton = VolleySingleton.getInstance(mResultCallback, getApplicationContext());
-
         volleySingleton.getDataVolley("Gerencias", Config.URL_GERENCIAS);
         volleySingleton.getDataVolley("Sucursales", Config.URL_SUCURSALES);
     }
@@ -86,18 +81,15 @@ public class Director extends AppCompatActivity{
      *  metodo para callback de volley
      */
     void initVolleyCallback() {
-
         mResultCallback = new IResult() {
             @Override
             public void notifySuccess(String requestType, JSONObject response) {
-
                 if(requestType.equals("Gerencias"))
                     try {
                         Gerencias(response.getJSONArray("Gerencias"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
                 if(requestType.equals("Sucursales"))
                     try {
                         Sucursales(response.getJSONArray("Sucursales"));
@@ -105,11 +97,8 @@ public class Director extends AppCompatActivity{
                         e.printStackTrace();
                     }
             }
-
             @Override
             public void notifyError(String requestType, VolleyError error) {
-                // Log.d(TAG, "Volley requester " + requestType);
-                // Log.d(TAG, "Volley JSON post" + "That didn't work! " + error.toString());
             }
         };
     }
@@ -194,7 +183,6 @@ public class Director extends AppCompatActivity{
         NavigationView navigationView = (NavigationView) findViewById(R.id.director_nav_view);
         assert navigationView != null;
         navigationView.setItemIconTintList(null);
-
         if (navigationView != null) {
             //añadir caracteristicas
             setupDrawerContent(navigationView);
@@ -210,14 +198,11 @@ public class Director extends AppCompatActivity{
     private void setInformacionDrawer() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.director_nav_view);
         HashMap<String, String> informacion = sessionManager.getUserDetails();
-        String sNombreEmpleado = informacion.get(MySharePreferences.NOMBRE);
         View hView = navigationView.getHeaderView(0);
         TextView navPrimeraLetra = (TextView) hView.findViewById(R.id.director_nav_tv_letra);
         TextView navDatosGerente = (TextView) hView.findViewById(R.id.director_nav_tv_datos);
-        char letra = sNombreEmpleado.charAt(0);
-        String primeraLetra = Character.toString(letra);
-        navPrimeraLetra.setText(primeraLetra);
-        navDatosGerente.setText("Nombre: " + sNombreEmpleado + "\nNumero Empleado: " + Config.usuarioCusp(getApplicationContext()));
+        navPrimeraLetra.setText(Character.toString(informacion.get(MySharePreferences.NOMBRE).charAt(0)));
+        navDatosGerente.setText("Nombre: " + informacion.get(MySharePreferences.NOMBRE) + "\nNumero Empleado: " + Config.usuarioCusp(getApplicationContext()));
     }
 
     /**
@@ -232,7 +217,6 @@ public class Director extends AppCompatActivity{
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         menuItem.setChecked(true);
                         seleccionarItem(menuItem);
-                        Log.d(TAG,"DRAWER SELECCION");
                         drawerLayout.closeDrawers();
                         return true;
                     }
@@ -364,6 +348,10 @@ public class Director extends AppCompatActivity{
         ft.replace(R.id.content_director, fragment, fragment.toString()).addToBackStack(null).commit();
     }
 
+    /**
+     * Recibiendo jsonArray de gerencias
+     * @param j jsonArray
+     */
     private void Gerencias(JSONArray j){
         int idGerencia = 0;
         String nombreGerencia = "";
@@ -386,6 +374,10 @@ public class Director extends AppCompatActivity{
         Config.idGerencia = arrayListIdGerencia;
     }
 
+    /**
+     * Recibiendo jsonArray de sucursales
+     * @param j jsonArray
+     */
     private void Sucursales(JSONArray j){
         int idSucursal = 0;
         String nombreSucursal;
