@@ -111,6 +111,15 @@ public class Encuesta2 extends Fragment {
             public void onClick(View v) {
 
                 boolean val = (Config.verificarEmail(etEmail.getText().toString())) ? true : false;
+                iParam1IdGerencia = spinnerAfores.getSelectedItemPosition();
+                iParam2IdMotivos = spinnerMotivos.getSelectedItemPosition();
+                iParam3IdEstatus = spinnerEstatus.getSelectedItemPosition();
+                iParam4IdTitulo = spinnerInstituto.getSelectedItemPosition();
+                iParam5IdRegimentPensionario = spinnerRegimen.getSelectedItemPosition();
+                iParam6IdDocumentacion = spinnerDocumentos.getSelectedItemPosition();
+                iParam7Telefono = etTelefono.getText().toString();
+                iParam8Email = etEmail.getText().toString();
+
                 if(spinnerAfores.getSelectedItemPosition() == 0 || spinnerMotivos.getSelectedItemPosition() == 0 || spinnerEstatus.getSelectedItemPosition() == 0 ||  spinnerInstituto.getSelectedItemPosition() == 0 ||
                         spinnerRegimen.getSelectedItemPosition() == 0 || spinnerDocumentos.getSelectedItemPosition() == 0 || etTelefono.getText().toString().isEmpty() || etEmail.getText().toString().isEmpty()  ){
                     Config.dialogoDatosVacios(getContext());
@@ -272,6 +281,7 @@ public class Encuesta2 extends Fragment {
             @Override
             public void notifySuccess(String requestType, JSONObject response) {
                 loading.dismiss();
+                primerPaso(response);
             }
 
             @Override
@@ -353,5 +363,13 @@ public class Encuesta2 extends Fragment {
             Config.msj(getContext(), "Error", "Error al formar los datos");
         }
         volleySingleton.postDataVolley("primerPaso", Config.URL_ENVIAR_ENCUESTA_2, obj);
+    }
+
+    /**
+     * Método donde se obtiene el response
+     * @param obj
+     */
+    private void primerPaso(JSONObject obj){
+        Log.d("jma", "response--> "  + obj );
     }
 }
