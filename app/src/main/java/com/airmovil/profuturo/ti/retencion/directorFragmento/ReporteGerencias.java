@@ -287,6 +287,7 @@ public class ReporteGerencias extends Fragment{
      * @param obj jsonObject
      */
     private void primerPaso(JSONObject obj) {
+        Log.d(TAG,"resposive--->"+obj);
         try{
             // TODO: jsonArray de gerencias
             JSONArray array = obj.getJSONArray("Gerencia");

@@ -268,6 +268,7 @@ public class Inicio extends Fragment {
      * @param obj recibe el obj json de la peticion
      */
     private void primerPaso(JSONObject obj) {
+        Log.d(TAG,"response--->"+obj);
         try {
             if (rootView != null)
                 tvRetenidos = (TextView) rootView.findViewById(R.id.dfi_tv_retenidos);

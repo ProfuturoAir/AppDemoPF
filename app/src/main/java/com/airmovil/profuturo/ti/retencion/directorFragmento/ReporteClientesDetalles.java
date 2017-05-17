@@ -272,6 +272,7 @@ public class ReporteClientesDetalles extends Fragment {
      * @param obj jsonObject
      */
     private void primerPaso(JSONObject obj){
+        Log.d(TAG, "Response: --->" + obj.toString() + "\n");
         String curp = "", horaAtencion = "", nombre = "", nombreSucursal = "", nss = "", numeroCuenta = "", rfc = "", saldo = "";
         int idTramite = 0;
         boolean retenido = false;

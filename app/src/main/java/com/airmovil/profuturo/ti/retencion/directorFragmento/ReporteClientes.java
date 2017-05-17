@@ -390,7 +390,7 @@ public class ReporteClientes extends Fragment{
      * @param obj jsonObject
      */
     private void primerPaso(JSONObject obj){
-        Log.d(TAG, "Response: \n" + obj.toString() + "\n");
+        Log.d(TAG, "Response: --->" + obj.toString() + "\n");
         int totalFilas = 1;
         try{
             JSONArray array = obj.getJSONArray("Cliente");
