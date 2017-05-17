@@ -147,4 +147,8 @@
     <!-- TODO: String para el mensaje de dialogo, verificar modo avion -->
     <string name="titulo_modo_avion_aviso">Alerta de Modo Avión</string>
     <string name="msj_modo_avion_aviso">Advertencia, se encuentra activado el modo avión en tu dispositivo, por favor desactivalo, para tener un mejor rendimineto</string>
+    <!-- TODO: String de mensaje de GPS -->
+    <string name="GPSAlertDialogTitle">GPSAlertDialogTitle</string>
+    <string name="label_cancel">label_cancel</string>
+    <string name="GPSAlertDialogMessage">GPSAlertDialogMessage</string>
 </resources>

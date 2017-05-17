@@ -5,6 +5,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -122,7 +123,8 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
                 public void onClick(View v) {
                     ReporteClientesDetalles reporteClientesDetalles = new ReporteClientesDetalles();
                     Gerente g1 = (Gerente) v.getContext();
-                    g1.envioParametros( reporteClientesDetalles,  mFechaInicio,  mFechaFin,  0,  0,  "",  lista.getNumeroEmpleado(), lista.nombreAsesor, lista.getNumeroCuenta(),  Boolean.parseBoolean(lista.getCita()),  lista.getHora(),  lista.getIdTramite());
+                    g1.envioParametros( reporteClientesDetalles,  mFechaInicio,  mFechaFin,  0,  0,  "",  lista.getNumeroEmpleado(), lista.nombreAsesor,
+                            lista.getNumeroCuenta(),  Boolean.parseBoolean(lista.getCita()),  lista.getHora(),  lista.getTramite());
                 }
             });
         } else{

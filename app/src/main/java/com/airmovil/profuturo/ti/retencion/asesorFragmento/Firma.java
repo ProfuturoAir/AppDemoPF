@@ -86,6 +86,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
         dvFirma.setBrushSize(5);
         dvFirma.setColor("#000000");
         dvFirma.setFocusable(true);
+
         btnLimpiar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,6 +95,7 @@ public class Firma extends Fragment implements GoogleApiClient.OnConnectionFaile
                 Config.msjTime(v.getContext(), "Mensaje", "Limpiando contenido", 2000);
             }
         });
+
         btnCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

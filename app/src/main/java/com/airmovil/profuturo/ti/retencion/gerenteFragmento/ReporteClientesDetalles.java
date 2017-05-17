@@ -251,9 +251,9 @@ public class ReporteClientesDetalles extends Fragment {
         try{
             if(getArguments() != null){
                 rqt.put("filtro", filtro);
-                filtro.put("curp", mParam1);
-                filtro.put("nss", mParam2);
-                filtro.put("numeroCuenta", mParam3);
+                filtro.put("curp", "");
+                filtro.put("nss", "");
+                filtro.put("numeroCuenta", getArguments().getString("numeroCuenta"));
                 rqt.put("idTramite", mParam4);
                 rqt.put("periodo", periodo);
                 periodo.put("fechaInicio", mParam5);
@@ -273,6 +273,7 @@ public class ReporteClientesDetalles extends Fragment {
      * @param obj jsonObject
      */
     private void primerPaso(JSONObject obj){
+        Log.e(TAG, "<-Response->\n" + obj + "\n");
         String curp = "", horaAtencion = "", nombre = "", nombreSucursal = "", nss = "", numeroCuenta = "", rfc = "", saldo = "";
         boolean retenido = false;
         try{
