@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
@@ -346,6 +347,10 @@ public class Dialogos extends Activity{
         return dialog;
     }
 
+    /**
+     * No existe algun paramatro del obj json
+     * @param context referencia de la llamada, fragment o actividad
+     */
     public static void dialogoNoExisteDato(Context context){
         final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
         progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_error));
@@ -359,5 +364,29 @@ public class Dialogos extends Activity{
                     }
                 });
         progressDialog.show();
+    }
+
+    /**
+     * Dialogo de geolocalizacion
+     * @param context referencia de llamada del fragmento o actividad
+     */
+    public static final void dialogoAvisoModoAvion(final Context context){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        builder.setTitle(context.getResources().getString(R.string.titulo_modo_avion_aviso));
+        builder.setMessage(context.getResources().getString(R.string.msj_modo_avion_aviso));
+        builder.setInverseBackgroundForced(true);
+        builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                context.startActivity(new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS));
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }

@@ -2,7 +2,6 @@ package com.airmovil.profuturo.ti.retencion.gerenteFragmento;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -95,6 +94,9 @@ public class Inicio extends Fragment {
         // TODO: Rango inicial y final para seleccionar el dialogo de fechas
         Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha1);
         Dialogos.dialogoFechaFin(getContext(), tvRangoFecha2);
+
+        Config.modeAvionDetectado(getContext());
+
         // TODO: inicio de la primera peticion REST
         if(Config.conexion(getContext()))
             sendJson(true);
@@ -117,6 +119,8 @@ public class Inicio extends Fragment {
             }
         });
     }
+
+
 
     /**
      * Se lo llama para crear la jerarquía de vistas asociada con el fragmento.

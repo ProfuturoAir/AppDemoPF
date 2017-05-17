@@ -5,14 +5,17 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.MatrixCursor;
 import android.graphics.Bitmap;
 import android.location.LocationManager;
+import android.provider.Settings;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Base64;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.text.DecimalFormat;
@@ -425,7 +428,6 @@ public class Config extends Activity {
         return mAdapter;
     }
 
-    /* DIALOGOS MOVIDOS AL LA CLASE DIALOGOS**********************************************/
     /**
      * @param ctx parametro 1 referencia de la llamada, fragmento o actividad
      * @param titulo parametro 2 titulo del dialogo
@@ -476,5 +478,12 @@ public class Config extends Activity {
         mTimer.schedule(task, 0, time);
         dialog = ProgressDialog.show(context, title, message);
         return dialog;
+    }
+
+    public static void modeAvionDetectado(Context context){
+        if(Settings.System.getInt(context.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) != 0) {
+
+            Dialogos.dialogoAvisoModoAvion(context);
+        }
     }
 }

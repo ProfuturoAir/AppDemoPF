@@ -144,4 +144,7 @@
     <!-- TODO: String para el mensaje de dialogo, sin obtencion de un parametros -->
     <string name="titulo_no_existe_parametro">Error en datos</string>
     <string name="msj_no_existe_parametro">Lo sentimos, hace falta datos para realizar el tramite</string>
+    <!-- TODO: String para el mensaje de dialogo, verificar modo avion -->
+    <string name="titulo_modo_avion_aviso">Alerta de Modo Avión</string>
+    <string name="msj_modo_avion_aviso">Advertencia, se encuentra activado el modo avión en tu dispositivo, por favor desactivalo, para tener un mejor rendimineto</string>
 </resources>
