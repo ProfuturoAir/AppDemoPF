@@ -122,7 +122,7 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
                 public void onClick(View v) {
                     ReporteClientesDetalles reporteClientesDetalles = new ReporteClientesDetalles();
                     Director d1 = (Director) v.getContext();
-                    d1.envioParametros( reporteClientesDetalles,  mFechaInicio,  mFechaFin,  0,  0,  "",  lista.getNumeroEmpleado(), lista.nombreAsesor, lista.getNumeroCuenta(),  Boolean.parseBoolean(lista.getCita()),  lista.getHora(),  lista.getIdTramite());
+                    d1.envioParametros( reporteClientesDetalles,  mFechaInicio,  mFechaFin,  0,  0,  "",  lista.getNumeroEmpleado(), lista.nombreAsesor, lista.getNumeroCuenta(),  Boolean.parseBoolean(lista.getCita()),  lista.getHora(),  lista.getTramite());
                 }
             });
         } else{

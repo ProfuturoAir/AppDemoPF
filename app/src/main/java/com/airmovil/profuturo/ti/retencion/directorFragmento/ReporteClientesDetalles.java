@@ -83,6 +83,7 @@ public class ReporteClientesDetalles extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("arg",getArguments().toString());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getBoolean(ARG_PARAM2);
@@ -250,13 +251,13 @@ public class ReporteClientesDetalles extends Fragment {
         try{
             if(getArguments() != null){
                 rqt.put("filtro", filtro);
-                filtro.put("curp", mParam1);
-                filtro.put("nss", mParam2);
-                filtro.put("numeroCuenta", mParam3);
-                rqt.put("idTramite", mParam4);
+                filtro.put("curp", "");
+                filtro.put("nss", "");
+                filtro.put("numeroCuenta", getArguments().getString("numeroCuenta"));
+                rqt.put("idTramite", getArguments().getInt("idTramite"));
                 rqt.put("periodo", periodo);
-                periodo.put("fechaInicio", mParam5);
-                periodo.put("fechaFin", mParam6);
+                periodo.put("fechaInicio", getArguments().getString("fechaInicio"));
+                periodo.put("fechaFin", getArguments().getString("fechaFin"));
                 rqt.put("usuario", Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }
@@ -272,9 +273,7 @@ public class ReporteClientesDetalles extends Fragment {
      * @param obj jsonObject
      */
     private void primerPaso(JSONObject obj){
-        Log.d(TAG, "Response: --->" + obj.toString() + "\n");
         String curp = "", horaAtencion = "", nombre = "", nombreSucursal = "", nss = "", numeroCuenta = "", rfc = "", saldo = "";
-        int idTramite = 0;
         boolean retenido = false;
         try{
             JSONObject cliente = obj.getJSONObject("cliente");

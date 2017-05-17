@@ -295,7 +295,6 @@ public class ReporteAsistencia extends Fragment{
             boolean argumentos = (getArguments()!=null);
             rqt.put("idSucursal", (argumentos)?getArguments().getInt(ARG_PARAM2):0);
             rqt.put("idGerencia", (argumentos)?getArguments().getInt(ARG_PARAM1):0);
-            rqt.put("numeroEmpleado", (argumentos)?getArguments().getString(ARG_PARAM3):"");
             rqt.put("pagina", pagina);
             periodo.put("fechaInicio", (argumentos)?getArguments().getString(ARG_PARAM4):Dialogos.fechaActual());
             periodo.put("fechaFin", (argumentos)?getArguments().getString(ARG_PARAM5):Dialogos.fechaSiguiente());
