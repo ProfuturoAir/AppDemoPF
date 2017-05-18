@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,13 +41,14 @@ import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
 import com.airmovil.profuturo.ti.retencion.fragmento.Calculadora;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
+import com.airmovil.profuturo.ti.retencion.helper.NetworkStateReceiver;
 import com.airmovil.profuturo.ti.retencion.helper.ServicioJSON;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
 
 import java.util.HashMap;
 
-public class Asesor extends AppCompatActivity{
+public class Asesor extends AppCompatActivity implements NetworkStateReceiver.NetworkStateReceiverListener{
     private static final String TAG = Asesor.class.getSimpleName();
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
@@ -57,8 +59,9 @@ public class Asesor extends AppCompatActivity{
     private static final  int REQUEST_CODE_OPENER = 2;
     String url;
     public static Fragment itemMenu = null;
+    private NetworkStateReceiver networkStateReceiver;
+    private MySharePreferences mySharePreferences;
 
-    MySharePreferences mySharePreferences;
     /**
      * Se utiliza para iniciar la actividad
      * @param savedInstanceState
@@ -67,7 +70,6 @@ public class Asesor extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.asesor);
-
         // TODO: Mantener el estado de la pantalla Vertical
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         // TODO: nueva instancia para el sharePreference
@@ -81,6 +83,11 @@ public class Asesor extends AppCompatActivity{
         }catch (Exception e){
             Log.d("-->Error en servicio:", e.toString());
         }
+
+        // TODO: Listener para verificar conexion a internet
+        networkStateReceiver = new NetworkStateReceiver();
+        networkStateReceiver.addListener(this);
+        this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
 
     }
 
@@ -590,5 +597,28 @@ public class Asesor extends AppCompatActivity{
         fragment.setArguments(bundle);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_asesor, fragment, fragment.toString()).addToBackStack(null).commit();
+    }
+
+    @Override
+    public void networkAvailable() {
+        Log.d(TAG, "Red habilitada!");
+        // TODO: Mantener el estado de la pantalla Vertical
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        // TODO: nueva instancia para el sharePreference
+        mySharePreferences = MySharePreferences.getInstance(getApplicationContext());
+        // TODO: Validacion de la sesion del usuario
+        validateSession();
+
+        Config.context = getApplicationContext();
+        try {
+            startService(new Intent(this, ServicioJSON.class));
+        }catch (Exception e){
+            Log.d("-->Error en servicio:", e.toString());
+        }
+    }
+
+    @Override
+    public void networkUnavailable() {
+        Log.d(TAG, "Red no habilitada");
     }
 }
