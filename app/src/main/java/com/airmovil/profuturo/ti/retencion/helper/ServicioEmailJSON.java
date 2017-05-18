@@ -163,6 +163,7 @@ public class ServicioEmailJSON {
 
                             @Override
                             public void onSuccess(JSONObject result) {
+                                Log.d(TAG,"response--->"+result);
                                 int status;
                                 try {
                                     status = result.getInt("status");
@@ -389,13 +390,13 @@ public class ServicioEmailJSON {
                             obj.put("rqt", rqt);
                             Log.d(TAG, "<- RQT -> \n" + obj + "\n");
                         } catch (JSONException e) {
-                            Config.msj(context, "Error", "Error al formar los datos");
+                            Dialogos.msj(context, "Error", "Error al formar los datos");
                         }
                         EnviaMail.sendMail(obj,Config.URL_SEND_MAIL_REPORTE_ASISTENCIA,context,new EnviaMail.VolleyCallback() {
 
                             @Override
                             public void onSuccess(JSONObject result) {
-                                Log.d("RESPUESTA SUCURSAL", result.toString());
+                                Log.d("response--->", result.toString());
                                 int status;
 
                                 try {
