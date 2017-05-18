@@ -282,7 +282,7 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
 
     /**
      * Se utiliza para redireccionar la seleccion de cualquier item
-     * @param itemDrawer
+     * @param itemDrawer item del menu
      */
     private void seleccionarItem(MenuItem itemDrawer){
         Fragment fragmentoGenerico = null;
@@ -543,6 +543,14 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
         ft.commit();
     }
 
+    /**
+     * Metodo para envio de datos a fragmento Encuesta1
+     * @param frag direccion del fragmento
+     * @param idTramite idTramite del cliente
+     * @param borrar borrar datos del fragmento
+     * @param nombre nombre del cliente
+     * @param numeroDeCuenta numeroCuenta clinete
+     */
     public void switchEncuesta1(Fragment frag,String idTramite,Fragment borrar,String nombre,String numeroDeCuenta,String hora) {
         Bundle bundle=new Bundle();
         bundle.putString("idTramite",idTramite);
@@ -557,6 +565,14 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
         ft.commit();
     }
 
+    /**
+     * Metodo para enviar parametros a fragmeto
+     * @param frag direccion del fragmento envio
+     * @param idTramite idTramite del cliente
+     * @param borrar borrar datos del fragmento
+     * @param nombre nombre del cliente
+     * @param numeroDeCuenta numeroDeCuenta del cliente
+     */
     public void switchEncuesta2(Fragment frag,String idTramite,Fragment borrar,String nombre,String numeroDeCuenta) {
         Bundle bundle=new Bundle();
         bundle.putString("idTramite",idTramite);
@@ -570,6 +586,14 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
         ft.commit();
     }
 
+    /**
+     * Metodo para enviar parametros a fragmento
+     * @param frag direccion del fragmento para envio
+     * @param idTramite idTramite del cliente
+     * @param borrar borrar datos del fragmento
+     * @param nombre nombre del cliente
+     * @param numeroDeCuenta numeroDeCuenta del cliente
+     */
     public void switchDocumento(Fragment frag,String idTramite,Fragment borrar,String nombre,String numeroDeCuenta) {
         Bundle bundle=new Bundle();
         bundle.putString("idTramite",idTramite);
@@ -583,6 +607,13 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
         ft.commit();
     }
 
+    /**
+     * metodo para envio de datos a fragmento datosCliente
+     * @param frag direccion del fragmento
+     * @param nombre nombre del cliente
+     * @param numeroDeCuenta numero de cuenta cliente
+     * @param hora hora de atencion del cliente
+     */
     public void switchDatosCliente(Fragment frag,String nombre,String numeroDeCuenta,String hora) {
         Bundle bundle=new Bundle();
         bundle.putString("nombre",nombre);
@@ -596,6 +627,15 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
         ft.commit();
     }
 
+    /**
+     * Metodo para enviar parametros a fragmento
+     * @param frag direccion del fragmento para envio
+     * @param idTramite idTramite del cliente
+     * @param borrar borrar datos del fragmento
+     * @param nombre nombre del cliente
+     * @param numeroDeCuenta numeroDeCuenta del cliente
+     * @param hora hora de atencion del cliente
+     */
     public void switchFirma(Fragment frag,String idTramite,Fragment borrar,String nombre,String numeroDeCuenta,String hora) {
         Bundle bundle=new Bundle();
         bundle.putString("idTramite",idTramite);
@@ -643,6 +683,10 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
         ft.replace(R.id.content_gerente, fragment, fragment.toString()).addToBackStack(null).commit();
     }
 
+    /**
+     * Metodo para recepcion de datos del servio(Gerencia)
+     * @param j jsonArray
+     */
     private void Gerencias(JSONArray j){
         Log.e(TAG, j.toString() + "\n");
         int idGerencia = 0;
@@ -667,6 +711,10 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
         Config.idGerencia = arrayIdgerencia;
     }
 
+    /**
+     * Metodo para recepcion de datos del servio(Sucursales)
+     * @param j jsonArray
+     */
     private void Sucursales(JSONArray j){
         int idSucursal = 0;
         String nombreSucursal = "";
