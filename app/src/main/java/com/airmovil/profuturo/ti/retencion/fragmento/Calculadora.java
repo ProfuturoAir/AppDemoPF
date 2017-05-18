@@ -128,7 +128,7 @@ public class Calculadora extends Fragment {
             // TODO Auto-generated method stub
             super.onPageStarted(view, url, favicon);
             // verificando la conexion a internet
-            if(connected.estaConectado(getContext())){
+            if(Config.conexion(getContext())){
                 loading = ProgressDialog.show(getActivity(), "Cargando datos", "Porfavor espere...", false, false);
                 linearLayout.setVisibility(View.GONE);
             }else{
