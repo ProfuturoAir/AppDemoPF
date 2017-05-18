@@ -16,6 +16,8 @@ import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientesDetalles;
+import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.ServicioEmailJSON;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteClientesModel;
@@ -122,7 +124,11 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
                 public void onClick(View v) {
                     ReporteClientesDetalles reporteClientesDetalles = new ReporteClientesDetalles();
                     Director d1 = (Director) v.getContext();
-                    d1.envioParametros( reporteClientesDetalles,  mFechaInicio,  mFechaFin,  0,  0,  "",  lista.getNumeroEmpleado(), lista.nombreAsesor, lista.getNumeroCuenta(),  Boolean.parseBoolean(lista.getCita()),  lista.getHora(),  lista.getTramite());
+                    if(Config.conexion(mContext)){
+                        d1.envioParametros( reporteClientesDetalles,  mFechaInicio,  mFechaFin,  0,  0,  "",  lista.getNumeroEmpleado(), lista.nombreAsesor, lista.getNumeroCuenta(),  Boolean.parseBoolean(lista.getCita()),  lista.getHora(),  lista.getTramite());
+                    }else{
+                        Dialogos.dialogoErrorConexion(mContext);
+                    }
                 }
             });
         } else{
@@ -189,12 +195,20 @@ public class DirectorReporteClientesAdapter extends RecyclerView.Adapter{
             switch (item.getItemId()) {
                 case R.id.sub_menu_reporte_clientes_detalles:
                     ReporteClientesDetalles reporteClientesDetalles = new ReporteClientesDetalles();
-                    Gerente g1 = (Gerente) mRecyclerView.getContext();
+                    Director d1 = (Director) mRecyclerView.getContext();
                     //fragment 1.fechaInicio 2.fechaFin 3.idGerencia 4.idSucursal 5.idAsesor 6.numeroEmpleado 7.nombreEmpleado 8.numeroCuenta 9.cita 10.hora 11.idTramite
-                    g1.envioParametros(reporteClientesDetalles, mFechaInicio, mFechaFin, 0, 0, "", list.getNumeroEmpleado(),list.nombreAsesor,list.getNumeroCuenta(), Boolean.parseBoolean(list.getCita()), list.getHora(), list.getIdTramite());
+                    if(Config.conexion(mContext)){
+                        d1.envioParametros(reporteClientesDetalles, mFechaInicio, mFechaFin, 0, 0, "", list.getNumeroEmpleado(),list.nombreAsesor,list.getNumeroCuenta(), Boolean.parseBoolean(list.getCita()), list.getHora(), list.getIdTramite());
+                    }else{
+                        Dialogos.dialogoErrorConexion(mContext);
+                    }
                     return true;
                 case R.id.sub_menu_reporte_clientes_email:
-                    ServicioEmailJSON.enviarEmailReporteClientes(mContext, list.getIdSucursal(), 2, (list.getCita()=="true")?1:2, list.getNumeroCuenta(), (list.getRetenido()=="true")?1:2, list.getNumeroEmpleado(),mFechaInicio, mFechaFin, true);
+                    if(Config.conexion(mContext)){
+                        ServicioEmailJSON.enviarEmailReporteClientes(mContext, list.getIdSucursal(), 2, (list.getCita()=="true")?1:2, list.getNumeroCuenta(), (list.getRetenido()=="true")?1:2, list.getNumeroEmpleado(),mFechaInicio, mFechaFin, true);
+                    }else{
+                        Dialogos.dialogoErrorConexion(mContext);
+                    }
                     return true;
                 default:
             }

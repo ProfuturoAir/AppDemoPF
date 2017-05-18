@@ -229,9 +229,9 @@ public class ConCita extends Fragment {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                    Fragment fragmentoGenerico = new Inicio();
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                    Fragment fragment = new Inicio();
+                    Dialogos.dialogoBotonRegresoProcesoImplicaciones(getContext(), fragmentManager, getResources().getString(R.string.msj_regresar_inicio), 1, fragment);
                     return true;
                 }
                 return false;
@@ -321,6 +321,7 @@ public class ConCita extends Fragment {
      * @param obj json objeto
      */
     private void primerPaso(JSONObject obj) {
+        Log.d(TAG, "<-Response->\n" + obj + "\n");
         int totalFilas = 1;
         try{
             JSONArray array = obj.getJSONArray("citas");

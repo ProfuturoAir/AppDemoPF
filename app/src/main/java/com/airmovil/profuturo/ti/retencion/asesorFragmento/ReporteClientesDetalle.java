@@ -132,7 +132,6 @@ public class ReporteClientesDetalle extends Fragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
                     if(getArguments()!=null){
-                        Log.d("arg",getArguments().toString());
                         Asesor d1 = (Asesor) getContext();
                         ReporteClientes reporte = new ReporteClientes();
                         d1.envioParametros(reporte, getArguments().getString(ARG_PARAM4), getArguments().getString(ARG_PARAM5));

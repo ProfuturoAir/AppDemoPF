@@ -441,7 +441,7 @@ public class Dialogos extends Activity{
             @Override
             public void onClick(View v) {
                 android.support.v7.app.AlertDialog.Builder dialogo1 = new android.support.v7.app.AlertDialog.Builder(context);
-                dialogo1.setTitle(context.getResources().getString(R.string.msj_confirmacion));
+                dialogo1.setTitle(context.getResources().getString(R.string.titulo_confirmacion));
                 dialogo1.setMessage(mensaje);
                 dialogo1.setCancelable(false);
                 dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
@@ -485,7 +485,7 @@ public class Dialogos extends Activity{
      */
     public static final void dialogoBotonRegresoProcesoImplicaciones(final Context context, final FragmentManager fragmentManager, final String mensaje, final int idRoll, final Fragment fragment){
         android.support.v7.app.AlertDialog.Builder dialogo1 = new android.support.v7.app.AlertDialog.Builder(context);
-        dialogo1.setTitle(context.getResources().getString(R.string.msj_confirmacion));
+        dialogo1.setTitle(context.getResources().getString(R.string.titulo_confirmacion));
         dialogo1.setMessage(mensaje);
         dialogo1.setCancelable(false);
         dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
@@ -511,6 +511,24 @@ public class Dialogos extends Activity{
             public void onClick(DialogInterface dialog, int which) {}
         });
         dialogo1.show();
+    }
+
+    /**
+     * Dialogo para avisar que el email esta vacio
+     * @param ctx parametro 1 referencia de la llamada, fragmento o actividad
+     */
+    public static final void dialogoEmailVacio(Context ctx){
+        AlertDialog.Builder dialog  = new AlertDialog.Builder(ctx);
+        dialog.setTitle(ctx.getResources().getString(R.string.titulo_error));
+        dialog.setMessage(ctx.getResources().getString(R.string.msj_email_vacio));
+        dialog.setCancelable(true);
+        dialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        dialog.create().show();
     }
 
 }

@@ -1,7 +1,6 @@
 package com.airmovil.profuturo.ti.retencion.helper;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Context;
 import android.util.Log;
@@ -11,19 +10,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
-import com.android.volley.VolleyError;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by tecnicoairmovil on 25/04/17.
@@ -33,7 +24,6 @@ public class ServicioEmailJSON {
     private static final String TAG = ServicioEmailJSON.class.getSimpleName();
     private static String linea = "\n _______________ \n";
     private static Connected connected = new Connected();
-
     private static Dialog dialog;
     private static Button btn;
     private static Spinner spinner;
@@ -70,7 +60,7 @@ public class ServicioEmailJSON {
                 final String datoEditText = editText.getText().toString().trim();
                 final String datoSpinner = spinner.getSelectedItem().toString();
                 if(datoEditText == "" || datoSpinner == "Seleciona un email"){
-                    Config.msj(context, "Error", "Ingresa email valido");
+                    Dialogos.dialogoEmailVacio(context);
                 }else{
                     String email = datoEditText+"@"+datoSpinner;
                     if(connected.estaConectado(context)){
@@ -113,7 +103,7 @@ public class ServicioEmailJSON {
                             }
                         });
                     }else{
-                        Config.msj(context, "Error en conexión", "Por favor, revisa tu conexión a internet");
+                       Dialogos.dialogoErrorConexion(context);
                     }
                 }
             }
@@ -138,7 +128,7 @@ public class ServicioEmailJSON {
                 final String datoEditText = editText.getText().toString().trim();
                 final String datoSpinner = spinner.getSelectedItem().toString();
                 if(datoEditText == "" || datoSpinner == "Seleciona un email"){
-                    Config.msj(context, "Error", "Ingresa email valido");
+                    Dialogos.dialogoEmailVacio(context);
                 }else{
                     String email = datoEditText+"@"+datoSpinner;
                     Connected connected = new Connected();
@@ -184,7 +174,7 @@ public class ServicioEmailJSON {
                             }
                         });
                     }else{
-                        Config.msj(context, "Error en conexión", "Por favor, revisa tu conexión a internet");
+                       Dialogos.dialogoErrorConexion(context);
                     }
                 }
             }
@@ -209,7 +199,7 @@ public class ServicioEmailJSON {
                 final String datoEditText = editText.getText().toString().trim();
                 final String datoSpinner = spinner.getSelectedItem().toString();
                 if(datoEditText == "" || datoSpinner == "Seleciona un email"){
-                    Config.msj(context, "Error", "Ingresa email valido");
+                    Dialogos.dialogoEmailVacio(context);
                 }else{
                     String email = datoEditText+"@"+datoSpinner;
                     Connected connected = new Connected();
@@ -257,7 +247,7 @@ public class ServicioEmailJSON {
                             }
                         });
                     }else{
-                        Config.msj(context, "Error en conexión", "Por favor, revisa tu conexión a internet");
+                       Dialogos.dialogoErrorConexion(context);
                     }
                 }
             }
@@ -288,7 +278,7 @@ public class ServicioEmailJSON {
                 final String datoSpinner = spinner.getSelectedItem().toString();
 
                 if(datoEditText == "" || datoSpinner == "Seleciona un email"){
-                    Config.msj(context, "Error", "Ingresa email valido");
+                    Dialogos.dialogoEmailVacio(context);
                 }else{
                     String email = datoEditText+"@"+datoSpinner;
                     Connected connected = new Connected();
@@ -341,7 +331,7 @@ public class ServicioEmailJSON {
                             }
                         });
                     }else{
-                        Config.msj(context, "Error en conexión", "Por favor, revisa tu conexión a internet");
+                       Dialogos.dialogoErrorConexion(context);
                     }
                 }
             }
@@ -368,7 +358,7 @@ public class ServicioEmailJSON {
                 final String datoEditText = editText.getText().toString().trim();
                 final String datoSpinner = spinner.getSelectedItem().toString();
                 if(datoEditText == "" || datoSpinner == "Seleciona un email"){
-                    Config.msj(context, "Error", "Ingresa email valido");
+                    Dialogos.dialogoEmailVacio(context);
                 }else{
                     String email = datoEditText+"@"+datoSpinner;
                     Connected connected = new Connected();
@@ -415,11 +405,11 @@ public class ServicioEmailJSON {
                             }
                             @Override
                             public void onError(String result) {
-                                Config.msj(context, "Error en conexión", "Por favor, revisa tu conexión a internet");
+                               Dialogos.dialogoErrorConexion(context);
                             }
                         });
                     }else{
-                        Config.msj(context, "Error en conexión", "Por favor, revisa tu conexión a internet");
+                       Dialogos.dialogoErrorConexion(context);
                     }
                 }
             }
@@ -443,7 +433,7 @@ public class ServicioEmailJSON {
                 final String datoEditText = editText.getText().toString();
                 final String datoSpinner = spinner.getSelectedItem().toString();
                 if(datoEditText == "" || datoSpinner == "Seleciona un email"){
-                    Config.msj(context, "Error", "Ingresa email valido");
+                    Dialogos.dialogoEmailVacio(context);
                 }else{
                     String email = datoEditText+"@"+datoSpinner;
                     Connected connected = new Connected();
@@ -488,7 +478,7 @@ public class ServicioEmailJSON {
                             }
                         });
                     }else{
-                        Config.msj(context, "Error en conexión", "Por favor, revisa tu conexión a internet");
+                       Dialogos.dialogoErrorConexion(context);
                     }
                 }
             }

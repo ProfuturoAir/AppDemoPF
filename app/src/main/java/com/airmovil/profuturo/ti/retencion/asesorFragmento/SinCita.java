@@ -220,25 +220,9 @@ public class SinCita extends Fragment {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                    AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
-                    dialogo1.setTitle(getResources().getString(R.string.titulo_regreso_inicio));
-                    dialogo1.setMessage(getResources().getString(R.string.msj_regreso_inicio));
-                    dialogo1.setCancelable(false);
-                    dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Fragment fragmentoGenerico = new Inicio();
-                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                            if (fragmentoGenerico != null) {
-                                fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
-                            }
-                        }
-                    });
-                    dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {}
-                    });
-                    dialogo1.show();
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    Fragment fragment = new ConCita();
+                    Dialogos.dialogoBotonRegresoProcesoImplicaciones(getContext(), fragmentManager, getResources().getString(R.string.msj_regreso_proceso), 1, fragment);
                     return true;
                 }
                 return false;

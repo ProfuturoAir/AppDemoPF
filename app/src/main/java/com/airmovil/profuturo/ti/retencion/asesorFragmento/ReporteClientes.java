@@ -56,9 +56,7 @@ public class ReporteClientes extends Fragment {
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
 
-    public ReporteClientes() {
-        /* Requiere un constructor vacio */
-    }
+    public ReporteClientes() {/* Requiere un constructor vacio */}
 
     /**
      * Utilice este método de fábrica para crear una nueva instancia de
@@ -349,7 +347,13 @@ public class ReporteClientes extends Fragment {
                     return;
                 }
                 getDatos1.add(null);
-                adapter.notifyItemInserted(getDatos1.size() - 1);
+                Handler handler = new Handler();
+                final Runnable r = new Runnable() {
+                    public void run() {
+                        adapter.notifyItemInserted(getDatos1.size() - 1);
+                    }
+                };
+                handler.post(r);
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -379,7 +383,10 @@ public class ReporteClientes extends Fragment {
                     getDatos2.setNombreCliente(json.getString("nombre"));
                     getDatos2.setNumeroCuenta(json.getString("numeroCuenta"));
                     getDatos2.setConCita(json.getString("cita"));
+                    getDatos2.setIdTramite(json.getInt("idTramite"));
+                    getDatos2.setCurp(json.getString("curp"));
                     getDatos2.setHora(json.getString("hora"));
+                    getDatos2.setNoEmitido(json.getString("retenido"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

@@ -18,6 +18,7 @@ import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistencia;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientes;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.ServicioEmailJSON;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteAsesoresModel;
@@ -183,15 +184,24 @@ public class DirectorReporteAsesoresAdapter extends RecyclerView.Adapter{
                     ReporteClientes reporteClientes = new ReporteClientes();
                     Director d1 = (Director) mRecyclerView.getContext();
                     //fragment 1. fechaInicio 2. fechaFin 3.idGerencia 4.idSucursal 5.idAsesor 6.numeroEmpleado 7.nombreEmpleado 8.numeroCuenta 9.cita 10.hora 11.idTramite
-                    d1.envioParametros(reporteClientes, mFechaInicio, mFechaFin, 0, 0, String.valueOf(lista.getNumeroEmpleado()), "","", "", false, "", 0);
+                    if (Config.conexion(mContext))
+                        d1.envioParametros(reporteClientes, mFechaInicio, mFechaFin, 0, 0, String.valueOf(lista.getNumeroEmpleado()), "","", "", false, "", 0);
+                    else
+                        Dialogos.dialogoErrorConexion(mContext);
                     return true;
                 case R.id.sub_menu_reporte_asesores_nav_asistencia:
                     ReporteAsistencia reporteAsistencia = new ReporteAsistencia();
                     Director d2 = (Director) mRecyclerView.getContext();
-                    d2.envioParametros(reporteAsistencia, mFechaInicio, mFechaFin, 0, 0, String.valueOf(lista.getNumeroEmpleado()), "","", "", false, "", 0);
+                    if (Config.conexion(mContext))
+                        d2.envioParametros(reporteAsistencia, mFechaInicio, mFechaFin, 0, 0, String.valueOf(lista.getNumeroEmpleado()), "","", "", false, "", 0);
+                    else
+                        Dialogos.dialogoErrorConexion(mContext);
                     return true;
                 case R.id.sub_menu_reporte_asesores_email:
-                    ServicioEmailJSON.enviarEmailReporteAsesores(mContext, mFechaInicio, mFechaFin, String.valueOf(lista.getNumeroEmpleado()), true);
+                    if (Config.conexion(mContext))
+                        ServicioEmailJSON.enviarEmailReporteAsesores(mContext, mFechaInicio, mFechaFin, String.valueOf(lista.getNumeroEmpleado()), true);
+                    else
+                        Dialogos.dialogoErrorConexion(mContext);
                     return true;
                 default:
                     break;

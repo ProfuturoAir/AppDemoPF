@@ -10,19 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Asesor;
-import com.airmovil.profuturo.ti.retencion.asesorFragmento.Asistencia;
-import com.airmovil.profuturo.ti.retencion.asesorFragmento.DatosAsesor;
-import com.airmovil.profuturo.ti.retencion.asesorFragmento.ReporteClientes;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.ReporteClientesDetalle;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
-import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.AsesorReporteClientesModel;
-import com.airmovil.profuturo.ti.retencion.model.CitasClientesModel;
 
 import java.util.List;
 
@@ -44,6 +39,12 @@ public class AsesorReporteClientesAdapter extends RecyclerView.Adapter{
     private String mfechaInicio;
     private String mfechaFin;
 
+    /**
+     * Constructor
+     * @param mContext contexto
+     * @param list clase del modelo
+     * @param mRecyclerView contenendor del servicio
+     */
     public AsesorReporteClientesAdapter(Context mContext, List<AsesorReporteClientesModel> list, RecyclerView mRecyclerView, String mfechaInicio, String mfechaFin){
         this.mContext = mContext;
         this.list = list;
@@ -71,6 +72,10 @@ public class AsesorReporteClientesAdapter extends RecyclerView.Adapter{
         });
     }
 
+    /**
+     * @param parent acceso para determinar que tipo de XML mostrara
+     * @return la vista XML de elementos o loading
+     */
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder vh;
@@ -84,6 +89,11 @@ public class AsesorReporteClientesAdapter extends RecyclerView.Adapter{
         return vh;
     }
 
+    /**
+     * Inplementa el contenido consumido
+     * @param holder accede a los elementos XML a mostrar
+     * @param position posicion de cada elementos comparado con el servicio
+     */
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof MyViewHolder) {
@@ -108,8 +118,11 @@ public class AsesorReporteClientesAdapter extends RecyclerView.Adapter{
             myholder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    View borrar = v;
-                    fragmentoDatosCliente(v, lista.curp, lista.idTramite, lista.hora, mfechaInicio, mfechaFin);
+                    if(Config.conexion(mContext)){
+                        fragmentoDatosCliente(v, lista.curp, lista.idTramite, lista.hora, mfechaInicio, mfechaFin);
+                    }else{
+                        Dialogos.dialogoErrorConexion(mContext);
+                    }
                 }
             });
         } else {
@@ -122,11 +135,13 @@ public class AsesorReporteClientesAdapter extends RecyclerView.Adapter{
             return;
         if(view.getContext() instanceof Asesor){
             Asesor asesor = (Asesor) view.getContext();
-
             asesor.switchDetalleCliente(fragmento, curp, idTramite, hora, fechaInicio, fechaFin);
         }
     }
 
+    /**
+     * @return el tamaño que del servicio REST
+     */
     @Override
     public int getItemCount() {
         return list.size();
@@ -143,23 +158,6 @@ public class AsesorReporteClientesAdapter extends RecyclerView.Adapter{
 
     public void setOnLoadMoreListener(OnLoadMoreListener mOnLoadMoreListener) {
         this.mOnLoadMoreListener = mOnLoadMoreListener;
-    }
-
-    public void fragmentJumpDatosUsuario(String idClienteCuenta, View view) {
-        Fragment fragmento = new ReporteClientesDetalle();
-        if (view.getContext() == null)
-            return;
-        if (view.getContext() instanceof Asesor) {
-            Asesor asesor = (Asesor) view.getContext();
-
-            final Connected conected = new Connected();
-            if(conected.estaConectado(view.getContext())) {
-
-            }else{
-                Config.msj(view.getContext(),"Error conexión", "Sin Conexion por el momento.Cliente P-1.1.3");
-            }
-            asesor.switchContent(fragmento, idClienteCuenta);
-        }
     }
 
     public static class LoadingViewHolder extends RecyclerView.ViewHolder {

@@ -99,7 +99,8 @@
     <string name="msj_error_conexion_firma">No hay conexión a internet, verifica tu conexión y vuelve a intentar</string>
     <string name="titulo_espera">Espere un momento</string>
     <string name="texto_pendientes">Pendientes</string>
-    <string name="texto">tex</string>
+    <string name="texto">texto</string>
+    <string name="msj_email_vacio">Ingresa email valido</string>
     <!-- TODO: datos de mensaje de carga de datos json -->
     <string name="titulo_carga_datos">Cargando datos</string>
     <string name="msj_carga_datos">Por favor espere un momento...</string>
@@ -148,4 +149,6 @@
     <string name="msj_cancelar_1138">¿Estás de acuerdo en cancelar el proceso 1.1.3.8 de implicaciones?</string>
     <string name="msj_regresar_inicio">¡Estás de acuerdo en regresar al inicio?</string>
     <string name="msj_regresar_proceso">¿Estás de acuerdo en regresar al inicio del proceso de implicaciones? esto implica que terminaras con el actual proceso</string>
+    <string name="msj_regreso_proceso">Serás dirigido al proceso de implicaciones</string>
+
 </resources>

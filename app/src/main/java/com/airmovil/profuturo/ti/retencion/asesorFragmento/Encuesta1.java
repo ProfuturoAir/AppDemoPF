@@ -166,31 +166,9 @@ public class Encuesta1 extends Fragment {
             }
         });
 
-        btnCancelar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
-                dialogo.setTitle(getResources().getString(R.string.titulo_confirmacion));
-                dialogo.setMessage(getResources().getString(R.string.msj_confirmacion));
-                dialogo.setCancelable(false);
-                dialogo.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Fragment fragmentoGenerico = new ConCita();
-                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
-                    }
-                });
-                dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-                dialogo.show();
-            }
-        });
-
+        // TODO Cancelar el proceso
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        Dialogos.dialogoCancelarProcesoImplicaciones(getContext(), btnCancelar, fragmentManager, getResources().getString(R.string.msj_cancelar_1134), 1);
     }
 
     /**
@@ -243,25 +221,9 @@ public class Encuesta1 extends Fragment {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                    AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
-                    dialogo.setTitle(getResources().getString(R.string.titulo_cancelacion_implicaciones));
-                    dialogo.setMessage(getResources().getString(R.string.msj_cancelacion_implicaciones));
-                    dialogo.setCancelable(false);
-                    dialogo.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Fragment fragmentoGenerico = new ConCita();
-                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                            fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
-                        }
-                    });
-                    dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-                    dialogo.show();
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    Fragment fragment = new ConCita();
+                    Dialogos.dialogoBotonRegresoProcesoImplicaciones(getContext(), fragmentManager, getResources().getString(R.string.msj_regresar_proceso), 1, fragment);
                     return true;
                 }
                 return false;

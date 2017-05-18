@@ -16,6 +16,8 @@ import android.widget.TextView;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Director;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsistenciaDetalles;
+import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.ServicioEmailJSON;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteAsistenciaModel;
@@ -114,7 +116,11 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
                     if (mContext instanceof Director) {
                         Director director = (Director) mContext;
                         //fragment 1. fechaInicio 2. fechaFin 3.idGerencia 4.idSucursal 5.idAsesor 6.numeroEmpleado 7.nombreEmpleado 8.numeroCuenta 9.cita 10.hora 11.idTramite
-                        director.envioParametros(fragmento, mFechaInicio, mFechaFin, 0, 0, "", lista.getnEmpleado(),lista.getNombre(), "", false, "", 0);
+                        if(Config.conexion(mContext)){
+                            director.envioParametros(fragmento, mFechaInicio, mFechaFin, 0, 0, "", lista.getnEmpleado(),lista.getNombre(), "", false, "", 0);
+                        }else{
+                            Dialogos.dialogoErrorConexion(mContext);
+                        }
                     }
                 }
             });
@@ -159,11 +165,17 @@ public class DirectorReporteAsistenciaAdapter extends RecyclerView.Adapter {
                 Fragment fragmento = new ReporteAsistenciaDetalles();
                 if (mContext instanceof Director) {
                     Director director = (Director) mContext;
-                    director.envioParametros(fragmento, mFechaInicio, mFechaFin, 0, 0, "", String.valueOf(lista.getnEmpleado()),lista.getNombre(), "", false, "", 0);
+                    if (Config.conexion(mContext))
+                        director.envioParametros(fragmento, mFechaInicio, mFechaFin, 0, 0, "", String.valueOf(lista.getnEmpleado()),lista.getNombre(), "", false, "", 0);
+                    else
+                        Dialogos.dialogoErrorConexion(mContext);
                 }
                 return true;
                 case R.id.sub_menu_reporte_asistencia_email:
-                    ServicioEmailJSON.enviarEmailReporteAsistencia(mContext, 0, lista.getIdSucursal(), lista.getnEmpleado(), mFechaInicio, mFechaFin, true);
+                    if (Config.conexion(mContext))
+                        ServicioEmailJSON.enviarEmailReporteAsistencia(mContext, 0, lista.getIdSucursal(), lista.getnEmpleado(), mFechaInicio, mFechaFin, true);
+                    else
+                        Dialogos.dialogoErrorConexion(mContext);
                     return true;
                 default:
             }

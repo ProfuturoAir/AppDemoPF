@@ -18,6 +18,7 @@ import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsesores;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteClientes;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteSucursales;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.ServicioEmailJSON;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteGerenciasModel;
@@ -187,20 +188,32 @@ public class DirectorReporteGerenciasAdapter extends RecyclerView.Adapter {
                     ReporteSucursales reporteSucursales = new ReporteSucursales();
                     Director d1 = (Director) mRecyclerView.getContext();
                     //fragment 1. fechaInicio 2. fechaFin 3.idGerencia 4.idSucursal 5.idAsesor 6.numeroEmpleado 7.nombreEmpleado 8.numeroCuenta 9.cita 10.hora 11.idTramite
-                    d1.envioParametros(reporteSucursales, mFechaInicio, mFechaFin, list.idGerencia, 0, "", "","", "", false, "", 0);
+                    if (Config.conexion(mContext))
+                        d1.envioParametros(reporteSucursales, mFechaInicio, mFechaFin, list.idGerencia, 0, "", "","", "", false, "", 0);
+                    else
+                        Dialogos.dialogoErrorConexion(mContext);
                     return true;
                 case R.id.nav_asesor:
                     ReporteAsesores reporteAsesores = new ReporteAsesores();
                     Director d2 = (Director) mRecyclerView.getContext();
-                    d2.envioParametros(reporteAsesores, mFechaInicio, mFechaFin, list.idGerencia, 0, "", "","", "", false, "", 0);
+                    if (Config.conexion(mContext))
+                        d2.envioParametros(reporteAsesores, mFechaInicio, mFechaFin, list.idGerencia, 0, "", "","", "", false, "", 0);
+                    else
+                        Dialogos.dialogoErrorConexion(mContext);
                     return true;
                 case R.id.nav_clientes:
                     ReporteClientes reporteClientes = new ReporteClientes();
                     Director d3 = (Director) mRecyclerView.getContext();
-                    d3.envioParametros(reporteClientes, mFechaInicio, mFechaFin, list.idGerencia, 0, "", "","", "", false, "", 0);
+                    if (Config.conexion(mContext))
+                        d3.envioParametros(reporteClientes, mFechaInicio, mFechaFin, list.idGerencia, 0, "", "","", "", false, "", 0);
+                    else
+                        Dialogos.dialogoErrorConexion(mContext);
                     return true;
                 case R.id.nav_enviar_a_email:
-                    ServicioEmailJSON.enviarEmailReporteGerencias(mContext, true, list.idGerencia, mFechaInicio, mFechaFin);
+                    if (Config.conexion(mContext))
+                        ServicioEmailJSON.enviarEmailReporteGerencias(mContext, true, list.idGerencia, mFechaInicio, mFechaFin);
+                    else
+                        Dialogos.dialogoErrorConexion(mContext);
                     return true;
                 default:
             }
