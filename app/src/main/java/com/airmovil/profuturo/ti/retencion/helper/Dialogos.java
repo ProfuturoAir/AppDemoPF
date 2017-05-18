@@ -31,10 +31,12 @@ import com.airmovil.profuturo.ti.retencion.gerenteFragmento.SinCita;
 
 public class Dialogos extends Activity{
 
-    Activity activity = this;
     private static Timer mTimer = new Timer();
     private static ProgressDialog dialog;
 
+    /**
+     * @return fecha actual del dispositivo
+     */
     public static String fechaActual(){
         Calendar calendar = Calendar.getInstance();
         int dia = calendar.get(Calendar.DAY_OF_MONTH);
@@ -43,6 +45,9 @@ public class Dialogos extends Activity{
         return String.valueOf(dia)+"-"+String.valueOf(mes +1)+"-"+String.valueOf(anio);
     }
 
+    /**
+     * @return fecha del dia siguiente del dispositivo
+     */
     public static String fechaSiguiente(){
         Calendar calendar = Calendar.getInstance();
         int dia = calendar.get(Calendar.DAY_OF_MONTH);
@@ -51,6 +56,11 @@ public class Dialogos extends Activity{
         return String.valueOf(dia+1)+"-"+String.valueOf(mes + 1)+"-"+String.valueOf(anio);
     }
 
+    /**
+     * funcion para mostrar dialogo Picker de fechas
+     * @param context referencia del fragmento de la peticion del metodo
+     * @param textView elemento XML para mostrar la fecha a mostrar, despues de la seleccion
+     */
     public static void dialogoFechaInicio(final Context context, final TextView textView){
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +83,11 @@ public class Dialogos extends Activity{
         });
     }
 
+    /**
+     * funcion para mostrar dialogo Picker de fechas
+     * @param context referencia del fragmento de la peticion del metodo
+     * @param textView elemento XML para mostrar la fecha a mostrar, despues de la seleccion
+     */
     public static void dialogoFechaFin(final Context context, final TextView textView){
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,6 +110,10 @@ public class Dialogos extends Activity{
         });
     }
 
+    /**
+     * Metodo para mostrar dialogo de error de servicio
+     * @param context referencia del fragmento de la peticion del metodo
+     */
     public static void dialogoErrorServicio(Context context){
         android.app.AlertDialog.Builder dialogoAlert  = new android.app.AlertDialog.Builder(context);
         dialogoAlert.setTitle(context.getResources().getString(R.string.titulo_error));
@@ -108,11 +127,32 @@ public class Dialogos extends Activity{
         dialogoAlert.create().show();
     }
 
+    /**
+     * Metodo para mostrar dialogo de error de conexion
+     * @param context referencia del fragmento de la peticion del metodo
+     */
     public static void dialogoErrorConexion(Context context){
         android.app.AlertDialog.Builder dialogoAlert  = new android.app.AlertDialog.Builder(context);
         dialogoAlert.setTitle(context.getResources().getString(R.string.titulo_error));
         dialogoAlert.setIcon(context.getResources().getDrawable(R.drawable.icono_sin_wifi));
         dialogoAlert.setMessage(context.getResources().getString(R.string.msj_error_conexion_internet));
+        dialogoAlert.setCancelable(true);
+        dialogoAlert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+        dialogoAlert.create().show();
+    }
+
+    /**
+     * funcion para mostrar dialogo con error a conexion entre cambios del menu a otras secciones
+     * @param context referencia del fragmento de la peticion del metodo
+     */
+    public static void dialogoErrorConexionMenu(Context context){
+        android.app.AlertDialog.Builder dialogoAlert  = new android.app.AlertDialog.Builder(context);
+        dialogoAlert.setTitle(context.getResources().getString(R.string.titulo_error));
+        dialogoAlert.setIcon(context.getResources().getDrawable(R.drawable.icono_sin_wifi));
+        dialogoAlert.setMessage(context.getResources().getString(R.string.msj_error_conexion_internet_menu));
         dialogoAlert.setCancelable(true);
         dialogoAlert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
             @Override

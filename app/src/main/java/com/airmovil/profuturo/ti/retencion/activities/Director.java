@@ -1,8 +1,10 @@
 package com.airmovil.profuturo.ti.retencion.activities;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -18,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.Inicio;
@@ -29,12 +33,17 @@ import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteSucursales;
 import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
 import com.airmovil.profuturo.ti.retencion.fragmento.Calculadora;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
+import com.airmovil.profuturo.ti.retencion.helper.NetworkStateReceiver;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.VolleyError;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
+import com.google.android.gms.drive.events.ChangeEvent;
+import com.google.android.gms.drive.events.ChangeListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,7 +52,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Director extends AppCompatActivity{
+public class Director extends AppCompatActivity implements NetworkStateReceiver.NetworkStateReceiverListener{
     private static final String TAG = Asesor.class.getSimpleName();
     private MySharePreferences sessionManager;
     private Toolbar toolbar;
@@ -55,6 +64,9 @@ public class Director extends AppCompatActivity{
     public static Fragment itemMenu = null;
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
+    private ChangeListener listener;
+    private boolean conexion = false;
+    private NetworkStateReceiver networkStateReceiver;
 
     /**
      * Se utiliza para iniciar la actividad
@@ -75,7 +87,14 @@ public class Director extends AppCompatActivity{
         volleySingleton = VolleySingleton.getInstance(mResultCallback, getApplicationContext());
         volleySingleton.getDataVolley("Gerencias", Config.URL_GERENCIAS);
         volleySingleton.getDataVolley("Sucursales", Config.URL_SUCURSALES);
+
+        networkStateReceiver = new NetworkStateReceiver();
+        networkStateReceiver.addListener(this);
+        this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
+
     }
+
+
 
     /**
      *  metodo para callback de volley
@@ -237,32 +256,59 @@ public class Director extends AppCompatActivity{
                 fragmentoGenerico = new Inicio();
                 break;
             case R.id.director_nav_calculadora:
-                fragmentoGenerico = new Calculadora();
+                if(Config.conexion(getApplicationContext())) {
+                    fragmentoGenerico = new Calculadora();
+                }else{
+                    Dialogos.dialogoErrorConexionMenu(this);
+                }
                 break;
             case R.id.director_nav_biblioteca:
-                fragmentoGenerico = new Biblioteca();
+                if(Config.conexion(getApplicationContext())) {
+                    fragmentoGenerico = new Biblioteca();
+                }else{
+                    Dialogos.dialogoErrorConexionMenu(this);
+                }
                 break;
             case R.id.director_nav_gerencias:
-                fragmentoGenerico = new ReporteGerencias();
+                if(Config.conexion(getApplicationContext())) {
+                    fragmentoGenerico = new ReporteGerencias();
+                }else{
+                    Dialogos.dialogoErrorConexionMenu(this);
+                }
                 break;
             case R.id.director_nav_sucursales:
-                fragmentoGenerico = new ReporteSucursales();
+                if(Config.conexion(getApplicationContext())) {
+                    fragmentoGenerico = new ReporteSucursales();
+                }else{
+                    Dialogos.dialogoErrorConexionMenu(this);
+                }
                 break;
             case R.id.director_nav_asesores:
-                fragmentoGenerico = new ReporteAsesores();
+                if(Config.conexion(getApplicationContext())) {
+                    fragmentoGenerico = new ReporteAsesores();
+                }else{
+                    Dialogos.dialogoErrorConexionMenu(this);
+                }
                 break;
             case R.id.director_nav_clientes:
-                fragmentoGenerico = new ReporteClientes();
+                if(Config.conexion(getApplicationContext())) {
+                    fragmentoGenerico = new ReporteClientes();
+                }else{
+                    Dialogos.dialogoErrorConexionMenu(this);
+                }
                 break;
             case R.id.director_nav_asistencia:
-                fragmentoGenerico = new ReporteAsistencia();
+                if(Config.conexion(getApplicationContext())) {
+                    fragmentoGenerico = new ReporteAsistencia();
+                }else{
+                    Dialogos.dialogoErrorConexionMenu(this);
+                }
                 break;
             case R.id.director_nav_cerrar:
                 cerrarSesion();
                 break;
         }
         if (fragmentoGenerico != null){
-
             fragmentManager.beginTransaction().replace(R.id.content_director, fragmentoGenerico).addToBackStack("F_MAIN").commit();
         }
 
@@ -353,6 +399,7 @@ public class Director extends AppCompatActivity{
      * @param j jsonArray
      */
     private void Gerencias(JSONArray j){
+        Log.e(TAG,"Response gerencias: \n" + j + "\n" );
         int idGerencia = 0;
         String nombreGerencia = "";
         ArrayList<String> arrayListNombreGerencia = new ArrayList<String>();
@@ -379,6 +426,7 @@ public class Director extends AppCompatActivity{
      * @param j jsonArray
      */
     private void Sucursales(JSONArray j){
+        Log.e(TAG,"Response sucursales: \n" + j + "\n" );
         int idSucursal = 0;
         String nombreSucursal;
         ArrayList<Integer> arrayListIdSucursal = new ArrayList<Integer>();
@@ -398,5 +446,17 @@ public class Director extends AppCompatActivity{
             Config.nombreSucursal = arrayListNombreSucursal;
             Config.idSucusal = arrayListIdSucursal;
         }
+    }
+
+    @Override
+    public void networkAvailable() {
+        Log.d(TAG, "Red habilitada!");
+        volleySingleton.getDataVolley("Gerencias", Config.URL_GERENCIAS);
+        volleySingleton.getDataVolley("Sucursales", Config.URL_SUCURSALES);
+    }
+
+    @Override
+    public void networkUnavailable() {
+        Log.d(TAG, "Red no habilitada");
     }
 }

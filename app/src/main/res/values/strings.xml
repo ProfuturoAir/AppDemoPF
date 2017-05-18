@@ -107,6 +107,7 @@
     <!-- TODO: nuevas cadenas en dialogos -->
     <string name="msj_error_datos_servicio">Se ha encontrado un problema, con los datos a procesar</string>
     <string name="msj_error_conexion_internet">Se ha encontrado un problema, debes revisar tu conexion a internet</string>
+    <string name="msj_error_conexion_internet_menu">Al parecer no tienes internet, debes revisar tu conexion a internet, para poder visualizar las demas secciones</string>
     <string name="titulo_error">Error</string>
     <!-- TODO: mensaje de dialogo error en datos -->
     <string name="titulo_error_datos">Error en datos</string>
