@@ -1,7 +1,6 @@
 package com.airmovil.profuturo.ti.retencion.activities;
 
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -21,7 +20,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.directorFragmento.Inicio;
@@ -33,7 +31,6 @@ import com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteSucursales;
 import com.airmovil.profuturo.ti.retencion.fragmento.Biblioteca;
 import com.airmovil.profuturo.ti.retencion.fragmento.Calculadora;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
-import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
@@ -42,8 +39,6 @@ import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.VolleyError;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
-import com.google.android.gms.drive.events.ChangeEvent;
-import com.google.android.gms.drive.events.ChangeListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -64,8 +59,6 @@ public class Director extends AppCompatActivity implements NetworkStateReceiver.
     public static Fragment itemMenu = null;
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
-    private ChangeListener listener;
-    private boolean conexion = false;
     private NetworkStateReceiver networkStateReceiver;
 
     /**
@@ -88,6 +81,7 @@ public class Director extends AppCompatActivity implements NetworkStateReceiver.
         volleySingleton.getDataVolley("Gerencias", Config.URL_GERENCIAS);
         volleySingleton.getDataVolley("Sucursales", Config.URL_SUCURSALES);
 
+        // TODO: Listener para verificar conexion a internet
         networkStateReceiver = new NetworkStateReceiver();
         networkStateReceiver.addListener(this);
         this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
@@ -142,6 +136,17 @@ public class Director extends AppCompatActivity implements NetworkStateReceiver.
         return;
     }
 
+    @Override
+    public void networkAvailable() {
+        Log.d(TAG, "Red habilitada!");
+        volleySingleton.getDataVolley("Gerencias", Config.URL_GERENCIAS);
+        volleySingleton.getDataVolley("Sucursales", Config.URL_SUCURSALES);
+    }
+
+    @Override
+    public void networkUnavailable() {
+
+    }
 
     /**
      * Este metodo valida la sesion del usuario, manda a llamar a otros metodos
@@ -448,15 +453,4 @@ public class Director extends AppCompatActivity implements NetworkStateReceiver.
         }
     }
 
-    @Override
-    public void networkAvailable() {
-        Log.d(TAG, "Red habilitada!");
-        volleySingleton.getDataVolley("Gerencias", Config.URL_GERENCIAS);
-        volleySingleton.getDataVolley("Sucursales", Config.URL_SUCURSALES);
-    }
-
-    @Override
-    public void networkUnavailable() {
-        Log.d(TAG, "Red no habilitada");
-    }
 }

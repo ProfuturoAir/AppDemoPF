@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
@@ -39,8 +40,10 @@ import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsesores;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteSucursales;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
+import com.airmovil.profuturo.ti.retencion.helper.NetworkStateReceiver;
 import com.airmovil.profuturo.ti.retencion.helper.ServicioJSON;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.VolleyError;
@@ -55,7 +58,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Gerente extends AppCompatActivity{
+public class Gerente extends AppCompatActivity implements NetworkStateReceiver.NetworkStateReceiverListener{
     private static final String TAG = Gerente.class.getSimpleName();
     private MySharePreferences sessionManager;
     private VolleySingleton volleySingleton;
@@ -67,7 +70,8 @@ public class Gerente extends AppCompatActivity{
     private String global = "";
     private DriveId mFileId;
     private static final  int REQUEST_CODE_OPENER = 2;
-    String url;
+    private String url;
+    private NetworkStateReceiver networkStateReceiver;
 
     public static Fragment itemMenu = null;
     /**
@@ -94,6 +98,11 @@ public class Gerente extends AppCompatActivity{
         }catch (Exception e){}
         volleySingleton.getDataVolley("Gerencias", Config.URL_GERENCIAS);
         volleySingleton.getDataVolley("Sucursales", Config.URL_SUCURSALES);
+
+        // TODO: Listener para verificar conexion a internet
+        networkStateReceiver = new NetworkStateReceiver();
+        networkStateReceiver.addListener(this);
+        this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
     /**
@@ -141,6 +150,17 @@ public class Gerente extends AppCompatActivity{
         return;
     }
 
+    @Override
+    public void networkAvailable() {
+        Log.d(TAG, "Red habilitada!");
+        volleySingleton.getDataVolley("Gerencias", Config.URL_GERENCIAS);
+        volleySingleton.getDataVolley("Sucursales", Config.URL_SUCURSALES);
+    }
+
+    @Override
+    public void networkUnavailable() {
+        Log.d(TAG, "Red no habilitada");
+    }
 
     /**
      * Este metodo valida la sesion del usuario, manda a llamar a otros metodos
@@ -312,75 +332,107 @@ public class Gerente extends AppCompatActivity{
                 }
                 break;
             case R.id.gerente_nav_calculadora:
-                if(checkProccess == false) {
-                    checkMapsFragment = false;
-                    fragmentoGenerico = new Calculadora();
+                if(Config.conexion(this)){
+                    if(checkProccess == false) {
+                        checkMapsFragment = false;
+                        fragmentoGenerico = new Calculadora();
+                    }else{
+                        Gerente.itemMenu = new Calculadora();
+                        salirFragment(getApplicationContext());
+                    }
                 }else{
-                    Gerente.itemMenu = new Calculadora();
-                    salirFragment(getApplicationContext());
+                    Dialogos.dialogoErrorConexion(this);
                 }
                 break;
             case R.id.gerente_nav_biblioteca:
-                if(checkProccess == false) {
-                    checkMapsFragment = false;
-                    fragmentoGenerico = new Biblioteca();
+                if(Config.conexion(this)){
+                    if(checkProccess == false) {
+                        checkMapsFragment = false;
+                        fragmentoGenerico = new Biblioteca();
+                    }else{
+                        Gerente.itemMenu = new Biblioteca();
+                        salirFragment(getApplicationContext());
+                    }
                 }else{
-                    Gerente.itemMenu = new Biblioteca();
-                    salirFragment(getApplicationContext());
+                    Dialogos.dialogoErrorConexion(this);
                 }
                 break;
             case R.id.gerente_nav_constancia_implicaciones:
-                if(checkProccess == false) {
-                    checkMapsFragment = false;
-                    fragmentoGenerico = new SinCita();
+                if(Config.conexion(this)){
+                    if(checkProccess == false) {
+                        checkMapsFragment = false;
+                        fragmentoGenerico = new SinCita();
+                    }else{
+                        Gerente.itemMenu = new SinCita();
+                        salirFragment(getApplicationContext());
+                    }
                 }else{
-                    Gerente.itemMenu = new SinCita();
-                    salirFragment(getApplicationContext());
+                    Dialogos.dialogoErrorConexion(this);
                 }
                 break;
             case R.id.gerente_nav_sucursales:
-                if(checkProccess == false) {
-                    checkMapsFragment = false;
-                    fragmentoGenerico = new ReporteSucursales();
+                if(Config.conexion(this)){
+                    if(checkProccess == false) {
+                        checkMapsFragment = false;
+                        fragmentoGenerico = new ReporteSucursales();
+                    }else{
+                        Gerente.itemMenu = new ReporteSucursales();
+                        salirFragment(getApplicationContext());
+                    }
                 }else{
-                    Gerente.itemMenu = new ReporteSucursales();
-                    salirFragment(getApplicationContext());
+                    Dialogos.dialogoErrorConexion(this);
                 }
                 break;
             case R.id.gerente_nav_asesores:
-                if(checkProccess == false) {
-                    checkMapsFragment = false;
-                    fragmentoGenerico = new ReporteAsesores();
+                if(Config.conexion(this)){
+                    if(checkProccess == false) {
+                        checkMapsFragment = false;
+                        fragmentoGenerico = new ReporteAsesores();
+                    }else{
+                        Gerente.itemMenu = new ReporteAsesores();
+                        salirFragment(getApplicationContext());
+                    }
                 }else{
-                    Gerente.itemMenu = new ReporteAsesores();
-                    salirFragment(getApplicationContext());
+                    Dialogos.dialogoErrorConexion(this);
                 }
                 break;
             case R.id.gerente_nav_clientes:
-                if(checkProccess == false) {
-                    checkMapsFragment = false;
-                    fragmentoGenerico = new ReporteClientes();
+                if(Config.conexion(this)){
+                    if(checkProccess == false) {
+                        checkMapsFragment = false;
+                        fragmentoGenerico = new ReporteClientes();
+                    }else{
+                        Gerente.itemMenu = new ReporteClientes();
+                        salirFragment(getApplicationContext());
+                    }
                 }else{
-                    Gerente.itemMenu = new ReporteClientes();
-                    salirFragment(getApplicationContext());
+                    Dialogos.dialogoErrorConexion(this);
                 }
                 break;
             case R.id.gerente_nav_asistencia:
-                if(checkProccess == false) {
-                    checkMapsFragment = false;
-                    fragmentoGenerico = new ReporteAsistencia();
+                if(Config.conexion(this)){
+                    if(checkProccess == false) {
+                        checkMapsFragment = false;
+                        fragmentoGenerico = new ReporteAsistencia();
+                    }else{
+                        Gerente.itemMenu = new ReporteAsistencia();
+                        salirFragment(getApplicationContext());
+                    }
                 }else{
-                    Gerente.itemMenu = new ReporteAsistencia();
-                    salirFragment(getApplicationContext());
+                    Dialogos.dialogoErrorConexion(this);
                 }
                 break;
             case R.id.gerente_nav_implicaciones_pendientes:
-                if(checkProccess == false) {
-                    checkMapsFragment = false;
-                    fragmentoGenerico = new ProcesoImplicacionesPendientes();
+                if(Config.conexion(this)){
+                    if(checkProccess == false) {
+                        checkMapsFragment = false;
+                        fragmentoGenerico = new ProcesoImplicacionesPendientes();
+                    }else{
+                        Gerente.itemMenu = new ProcesoImplicacionesPendientes();
+                        salirFragment(getApplicationContext());
+                    }
                 }else{
-                    Gerente.itemMenu = new ProcesoImplicacionesPendientes();
-                    salirFragment(getApplicationContext());
+                    Dialogos.dialogoErrorConexion(this);
                 }
                 break;
             case R.id.gerente_nav_cerrar:
@@ -628,4 +680,6 @@ public class Gerente extends AppCompatActivity{
             Config.idSucusal = arrayIdSucursal;
         }
     }
+
+
 }
