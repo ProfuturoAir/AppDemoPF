@@ -3,6 +3,7 @@ package com.airmovil.profuturo.ti.retencion.asesorFragmento;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -217,7 +218,11 @@ public class ConCita extends Fragment {
      */
     @Override
     public void onResume() {
-        super.onResume();
+        LocationManager mlocManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        boolean enable = mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if(!enable){
+            Dialogos.dialogoActivarLocalizacion(getContext());
+        }
         getView().setFocusableInTouchMode(true);
         getView().requestFocus();
         getView().setOnKeyListener(new View.OnKeyListener() {
@@ -232,6 +237,7 @@ public class ConCita extends Fragment {
                 return false;
             }
         });
+        super.onResume();
     }
 
     /**

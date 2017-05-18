@@ -98,7 +98,7 @@
     <string name="msj_titulo_firma">Firma vacia</string>
     <string name="msj_titulo_sin_coordenadas">Error en coordenadas</string>
     <string name="msj_titulo_confirmacion">Confirmación</string>
-    <string name="msj_cotentido_sin_coordenadas">No existen una ubicación, activa tu GPS</string>
+    <string name="msj_cotentido_sin_coordenadas">No existen una ubicación, activa tu GPS.</string>
     <string name="msj_contenido_vacio_firma">Se requiere una firma, favor de firmar</string>
     <string name="msj_contenido_envio">Se enviara los datos de </string>
     <string name="msj_contenido_spinner">Debes ingresar un </string>

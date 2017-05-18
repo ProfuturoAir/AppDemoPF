@@ -12,6 +12,7 @@ import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.support.v7.app.AlertDialog.Builder;
@@ -389,4 +390,34 @@ public class Dialogos extends Activity{
         AlertDialog alert = builder.create();
         alert.show();
     }
+
+    public static final void dialogoCancelarFirma(final Context context, Button button, final FragmentManager fragmentManager){
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+                progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_regreso));
+                progressDialog.setTitle(context.getResources().getString(R.string.msj_titulo_aviso));
+                progressDialog.setMessage(context.getResources().getString(R.string.msj_contenido_aviso));
+                progressDialog.setButton(DialogInterface.BUTTON1, context.getResources().getString(R.string.aceptar),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                progressDialog.dismiss();
+                                Fragment fragmentoGenerico = new Inicio();
+                                fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                            }
+                        });
+                progressDialog.setButton(DialogInterface.BUTTON2, context.getResources().getString(R.string.cancelar),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                progressDialog.dismiss();
+                            }
+                        });
+                progressDialog.show();
+            }
+        });
+    }
+
 }

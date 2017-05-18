@@ -20,6 +20,7 @@ import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
+import com.airmovil.profuturo.ti.retencion.helper.GPSRastreador;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
@@ -112,6 +113,8 @@ public class Inicio extends Fragment {
             sendJson(true);
         else
             Dialogos.dialogoErrorConexion(getContext());
+        // TODO: Desactivar el modo Avion
+        Config.modeAvionDetectado(getContext());
 
         // TODO: Asignacion de variables
         variables();
@@ -119,6 +122,8 @@ public class Inicio extends Fragment {
         detalleSuperior();
         // TODO: Verificacion de datos recibidos
         argumentos();
+        // TODO: GPS coordenadas
+        localizacion();
         // TODO: Dialogos de fechas
         Dialogos.dialogoFechaInicio(getContext(), tvRangoFecha1); // Dialogo de muestra de fecha
         Dialogos.dialogoFechaFin(getContext(), tvRangoFecha2); // Dialogo de muestra de fecha
@@ -139,6 +144,7 @@ public class Inicio extends Fragment {
                 }
             }
         });
+
     }
 
     /**
@@ -241,6 +247,16 @@ public class Inicio extends Fragment {
         tvRangoFecha2 = (TextView) rootView.findViewById(R.id.afi_tv_fecha_rango2);
         btnFiltro = (Button) rootView.findViewById(R.id.afi_btn_filtro);
         connected = new Connected();
+    }
+
+    /**
+     * Obtencion de Coordenadas
+     */
+    private void localizacion(){
+        GPSRastreador gps = new GPSRastreador(getContext());
+        Double latitude_user= gps.getLatitude();
+        Double longitude_user = gps.getLongitude();
+        Log.e(TAG, "Latitud: " + latitude_user + "\nLongitud: " + longitude_user);
     }
 
     /**

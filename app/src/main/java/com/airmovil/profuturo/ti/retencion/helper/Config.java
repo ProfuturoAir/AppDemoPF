@@ -5,17 +5,17 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.MatrixCursor;
 import android.graphics.Bitmap;
 import android.location.LocationManager;
 import android.provider.Settings;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Base64;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.text.DecimalFormat;
@@ -34,6 +34,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.Inicio;
 import com.android.volley.RequestQueue;
 
 import org.json.JSONObject;
@@ -123,7 +124,6 @@ public class Config extends Activity {
     public static Context context; // Context
     public static String idUsuario = "";
     public static RequestQueue mRequestQueue = null;
-
     /**
      * Muestra mensaje de fechas vacias
      * @param context referencia de la llamada, fragmento o actividad
@@ -480,10 +480,14 @@ public class Config extends Activity {
         return dialog;
     }
 
+    /**
+     * Metodo para quitar el modo avion
+     * @param context
+     */
     public static void modeAvionDetectado(Context context){
         if(Settings.System.getInt(context.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) != 0) {
-
             Dialogos.dialogoAvisoModoAvion(context);
         }
     }
+
 }

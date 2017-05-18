@@ -27,27 +27,14 @@ public class EnviaJSON {
     private static final String TAG = "ENCUESTA";
     private static final String TAG2 = "ENCUESTA 2";
     private String idTramite;
-
     private String retencion_encuesta;
     private int estatusTramite;
     private boolean pregunta1;
     private Boolean pregunta2;
     private Boolean pregunta3;
-    private String pregunta4;
-    private String pregunta5;
-    private String pregunta6;
-
-    private String retencion_encuesta_observaciones;
-    private String claveAfore;
     private String email;
-    private String pregunta7;
-    private String pregunta8;
-    private String pregunta9;
-    private String estatus;
     private int idMotivo;
-    private String leyRegimen;
     private String observacion;
-    private String regimen;
     private String telefono;
     private int idAfore;
     private int idEstatus;
@@ -56,16 +43,12 @@ public class EnviaJSON {
     private int idDocumentacion;
     private Double longitud;
     private Double latitud;
-
-    private String retencion_documentacion;
     private String fechaHoraFin;
     private String ineIfe;
     private String numeroCuenta;
     private String usuario;
-
     private int statusRs;
     private String firmaString;
-
     public Boolean eTramite;
 
     /**
@@ -150,7 +133,6 @@ public class EnviaJSON {
     private void sendJsonEncuesta(final boolean primerPeticion, final String idTramite, String observaciones, Boolean pregunta1, Boolean pregunta2, Boolean pregunta3, int estatusTramite, final Context context) {
         final ProgressDialog loading;
         JSONObject obj = new JSONObject();
-        // TODO: Formacion del JSON request
         try{
             JSONObject rqt = new JSONObject();
             JSONObject encuesta = new JSONObject();
@@ -166,14 +148,11 @@ public class EnviaJSON {
         } catch (JSONException e){
             Config.msj(context, "Error", "Error al formar los datos");
         }
-        // Creación de una solicitud de un objeto json
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_ENCUESTA, obj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        // disminucion del progress dialog
                         if (primerPeticion) {
-                            //loading.dismiss();
                             primerPaso(response,idTramite);
                         }
                     }
@@ -186,13 +165,7 @@ public class EnviaJSON {
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+                return Config.credenciales(context);
             }
         };
         MySingleton.getInstance(context).addToRequestQueue(jsonArrayRequest);
@@ -240,13 +213,13 @@ public class EnviaJSON {
                     @Override
                     public void onResponse(JSONObject response) {
                         if (primerPeticion) {
+                            primerPaso(response,idTramite);
                             try {
                                 statusRs = response.getInt("status");
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                             if(statusRs == 200) {
-                                Log.d(TAG, "DELETE ->" );
                                 db.deleteObservaciones(idTramite);
                                 db.deleteTramite(idTramite);
                             }
@@ -261,12 +234,124 @@ public class EnviaJSON {
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-                return headers;
+                return Config.credenciales(context);
+            }
+        };
+        MySingleton.getInstance(context).addToRequestQueue(jsonArrayRequest);
+    }
+
+    /**
+     * Creacion de una nueva peticion para el envio de parametros
+     * @param primerPeticion
+     * @param idTramite
+     * @param estatusTramite
+     * @param firmaString
+     * @param latitud
+     * @param longitud
+     * @param context
+     */
+    private void sendJsonFirma(final boolean primerPeticion,final String idTramite,int estatusTramite,String firmaString,Double latitud,Double longitud,final Context context) {
+        final ProgressDialog loading;
+        JSONObject obj = new JSONObject();
+        // TODO: Formacion del JSON request
+        try{
+            JSONObject rqt = new JSONObject();
+            rqt.put("estatusTramite", estatusTramite);
+            rqt.put("idTramite", Integer.parseInt(idTramite));
+            JSONObject ubicacion = new JSONObject();
+            ubicacion.put("latitud", latitud);
+            ubicacion.put("longitud", longitud);
+            rqt.put("ubicacion", ubicacion);
+            rqt.put("firmaCliente", firmaString);
+            obj.put("rqt", rqt);
+            Log.d("datos", "REQUEST-->" + obj);
+        } catch (JSONException e){
+            Config.msj(context, "Error", "Error al formar los datos");
+        }
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_FIRMA, obj,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        if (primerPeticion) {
+                            primerPaso(response,idTramite);
+                            try {
+                                statusRs = response.getInt("status");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            if(statusRs == 200) {
+                                Log.d(TAG, "DELETE ->" );
+                                db.deleteFirma(idTramite);
+                                db.deleteTramite(idTramite);
+                            }
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //loading.dismiss();
+                        Config.msj(context,"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return Config.credenciales(context);
+            }
+        };
+        MySingleton.getInstance(context).addToRequestQueue(jsonArrayRequest);
+    }
+
+    private void sendJsonDocumento(final boolean primerPeticion,final String idTramite,String fechaHoraFin,int estatusTramite,String ineIfe,String numeroCuenta,String usuario,Double latitud,Double longitud,final Context context) {
+        final ProgressDialog loading;
+        JSONObject obj = new JSONObject();
+        // TODO: Formacion del JSON request
+        try{
+            JSONObject rqt = new JSONObject();
+            rqt.put("estatusTramite", estatusTramite);
+            rqt.put("fechaHoraFin", fechaHoraFin);
+            rqt.put("idTramite", Integer.parseInt(idTramite));
+            rqt.put("numeroCuenta", numeroCuenta);
+            JSONObject ubicacion = new JSONObject();
+            ubicacion.put("latitud", latitud);
+            ubicacion.put("longitud", longitud);
+            rqt.put("ubicacion", ubicacion);
+            rqt.put("usuario", Config.usuarioCusp(context));
+            rqt.put("ineIfe", ineIfe);
+            obj.put("rqt", rqt);
+            Log.d("datos", "REQUEST-->" + obj);
+        } catch (JSONException e){
+            Config.msj(context, "Error", "Error al formar los datos");
+        }
+        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_DOCUMENTO_IFE_INE, obj,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // disminucion del dialog
+                        if (primerPeticion) {
+                            primerPaso(response,idTramite);
+                            try {
+                                statusRs = response.getInt("status");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            if(statusRs == 200) {
+                                Log.d(TAG, "DELETE ->" );
+                                db.deleteDocumentacion(idTramite);
+                                db.deleteTramite(idTramite);
+                            }
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Config.msj(context,"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return Config.credenciales(context);
             }
         };
         MySingleton.getInstance(context).addToRequestQueue(jsonArrayRequest);
@@ -290,133 +375,5 @@ public class EnviaJSON {
         }else{
             Log.d(TAG, "DELETE -> NONE pP" );
         }
-    }
-
-    /**
-     * Creacion de una nueva peticion para el envio de parametros
-     * @param primerPeticion
-     * @param idTramite
-     * @param estatusTramite
-     * @param firmaString
-     * @param latitud
-     * @param longitud
-     * @param context
-     */
-    private void sendJsonFirma(final boolean primerPeticion,final String idTramite,int estatusTramite,String firmaString,Double latitud,Double longitud,final Context context) {
-        final ProgressDialog loading;
-        JSONObject obj = new JSONObject();
-        // TODO: Formacion del JSON request
-        try{
-            JSONObject rqt = new JSONObject();
-            rqt.put("estatusTramite", estatusTramite);
-            rqt.put("firmaCliente", firmaString);
-            rqt.put("idTramite", Integer.parseInt(idTramite));
-            JSONObject ubicacion = new JSONObject();
-            ubicacion.put("latitud", latitud);
-            ubicacion.put("longitud", longitud);
-            rqt.put("ubicacion", ubicacion);
-            obj.put("rqt", rqt);
-            Log.d("datos", "REQUEST-->" + obj);
-        } catch (JSONException e){
-            Config.msj(context, "Error", "Error al formar los datos");
-        }
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_FIRMA, obj,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        if (primerPeticion) {
-                            try {
-                                statusRs = response.getInt("status");
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            if(statusRs == 200) {
-                                Log.d(TAG, "DELETE ->" );
-                                db.deleteFirma(idTramite);
-                                db.deleteTramite(idTramite);
-                            }
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //loading.dismiss();
-                        Config.msj(context,"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
-            }
-        };
-        MySingleton.getInstance(context).addToRequestQueue(jsonArrayRequest);
-    }
-
-    private void sendJsonDocumento(final boolean primerPeticion,final String idTramite,String fechaHoraFin,int estatusTramite,String ineIfe,String numeroCuenta,String usuario,Double latitud,Double longitud,final Context context) {
-        final ProgressDialog loading;
-        JSONObject obj = new JSONObject();
-        // TODO: Formacion del JSON request
-        try{
-            JSONObject rqt = new JSONObject();
-            rqt.put("estatusTramite", estatusTramite);
-            rqt.put("fechaHoraFin", fechaHoraFin);
-            rqt.put("idTramite", Integer.parseInt(idTramite));
-            rqt.put("numeroCuenta", numeroCuenta);
-            JSONObject ubicacion = new JSONObject();
-            ubicacion.put("latitud", latitud);
-            ubicacion.put("longitud", longitud);
-            rqt.put("ubicacion", ubicacion);
-            rqt.put("ineIfe", ineIfe);
-            rqt.put("usuario", Config.usuarioCusp(context));
-            obj.put("rqt", rqt);
-            Log.d("datos", "REQUEST-->" + obj);
-        } catch (JSONException e){
-            Config.msj(context, "Error", "Error al formar los datos");
-        }
-        JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_DOCUMENTO_IFE_INE, obj,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        // disminucion del dialog
-                        if (primerPeticion) {
-                            try {
-                                statusRs = response.getInt("status");
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            if(statusRs == 200) {
-                                Log.d(TAG, "DELETE ->" );
-                                db.deleteDocumentacion(idTramite);
-                                db.deleteTramite(idTramite);
-                            }
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Config.msj(context,"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String credentials = Config.USERNAME+":"+Config.PASSWORD;
-                String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-                return headers;
-            }
-        };
-        MySingleton.getInstance(context).addToRequestQueue(jsonArrayRequest);
     }
 }
