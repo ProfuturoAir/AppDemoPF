@@ -128,7 +128,7 @@ public class Dialogos extends Activity{
     }
 
     /**
-     * Metodo para mostrar dialogo de error de conexion
+     * Metodo para mostrar dialogo de error de servicio
      * @param context referencia del fragmento de la peticion del metodo
      */
     public static void dialogoErrorConexion(Context context){
@@ -145,7 +145,7 @@ public class Dialogos extends Activity{
     }
 
     /**
-     * funcion para mostrar dialogo con error a conexion entre cambios del menu a otras secciones
+     * Metodo para mostrar dialogo de error de conexion a internet, actua conforme al menu
      * @param context referencia del fragmento de la peticion del metodo
      */
     public static void dialogoErrorConexionMenu(Context context){
@@ -161,6 +161,10 @@ public class Dialogos extends Activity{
         dialogoAlert.create().show();
     }
 
+    /**
+     * Metodo para mostrar dialogo que muestra la verificacion a internet
+     * @param context referencia del fragmento de la peticion del metodo
+     */
     public  static void dialogoVerificarConexionInternet(Context context){
         final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
         progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_sin_wifi));

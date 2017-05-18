@@ -150,6 +150,9 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
         return;
     }
 
+    /**
+     * Metodo que notifica la conexion a la red
+     */
     @Override
     public void networkAvailable() {
         Log.d(TAG, "Red habilitada!");
@@ -250,25 +253,11 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
         View hView = navigationView.getHeaderView(0);
         TextView navPrimeraLetra = (TextView) hView.findViewById(R.id.gerente_nav_tv_letra);
         TextView navDatosGerente = (TextView) hView.findViewById(R.id.gerente_nav_tv_datos);
-
         navigationView.getMenu().hasVisibleItems();
-
         // TODO: obteniendo datos del sharePreference
         HashMap<String,String> datosUsuario = sessionManager.getUserDetails();
-
-        String apePaterno = datosUsuario.get(MySharePreferences.APELLIDO_PATERNO);
-        String apeMaterno = datosUsuario.get(MySharePreferences.APELLIDO_MATERNO);
-        String nombre = datosUsuario.get(MySharePreferences.NOMBRE);
-        String idEmpleado = datosUsuario.get(MySharePreferences.USER_ID);
-
-        char letra = nombre.charAt(0);
-        String inicial = Character.toString(letra);
-
-        navPrimeraLetra.setText(inicial);
-        navDatosGerente.setText(nombre + " " + apePaterno + " " + apeMaterno + "\nNúmero empleado: " + Config.usuarioCusp(getApplicationContext()));
-
-        // TODO: Se utiliza para colocar la primera de todo el nombre dentro de un contenedor
-        navPrimeraLetra.setText(inicial);
+        navPrimeraLetra.setText(Character.toString(datosUsuario.get(MySharePreferences.NOMBRE).charAt(0)));
+        navDatosGerente.setText(datosUsuario.get(MySharePreferences.NOMBRE) + " " + datosUsuario.get(MySharePreferences.APELLIDO_PATERNO) + " " + datosUsuario.get(MySharePreferences.APELLIDO_MATERNO) + "\nNúmero empleado: " + Config.usuarioCusp(getApplicationContext()));
     }
 
     /**
@@ -326,6 +315,7 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
             fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).addToBackStack("F_MAIN").commit();
         }
 
+        // Cambia de fragmento y notifica si hay conexion a internet
         //<editor-fold desc="Cambio de fragmentos">
         switch (itemDrawer.getItemId()){
             case R.id.gerente_nav_inicio:
@@ -452,6 +442,10 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
         }
     }
 
+    /**
+     * Metodo para salir del proceso de implicaciones y avisa al usuario en que proceso saldra
+     * @param context
+     */
     public void salirFragment(Context context){
         AlertDialog.Builder dialogo1 = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppTheme));
         dialogo1.setTitle("Confirmar");
@@ -472,17 +466,12 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
                 checkProccess = false;
                 final Fragment borrar = f;
                 borrar.onDestroy();
-                ft.remove(borrar);
-                ft.replace(R.id.content_gerente, Gerente.itemMenu);
-                ft.addToBackStack(null);
-                ft.commit();
+                ft.remove(borrar).replace(R.id.content_gerente, Gerente.itemMenu).addToBackStack(null).commit();
             }
         });
         dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
+            public void onClick(DialogInterface dialog, int which) {}
         });
         dialogo1.show();
     }
@@ -510,6 +499,12 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
         dialogo1.show();
     }
 
+    /**
+     * Metodo para veridicar la cuenta de gmail y generar la vinculacion de actividad a fragmento
+     * @param requestCode codigo de respuesta
+     * @param resultCode resultado del codigo
+     * @param data envio de datos para abrir GoogleDrive
+     */
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         switch (requestCode) {
@@ -529,6 +524,13 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
         }
     }
 
+    /**
+     * Metodo para envio  de parametro al fragmnto
+     * @param frag fragmento de envio de informacion
+     * @param idClienteCuenta idCliente para uso en otros fragmento
+     * @param nombre nombre del cliente
+     * @param numeroDeCuenta numero de cuenta del cliente
+     */
     public void switchDatosAsesor(Fragment frag, String idClienteCuenta,String nombre,String numeroDeCuenta) {
         Bundle bundle=new Bundle();
         bundle.putString("idClienteCuenta",idClienteCuenta);

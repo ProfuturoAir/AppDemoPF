@@ -392,7 +392,7 @@ public class Asesor extends AppCompatActivity{
     public void salirFragment(Context context){
         AlertDialog.Builder dialogo1 = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppTheme));
         dialogo1.setTitle("Confirmar");
-        dialogo1.setMessage("¿Estás seguro que deseas cancelar el proceso " + global + " ?");
+        dialogo1.setMessage("\"¿Estás seguro que deseas cancelar el proceso " + global + " ?");
         dialogo1.setCancelable(false);
         dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             @Override
@@ -422,7 +422,10 @@ public class Asesor extends AppCompatActivity{
                 checkProccess = false;
                 final Fragment borrar = f;
                 borrar.onDestroy();
-                ft.remove(borrar).replace(R.id.content_asesor, Asesor.itemMenu).addToBackStack(null).commit();
+                ft.remove(borrar);
+                ft.replace(R.id.content_asesor, Asesor.itemMenu);
+                ft.addToBackStack(null);
+                ft.commit();
             }
         });
         dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -436,11 +439,10 @@ public class Asesor extends AppCompatActivity{
 
     /**
      * Metodo para envio  de parametro al fragmnto
-     * @param frag
-     * @param idClienteCuenta
-     * @param nombre
-     * @param numeroDeCuenta
-     * @param hora
+     * @param frag fragmento de envio de informacion
+     * @param idClienteCuenta idCliente para uso en otros fragmento
+     * @param nombre nombre del cliente
+     * @param numeroDeCuenta numero de cuenta del cliente
      */
     public void switchDatosAsesor(Fragment frag, String idClienteCuenta,String nombre,String numeroDeCuenta,String hora) {
         Bundle bundle=new Bundle();
