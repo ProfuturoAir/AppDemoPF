@@ -40,7 +40,6 @@ import java.util.List;
 public class ReporteAsistencia extends Fragment{
     private static final String TAG = ReporteAsistencia.class.getSimpleName();
     private static final String ARG_PARAM1 = "idGerencia", ARG_PARAM2 = "idSucursal", ARG_PARAM3 = "idAsesor", ARG_PARAM4 = "fechaInicio", ARG_PARAM5 = "fechaFin";
-    private int mParam1 /*idGerencia*/, mParam2; //idSucursal
     private String mParam3 /*idAsesor*/, mParam4 /*fechaInicio*/, mParam5 /*fechaFin*/;
     private List<GerenteReporteAsistenciaModel> getDatos1;
     private RecyclerView recyclerView;
@@ -93,8 +92,8 @@ public class ReporteAsistencia extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getInt(ARG_PARAM1);
-            mParam2 = getArguments().getInt(ARG_PARAM2);
+            idGerencia = getArguments().getInt(ARG_PARAM1);
+            idSucursal = getArguments().getInt(ARG_PARAM2);
             mParam3 = getArguments().getString(ARG_PARAM3);
             mParam4 = getArguments().getString(ARG_PARAM4);
             mParam5 = getArguments().getString(ARG_PARAM5);
@@ -164,7 +163,8 @@ public class ReporteAsistencia extends Fragment{
                         Dialogos.dialogoFechasVacias(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ReporteAsistencia fragmento = ReporteAsistencia.newInstance(mParam1 = idGerencia, mParam2 = idSucursal, etAsesor.getText().toString(), tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), rootView.getContext());
+                        Log.e("jma","idSucursal:---->"+spinnerSucursal.getSelectedItemId());
+                        ReporteAsistencia fragmento = ReporteAsistencia.newInstance(idGerencia, (int) spinnerSucursal.getSelectedItemId(), etAsesor.getText().toString(), tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), rootView.getContext());
                         borrar.onDestroy();ft.remove(borrar).replace(R.id.content_gerente, fragmento).addToBackStack(null).commit();
                         Config.teclado(getContext(), etAsesor);
                     }
@@ -178,6 +178,7 @@ public class ReporteAsistencia extends Fragment{
             @Override
             public void onClick(View v) {
                 boolean argumentos = (getArguments()!=null);
+                Log.e("jma","arguments------------->"+getArguments());
                 ServicioEmailJSON.enviarEmailReporteAsistencia(getContext(), (argumentos)?getArguments().getInt(ARG_PARAM1):0, (argumentos)?getArguments().getInt(ARG_PARAM2):0, (argumentos)?getArguments().getString(ARG_PARAM3):"", (argumentos)?getArguments().getString(ARG_PARAM4):Dialogos.fechaActual(), (argumentos)?getArguments().getString(ARG_PARAM5):Dialogos.fechaSiguiente(), (argumentos) ? true : false);
             }
         });
@@ -260,8 +261,8 @@ public class ReporteAsistencia extends Fragment{
             tvFecha.setText(getArguments().getString(ARG_PARAM4) + " - " + getArguments().getString(ARG_PARAM5));
             tvRangoFecha1.setText(getArguments().getString(ARG_PARAM4));
             tvRangoFecha2.setText(getArguments().getString(ARG_PARAM5));
-            if(mParam2 != 0) idSucursal = mParam2;
-            if(mParam1 != 0) idGerencia = mParam1;
+            if(idSucursal != 0) idSucursal = idSucursal;
+            if(idGerencia != 0) idGerencia = idGerencia;
             etAsesor.setText(getArguments().getString(ARG_PARAM3));
         }else{
             tvFecha.setText(Dialogos.fechaActual() + " - " + Dialogos.fechaSiguiente());

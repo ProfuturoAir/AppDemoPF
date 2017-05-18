@@ -45,18 +45,17 @@ import java.util.List;
 public class ReporteClientes extends Fragment{
     private static final String TAG = ReporteClientes.class.getSimpleName();
     private static final String ARG_PARAM1 = "idBusqueda", ARG_PARAM2 = "datosCliente", ARG_PARAM3 = "idGerencia", ARG_PARAM4 = "idSucursal", ARG_PARAM5 = "idAsesor", ARG_PARAM6 = "fechaInicio", ARG_PARAM7 = "fechaFin", ARG_PARAM8 = "idRetenido", ARG_PARAM9 = "idCita";
-    private Spinner spinnerId, spinnerSucursales, spinnerIdRetenido, spinnerIdCita, spinnerGerencias;
+    private Spinner spinnerId, spinnerSucursales, spinnerIdRetenido, spinnerIdCita;
     private TextView tvResultados, tvRangoFecha1, tvRangoFecha2, tvFecha;
     private Button btnBuscar;
     private EditText etDatosCliente, etIdAsesor;
-    private ArrayList<String> sucursales, id_sucursales;
     private View rootView;
     private Connected connected;
     private List<GerenteReporteClientesModel> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private GerenteReporteClientesAdapter adapter;
-    private int filas, pagina = 1, numeroMaximoPaginas = 0, idSucursal1, idGerencia1, idRetenido1, idCita1, idSucursal, tipoBuscar, spinId = 0, idGerencia;
+    private int filas, pagina = 1, numeroMaximoPaginas = 0, idRetenido1, idCita1, idSucursal, tipoBuscar, spinId = 0, idGerencia;
     private String idAsesor1;
     private Fragment borrar = this;
     private OnFragmentInteractionListener mListener;
@@ -226,8 +225,9 @@ public class ReporteClientes extends Fragment{
                         Dialogos.dialogoFechasVacias(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ReporteClientes fragmento = ReporteClientes.newInstance(spinnerId.getSelectedItemPosition(),  etDatosCliente.getText().toString(), idGerencia,  idSucursal,  etIdAsesor.getText().toString(), tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), spinnerIdRetenido.getSelectedItemPosition(),  spinnerIdCita.getSelectedItemPosition());
-                        borrar.onDestroy();ft.remove(borrar).replace(R.id.content_gerente, fragmento).addToBackStack(null).commit();
+                        ReporteClientes fragmento = ReporteClientes.newInstance(spinnerId.getSelectedItemPosition(),  etDatosCliente.getText().toString(), idGerencia, (int) spinnerSucursales.getSelectedItemId(),  etIdAsesor.getText().toString(), tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), spinnerIdRetenido.getSelectedItemPosition(),  spinnerIdCita.getSelectedItemPosition());
+                        borrar.onDestroy();
+                        ft.remove(borrar).replace(R.id.content_gerente, fragmento).addToBackStack(null).commit();
                         Config.teclado(getContext(), etIdAsesor);
                         Config.teclado(getContext(), etDatosCliente);
                     }
@@ -242,7 +242,7 @@ public class ReporteClientes extends Fragment{
             @Override
             public void onClick(View v) {
                 boolean argumentos = (getArguments()!=null);
-                ServicioEmailJSON.enviarEmailReporteClientes(getContext(), (argumentos)?getArguments().getInt(ARG_PARAM3):0, (argumentos)?getArguments().getInt(ARG_PARAM1):0, (argumentos)?getArguments().getInt(ARG_PARAM9):0,
+                ServicioEmailJSON.enviarEmailReporteClientes(getContext(), (argumentos)?getArguments().getInt(ARG_PARAM4):0, (argumentos)?getArguments().getInt(ARG_PARAM1):0, (argumentos)?getArguments().getInt(ARG_PARAM9):0,
                         (argumentos)?getArguments().getString(ARG_PARAM2):"", (argumentos)?getArguments().getInt(ARG_PARAM8):0, (argumentos)?getArguments().getString(ARG_PARAM5):"",
                         (argumentos)?getArguments().getString(ARG_PARAM6):Dialogos.fechaActual(), (argumentos)?getArguments().getString(ARG_PARAM7):Dialogos.fechaSiguiente(), (argumentos) ? true:false );
             }
@@ -314,8 +314,6 @@ public class ReporteClientes extends Fragment{
         tvResultados = (TextView) rootView.findViewById(R.id.ggfrc_tv_registros);
         etDatosCliente = (EditText) rootView.findViewById(R.id.ggfrc_et_id);
         etIdAsesor = (EditText) rootView.findViewById(R.id.ggfrc_et_asesor);
-        sucursales = new ArrayList<String>();
-        id_sucursales = new ArrayList<String>();
         idSucursal = 0;
         SpinnerDatos.spinnerSucursales(getContext(),spinnerSucursales,Config.ID_SUCURSAL_POSICION);
         connected = new Connected();
@@ -331,8 +329,8 @@ public class ReporteClientes extends Fragment{
             tvRangoFecha1.setText(getArguments().getString(ARG_PARAM6));
             tvRangoFecha2.setText(getArguments().getString(ARG_PARAM7));
             etDatosCliente.setText(getArguments().getString(ARG_PARAM2));
-            idSucursal1 = getArguments().getInt("idSucursal");
-            idGerencia1 = getArguments().getInt("idGerencia");
+            idSucursal = getArguments().getInt("idSucursal");
+            idGerencia = getArguments().getInt("idGerencia");
             idAsesor1 = getArguments().getString("idAsesor");
             idRetenido1 = getArguments().getInt("idRetenido");
             idCita1 = getArguments().getInt("idCita");

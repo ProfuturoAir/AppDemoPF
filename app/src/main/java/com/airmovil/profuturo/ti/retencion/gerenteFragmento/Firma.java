@@ -99,7 +99,7 @@ public class Firma extends Fragment{
                                 dvFirma.setDrawingCacheEnabled(true);
                                 final String base64 = Config.encodeTobase64(getContext(), dvFirma.getDrawingCache());
                                 dvFirma.setDrawingCacheEnabled(false);
-                                if(connected.estaConectado(getContext())) {
+                                if(Config.conexion(getContext())) {
                                     if(Config.estahabilitadoGPS(getContext())){
                                         sendJson(true, base64);
                                         Fragment fragmentoGenerico = new Escaner();
@@ -108,7 +108,6 @@ public class Firma extends Fragment{
                                     }else{
                                         Dialogos.dialogoActivarLocalizacion(getContext());
                                     }
-
                                 }else{
                                     AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
                                     dialogo.setTitle(getResources().getString(R.string.error_conexion));
