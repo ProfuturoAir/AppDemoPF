@@ -13,7 +13,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
-import android.util.Log;
+import com.airmovil.profuturo.ti.retencion.helper.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
