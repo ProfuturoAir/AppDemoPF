@@ -19,6 +19,7 @@ import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsesores;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.ServicioEmailJSON;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.GerenteReporteSucursalesModel;
@@ -182,27 +183,31 @@ public class GerenteReporteSucursalesAdapter extends RecyclerView.Adapter{
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.sub_menu_reporte_sucusal_nav_asesores:
-                    ReporteAsesores reporteAsesores = new ReporteAsesores();
-                    Gerente g1 = (Gerente) mRecyclerView.getContext();
-                    //fragment 1. fechaInicio 2. fechaFin 3.idGerencia 4.idSucursal 5.idAsesor 6.numeroEmpleado 7.nombreEmpleado 8.numeroCuenta 9.cita 10.hora 11.idTramite
-                    g1.envioParametros(reporteAsesores, mFechaInicio, mFechaFin, 0, lista.idSucursal, "", "","", "", false, "", 0);
-                    return true;
-                case R.id.sub_menu_reporte_sucusal_nav_clientes:
-                    ReporteClientes reporteClientes = new ReporteClientes();
-                    Gerente g2 = (Gerente) mRecyclerView.getContext();
-                    g2.envioParametros(reporteClientes, mFechaInicio, mFechaFin, 0, lista.idSucursal, "", "","", "", false, "", 0);
-                    return true;
-                case R.id.sub_menu_reporte_sucusal_nav_asistencia:
-                    ReporteAsistencia reporteAsistencia = new ReporteAsistencia();
-                    Gerente g3 = (Gerente) mRecyclerView.getContext();
-                    g3.envioParametros(reporteAsistencia, mFechaInicio, mFechaFin, 0, lista.idSucursal, "", "","", "", false, "", 0);
-                    return true;
-                case R.id.sub_menu_reporte_sucusal_email:
-                    ServicioEmailJSON.enviarEmailReporteSucursales(mContext, lista.idSucursal, mFechaInicio, mFechaFin, true);
-                    return true;
-                default:
+            if(Config.conexion(mContext)){
+                switch (item.getItemId()) {
+                    case R.id.sub_menu_reporte_sucusal_nav_asesores:
+                        ReporteAsesores reporteAsesores = new ReporteAsesores();
+                        Gerente g1 = (Gerente) mRecyclerView.getContext();
+                        //fragment 1. fechaInicio 2. fechaFin 3.idGerencia 4.idSucursal 5.idAsesor 6.numeroEmpleado 7.nombreEmpleado 8.numeroCuenta 9.cita 10.hora 11.idTramite
+                        g1.envioParametros(reporteAsesores, mFechaInicio, mFechaFin, 0, lista.idSucursal, "", "","", "", false, "", 0);
+                        return true;
+                    case R.id.sub_menu_reporte_sucusal_nav_clientes:
+                        ReporteClientes reporteClientes = new ReporteClientes();
+                        Gerente g2 = (Gerente) mRecyclerView.getContext();
+                        g2.envioParametros(reporteClientes, mFechaInicio, mFechaFin, 0, lista.idSucursal, "", "","", "", false, "", 0);
+                        return true;
+                    case R.id.sub_menu_reporte_sucusal_nav_asistencia:
+                        ReporteAsistencia reporteAsistencia = new ReporteAsistencia();
+                        Gerente g3 = (Gerente) mRecyclerView.getContext();
+                        g3.envioParametros(reporteAsistencia, mFechaInicio, mFechaFin, 0, lista.idSucursal, "", "","", "", false, "", 0);
+                        return true;
+                    case R.id.sub_menu_reporte_sucusal_email:
+                        ServicioEmailJSON.enviarEmailReporteSucursales(mContext, lista.idSucursal, mFechaInicio, mFechaFin, true);
+                        return true;
+                    default:
+                }
+            }else{
+                Dialogos.dialogoErrorConexion(mContext);
             }
             return false;
         }

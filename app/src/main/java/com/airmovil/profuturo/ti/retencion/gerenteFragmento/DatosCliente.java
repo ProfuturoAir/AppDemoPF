@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
@@ -108,7 +109,25 @@ public class DatosCliente extends Fragment {
                         gerente.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
                     }
                 }else{
-                    Dialogos.dialogoErrorConexion(getContext());
+                    AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
+                    dialogo.setTitle(getResources().getString(R.string.error_conexion));
+                    dialogo.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
+                    dialogo.setCancelable(false);
+                    dialogo.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if(idTramite!=null){
+                                Fragment fragmentoGenerico = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.Encuesta1();
+                                Gerente gerente = (Gerente) getContext();
+                                gerente.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+                            }
+                        }
+                    });
+                    dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {}
+                    });
+                    dialogo.show();
                 }
             }
         });
