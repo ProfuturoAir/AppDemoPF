@@ -56,9 +56,9 @@ public class Director extends AppCompatActivity implements NetworkStateReceiver.
     private NavigationView navigationView;
     private static final  int REQUEST_CODE_OPENER = 2;
     private String url;
-    public static Fragment itemMenu = null;
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
+    private boolean conexion = false;
     private NetworkStateReceiver networkStateReceiver;
 
     /**
@@ -81,7 +81,6 @@ public class Director extends AppCompatActivity implements NetworkStateReceiver.
         volleySingleton.getDataVolley("Gerencias", Config.URL_GERENCIAS);
         volleySingleton.getDataVolley("Sucursales", Config.URL_SUCURSALES);
 
-        // TODO: Listener para verificar conexion a internet
         networkStateReceiver = new NetworkStateReceiver();
         networkStateReceiver.addListener(this);
         this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
@@ -136,17 +135,6 @@ public class Director extends AppCompatActivity implements NetworkStateReceiver.
         return;
     }
 
-    @Override
-    public void networkAvailable() {
-        Log.d(TAG, "Red habilitada!");
-        volleySingleton.getDataVolley("Gerencias", Config.URL_GERENCIAS);
-        volleySingleton.getDataVolley("Sucursales", Config.URL_SUCURSALES);
-    }
-
-    @Override
-    public void networkUnavailable() {
-
-    }
 
     /**
      * Este metodo valida la sesion del usuario, manda a llamar a otros metodos
@@ -453,4 +441,22 @@ public class Director extends AppCompatActivity implements NetworkStateReceiver.
         }
     }
 
+    @Override
+    public void networkAvailable() {
+        Log.d(TAG, "Red habilitada!");
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        sessionManager = MySharePreferences.getInstance(getApplicationContext());
+        validateSession();
+        initVolleyCallback();
+        // TODO: llama clase singleton volley
+        volleySingleton = VolleySingleton.getInstance(mResultCallback, getApplicationContext());
+        volleySingleton.getDataVolley("Gerencias", Config.URL_GERENCIAS);
+        volleySingleton.getDataVolley("Sucursales", Config.URL_SUCURSALES);
+
+    }
+
+    @Override
+    public void networkUnavailable() {
+        Log.d(TAG, "Red no habilitada");
+    }
 }
