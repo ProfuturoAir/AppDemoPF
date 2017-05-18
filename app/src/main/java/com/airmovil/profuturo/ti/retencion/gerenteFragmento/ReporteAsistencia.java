@@ -163,7 +163,6 @@ public class ReporteAsistencia extends Fragment{
                         Dialogos.dialogoFechasVacias(getContext());
                     }else{
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        Log.e("jma","idSucursal:---->"+spinnerSucursal.getSelectedItemId());
                         ReporteAsistencia fragmento = ReporteAsistencia.newInstance(idGerencia, (int) spinnerSucursal.getSelectedItemId(), etAsesor.getText().toString(), tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), rootView.getContext());
                         borrar.onDestroy();ft.remove(borrar).replace(R.id.content_gerente, fragmento).addToBackStack(null).commit();
                         Config.teclado(getContext(), etAsesor);
@@ -178,7 +177,6 @@ public class ReporteAsistencia extends Fragment{
             @Override
             public void onClick(View v) {
                 boolean argumentos = (getArguments()!=null);
-                Log.e("jma","arguments------------->"+getArguments());
                 ServicioEmailJSON.enviarEmailReporteAsistencia(getContext(), (argumentos)?getArguments().getInt(ARG_PARAM1):0, (argumentos)?getArguments().getInt(ARG_PARAM2):0, (argumentos)?getArguments().getString(ARG_PARAM3):"", (argumentos)?getArguments().getString(ARG_PARAM4):Dialogos.fechaActual(), (argumentos)?getArguments().getString(ARG_PARAM5):Dialogos.fechaSiguiente(), (argumentos) ? true : false);
             }
         });
