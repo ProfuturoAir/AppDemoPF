@@ -287,6 +287,7 @@ public class ReporteSucursales extends Fragment{
      * @param obj recibe el obj json de la peticion
      */
     private void primerPaso(JSONObject obj) {
+        Log.d("arg","response--->"+obj);
         int emitidos = 0;
         int noEmitido = 0;
         int saldoEmitido = 0;

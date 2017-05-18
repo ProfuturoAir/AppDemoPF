@@ -305,6 +305,7 @@ public class ReporteAsistencia extends Fragment{
      * @param obj jsonObject
      */
     private void primerPaso(JSONObject obj) {
+        Log.d(TAG, "response--->" + obj);
         int onTime = 0;
         int retardo = 0;
         int inasistencia = 0;

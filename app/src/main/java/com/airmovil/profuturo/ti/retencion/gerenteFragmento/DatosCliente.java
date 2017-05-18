@@ -246,7 +246,7 @@ public class DatosCliente extends Fragment {
      * @param obj recibe el obj json de la peticion
      */
     private void primerPaso(JSONObject obj){
-        Log.d(TAG, "--> JSON OBJ " + obj);
+        Log.d(TAG, "response--->" + obj);
         String status = "";
         String statusText = "";
         String nombre = "";

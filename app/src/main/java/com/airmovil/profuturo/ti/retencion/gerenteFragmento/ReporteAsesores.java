@@ -279,6 +279,7 @@ public class ReporteAsesores extends Fragment {
      * @param obj jsonObject
      */
     private void primerPaso(JSONObject obj) {
+        Log.d("arg","responsive--->"+obj);
         int emitidos = 0;
         int noEmitido = 0;
         int saldoEmitido = 0;
