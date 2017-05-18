@@ -156,12 +156,6 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
     @Override
     public void networkAvailable() {
         Log.d(TAG, "Red habilitada!");
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        sessionManager = MySharePreferences.getInstance(getApplicationContext());
-        validateSession();
-        initVolleyCallback();
-        // TODO: llama clase singleton volley
-        volleySingleton = VolleySingleton.getInstance(mResultCallback, getApplicationContext());
         volleySingleton.getDataVolley("Gerencias", Config.URL_GERENCIAS);
         volleySingleton.getDataVolley("Sucursales", Config.URL_SUCURSALES);
     }
