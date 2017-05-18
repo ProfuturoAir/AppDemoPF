@@ -17,6 +17,8 @@ import android.widget.TextView;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientesDetalles;
+import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.ServicioEmailJSON;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.GerenteReporteClientesModel;
@@ -121,10 +123,14 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
             myholder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ReporteClientesDetalles reporteClientesDetalles = new ReporteClientesDetalles();
-                    Gerente g1 = (Gerente) v.getContext();
-                    g1.envioParametros( reporteClientesDetalles,  mFechaInicio,  mFechaFin,  0,  0,  "",  lista.getNumeroEmpleado(), lista.nombreAsesor,
-                            lista.getNumeroCuenta(),  Boolean.parseBoolean(lista.getCita()),  lista.getHora(),  lista.getTramite());
+                    if(Config.conexion(mContext)) {
+                        ReporteClientesDetalles reporteClientesDetalles = new ReporteClientesDetalles();
+                        Gerente g1 = (Gerente) v.getContext();
+                        g1.envioParametros(reporteClientesDetalles, mFechaInicio, mFechaFin, 0, 0, "", lista.getNumeroEmpleado(), lista.nombreAsesor,
+                                lista.getNumeroCuenta(), Boolean.parseBoolean(lista.getCita()), lista.getHora(), lista.getTramite());
+                    }else{
+                        Dialogos.dialogoErrorConexion(mContext);
+                    }
                 }
             });
         } else{
@@ -188,17 +194,21 @@ public class GerenteReporteClientesAdapter extends RecyclerView.Adapter{
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.sub_menu_reporte_clientes_detalles:
-                    ReporteClientesDetalles reporteClientesDetalles = new ReporteClientesDetalles();
-                    Gerente d1 = (Gerente) mRecyclerView.getContext();
-                    //fragment 1.fechaInicio 2.fechaFin 3.idGerencia 4.idSucursal 5.idAsesor 6.numeroEmpleado 7.nombreEmpleado 8.numeroCuenta 9.cita 10.hora 11.idTramite
-                    d1.envioParametros(reporteClientesDetalles, mFechaInicio, mFechaFin, 0, 0, "", list.getNumeroEmpleado(),list.nombreAsesor,list.getNumeroCuenta(), Boolean.parseBoolean(list.getCita()), list.getHora(), list.getIdTramite());
-                    return true;
-                case R.id.sub_menu_reporte_clientes_email:
-                    ServicioEmailJSON.enviarEmailReporteClientes(mContext, list.getIdSucursal(), 2, (list.getCita()=="true")?1:2, list.getNumeroCuenta(), (list.getRetenido()=="true")?1:2, list.getNumeroEmpleado(),mFechaInicio, mFechaFin, true);
-                    return true;
-                default:
+            if(Config.conexion(mContext)) {
+                switch (item.getItemId()) {
+                    case R.id.sub_menu_reporte_clientes_detalles:
+                        ReporteClientesDetalles reporteClientesDetalles = new ReporteClientesDetalles();
+                        Gerente d1 = (Gerente) mRecyclerView.getContext();
+                        //fragment 1.fechaInicio 2.fechaFin 3.idGerencia 4.idSucursal 5.idAsesor 6.numeroEmpleado 7.nombreEmpleado 8.numeroCuenta 9.cita 10.hora 11.idTramite
+                        d1.envioParametros(reporteClientesDetalles, mFechaInicio, mFechaFin, 0, 0, "", list.getNumeroEmpleado(), list.nombreAsesor, list.getNumeroCuenta(), Boolean.parseBoolean(list.getCita()), list.getHora(), list.getIdTramite());
+                        return true;
+                    case R.id.sub_menu_reporte_clientes_email:
+                        ServicioEmailJSON.enviarEmailReporteClientes(mContext, list.getIdSucursal(), 2, (list.getCita() == "true") ? 1 : 2, list.getNumeroCuenta(), (list.getRetenido() == "true") ? 1 : 2, list.getNumeroEmpleado(), mFechaInicio, mFechaFin, true);
+                        return true;
+                    default:
+                }
+            }else{
+                Dialogos.dialogoErrorConexion(mContext);
             }
             return false;
         }

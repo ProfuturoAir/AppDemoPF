@@ -18,6 +18,7 @@ import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteAsistencia;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ReporteClientes;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.ServicioEmailJSON;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.GerenteReporteAsesoresModel;
@@ -178,23 +179,27 @@ public class GerenteReporteAsesoresAdapter extends RecyclerView.Adapter{
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.sub_menu_reporte_asesores_nav_clientes:
-                    ReporteClientes reporteClientes = new ReporteClientes();
-                    Gerente g1 = (Gerente) mRecyclerView.getContext();
-                    //fragment 1. fechaInicio 2. fechaFin 3.idGerencia 4.idSucursal 5.idAsesor 6.numeroEmpleado 7.nombreEmpleado 8.numeroCuenta 9.cita 10.hora 11.idTramite
-                    g1.envioParametros(reporteClientes, mFechaInicio, mFechaFin, 0, 0, String.valueOf(lista.getNumeroEmpleado()), "","", "", false, "", 0);
-                    return true;
-                case R.id.sub_menu_reporte_asesores_nav_asistencia:
-                    ReporteAsistencia reporteAsistencia = new ReporteAsistencia();
-                    Gerente g2 = (Gerente) mRecyclerView.getContext();
-                    g2.envioParametros(reporteAsistencia, mFechaInicio, mFechaFin, 0, 0, String.valueOf(lista.getNumeroEmpleado()), "","", "", false, "", 0);
-                    return true;
-                case R.id.sub_menu_reporte_asesores_email:
-                    ServicioEmailJSON.enviarEmailReporteAsesores(mContext, mFechaInicio, mFechaFin, String.valueOf(lista.getNumeroEmpleado()), true);
-                    return true;
-                default:
-                    break;
+            if(Config.conexion(mContext)){
+                switch (item.getItemId()) {
+                    case R.id.sub_menu_reporte_asesores_nav_clientes:
+                        ReporteClientes reporteClientes = new ReporteClientes();
+                        Gerente g1 = (Gerente) mRecyclerView.getContext();
+                        //fragment 1. fechaInicio 2. fechaFin 3.idGerencia 4.idSucursal 5.idAsesor 6.numeroEmpleado 7.nombreEmpleado 8.numeroCuenta 9.cita 10.hora 11.idTramite
+                        g1.envioParametros(reporteClientes, mFechaInicio, mFechaFin, 0, 0, String.valueOf(lista.getNumeroEmpleado()), "","", "", false, "", 0);
+                        return true;
+                    case R.id.sub_menu_reporte_asesores_nav_asistencia:
+                        ReporteAsistencia reporteAsistencia = new ReporteAsistencia();
+                        Gerente g2 = (Gerente) mRecyclerView.getContext();
+                        g2.envioParametros(reporteAsistencia, mFechaInicio, mFechaFin, 0, 0, String.valueOf(lista.getNumeroEmpleado()), "","", "", false, "", 0);
+                        return true;
+                    case R.id.sub_menu_reporte_asesores_email:
+                        ServicioEmailJSON.enviarEmailReporteAsesores(mContext, mFechaInicio, mFechaFin, String.valueOf(lista.getNumeroEmpleado()), true);
+                        return true;
+                    default:
+                        break;
+                }
+            }else{
+                Dialogos.dialogoErrorConexion(mContext);
             }
             return false;
         }
