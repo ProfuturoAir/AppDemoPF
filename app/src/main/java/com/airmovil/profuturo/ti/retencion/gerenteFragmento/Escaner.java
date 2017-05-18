@@ -1,20 +1,15 @@
 package com.airmovil.profuturo.ti.retencion.gerenteFragmento;
 
-import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
@@ -25,18 +20,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
+import com.airmovil.profuturo.ti.retencion.helper.GPSRastreador;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.SQLiteHandler;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.VolleyError;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.File;
@@ -44,17 +36,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
+public class Escaner extends Fragment {
     private View rootView;
     private int PHOTO_FILE = 0;
     private Button btnCancelar, btnBorrar, btn;
     private ImageView imageView;
     private Button btnFinalizar;
-    private GoogleApiClient apiClient;
-    private static final int REQUEST_LOCATION = 0;
-    private boolean firsStarted = true;
-    private TextView lblLatitud;
-    private TextView lblLongitud;
     private SQLiteHandler db;
     private OnFragmentInteractionListener mListener;
     private String idTramite, nombre, numeroDeCuenta, hora;
@@ -63,7 +50,7 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
     private Connected connected;
-    private double dlongitud, dlatitud;
+    private GPSRastreador gps;
 
     public Escaner() {/* Se requiere un constructo vacio */}
 
@@ -107,7 +94,6 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // TODO: metodo para callback de volley
         initVolleyCallback();
-        // TODO: Lineas para ocultar el teclado virtual (Hide keyboard)
         rootView = view;
         // TODO: llama clase singleton volley
         volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
@@ -115,8 +101,8 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
         variables();
         // TODO: Argumentos, verificacion de datos recibidos de otros fragmentos
         argumentos();
-
-        apiClient = new GoogleApiClient.Builder(getActivity()).enableAutoManage(getActivity(),this).addConnectionCallbacks(this).addApi(LocationServices.API).build();
+        // TODO: Clase para obtener las coordenadas
+        gps = new GPSRastreador(getContext());
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,33 +126,6 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
             }
         });
 
-        btnCancelar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
-                dialogo1.setTitle("Importante");
-                dialogo1.setMessage("¿Estás seguro que deseas cancelar el proceso 1.1.3.8");
-                dialogo1.setCancelable(false);
-                dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Fragment fragmentoGenerico = null;
-                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        fragmentoGenerico = new SinCita();
-                        if (fragmentoGenerico != null){
-                            fragmentManager.beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right).replace(R.id.content_gerente, fragmentoGenerico).addToBackStack("F_MAIN").commit();
-                        }
-                    }
-                });
-                dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-                dialogo1.show();
-            }
-        });
-
         btnFinalizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,8 +142,7 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
                             imageView.setDrawingCacheEnabled(true);
                             final String base64 = Config.encodeTobase64(getContext(), imageView.getDrawingCache());
                             imageView.setDrawingCacheEnabled(false);
-
-                            if(connected.estaConectado(getContext())) {
+                            if(Config.conexion(getContext())) {
                                 sendJson(true, base64);
                             }else {
                                 AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
@@ -194,15 +152,6 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
                                 dialogo.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-
-                                        try {
-                                            dlatitud = new Double(lblLatitud.getText().toString());
-                                            dlongitud = new Double(lblLongitud.getText().toString());
-                                        } catch (NumberFormatException e) {
-                                            dlatitud = 0;
-                                            dlongitud = 0;
-                                        }
-
                                         String fechaN = "";
                                         try {
                                             SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -214,7 +163,7 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
                                             e.printStackTrace();
                                         }
                                         numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-                                        db.addDocumento(idTramite,fechaN,1138,base64,numeroDeCuenta,Config.usuarioCusp(getContext()),dlatitud, dlongitud);
+                                        db.addDocumento(idTramite,fechaN,1138,base64,numeroDeCuenta,Config.usuarioCusp(getContext()),gps.getLatitude(), gps.getLongitude());
                                         db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
                                         Fragment fragmentoGenerico = new SinCita();
                                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
@@ -240,13 +189,16 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
                 }
             }
         });
-
+        // TODO: Borrar contenido
         btnBorrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 imageView.setImageResource(0);
             }
         });
+        // TODO: Cancelar proceso
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        Dialogos.dialogoCancelarProcesoImplicaciones(getContext(), btnCancelar, fragmentManager, getResources().getString(R.string.msj_cancelar_1138), 2);
     }
 
     /**
@@ -318,21 +270,13 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
      * Destruccion de la vista
      */
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        apiClient.stopAutoManage(getActivity());
-        apiClient.disconnect();
-    }
+    public void onDestroyView() {super.onDestroyView();}
 
     /**
      *  Indica que la actividad está a punto de ser lanzada a segundo plano
      */
     @Override
-    public void onPause() {
-        super.onPause();
-        apiClient.stopAutoManage(getActivity());
-        apiClient.disconnect();
-    }
+    public void onPause() {super.onPause();}
 
     /**
      * Nos indica que la actividad está a punto de ser mostrada al usuario.
@@ -346,12 +290,7 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
      *  La actividad ya no va a ser visible para el usuario
      */
     @Override
-    public void onStop() {
-        if(apiClient.isConnected())
-            apiClient.disconnect();
-        firsStarted = true;
-        super.onStop();
-    }
+    public void onStop() {super.onStop();}
 
     /**
      * Se implementa este metodo, para generar el regreso con clic nativo de android
@@ -364,95 +303,16 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
         getView().setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                    AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
-                    dialogo.setTitle("Confirmar");
-                    dialogo.setMessage("¿Estás seguro que deseas salir del proceso de implicaciones?");
-                    dialogo.setCancelable(false);
-                    dialogo.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Fragment fragmentoGenerico = new SinCita();
-                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                            fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
-
-                        }
-                    });
-                    dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-                    dialogo.show();
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    Fragment fragment = new SinCita();
+                    Dialogos.dialogoBotonRegresoProcesoImplicaciones(getContext(), fragmentManager, getResources().getString(R.string.msj_regresar_proceso), 2, fragment);
                     return true;
                 }
                 return false;
             }
         });
     }
-
-    /**
-     * Metodo para verificar la conexion a la red
-     * @param bundle envio de parametros
-     */
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-        } else {
-            Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(apiClient);
-            updateUI(lastLocation);
-        }
-    }
-
-    /**
-     * Metodo para obtencion de permiso del dispositivo
-     * @param requestCode codigo de respuesta
-     * @param permissions permiso
-     * @param grantResults resultado
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_LOCATION) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permiso concedido
-                @SuppressWarnings("MissingPermission")
-                Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(apiClient);
-                updateUI(lastLocation);
-            } else {
-                //Permiso denegado:
-            }
-        }
-    }
-
-    /**
-     * Metodo para obtener la localizacion del dispositivo
-     * @param loc accede a las coordenadas del dispositivo
-     */
-    private void updateUI(Location loc){
-        if (loc != null){
-            lblLatitud.setText(String.valueOf(loc.getLatitude()));
-            lblLongitud.setText(String.valueOf(loc.getLongitude()));
-        }
-    }
-
-    /**
-     * Metodo con el estado de la conexion suspendida
-     * @param i captura el valor de la conexion
-     */
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    /**
-     * Metodo, cuando la conexion a fallado
-     * @param connectionResult estatus de la conexion
-     */
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
 
     /**
      * Esta interfaz debe ser implementada por actividades que contengan esta
@@ -472,8 +332,6 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
         btnFinalizar = (Button) rootView.findViewById(R.id.gf_btn_guardar);
         btnBorrar= (Button) rootView.findViewById(R.id.gf_btn_borrar);
         imageView = (ImageView) rootView.findViewById(R.id.gf_scannedImage);
-        lblLatitud = (TextView) rootView.findViewById(R.id.gff_lbl_LatitudDoc);
-        lblLongitud = (TextView) rootView.findViewById(R.id.gff_lbl_LongitudDoc);
         connected = new Connected();
     }
 
@@ -498,15 +356,6 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
             loading = ProgressDialog.show(getActivity(), "Cargando datos", "espere un momento porfavor...", false, false);
         else
             loading = null;
-
-        double w, z;
-        try {
-            z = new Double(lblLatitud.getText().toString());
-            w = new Double(lblLongitud.getText().toString());
-        } catch (NumberFormatException e) {
-            z = 0;
-            w = 0;
-        }
 
         JSONObject obj = new JSONObject();
         idTramite = getArguments().getString("idTramite");
@@ -533,8 +382,8 @@ public class Escaner extends Fragment implements GoogleApiClient.OnConnectionFai
                 rqt.put("idTramite", Integer.parseInt(idTramite));
                 rqt.put("numeroCuenta", numeroDeCuenta);
                 JSONObject ubicacion = new JSONObject();
-                ubicacion.put("latitud", z);
-                ubicacion.put("longitud", w);
+                ubicacion.put("latitud", gps.getLatitude());
+                ubicacion.put("longitud", gps.getLongitude());
                 rqt.put("ubicacion", ubicacion);
                 rqt.put("usuario", Config.usuarioCusp(getContext()));
                 rqt.put("ineIfe", base64);

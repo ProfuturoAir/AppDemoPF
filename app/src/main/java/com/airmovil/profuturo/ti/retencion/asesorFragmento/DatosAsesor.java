@@ -79,29 +79,12 @@ public class DatosAsesor extends Fragment {
                     Asesor asesor = (Asesor) getContext();
                     asesor.switchDatosCliente(fragmentoGenerico,nombre,numeroDeCuenta,hora);
                 }else {
-
-                    final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
-                    progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
-                    progressDialog.setTitle(getResources().getString(R.string.error_conexion));
-                    progressDialog.setMessage(getResources().getString(R.string.msj_error_conexion_sin_proceso));
-                    progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.aceptar),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    progressDialog.dismiss();
-                                }
-                            });
-                    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancelar),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {}
-                            });
-                    progressDialog.show();
+                    Dialogos.dialogoErrorConexion(getContext());
                 }
             }
         });
 
-        btnCancelar.setOnClickListener(new View.OnClickListener() {
+        /*btnCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
@@ -124,7 +107,11 @@ public class DatosAsesor extends Fragment {
                 });
                 dialogo1.show();
             }
-        });
+        });*/
+
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        Dialogos.dialogoCancelarProcesoImplicaciones(getContext(), btnCancelar, fragmentManager, getResources().getString(R.string.msj_cancelar), 1);
+
 
     }
 

@@ -21,7 +21,9 @@ import java.util.Calendar;
 import java.util.Timer;
 
 import com.airmovil.profuturo.ti.retencion.R;
+import com.airmovil.profuturo.ti.retencion.asesorFragmento.ConCita;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.Inicio;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.SinCita;
 
 /**
  * Created by tecnicoairmovil on 25/04/17.
@@ -391,6 +393,12 @@ public class Dialogos extends Activity{
         alert.show();
     }
 
+    /**
+     * Dialogo de cancelacion de firmas asistencia: entrada, salidaComida, entradaComida, salida
+     * @param context reterencia de llamada del fragmento o actividad
+     * @param button Elemento XML que activa el metodo
+     * @param fragmentManager objeto con la funcion de manejar los fragmentos
+     */
     public static final void dialogoCancelarFirma(final Context context, Button button, final FragmentManager fragmentManager){
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -418,6 +426,92 @@ public class Dialogos extends Activity{
                 progressDialog.show();
             }
         });
+    }
+
+    /**
+     * Dialogo de cancelar el proceso de implicaciones
+     * @param context referencia de llamada del fragmento o actividad
+     * @param button Elemento XML que activara el metodo
+     * @param fragmentManager objeto con la funcion de manejar los fragmentos
+     * @param mensaje mensaje de alerta
+     * @param idRoll diferencia para la transaccion de fragmentos 1: Asesor Actividad y 2: Gerente Actividad
+     */
+    public static final void dialogoCancelarProcesoImplicaciones(final Context context, Button button, final FragmentManager fragmentManager, final String mensaje, final int idRoll){
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                android.support.v7.app.AlertDialog.Builder dialogo1 = new android.support.v7.app.AlertDialog.Builder(context);
+                dialogo1.setTitle(context.getResources().getString(R.string.msj_confirmacion));
+                dialogo1.setMessage(mensaje);
+                dialogo1.setCancelable(false);
+                dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+
+                        switch (idRoll){
+                            case 1:
+                                Fragment fragmentoGenerico1 = new ConCita();
+                                if (fragmentoGenerico1 != null) {
+                                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico1).commit();
+                                }
+                                break;
+                            case 2:
+                                Fragment fragmentoGeneric2 = new SinCita();
+                                if (fragmentoGeneric2 != null) {
+                                    fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGeneric2).commit();
+                                }
+                                break;
+                        }
+                    }
+                });
+
+                dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                dialogo1.show();
+            }
+        });
+    }
+
+    /**
+     * Dialogo paara regreso en el proceoso de implicaciones
+     * @param context referencia de llamada del fragmento o actividad
+     * @param fragmentManager objeto con la funcion de manejar los fragmentos
+     * @param mensaje mensaje de alerta
+     * @param idRoll diferencia para la transaccion de fragmentos 1: Asesor Actividad y 2: Gerente Actividad
+     */
+    public static final void dialogoBotonRegresoProcesoImplicaciones(final Context context, final FragmentManager fragmentManager, final String mensaje, final int idRoll, final Fragment fragment){
+        android.support.v7.app.AlertDialog.Builder dialogo1 = new android.support.v7.app.AlertDialog.Builder(context);
+        dialogo1.setTitle(context.getResources().getString(R.string.msj_confirmacion));
+        dialogo1.setMessage(mensaje);
+        dialogo1.setCancelable(false);
+        dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                switch (idRoll){
+                    case 1:
+                        if (fragment != null) {
+                            fragmentManager.beginTransaction().replace(R.id.content_asesor, fragment).commit();
+                        }
+                        break;
+                    case 2:
+                        if (fragment != null) {
+                            fragmentManager.beginTransaction().replace(R.id.content_gerente, fragment).commit();
+                        }
+                        break;
+                }
+            }
+        });
+        dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        dialogo1.show();
     }
 
 }
