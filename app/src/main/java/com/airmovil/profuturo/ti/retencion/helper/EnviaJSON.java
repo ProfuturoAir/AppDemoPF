@@ -2,8 +2,7 @@ package com.airmovil.profuturo.ti.retencion.helper;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.util.Base64;
-import android.util.Log;
+import com.airmovil.profuturo.ti.retencion.helper.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;

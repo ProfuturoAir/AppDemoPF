@@ -1,7 +1,7 @@
 package com.airmovil.profuturo.ti.retencion.helper;
 
 import android.content.Context;
-import android.util.Log;
+import com.airmovil.profuturo.ti.retencion.helper.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;

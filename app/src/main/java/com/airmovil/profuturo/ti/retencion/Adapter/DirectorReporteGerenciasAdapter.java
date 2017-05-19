@@ -23,7 +23,6 @@ import com.airmovil.profuturo.ti.retencion.helper.ServicioEmailJSON;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.DirectorReporteGerenciasModel;
 import java.util.List;
-import java.util.Map;
 import com.airmovil.profuturo.ti.retencion.R;
 
 /**

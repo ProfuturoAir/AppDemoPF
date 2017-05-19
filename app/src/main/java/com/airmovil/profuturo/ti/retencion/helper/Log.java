@@ -1,7 +1,5 @@
 package com.airmovil.profuturo.ti.retencion.helper;
 
-import com.airmovil.profuturo.ti.retencion.BuildConfig;
-
 /**
  * Created by tecnicoairmovil on 18/05/17.
  */

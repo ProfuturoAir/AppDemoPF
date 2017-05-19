@@ -99,6 +99,7 @@
     <string name="msj_error_conexion_firma">No hay conexión a internet, verifica tu conexión y vuelve a intentar</string>
     <string name="titulo_espera">Espere un momento</string>
     <string name="texto_pendientes">Pendientes</string>
+    <string name="texto_envios_pendientes">Lista de envios pendientes</string>
     <string name="texto">texto</string>
     <string name="msj_email_vacio">Ingresa email valido</string>
     <!-- TODO: datos de mensaje de carga de datos json -->

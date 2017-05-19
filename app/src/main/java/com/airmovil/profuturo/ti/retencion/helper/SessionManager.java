@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
+import com.airmovil.profuturo.ti.retencion.helper.Log;
 
 import com.airmovil.profuturo.ti.retencion.activities.Login;
 

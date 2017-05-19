@@ -8,15 +8,13 @@
         android:textColor="@color/colorWhite"
         android:id="@+id/textViewLogintud4"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="texto1" />
+        android:layout_height="wrap_content"/>
 
     <TextView
         android:textColor="@color/colorWhite"
         android:id="@+id/textViewLatitud4"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="texto2" />
+        android:layout_height="wrap_content"/>
 
     <com.airmovil.profuturo.ti.retencion.helper.DrawingView
         android:id="@+id/drawinView4"

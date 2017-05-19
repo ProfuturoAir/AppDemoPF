@@ -85,7 +85,6 @@ public class Director extends AppCompatActivity implements NetworkStateReceiver.
         networkStateReceiver = new NetworkStateReceiver();
         networkStateReceiver.addListener(this);
         this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
-
     }
 
 

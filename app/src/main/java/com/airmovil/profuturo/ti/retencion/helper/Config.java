@@ -9,11 +9,8 @@ import android.database.MatrixCursor;
 import android.graphics.Bitmap;
 import android.location.LocationManager;
 import android.provider.Settings;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Base64;
-import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -34,7 +31,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.asesorFragmento.Inicio;
 import com.android.volley.RequestQueue;
 
 import org.json.JSONObject;
@@ -377,7 +373,6 @@ public class Config extends Activity {
                 int start = i * maxLogSize;
                 int end = (i+1) * maxLogSize;
                 end = end > foto.length() ? foto.length() : end;
-                Log.d("n-"+i, foto.substring(start, end));
             }
             return foto;
     }

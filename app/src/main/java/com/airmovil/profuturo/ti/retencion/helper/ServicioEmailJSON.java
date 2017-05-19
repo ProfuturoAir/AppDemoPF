@@ -3,7 +3,7 @@ package com.airmovil.profuturo.ti.retencion.helper;
 import android.app.Dialog;
 import android.app.Service;
 import android.content.Context;
-import android.util.Log;
+import com.airmovil.profuturo.ti.retencion.helper.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;

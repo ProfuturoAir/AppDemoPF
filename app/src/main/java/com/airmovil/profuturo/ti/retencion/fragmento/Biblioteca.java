@@ -3,12 +3,12 @@ package com.airmovil.profuturo.ti.retencion.fragmento;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import com.airmovil.profuturo.ti.retencion.helper.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.Toast;
+
 
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
@@ -122,7 +122,7 @@ public class Biblioteca extends Fragment implements GoogleApiClient.ConnectionCa
         try {
             result.startResolutionForResult(getActivity(), REQUEST_CODE_RESOLUTION);
         } catch (IntentSender.SendIntentException e) {
-            Log.e(TAG, "Exception while starting resolution activity", e);
+            Log.e(TAG, "Exception while starting resolution activity");
         }
     }
 
