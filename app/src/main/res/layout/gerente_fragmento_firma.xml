@@ -4,36 +4,48 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <TextView
-        android:visibility="gone"
-        android:id="@+id/gmessage_id2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="texto1" />
-
-    <TextView
-        android:visibility="gone"
-        android:id="@+id/gmessage_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:text="texto2" />
-
-    <com.airmovil.profuturo.ti.retencion.helper.DrawingView
-        android:id="@+id/gff_dv_firma"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="650dp"
-        android:layout_weight="1"
-        android:background="@android:color/white"
-        android:gravity="center_vertical|center_horizontal"
-        android:visibility="visible">
-
-    </com.airmovil.profuturo.ti.retencion.helper.DrawingView>
-
-    <TextView android:id="@+id/gff_lbl_Latitud" style="@style/tvlatitud"/>
-    <TextView android:id="@+id/gff_lbl_Longitud" style="@style/tvLogintud"/>
-    <ToggleButton android:id="@+id/gff_btn_actualizar" style="@style/btnActualizar"/>
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+        <com.airmovil.profuturo.ti.retencion.helper.DrawingView
+            android:id="@+id/gff_dv_firma"
+            android:layout_width="match_parent"
+            android:layout_height="650dp"
+            android:layout_weight="1"
+            android:background="@android:color/white"
+            android:gravity="center_vertical|center_horizontal"
+            android:visibility="visible">
+        </com.airmovil.profuturo.ti.retencion.helper.DrawingView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_below="@+id/gff_dv_firma"
+            android:layout_marginTop="-50dp">
+            <TextView
+                android:id="@+id/gff_tv_nombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Nombre del cliente"/>
+            <TextView
+                android:layout_below="@+id/aff_dv_firma"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="100dp"
+                android:layout_marginRight="100dp"
+                android:layout_height="1dp"
+                android:background="@android:color/background_dark"/>
+            <TextView
+                android:layout_below="@+id/aff_dv_firma"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Firma del cliente"
+                android:gravity="center" />
+        </LinearLayout>
+    </RelativeLayout>
 
     <Button android:id="@+id/gff_btn_limpiar" style="@style/btnLimpiar"/>
     <Button android:id="@+id/gff_btn_guardar" style="@style/btnGuardar" />

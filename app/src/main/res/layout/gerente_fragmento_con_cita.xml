@@ -4,32 +4,32 @@
     android:layout_height="match_parent"
     android:background="@color/colorWhite"
     android:orientation="vertical"
-    tools:context="com.airmovil.profuturo.ti.retencion.asesorFragmento.ConCita">
+    tools:context="com.airmovil.profuturo.ti.retencion.gerenteFragmento.ConCita">
 
     <TextView
         android:id="@+id/textView4"
         style="@style/tituloProceso"
         android:text="Asesoría de Implicaciones T" />
 
-    <TextView android:id="@+id/afcc_tv_fecha" style="@style/fecha"/>
+    <TextView android:id="@+id/gfcc_tv_fecha" style="@style/fecha"/>
 
     <LinearLayout style="@style/contenedorFiltros2">
         <LinearLayout style="@style/linearLayoutHorizontal">
             <LinearLayout style="@style/contenedorSpinner">
-                <Spinner android:id="@+id/afcc_spinner_estados"
+                <Spinner android:id="@+id/gfcc_spinner_estados"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:backgroundTint="@color/colorWhite"/>
                 <TextView style="@style/linea"/>
             </LinearLayout>
-            <Button android:id="@+id/afcc_btn_aplicar" style="@style/btnAplicar"/>
+            <Button android:id="@+id/gfcc_btn_aplicar" style="@style/btnAplicar"/>
         </LinearLayout>
-        <Button android:id="@+id/afcc_btn_sin_cita" style="@style/btnSinCita"/>
+        <Button android:id="@+id/gfcc_btn_sin_cita" style="@style/btnSinCita"/>
     </LinearLayout>
 
     <LinearLayout style="@style/cabeceraLista">
         <TextView style="@style/campoClientes"/>
-        <TextView android:id="@+id/afcc_tv_registros" style="@style/campoCantidades"/>
+        <TextView android:id="@+id/gfcc_tv_registros" style="@style/campoCantidades"/>
     </LinearLayout>
 
     <LinearLayout
@@ -37,7 +37,7 @@
         android:layout_height="match_parent"
         android:layout_weight=".6">
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerview_citas"
+            android:id="@+id/grecyclerview_citas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

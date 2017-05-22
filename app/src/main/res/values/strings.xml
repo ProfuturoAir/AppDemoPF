@@ -14,7 +14,7 @@
     <string name="texto_nav_inicio">Inicio</string>
     <string name="texto_nav_calculadora">Calculadora de retiro</string>
     <string name="texto_nav_biblioteca">Biblioteca</string>
-    <string name="texto_nav_constancia_implicaciones">Constancia de implicaciones</string>
+    <string name="texto_nav_constancia_implicaciones">Asesoría de Implicaciones T</string>
     <string name="texto_nav_sucursales">Sucursales</string>
     <string name="texto_nav_asesores">Asesores</string>
     <string name="texto_nav_clientes">Clientes</string>
@@ -152,5 +152,8 @@
     <string name="msj_regresar_inicio">¡Estás de acuerdo en regresar al inicio?</string>
     <string name="msj_regresar_proceso">¿Estás de acuerdo en regresar al inicio del proceso de implicaciones? esto implica que terminaras con el actual proceso</string>
     <string name="msj_regreso_proceso">Serás dirigido al proceso de implicaciones</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

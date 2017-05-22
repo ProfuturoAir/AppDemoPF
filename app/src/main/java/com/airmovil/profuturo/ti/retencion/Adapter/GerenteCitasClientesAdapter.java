@@ -12,12 +12,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.activities.Asesor;
-import com.airmovil.profuturo.ti.retencion.asesorFragmento.DatosAsesor;
-import com.airmovil.profuturo.ti.retencion.helper.Connected;
+import com.airmovil.profuturo.ti.retencion.activities.Gerente;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.DatosAsesor;
+import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
-import com.airmovil.profuturo.ti.retencion.model.CitasClientesModel;
+import com.airmovil.profuturo.ti.retencion.model.GerenteConCitaClientes;
 
 import java.util.List;
 
@@ -25,12 +25,12 @@ import java.util.List;
  * Created by tecnicoairmovil on 22/03/17.
  */
 
-public class CitasClientesAdapter extends RecyclerView.Adapter {
+public class GerenteCitasClientesAdapter extends RecyclerView.Adapter {
 
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
     private Context mContext;
-    private List<CitasClientesModel> list;
+    private List<GerenteConCitaClientes> list;
     private OnLoadMoreListener mOnLoadMoreListener;
 
     private boolean isLoading;
@@ -38,7 +38,7 @@ public class CitasClientesAdapter extends RecyclerView.Adapter {
     private int lastVisibleItem, totalItemCount;
     private RecyclerView mRecyclerView;
 
-    public CitasClientesAdapter(Context mContext, List<CitasClientesModel> list, RecyclerView mRecyclerView){
+    public GerenteCitasClientesAdapter(Context mContext, List<GerenteConCitaClientes> list, RecyclerView mRecyclerView){
         this.mContext = mContext;
         this.list = list;
         this.mRecyclerView = mRecyclerView;
@@ -68,7 +68,7 @@ public class CitasClientesAdapter extends RecyclerView.Adapter {
         RecyclerView.ViewHolder vh;
 
         if (viewType == VIEW_TYPE_ITEM) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.asesor_fragmento_con_cita_lista, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.gerente_fragmento_con_cita_lista, parent, false);
             vh = new MyViewHolder(view);
         } else {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.loading, parent, false);
@@ -81,7 +81,7 @@ public class CitasClientesAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof MyViewHolder) {
 
-            final CitasClientesModel lista = list.get(position);
+            final GerenteConCitaClientes lista = list.get(position);
             final MyViewHolder myholder = (MyViewHolder) holder;
 
             myholder.campoNombre.setText("Nombre del cliente: " + lista.getNombreCliente());
@@ -95,8 +95,16 @@ public class CitasClientesAdapter extends RecyclerView.Adapter {
 
                     if(lista.getNumeroCuenta().isEmpty()){
                         Dialogos.dialogoNoExisteDato(mContext);
-                    }else{
-                        fragmentJumpDatosUsuario("", v,lista.getNombreCliente(),lista.getNumeroCuenta(),lista.getHora());
+                    }
+
+                    Fragment fragmento = new DatosAsesor();
+                    if (mContext instanceof Gerente) {
+                        if(Config.conexion(mContext)) {
+                            Gerente gerente = (Gerente) mContext;
+                            gerente.switchDatosAsesorTEST(fragmento,lista.getNombreCliente(),lista.getNumeroCuenta(),lista.getHora());
+                        }else{
+                            Dialogos.dialogoErrorConexion(mContext);
+                        }
                     }
                 }
             });
@@ -124,18 +132,6 @@ public class CitasClientesAdapter extends RecyclerView.Adapter {
         this.mOnLoadMoreListener = mOnLoadMoreListener;
     }
 
-    public void fragmentJumpDatosUsuario(String idClienteCuenta, View view,String nombre,String numeroDeCuenta,String hora) {
-        Fragment fragmento = new DatosAsesor();
-        if (view.getContext() == null)
-            return;
-        if (view.getContext() instanceof Asesor) {
-            Asesor asesor = (Asesor) view.getContext();
-
-            final Connected conected = new Connected();
-            asesor.switchDatosAsesor(fragmento, idClienteCuenta,nombre,numeroDeCuenta,hora);
-        }
-    }
-
     public static class LoadingViewHolder extends RecyclerView.ViewHolder {
         public ProgressBar progressBar;
         public LoadingViewHolder(View itemView) {
@@ -149,11 +145,11 @@ public class CitasClientesAdapter extends RecyclerView.Adapter {
         public CardView cardView;
         public MyViewHolder(View view){
             super(view);
-            campoLetra = (TextView) view.findViewById(R.id.afccl_tv_letra);
-            campoNombre = (TextView) view.findViewById(R.id.afccl_tv_nombre_cliente);
-            campoCuenta = (TextView) view.findViewById(R.id.afccl_tv_cuenta_cliente);
-            campoHora = (TextView) view.findViewById(R.id.afccl_tv_fecha_cita);
-            cardView = (CardView) view.findViewById(R.id.cardView_item_cita);
+            campoLetra = (TextView) view.findViewById(R.id.gfccl_tv_letra);
+            campoNombre = (TextView) view.findViewById(R.id.gfccl_tv_nombre_cliente);
+            campoCuenta = (TextView) view.findViewById(R.id.gfccl_tv_cuenta_cliente);
+            campoHora = (TextView) view.findViewById(R.id.gfccl_tv_fecha_cita);
+            cardView = (CardView) view.findViewById(R.id.gcardView_item_cita);
         }
     }
 }

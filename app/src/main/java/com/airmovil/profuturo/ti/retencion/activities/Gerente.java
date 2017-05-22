@@ -18,6 +18,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.Toolbar;
+
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ConCita;
 import com.airmovil.profuturo.ti.retencion.helper.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -351,9 +353,9 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
                 if(Config.conexion(this)){
                     if(checkProccess == false) {
                         checkMapsFragment = false;
-                        fragmentoGenerico = new SinCita();
+                        fragmentoGenerico = new ConCita();
                     }else{
-                        Gerente.itemMenu = new SinCita();
+                        Gerente.itemMenu = new ConCita();
                         salirFragment(getApplicationContext());
                     }
                 }else{
@@ -525,7 +527,7 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
      * @param nombre nombre del cliente
      * @param numeroDeCuenta numero de cuenta del cliente
      */
-    public void switchDatosAsesor(Fragment frag, String idClienteCuenta,String nombre,String numeroDeCuenta) {
+    public void switchDatosAsesor1(Fragment frag, String idClienteCuenta,String nombre,String numeroDeCuenta) {
         Bundle bundle=new Bundle();
         bundle.putString("idClienteCuenta",idClienteCuenta);
         bundle.putString("nombre",nombre);
@@ -535,6 +537,40 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
         ft.replace(R.id.content_gerente, frag, frag.toString());
         ft.addToBackStack(null);
         ft.commit();
+    }
+
+    /**
+     * Metodo para envio  de parametro al fragmnto
+     * @param frag fragmento de envio de informacion
+     * @param idClienteCuenta idCliente para uso en otros fragmento
+     * @param nombre nombre del cliente
+     * @param numeroDeCuenta numero de cuenta del cliente
+     */
+    public void switchDatosAsesor(Fragment frag, String idClienteCuenta,String nombre,String numeroDeCuenta,String hora) {
+        Bundle bundle=new Bundle();
+        bundle.putString("idClienteCuenta",idClienteCuenta);
+        bundle.putString("nombre",nombre);
+        bundle.putString("numeroDeCuenta",numeroDeCuenta);
+        bundle.putString("hora",hora);
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_gerente, frag, frag.toString()).addToBackStack(null).commit();
+    }
+
+    /**
+     * Metodo para envio  de parametro al fragmnto
+     * @param frag fragmento de envio de informacion
+     * @param nombre nombre del cliente
+     * @param numeroDeCuenta numero de cuenta del cliente
+     */
+    public void switchDatosAsesorTEST(Fragment frag, String nombre,String numeroDeCuenta,String hora) {
+        Bundle bundle=new Bundle();
+        bundle.putString("nombre",nombre);
+        bundle.putString("numeroDeCuenta",numeroDeCuenta);
+        bundle.putString("hora",hora);
+        frag.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_gerente, frag, frag.toString()).addToBackStack(null).commit();
     }
 
     /**
@@ -614,7 +650,7 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
         bundle.putString("numeroDeCuenta",numeroDeCuenta);
         bundle.putString("hora",hora);
         frag.setArguments(bundle);
-        Log.d("NOMBRES PRE ", "1" + nombre + " numero" + numeroDeCuenta);
+        Log.e("NOMBRES PRE -->", "1" + nombre + " numero" + numeroDeCuenta);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_gerente, frag, frag.toString());
         ft.addToBackStack(null);

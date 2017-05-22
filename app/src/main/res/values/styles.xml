@@ -302,7 +302,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">10dp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:text">Saldo a favor</item>
+        <item name="android:text">Saldo Emitido</item>
     </style>
     <!-- TODO: textView, texto contenido a mostrar de filtros -->
     <style name="textoCantidad">
@@ -336,7 +336,7 @@
         <item name="android:gravity">end</item>
         <item name="android:padding">10dp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:text">Saldo retenido</item>
+        <item name="android:text">Saldo No Emitido</item>
     </style>
     <!-- TODO: textView, estilos de la cantidad a mostrar del servicio saldo no retenido -->
     <style name="textoCantidadSaldoNoRetenido">

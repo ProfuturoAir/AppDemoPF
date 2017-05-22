@@ -20,7 +20,6 @@ import android.widget.TextView;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
-import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.DrawingView;
 import com.airmovil.profuturo.ti.retencion.helper.GPSRastreador;
@@ -34,10 +33,8 @@ import org.json.JSONObject;
 public class Firma extends Fragment{
     private static final String TAG = Firma.class.getSimpleName();
     private DrawingView dvFirma;
-    private TextView lblLatitud,lblLongitud;
     private OnFragmentInteractionListener mListener;
     private View rootView;
-    private Connected connected;
     private SQLiteHandler db;
     private String idTramite, nombre, numeroDeCuenta, hora;
     private Button btnLimpiar, btnGuardar, btnCancelar;
@@ -46,13 +43,18 @@ public class Firma extends Fragment{
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
     private GPSRastreador gps;
+    private TextView tvNombre;
 
     public Firma() {/* Se requiere un constructor vacio */}
 
+
+    /**
+     * El sistema lo llama cuando crea el fragmento
+     * @param savedInstanceState, llama las variables en el bundle
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = new SQLiteHandler(getContext());
     }
 
     @Override
@@ -62,10 +64,10 @@ public class Firma extends Fragment{
         rootView = view;
         // TODO: llama clase singleton volley
         volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
-        // TODO: Argumentos, verfica si existen datos enviado de otras clases
-        argumentos();
         // TODO: Variables
         variables();
+        // TODO: Argumentos, verfica si existen datos enviado de otras clases
+        argumentos();
         // TODO: Clase para obtener las coordenadas
         gps = new GPSRastreador(getContext());
 
@@ -74,19 +76,15 @@ public class Firma extends Fragment{
             public void onClick(View v) {
                 dvFirma.startNew();
                 dvFirma.setDrawingCacheEnabled(true);
-                Dialogos.msjTime(v.getContext(), "Mensaje", "Limpiando contenido", 2000);
+                //Dialogos.msjTime(v.getContext(), "Mensaje", "Limpiando contenido", 2000);
             }
         });
 
         btnGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String latitud = (String) lblLatitud.getText();
-                final String longitud = (String) lblLongitud.getText();
                 if(!dvFirma.isActive()) {
                     Dialogos.msj(v.getContext(),"Error", "Se requiere una firma");
-                }else if(latitud.equals("(desconocida)")||longitud.equals("(desconocida)")){
-                    Log.d("Coordenadas", "nulas");
                 }else{
                     if(dvFirma.isActive()){
                         AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
@@ -248,8 +246,7 @@ public class Firma extends Fragment{
         btnLimpiar = (Button) rootView.findViewById(R.id.gff_btn_limpiar);
         btnGuardar = (Button) rootView.findViewById(R.id.gff_btn_guardar);
         btnCancelar= (Button) rootView.findViewById(R.id.gff_btn_cancelar);
-        lblLatitud = (TextView) rootView.findViewById(R.id.gff_lbl_Latitud);
-        lblLongitud = (TextView) rootView.findViewById(R.id.gff_lbl_Longitud);
+        tvNombre = (TextView) rootView.findViewById(R.id.gff_tv_nombre);
         dvFirma = (DrawingView) rootView.findViewById(R.id.gff_dv_firma);
         dvFirma.setBrushSize(5);
         dvFirma.setColor("#000000");
@@ -265,6 +262,7 @@ public class Firma extends Fragment{
             nombre = getArguments().getString("nombre");
             numeroDeCuenta = getArguments().getString("numeroDeCuenta");
             hora = getArguments().getString("hora");
+            tvNombre.setText(nombre);
         }
     }
 
@@ -280,7 +278,7 @@ public class Firma extends Fragment{
             }
             @Override
             public void notifyError(String requestType, VolleyError error) {
-                if(connected.estaConectado(getContext())){
+                if(Config.conexion(getContext())){
                     Dialogos.dialogoErrorServicio(getContext());
                 }else{
                     Dialogos.dialogoErrorConexion(getContext());

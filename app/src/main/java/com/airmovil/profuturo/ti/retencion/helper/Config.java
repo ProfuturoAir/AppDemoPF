@@ -92,16 +92,17 @@ public class Config extends Activity {
     public static int ID_GERENCIA_POSICION = 0;
     public static int ID_SUCURSAL_POSICION = 0;
     // TODO: definicion de campos fijos para el envio de datos de encuestas
-    public static final String[] MOTIVOS = new String[]{"Selecciona el motivo", "Por mal servicio","Por falta de seguimiento ventas", "Promesas incumplidas", "Rendimiento", "Llevarse sus cuentas a la misma institución", "No da explicación", "Familiares o amigos en afore de la competencia"};
-    public static final String[] AFORES = new String[]{"Selecciona una AFORE","Azteca", "Banamex", "Coppel", "Inbursa", "Invercap", "Metlife", "PensionISSSTE", "Principal", "Profuturo", "SURA", "XXI-Banorte"};
-    public static final String[] ESTATUS = new String[]{"Selecciona un estatus", "Activo", "Inactivo"};
-    public static final String[] INSTITUCIONES = new String[]{"Selecciona una Institución","IMSS", "ISSSTE", "MIXTO"};
-    public static final String[] REGIMEN = new String[]{"Selecciona un regimen","IMSS Ley 73", "IMSS Ley 97", "ISSSTE"};
+    public static final String[] AFORES = new String[]{"¿A qué afore se va?","Azteca", "Banamex", "Coppel", "Inbursa", "Invercap", "Metlife", "PensionISSSTE", "Principal", "Profuturo", "SURA", "XXI-Banorte", "No indica"};
+    public static final String[] MOTIVOS = new String[]{"¿Cuál es el motivo?", "Por mal servicio","Por falta de seguimiento ventas", "Promesas incumplidas", "Rendimiento", "Llevarse sus cuentas a la misma institución", "No da explicación", "Familiares o amigos en afore de la competencia"};
+    public static final String[] ESTATUS = new String[]{"¿Cuál es el estatus del Cliente?", "Activo", "Inactivo"};
+    public static final String[] INSTITUCIONES = new String[]{"Instituto","IMSS", "ISSSTE", "MIXTO"};
+    public static final String[] REGIMEN = new String[]{"Regimen Pensionario","IMSS Ley 73", "IMSS Ley 97", "ISSSTE"};
     public static final String[] DOCUMENTOS = new String[]{"Selecciona el tipo de ducumentación","Estatus de cuenta con folio", "Constancia de implicaciones", "Estatus de cuenta con folio y Constancia de implicaciones", "Ningun documento"};
     public static final String[] EMITIDOS = new String[]{"Selecciona el tipo estatus de emitidos", "Emitidos", "No emitidos"};
     public static final String[] IDS = new String[]{"Selecciona el tipo de ID a buscar","Número de cuenta", "NSS", "CURP"};
     public static final String[] RETENIDO = new String[]{"Selecciona el tipo de estatus de retenidos ", "Retenido", "No Retenido"};
     public static final String[] CITAS = new String[]{"Seleciona el tipo de estatus de citas", "Con Cita", "Sin Cita"};
+    public static final String[] ATENCION = new String[]{"Seleccione a los clientes atendidos o no antendidos", "Atendidos", "No Atendidos"};
     public static final String[] EMAIL = new String[]{"Seleciona un email","profuturo.com.mx", "profuturo.com", "profuturo.mx"};
     // TODO: Variables
     public static final String USERNAME = "profuturo"; // USUARIO, para el acceso al basic authentication

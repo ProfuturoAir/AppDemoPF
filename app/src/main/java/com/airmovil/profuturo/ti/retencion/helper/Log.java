@@ -5,7 +5,7 @@ package com.airmovil.profuturo.ti.retencion.helper;
  */
 
 public class Log {
-    public static final boolean activo = false;
+    public static final boolean activo = true;
 
     public static void i(String TAG, String msg) {
         if (activo) {

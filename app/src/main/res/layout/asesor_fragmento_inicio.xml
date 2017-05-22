@@ -17,11 +17,11 @@
 
         <LinearLayout style="@style/contenedorRetenidosNoRetenidosSaldoAfavorSaldoEnContra">
             <LinearLayout style="@style/contenedorCantidadRetenidosSaldoAFavorColorFondo">
-                <TextView style="@style/textoRetenidos" android:text="Retenidos"/>
+                <TextView style="@style/textoRetenidos" android:text="Emitidas"/>
                 <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/afi_tv_retenidos"/>
             </LinearLayout>
             <LinearLayout style="@style/contenedorCantidadRetenidosSaldoAFavorColorFondo" >
-                <TextView style="@style/textoNoRetenidos" android:text="No Retenidos"/>
+                <TextView style="@style/textoNoRetenidos" android:text="No Emitidas"/>
                 <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/afi_tv_no_retenidos"/>
             </LinearLayout>
         </LinearLayout>

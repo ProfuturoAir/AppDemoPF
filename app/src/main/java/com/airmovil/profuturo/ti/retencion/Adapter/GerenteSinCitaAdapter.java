@@ -136,7 +136,7 @@ public class GerenteSinCitaAdapter extends RecyclerView.Adapter{
 
             final Connected conected = new Connected();
             if(conected.estaConectado(view.getContext())) {
-                gerente.switchDatosAsesor(fragmento, idClienteCuenta,nombre,numeroDeCuenta);
+                gerente.switchDatosAsesor1(fragmento, idClienteCuenta,nombre,numeroDeCuenta);
             }else{
                 final ProgressDialog progressDialog = new ProgressDialog(mContext, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
                 progressDialog.setIndeterminateDrawable(mContext.getResources().getDrawable(R.drawable.icono_sin_wifi));

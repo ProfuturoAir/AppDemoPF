@@ -1,4 +1,4 @@
-package com.airmovil.profuturo.ti.retencion.asesorFragmento;
+package com.airmovil.profuturo.ti.retencion.gerenteFragmento;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -23,7 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
-import com.airmovil.profuturo.ti.retencion.Adapter.CitasClientesAdapter;
+import com.airmovil.profuturo.ti.retencion.Adapter.GerenteCitasClientesAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
@@ -31,7 +31,7 @@ import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
-import com.airmovil.profuturo.ti.retencion.model.CitasClientesModel;
+import com.airmovil.profuturo.ti.retencion.model.GerenteConCitaClientes;
 import com.android.volley.VolleyError;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,12 +41,11 @@ import java.util.List;
 
 public class ConCita extends Fragment {
     private static final String TAG = ConCita.class.getSimpleName();
-    private static final String ARG_PARAM1 = "param1";
-    private List<CitasClientesModel> getDatos1;
+    private static final String ARG_PARAM1 = "atencion";
+    private List<GerenteConCitaClientes> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
-    private CitasClientesAdapter adapter;
-    private String JSON_HORA = "hora", JSON_NOMBRE_CLIENTE = "nombreCliente", JSON_NUMERO_CUENTA = "numeroCuenta", JSON_FILAS_TOTAL = "filasTotal";
+    private GerenteCitasClientesAdapter adapter;
     private int filas, pagina = 1, numeroMaximoPaginas = 0, spinnerOpcion;
     private OnFragmentInteractionListener mListener;
     private Spinner spinner;
@@ -125,7 +124,7 @@ public class ConCita extends Fragment {
         // TODO: modelos
         getDatos1 = new ArrayList<>();
         // TODO: Recycler
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_citas);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.grecyclerview_citas);
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
@@ -136,7 +135,7 @@ public class ConCita extends Fragment {
                 if(connected.estaConectado(getContext())){
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                     ConCita newInstance = ConCita.newInstance(spinnerOpcion, rootView.getContext());
-                    borrar.onDestroy();ft.remove(borrar).replace(R.id.content_asesor, newInstance).addToBackStack(null).commit();
+                    borrar.onDestroy();ft.remove(borrar).replace(R.id.content_gerente, newInstance).addToBackStack(null).commit();
                 }else{
                     final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.ThemeOverlay_AppCompat_Dialog_Alert);
                     progressDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.icono_sin_wifi));
@@ -171,7 +170,7 @@ public class ConCita extends Fragment {
                 }
                 Fragment fragmentoGenerico = new SinCita();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
+                fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
             }
         });
     }
@@ -184,7 +183,7 @@ public class ConCita extends Fragment {
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.asesor_fragmento_con_cita, container, false);
+        return inflater.inflate(R.layout.gerente_fragmento_con_cita, container, false);
     }
 
     public void onButtonPressed(Uri uri) {
@@ -255,11 +254,11 @@ public class ConCita extends Fragment {
      */
     private void variables(){
         connected = new Connected();
-        spinner = (Spinner) rootView.findViewById(R.id.afcc_spinner_estados);
-        btnAplicar = (Button) rootView.findViewById(R.id.afcc_btn_aplicar);
-        btnClienteSinCita = (Button) rootView.findViewById(R.id.afcc_btn_sin_cita);
-        tvFecha = (TextView) rootView.findViewById(R.id.afcc_tv_fecha);
-        tvRegistros = (TextView) rootView.findViewById(R.id.afcc_tv_registros);
+        spinner = (Spinner) rootView.findViewById(R.id.gfcc_spinner_estados);
+        btnAplicar = (Button) rootView.findViewById(R.id.gfcc_btn_aplicar);
+        btnClienteSinCita = (Button) rootView.findViewById(R.id.gfcc_btn_sin_cita);
+        tvFecha = (TextView) rootView.findViewById(R.id.gfcc_tv_fecha);
+        tvRegistros = (TextView) rootView.findViewById(R.id.gfcc_tv_registros);
     }
 
     /**
@@ -326,19 +325,19 @@ public class ConCita extends Fragment {
         int totalFilas = 1;
         try{
             JSONArray array = obj.getJSONArray("citas");
-            filas = obj.getInt(JSON_FILAS_TOTAL);
-            totalFilas = obj.getInt(JSON_FILAS_TOTAL);
+            filas = obj.getInt("filasTotal");
+            totalFilas = obj.getInt("filasTotal");
             String status = obj.getString("status");
             String statusText = obj.getString("statusText");
             if(Integer.parseInt(status) == 200){
                 for(int i = 0; i < array.length(); i++){
-                    CitasClientesModel getDatos2 = new CitasClientesModel();
+                    GerenteConCitaClientes getDatos2 = new GerenteConCitaClientes();
                     JSONObject json = null;
                     try{
                         json = array.getJSONObject(i);
-                        getDatos2.setHora(json.getString(JSON_HORA));
-                        getDatos2.setNombreCliente(json.getString(JSON_NOMBRE_CLIENTE));
-                        getDatos2.setNumeroCuenta(json.getString(JSON_NUMERO_CUENTA));
+                        getDatos2.setHora(json.getString("hora"));
+                        getDatos2.setNombreCliente(json.getString("nombreCliente"));
+                        getDatos2.setNumeroCuenta(json.getString("numeroCuenta"));
                     }catch (JSONException e){
                         e.printStackTrace();
                     }
@@ -352,7 +351,7 @@ public class ConCita extends Fragment {
         }
         tvRegistros.setText(filas + " Registros");
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
-        adapter = new CitasClientesAdapter(rootView.getContext(), getDatos1, recyclerView);
+        adapter = new GerenteCitasClientesAdapter(rootView.getContext(), getDatos1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
@@ -398,13 +397,13 @@ public class ConCita extends Fragment {
         try{
             JSONArray array = obj.getJSONArray("citas");
             for(int i = 0; i < array.length(); i++){
-                CitasClientesModel getDatos2 = new CitasClientesModel();
+                GerenteConCitaClientes getDatos2 = new GerenteConCitaClientes();
                 JSONObject json = null;
                 try{
                     json = array.getJSONObject(i);
-                    getDatos2.setHora(json.getString(JSON_HORA));
-                    getDatos2.setNombreCliente(json.getString(JSON_NOMBRE_CLIENTE));
-                    getDatos2.setNumeroCuenta(json.getString(JSON_NUMERO_CUENTA));
+                    getDatos2.setHora(json.getString("hora"));
+                    getDatos2.setNombreCliente(json.getString("nombreCliente"));
+                    getDatos2.setNumeroCuenta(json.getString("numeroCuenta"));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }

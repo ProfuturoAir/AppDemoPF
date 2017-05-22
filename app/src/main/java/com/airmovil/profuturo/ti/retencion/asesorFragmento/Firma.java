@@ -14,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
@@ -35,6 +37,7 @@ public class Firma extends Fragment{
     private Fragment borrar = this;
     private GPSRastreador gps;
     private Button btnLimpiar, btnGuardar, btnCancelar;
+    private TextView tvNombre;
     private String idTramite, nombre, numeroDeCuenta, hora;
 
     public Firma() {/* constructor vacio es requerido*/}
@@ -52,11 +55,13 @@ public class Firma extends Fragment{
         btnLimpiar = (Button) view.findViewById(R.id.aff_btn_limpiar);
         btnGuardar = (Button) view.findViewById(R.id.aff_btn_guardar);
         btnCancelar= (Button) view.findViewById(R.id.aff_btn_cancelar);
+        tvNombre = (TextView) view.findViewById(R.id.aff_tv_nombre);
         if(getArguments()!=null){
             idTramite = getArguments().getString("idTramite");
             nombre = getArguments().getString("nombre");
             numeroDeCuenta = getArguments().getString("numeroDeCuenta");
             hora = getArguments().getString("hora");
+            tvNombre.setText(nombre);
         }
 
         dvFirma = (DrawingView) view.findViewById(R.id.aff_dv_firma);
