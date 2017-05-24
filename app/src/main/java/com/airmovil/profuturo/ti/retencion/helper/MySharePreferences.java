@@ -38,7 +38,7 @@ public class MySharePreferences {
      * Constructor
      * @param context establece el estado actual de la apliacion para hacer uso con esta clase
      */
-    private MySharePreferences(Context context) {
+    public MySharePreferences(Context context) {
         this.context = context;
         sharedPreferences = context.getSharedPreferences(context.getPackageName(), Activity.MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -155,6 +155,16 @@ public class MySharePreferences {
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         // empieza la activity
         context.startActivity(i);
+    }
+
+    public boolean yaRegistro(String llave,String valor){
+        String fecha = sharedPreferences.getString(llave, valor);
+        return fecha.equalsIgnoreCase(Dialogos.fechaActual());
+    }
+
+    public void registrar(String llave,String valor){
+        editor.putString(llave,valor);
+        editor.commit();
     }
 }
 
