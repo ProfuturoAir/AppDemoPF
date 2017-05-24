@@ -573,4 +573,21 @@ public class Dialogos extends Activity{
         dialog.create().show();
     }
 
+    /**
+     * Dialogo para avisar que el email esta vacio
+     * @param ctx parametro 1 referencia de la llamada, fragmento o actividad
+     */
+    public static final void dialogoYaRegistro(Context ctx, String tittle,String message){
+        AlertDialog.Builder dialog  = new AlertDialog.Builder(ctx);
+        dialog.setTitle(tittle);
+        dialog.setMessage(message);
+        dialog.setCancelable(true);
+        dialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        dialog.create().show();
+    }
 }

@@ -20,6 +20,7 @@ import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.DrawingView;
 import com.airmovil.profuturo.ti.retencion.helper.GPSRastreador;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
+import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.VolleyError;
 import org.json.JSONException;
@@ -78,6 +79,14 @@ public class AsistenciaComidaSalida extends Fragment{
                 Dialogos.dialogoContenidoLimpio(getContext());
             }
         });
+
+        int visible = (new MySharePreferences(getContext()).yaRegistro("comidaSalida","01/04/2013"))? View.INVISIBLE: View.VISIBLE;
+        btnGuardar.setVisibility(visible);
+        btnCancelar.setVisibility(visible);
+        btnLimpiar.setVisibility(visible);
+        if(visible == 4){
+            Dialogos.dialogoYaRegistro(getContext(),"Salida Comida"," Ya ha registrado su salida de la comida");
+        }
 
         btnGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -240,6 +249,11 @@ public class AsistenciaComidaSalida extends Fragment{
             String statusText = obj.getString("statusText");
             if(Integer.parseInt(status) == 200){
                 Dialogos.msj(getContext(), "Envio correcto", "Se ha registrado, la salida de comida.\nFecha:" + Dialogos.fechaActual() + " \nhora: " +Config.getHoraActual());
+                new MySharePreferences(getContext()).registrar("comidaSalida",Dialogos.fechaActual());
+                int visible = (new MySharePreferences(getContext()).yaRegistro("comidaSalida","01/04/2013"))? View.INVISIBLE: View.VISIBLE;
+                btnGuardar.setVisibility(visible);
+                btnCancelar.setVisibility(visible);
+                btnLimpiar.setVisibility(visible);
             }else{
                 Dialogos.dialogoErrorRespuesta(getContext(),status, statusText);
             }
