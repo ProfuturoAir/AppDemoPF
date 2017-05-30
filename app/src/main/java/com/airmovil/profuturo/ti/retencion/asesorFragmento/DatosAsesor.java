@@ -50,6 +50,9 @@ public class DatosAsesor extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getArguments()!=null){
+            Log.e("Argumentos", "-->" + getArguments().toString());
+        }
     }
 
     /**
@@ -76,7 +79,9 @@ public class DatosAsesor extends Fragment {
                 if(connected.estaConectado(getContext())){
                     Fragment fragmentoGenerico = new DatosCliente();
                     Asesor asesor = (Asesor) getContext();
-                    asesor.switchDatosCliente(fragmentoGenerico,nombre,numeroDeCuenta,hora);
+                    if(getArguments()!=null){
+                        asesor.parametrosDetalle(fragmentoGenerico,0,getArguments().getString("nombre"), getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"), tvNombre.getText().toString(), tvNumeroEmpleado.getText().toString(), tvSucursal.getText().toString(), "", "", "", "", "", "", false, false, false, "", "", "", "", "", "", "", "", "");
+                    }
                 }else {
                     Dialogos.dialogoErrorConexion(getContext());
                 }
@@ -150,7 +155,8 @@ public class DatosAsesor extends Fragment {
                 if(event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     Fragment fragment = new ConCita();
-                    Dialogos.dialogoBotonRegresoProcesoImplicaciones(getContext(), fragmentManager, getResources().getString(R.string.msj_regresar_proceso), 1, fragment);
+                    //Dialogos.dialogoBotonRegresoProcesoImplicaciones(getContext(), fragmentManager, getResources().getString(R.string.msj_regresar_proceso), 1, fragment);
+                    fragmentManager.beginTransaction().replace(R.id.content_asesor, fragment).commit();
                     return true;
                 }
                 return false;

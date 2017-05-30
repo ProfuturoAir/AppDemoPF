@@ -141,6 +141,7 @@ public class Escaner extends Fragment {
                         public void onClick(DialogInterface dialog, int which) {
                             imageView.setDrawingCacheEnabled(true);
                             final String base64 = Config.encodeTobase64(getContext(), imageView.getDrawingCache());
+                            final String base641 = Config.encodeTobase64(getContext(), imageView.getDrawingCache());
                             imageView.setDrawingCacheEnabled(false);
                             if(Config.conexion(getContext())) {
                                 sendJson(true, base64);
@@ -163,7 +164,7 @@ public class Escaner extends Fragment {
                                             e.printStackTrace();
                                         }
                                         numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-                                        db.addDocumento(idTramite,fechaN,1138,base64,numeroDeCuenta,Config.usuarioCusp(getContext()),gps.getLatitude(), gps.getLongitude());
+                                        db.addDocumento(idTramite,fechaN,1138,base64,numeroDeCuenta,Config.usuarioCusp(getContext()),gps.getLatitude(), gps.getLongitude(), base641);
                                         db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
                                         Fragment fragmentoGenerico = new SinCita();
                                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();

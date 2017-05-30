@@ -1,5 +1,6 @@
 package com.airmovil.profuturo.ti.retencion.asesorFragmento;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,141 +9,169 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+
 import com.airmovil.profuturo.ti.retencion.helper.Log;
+
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
-import com.airmovil.profuturo.ti.retencion.helper.DrawingView;
 import com.airmovil.profuturo.ti.retencion.helper.GPSRastreador;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.SQLiteHandler;
+import com.airmovil.profuturo.ti.retencion.helper.Signature;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
+import com.kyanogen.signatureview.SignatureView;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 public class Firma extends Fragment{
-    private DrawingView dvFirma;
+    public static final String ARG_PARAM1 = "img_firma";
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
     private SQLiteHandler db;
     private Fragment borrar = this;
     private GPSRastreador gps;
-    private Button btnLimpiar, btnGuardar, btnCancelar;
-    private TextView tvNombre;
-    private String idTramite, nombre, numeroDeCuenta, hora;
+    private Button btnGuardar, btnCancelar;
+    private String nombre, numeroDeCuenta, hora;
+
+    // TODO: NUEVOS ELEMENTOS
+    private Button btnFirmar;
+    private static Dialog dialog;
+    private ImageView imgFirma;
+    // XML
+    private TextView nombreAsesor, numEmpleadoAsesor, sucursalAsesor;
+    private TextView nombreCliente, numCuentaCliente, nssCliente, curpCliente, fechaCliente, saldoCliente, telefonoCliente, emailCliente;
+    private TextView pregunta1, pregunta2, pregunta3, observaciones;
+    private TextView afore, motivo, estatus, instituto, regimen, documentacion;
+    private View rootView;
+    private TextView nombreClienteFirma;
+    private SignatureView signatureView;
+    private boolean isSignatured = false;
 
     public Firma() {/* constructor vacio es requerido*/}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getArguments()!=null){
+            Log.e("<->BUNDLE", "**" + getArguments().toString());
+        }
         db = new SQLiteHandler(getContext());
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        rootView = view;
         // TODO: llama clase singleton volley
         volleySingleton = VolleySingleton.getInstance(mResultCallback, view.getContext());
-        btnLimpiar = (Button) view.findViewById(R.id.aff_btn_limpiar);
         btnGuardar = (Button) view.findViewById(R.id.aff_btn_guardar);
         btnCancelar= (Button) view.findViewById(R.id.aff_btn_cancelar);
-        tvNombre = (TextView) view.findViewById(R.id.aff_tv_nombre);
+        // TODO: NUEVOS ELEMENTOS
+        btnFirmar = (Button) view.findViewById(R.id.btn_firma);
+        imgFirma = (ImageView) view.findViewById(R.id.imagenFirma);
+
+        variables();
+        argumentos();
+
+
+        btnFirmar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Signature.procesandoFirma(getContext(), imgFirma, (getArguments()!=null) ? getArguments().getString("nombreCliente") : "");
+            }
+        });
+
+        imgFirma.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Signature.procesandoFirma(getContext(), imgFirma, (getArguments()!=null) ? getArguments().getString("nombreCliente") : "");
+            }
+        });
+
         if(getArguments()!=null){
-            idTramite = getArguments().getString("idTramite");
+            //idTramite = getArguments().getString("idTramite");
             nombre = getArguments().getString("nombre");
             numeroDeCuenta = getArguments().getString("numeroDeCuenta");
             hora = getArguments().getString("hora");
-            tvNombre.setText(nombre);
         }
 
-        dvFirma = (DrawingView) view.findViewById(R.id.aff_dv_firma);
-        dvFirma.setBrushSize(5);
-        dvFirma.setColor("#000000");
-        dvFirma.setFocusable(true);
 
         // TODO: Clase para obtener las coordenadas
         gps = new GPSRastreador(getContext());
 
-        btnLimpiar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dvFirma.startNew();
-                dvFirma.setDrawingCacheEnabled(true);
-                Config.msjTime(v.getContext(), "Mensaje", "Limpiando contenido", 2000);
-            }
-        });
-
         btnGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!dvFirma.isActive()) {
-                    Dialogos.msj(v.getContext(),"Error", "Se requiere una firma");
+                imgFirma.buildDrawingCache();
+                if(imgFirma.getDrawable() == null){
+                    Config.dialogoNoExisteUnDocumento(getContext());
                 }else{
-                    if(dvFirma.isActive()){
-                        AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
-                        dialogo1.setTitle("Importante");
-                        dialogo1.setMessage("¿Guardar esta firma?");
-                        dialogo1.setCancelable(false);
-                        dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dvFirma.setDrawingCacheEnabled(true);
-                                final String base64 = Config.encodeTobase64(getContext(), dvFirma.getDrawingCache());
-                                dvFirma.setDrawingCacheEnabled(false);
-                                if(Config.conexion(getContext())) {
-                                    sendJson(true, base64);
-                                    loading.dismiss();
-                                    Fragment fragmentoGenerico = new Escaner();
-                                    Asesor asesor = (Asesor) getContext();
-                                    asesor.switchDocumento(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
-                                }else{
-                                    AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
-                                    dialogo.setTitle(getResources().getString(R.string.error_conexion));
-                                    dialogo.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
-                                    dialogo.setCancelable(false);
-                                    dialogo.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            db.addFirma(idTramite,1137,base64,gps.getLatitude(),gps.getLongitude());
-                                            db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
-                                            Fragment fragmentoGenerico = new Escaner();
-                                            Asesor asesor = (Asesor) getContext();
-                                            asesor.switchDocumento(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
-                                        }
-                                    });
-                                    dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {}
-                                    });
-                                    dialogo.show();
-                                }
+                    AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
+                    dialogo1.setTitle("Mensaje de confirmación");
+                    dialogo1.setMessage("¿Estas de acuerdo con los datos?");
+                    dialogo1.setCancelable(false);
+                    dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            final String base64 = Config.encodeTobase64(getContext(), imgFirma.getDrawingCache());
+                            if(Config.conexion(getContext())) {
+                                sendJson(true, base64);
+                                loading.dismiss();
+                                Fragment fragmentoGenerico = new Escaner();
+                                Asesor asesor = (Asesor) getContext();
+                                asesor.parametrosDetalle(fragmentoGenerico,0,getArguments().getString("nombre"), getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"), "", "", "", "", "", "", "", "", "", false, false, false, "", "", "", "", "", "", "", "", "");
+                            }else{
+                                AlertDialog.Builder dialogoCancelar = new AlertDialog.Builder(getContext());
+                                dialogoCancelar.setTitle(getResources().getString(R.string.error_conexion));
+                                dialogoCancelar.setMessage(getResources().getString(R.string.msj_sin_internet_continuar_proceso));
+                                dialogoCancelar.setCancelable(false);
+                                dialogoCancelar.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        db.addFirma(Config.ID_TRAMITE,1137,base64,gps.getLatitude(),gps.getLongitude());
+                                        db.addIDTramite(Config.ID_TRAMITE,getArguments().getString("nombre"), getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"));
+                                        Fragment fragmentoGenerico = new Escaner();
+                                        Asesor asesor = (Asesor) getContext();
+                                        asesor.parametrosDetalle(fragmentoGenerico,0,getArguments().getString("nombre"), getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"), "", "", "", "", "", "", "", "", "", false, false, false, "", "", "", "", "", "", "", "", "");
+                                    }
+                                });
+                                dialogoCancelar.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {}
+                                });
+                                dialogoCancelar.show();
                             }
-                        });
-                        dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener(){
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        });
-                        dialogo1.show();
-                    }
+                        }
+                    });
+                    dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener(){
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    dialogo1.show();
                 }
             }
         });
 
-        // TODO: Buton cancelar porceso de firma
+        // TODO: Buton cancelar porceso de img_firma
         // TODO Cancelar el proceso
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         Dialogos.dialogoCancelarProcesoImplicaciones(getContext(), btnCancelar, fragmentManager, getResources().getString(R.string.msj_cancelar_1137), 1);
     }
+
+
 
     /**
      * Se lo llama para crear la jerarquía de vistas asociada con el fragmento.
@@ -217,6 +246,69 @@ public class Firma extends Fragment{
         });
     }
 
+    private void variables(){
+        nombreAsesor = (TextView) rootView.findViewById(R.id.tv_nombre_asesor);
+        numEmpleadoAsesor = (TextView) rootView.findViewById(R.id.tv_num_empleado_asesor);
+        sucursalAsesor = (TextView) rootView.findViewById(R.id.tv_sucursal);
+        nombreCliente = (TextView) rootView.findViewById(R.id.tv_nombre_cliente);
+        numCuentaCliente = (TextView) rootView.findViewById(R.id.tv_num_cuenta_cliente);
+        nssCliente = (TextView) rootView.findViewById(R.id.tv_nss_asesor);
+        curpCliente = (TextView) rootView.findViewById(R.id.tv_curp_asesor);
+        fechaCliente = (TextView) rootView.findViewById(R.id.tv_fecha_cliente);
+        saldoCliente = (TextView) rootView.findViewById(R.id.tv_saldo_cliente);
+        telefonoCliente = (TextView) rootView.findViewById(R.id.tv_telefono_cliente);
+        emailCliente = (TextView) rootView.findViewById(R.id.tv_email_cliente);
+        pregunta1 = (TextView) rootView.findViewById(R.id.tv_pregunta1_cliente);
+        pregunta2 = (TextView) rootView.findViewById(R.id.tv_pregunta2_cliente);
+        pregunta3 = (TextView) rootView.findViewById(R.id.tv_pregunta3_cliente);
+        observaciones = (TextView) rootView.findViewById(R.id.tv_observaciones_cliente);
+        afore = (TextView) rootView.findViewById(R.id.tv_afore_cliente);
+        motivo = (TextView) rootView.findViewById(R.id.tv_motivo_cliente);
+        estatus = (TextView) rootView.findViewById(R.id.tv_estatus_cliente);
+        instituto = (TextView) rootView.findViewById(R.id.tv_instituto_cliente);
+        regimen = (TextView) rootView.findViewById(R.id.tv_regimen_cliente);
+        documentacion = (TextView) rootView.findViewById(R.id.tv_documentacion_cliente);
+    }
+
+    private void argumentos(){
+        if(getArguments()!=null){
+            nombreAsesor.setText(getArguments().getString("nombreAsesor"));
+            numEmpleadoAsesor.setText(getArguments().getString("cuentaAsesor"));
+            sucursalAsesor.setText(getArguments().getString("sucursalAsesor"));
+            nombreCliente.setText(getArguments().getString("nombreCliente"));
+            numCuentaCliente.setText(getArguments().getString("numCuentaCliente"));
+            nssCliente.setText(getArguments().getString("nssCliente"));
+            curpCliente.setText(getArguments().getString("curpCliente"));
+            fechaCliente.setText(getArguments().getString("fechaCliente"));
+            saldoCliente.setText(getArguments().getString("saldoCliente"));
+
+            if(getArguments().getBoolean("pregunta1"))
+                pregunta1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icono_check_circle, 0, 0, 0);
+            else
+                pregunta1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icono_cancel, 0, 0, 0);
+
+            if(getArguments().getBoolean("pregunta2"))
+                pregunta2.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icono_check_circle, 0, 0, 0);
+            else
+                pregunta2.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icono_cancel, 0, 0, 0);
+
+            if(getArguments().getBoolean("pregunta3"))
+                pregunta3.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icono_check_circle, 0, 0, 0);
+            else
+                pregunta3.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icono_cancel, 0, 0, 0);
+
+            observaciones.setText(getArguments().getString("observaciones"));
+            afore.setText(getArguments().getString("afore"));
+            motivo.setText(getArguments().getString("motivo"));
+            estatus.setText(getArguments().getString("estatus"));
+            instituto.setText(getArguments().getString("instituto"));
+            regimen.setText(getArguments().getString("regimen"));
+            documentacion.setText(getArguments().getString("documentacion"));
+            telefonoCliente.setText(getArguments().getString("telefono"));
+            emailCliente.setText(getArguments().getString("email"));
+        }
+    }
+
     /**
      * Método para generar el proceso REST
      * @param primerPeticion identifica si el metodo será procesado, debe llegar en true
@@ -228,11 +320,10 @@ public class Firma extends Fragment{
             loading = null;
 
         JSONObject obj = new JSONObject();
-        idTramite = getArguments().getString("idTramite");
         try{
             JSONObject rqt = new JSONObject();
             rqt.put("estatusTramite", 1137);
-            rqt.put("idTramite", Integer.parseInt(idTramite));
+            rqt.put("idTramite", Config.ID_TRAMITE);
             JSONObject ubicacion = new JSONObject();
             ubicacion.put("latitud", gps.getLatitude());
             ubicacion.put("longitud", gps.getLongitude());

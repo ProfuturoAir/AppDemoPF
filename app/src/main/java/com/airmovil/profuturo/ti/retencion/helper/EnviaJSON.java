@@ -48,6 +48,7 @@ public class EnviaJSON {
     private String usuario;
     private int statusRs;
     private String firmaString;
+    private String ineIfeReverso;
     public Boolean eTramite;
 
     /**
@@ -108,8 +109,8 @@ public class EnviaJSON {
             usuario=documento.get(SQLiteHandler.KEY_USUARIO);
             latitud = Double.parseDouble(documento.get(SQLiteHandler.KEY_LATITUD));
             longitud = Double.parseDouble(documento.get(SQLiteHandler.KEY_LONGITUD));
-
-            sendJsonDocumento(true,idTramite,fechaHoraFin,estatusTramite,ineIfe,numeroCuenta,usuario,latitud,longitud,context);
+            ineIfeReverso = documento.get(SQLiteHandler.KEY_INE_IFE_REVERSO);
+            sendJsonDocumento(true,idTramite,fechaHoraFin,estatusTramite,ineIfe,numeroCuenta,usuario,latitud,longitud, ineIfeReverso,context);
         }
         Connected connected = new Connected();
         if(connected.estaConectado(context)){
@@ -145,7 +146,7 @@ public class EnviaJSON {
             obj.put("rqt", rqt);
             Log.d(TAG, "REQUEST-->" + obj);
         } catch (JSONException e){
-            Config.msj(context, "Error", "Error al formar los datos");
+            //Config.msj(context, "Error", "Error al formar los datos");
         }
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_ENCUESTA, obj,
                 new Response.Listener<JSONObject>() {
@@ -159,7 +160,7 @@ public class EnviaJSON {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Config.msj(context,"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                        //Config.msj(context,"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
                     }
                 }) {
             @Override
@@ -204,7 +205,7 @@ public class EnviaJSON {
             obj.put("rqt", rqt);
             Log.d(TAG2, "REQUEST-->" + obj);
         } catch (JSONException e){
-            Config.msj(context, "Error", "Error al formar los datos");
+            //Config.msj(context, "Error", "Error al formar los datos");
         }
         // creacion de una peticion de respuesta de un json object
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_ENCUESTA_2, obj,
@@ -228,7 +229,7 @@ public class EnviaJSON {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Config.msj(context,"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                        //Config.msj(context,"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
                     }
                 }) {
             @Override
@@ -265,7 +266,7 @@ public class EnviaJSON {
             obj.put("rqt", rqt);
             Log.d("datos", "REQUEST-->" + obj);
         } catch (JSONException e){
-            Config.msj(context, "Error", "Error al formar los datos");
+            //Config.msj(context, "Error", "Error al formar los datos");
         }
         JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ENVIAR_FIRMA, obj,
                 new Response.Listener<JSONObject>() {
@@ -290,7 +291,7 @@ public class EnviaJSON {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //loading.dismiss();
-                        Config.msj(context,"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                        //Config.msj(context,"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
                     }
                 }) {
             @Override
@@ -301,7 +302,7 @@ public class EnviaJSON {
         MySingleton.getInstance(context).addToRequestQueue(jsonArrayRequest);
     }
 
-    private void sendJsonDocumento(final boolean primerPeticion,final String idTramite,String fechaHoraFin,int estatusTramite,String ineIfe,String numeroCuenta,String usuario,Double latitud,Double longitud,final Context context) {
+    private void sendJsonDocumento(final boolean primerPeticion,final String idTramite,String fechaHoraFin,int estatusTramite,String ineIfe,String numeroCuenta,String usuario,Double latitud,Double longitud, String ineIfeReverso, final Context context) {
         final ProgressDialog loading;
         JSONObject obj = new JSONObject();
         // TODO: Formacion del JSON request
@@ -317,6 +318,7 @@ public class EnviaJSON {
             rqt.put("ubicacion", ubicacion);
             rqt.put("usuario", Config.usuarioCusp(context));
             rqt.put("ineIfe", ineIfe);
+            rqt.put("ineIfe", ineIfeReverso);
             obj.put("rqt", rqt);
             Log.d("datos", "REQUEST-->" + obj);
         } catch (JSONException e){
@@ -345,7 +347,7 @@ public class EnviaJSON {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Config.msj(context,"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
+                        //Config.msj(context,"Error conexión", "Lo sentimos ocurrio un error, puedes intentar revisando tu conexión.");
                     }
                 }) {
             @Override

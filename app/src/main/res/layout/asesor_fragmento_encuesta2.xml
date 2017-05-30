@@ -71,7 +71,6 @@
                 android:inputType="phone"
                 android:maxLength="10"
                 android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
                 android:backgroundTint="@color/colorPrimaryDark"
                 android:layout_weight="1"/>
             <EditText
@@ -81,7 +80,6 @@
                 android:inputType="textEmailAddress"
                 android:hint="@string/texto_email"
                 android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimaryDark"
                 android:backgroundTint="@color/colorPrimaryDark"
                 android:layout_weight="1"/>
         </LinearLayout>

@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -31,8 +33,7 @@ public class Login extends AppCompatActivity {
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
     private String cusp;
-
-    MySharePreferences mySharePreferences;
+    private MySharePreferences mySharePreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,8 +121,8 @@ public class Login extends AppCompatActivity {
 
             @Override
             public void notifyError(String requestType, VolleyError error) {
-                // Log.d(TAG, "Volley requester " + requestType);
-                // Log.d(TAG, "Volley JSON post" + "That didn't work! " + error.toString());
+                Log.d(TAG, "Volley requester " + requestType);
+                Log.d(TAG, "Volley JSON post" + "That didn't work! " + error.toString());
             }
         };
     }
@@ -136,7 +137,7 @@ public class Login extends AppCompatActivity {
             obj.put("rqt", rqt);
             Log.d("RQT","" + obj);
         } catch (JSONException e) {
-            Config.msj(this,"Error", "1 Lo sentimos ocurrio un error al formar los datos");
+            Dialogos.msj(this,"Error", "Lo sentimos ocurrio un error al formar los datos");
         }
 
         this.numeroEmpleado = numeroEmpleado;
@@ -169,14 +170,11 @@ public class Login extends AppCompatActivity {
         progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
         progressDialog.setMessage(getResources().getString(R.string.msj_verificando));
         progressDialog.show();
-        // TODO: Implement your own authentication logic here.
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
                         Config.teclado(getApplicationContext(), _numeroEmpleadom);
                         Config.teclado(getApplicationContext(), _contrasenia);
-                        //redireccionSesiones(vNumeroEmpleado, vPerfil);
-                        //peticionDatos(true, vNumeroEmpleado);
                         peticionDatos(true, vNumeroEmpleado, CUSP);
                         progressDialog.dismiss();
                     }
@@ -191,13 +189,10 @@ public class Login extends AppCompatActivity {
         progressDialog.show();
         _numeroEmpleadom.setText("");
         _contrasenia.setText("");
-
         if(_numeroEmpleadom.requestFocus()) {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         }
-
-        // TODO: Implement your own authentication logic here.
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
@@ -240,19 +235,17 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    private void peticionDatos(final boolean primeraPeticion, String pNumeroEmpleado, final String CUSP) {
+    private void peticionDatos(final boolean primeraPeticion, String numEmpleado, final String CUSP) {
         JSONObject obj = new JSONObject();
         JSONObject rqt = new JSONObject();
         try {
-            rqt.put("usuario", pNumeroEmpleado);
+            rqt.put("usuario", numEmpleado);
             obj.put("rqt", rqt);
             Log.d("TAG--> peticiondatos", "" + obj );
         } catch (JSONException e) {
-            Config.msj(this,"Error", "1 Lo sentimos ocurrio un error al formar los datos");
+            Config.msj(this,"Error", "Lo sentimos ocurrio un error al formar los datos");
         }
-
         cusp = CUSP;
-
         volleySingleton.postDataVolley("obtencionDatos", Config.URL_CONSULTA_INFORMACION_USUARIO, obj);
     }
 
@@ -261,30 +254,33 @@ public class Login extends AppCompatActivity {
         String apellidoMaterno = "", apellidoPaterno = "", claveConsar = "", curp = "", email = "", fechaAltaConsar = "", nombre = "", numeroEmpleado = "", rolEmpleado = "", userId = "";
         int centroCosto = 0, idRolEmpleado = 0;
         try{
-            apellidoMaterno = obj.getString("apellidoMaterno");
-            apellidoPaterno = obj.getString("apellidoPaterno");
-            centroCosto = obj.getInt("centroCosto");
-            String sCentroCosto = String.valueOf(centroCosto);
-            claveConsar = obj.getString("claveConsar");
-            curp = obj.getString("curp");
-            email = obj.getString("email");
-            fechaAltaConsar = obj.getString("fechaAltaConsar");
-            idRolEmpleado = obj.getInt("idRolEmpleado");
-            String sIdRolEmpleado = String.valueOf(idRolEmpleado);
-            nombre = obj.getString("nombre");
-            numeroEmpleado = obj.getString("numeroEmpleado");
-            rolEmpleado = obj.getString("rolEmpleado");
-            userId = obj.getString("userId");
-            Config.idUsuario = CUSP;
-            Log.d("DATOS A RECOLECTAR ->", " " + apellidoMaterno + " " + apellidoPaterno + " " + centroCosto + " " + claveConsar + " " + curp + " " + email + " " +
-                    fechaAltaConsar + " idRolEmpleado" + idRolEmpleado + " " + nombre + " " + numeroEmpleado + " rolEmpleado" + rolEmpleado + " userId" + userId + " " );
-            mySharePreferences.createLoginSession(apellidoMaterno, apellidoPaterno, sCentroCosto, claveConsar,curp, email, fechaAltaConsar, sIdRolEmpleado,nombre, numeroEmpleado, rolEmpleado, userId, CUSP);
+            if(numeroEmpleado.isEmpty()){
+                apellidoMaterno = obj.getString("apellidoMaterno");
+                apellidoPaterno = obj.getString("apellidoPaterno");
+                centroCosto = obj.getInt("centroCosto");
+                String sCentroCosto = String.valueOf(centroCosto);
+                claveConsar = obj.getString("claveConsar");
+                curp = obj.getString("curp");
+                email = obj.getString("email");
+                fechaAltaConsar = obj.getString("fechaAltaConsar");
+                idRolEmpleado = obj.getInt("idRolEmpleado");
+                String sIdRolEmpleado = String.valueOf(idRolEmpleado);
+                nombre = obj.getString("nombre");
+                numeroEmpleado = obj.getString("numeroEmpleado");
+                rolEmpleado = obj.getString("rolEmpleado");
+                userId = obj.getString("userId");
+                Config.idUsuario = CUSP;
+                Log.d("DATOS A RECOLECTAR ->", " " + apellidoMaterno + " " + apellidoPaterno + " " + centroCosto + " " + claveConsar + " " + curp + " " + email + " " +
+                        fechaAltaConsar + " idRolEmpleado" + idRolEmpleado + " " + nombre + " " + numeroEmpleado + " rolEmpleado" + rolEmpleado + " userId" + userId + " " );
+                mySharePreferences.createLoginSession(apellidoMaterno, apellidoPaterno, sCentroCosto, claveConsar,curp, email, fechaAltaConsar, sIdRolEmpleado,nombre, numeroEmpleado, rolEmpleado, userId, CUSP);
+            }else{
+                Dialogos.msj(getApplicationContext(), "Error", "Ha ocurrido un error al ejecutar el servicio de autenticación de usuario");
+            }
         }catch (JSONException e){
             e.printStackTrace();
         }
         redireccionSesiones(idRolEmpleado);
         volleySingleton.getDataVolley("Gerencias", Config.URL_GERENCIAS);
         volleySingleton.getDataVolley("Sucursales", Config.URL_SUCURSALES);
-
     }
 }

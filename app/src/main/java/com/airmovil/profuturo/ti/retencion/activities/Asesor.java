@@ -589,4 +589,37 @@ public class Asesor extends AppCompatActivity{
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_asesor, fragment, fragment.toString()).addToBackStack(null).commit();
     }
+
+    public void parametrosDetalle(Fragment fragment, int idTramite,  String nombre, String numeroCuenta, String hora, String nombreAsesor, String cuentaAsesor, String sucursalAsesor, String nombreCliente, String numCuentaCliente, String nssCliente,
+                                  String curpCliente, String fechaCliente, String saldoCliente, boolean pregunta1, boolean pregunta2, boolean pregunta3, String observaciones, String afore,
+                                  String motivo, String estatus, String instituto, String regimen, String documentacion, String telefono, String email){
+        Bundle bundle = new Bundle();
+        bundle.putInt("idTramite", idTramite);
+        bundle.putString("nombre", nombre);
+        bundle.putString("numeroCuenta", numeroCuenta);
+        bundle.putString("hora", hora);
+        bundle.putString("nombreAsesor", nombreAsesor);
+        bundle.putString("cuentaAsesor", cuentaAsesor);
+        bundle.putString("sucursalAsesor", sucursalAsesor);
+        bundle.putString("nombreCliente", nombreCliente);
+        bundle.putString("numCuentaCliente", numCuentaCliente);
+        bundle.putString("nssCliente", nssCliente);
+        bundle.putString("curpCliente", curpCliente);
+        bundle.putString("fechaCliente", fechaCliente);
+        bundle.putString("saldoCliente", saldoCliente);
+        bundle.putBoolean("pregunta1", pregunta1);
+        bundle.putBoolean("pregunta2", pregunta2);
+        bundle.putBoolean("pregunta3", pregunta3);
+        bundle.putString("observaciones", observaciones);
+        bundle.putString("afore", afore);
+        bundle.putString("motivo", motivo);
+        bundle.putString("estatus", estatus);
+        bundle.putString("instituto", instituto);
+        bundle.putString("regimen", regimen);
+        bundle.putString("documentacion", documentacion);
+        bundle.putString("telefono", telefono);
+        bundle.putString("email", email);
+        fragment.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_asesor, fragment, fragment.toString()).addToBackStack(null).commit();
+    }
 }

@@ -139,8 +139,8 @@ public class SinCita extends Fragment {
                 switch (position){
                     case 0:
                         etDatos.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-                        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-                        etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryDark1), PorterDuff.Mode.OVERLAY);
+                        //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+                        //etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryDark1), PorterDuff.Mode.OVERLAY);
                         etDatos.setFocusable(true);
                         etDatos.setFocusable(false);
                         etDatos.setFocusableInTouchMode(false);
@@ -148,7 +148,7 @@ public class SinCita extends Fragment {
                     case 1:
                         etDatos.setFocusableInTouchMode(true);
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                        etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
+                        etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorSecundaryGray), PorterDuff.Mode.LIGHTEN);
                         etDatos.setInputType(InputType.TYPE_CLASS_PHONE);
                         etDatos.setFocusable(true);
                         etDatos.setFocusableInTouchMode(true);
@@ -156,7 +156,7 @@ public class SinCita extends Fragment {
                     case 2:
                         etDatos.setFocusableInTouchMode(true);
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                        etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
+                        etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorSecundaryGray), PorterDuff.Mode.LIGHTEN);
                         etDatos.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
                         etDatos.setFocusable(true);
                         etDatos.setFocusableInTouchMode(true);
@@ -164,7 +164,7 @@ public class SinCita extends Fragment {
                     case 3:
                         etDatos.setFocusableInTouchMode(true);
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                        etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
+                        etDatos.getBackground().setColorFilter(getResources().getColor(R.color.colorSecundaryGray), PorterDuff.Mode.LIGHTEN);
                         etDatos.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
                         etDatos.setFocusable(true);
                         etDatos.setFocusableInTouchMode(true);

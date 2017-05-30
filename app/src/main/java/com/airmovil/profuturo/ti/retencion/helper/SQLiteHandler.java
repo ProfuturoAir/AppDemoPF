@@ -39,12 +39,11 @@ public class SQLiteHandler extends SQLiteOpenHelper{
     public static final String KEY_INEIFE = "ineIfe";
     public static final String KEY_NUMERO_CUENTA = "numeroCuenta";
     public static final String KEY_USUARIO = "usuario";
-
+    public static final String KEY_INE_IFE_REVERSO = "ineIfeReverso";
     // TODO: Constructor
     public SQLiteHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
-
     // TODO: Creacion de tablas
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -89,7 +88,8 @@ public class SQLiteHandler extends SQLiteOpenHelper{
                 + KEY_NUMERO_CUENTA + " TEXT,"
                 + KEY_USUARIO + " TEXT,"
                 + KEY_LATITUD + " DOUBLE,"
-                + KEY_LONGITUD + " DOUBLE"+")";
+                + KEY_LONGITUD + " DOUBLE,"
+                + KEY_INE_IFE_REVERSO + " TEXT" + ")";
 
         db.execSQL(CREATE_TRAMITE_TABLE);
         db.execSQL(CREATE_ENCUESTA_TABLE);
@@ -223,7 +223,7 @@ public class SQLiteHandler extends SQLiteOpenHelper{
      * @param latitud latitud
      * @param longitud longitud
      */
-    public void addDocumento(String idTramite,String fechaHoraFin,int estatusTramite,String ineIfe,String numeroCuenta,String usuario,double latitud,double longitud) {
+    public void addDocumento(String idTramite,String fechaHoraFin,int estatusTramite,String ineIfe, String numeroCuenta,String usuario,double latitud,double longitud, String ineIfeReverso) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(FK_ID_TRAMITE,idTramite); // fk id
@@ -234,6 +234,7 @@ public class SQLiteHandler extends SQLiteOpenHelper{
         values.put(KEY_USUARIO,usuario);
         values.put(KEY_LATITUD,latitud);
         values.put(KEY_LONGITUD,longitud);
+        values.put(KEY_INE_IFE_REVERSO, ineIfeReverso);
         long id =(int) db.insertWithOnConflict(TABLE_DOCUMENTACION, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         if (id == -1) {
             db.update(TABLE_DOCUMENTACION,values, FK_ID_TRAMITE+"=?", new String[] {idTramite});
@@ -364,6 +365,7 @@ public class SQLiteHandler extends SQLiteOpenHelper{
             documento.put(KEY_USUARIO, cursor.getString(5));
             documento.put(KEY_LATITUD, cursor.getString(6));
             documento.put(KEY_LONGITUD, cursor.getString(7));
+            documento.put(KEY_INE_IFE_REVERSO, cursor.getString(8));
         }
         cursor.close();
         db.close();

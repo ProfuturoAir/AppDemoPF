@@ -68,6 +68,11 @@
     <string name="error_datos_vacios">Datos vacios</string>
     <string name="error_fechas_vacias">Fechas vacias</string>
     <string name="error_en_documento">Error en documento</string>
+    <string name="error_en_documento_frente">Error documento Frente</string>
+    <string name="error_en_documento_vuelta">Error documento Reverso</string>
+    <string name="error_en_documento_ambos_lados">Error documento Reverso</string>
+    <string name="error_en_documento_vacio">No existe un documento, debes tomar la captura del documento</string>
+    <string name="error_en_documento_sin_datos">No existe un documento, debes tomar la captura de la parte frontal y parte trasera del documento</string>
     <string name="error_email_incorrecto">Error en email</string>
     <string name="msj_error_documento">No existe un documento(IFE o INE), favor de tomar captura</string>
     <string name="msj_error_json">Los datos no se han podido formar</string>

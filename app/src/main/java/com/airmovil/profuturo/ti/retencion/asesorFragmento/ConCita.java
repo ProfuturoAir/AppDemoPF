@@ -32,6 +32,7 @@ import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.CitasClientesModel;
+import com.android.volley.NetworkResponse;
 import com.android.volley.VolleyError;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -119,6 +120,7 @@ public class ConCita extends Fragment {
             }
         };
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+
         spinner.setSelection(Adapter.NO_SELECTION,false);
         spinner.setAdapter(adapter);
         spinner.setSelection((getArguments()!=null)?getArguments().getInt(ARG_PARAM1):0);
@@ -283,9 +285,16 @@ public class ConCita extends Fragment {
             }
             @Override
             public void notifyError(String requestType, VolleyError error) {
-                if(connected.estaConectado(getContext())){
+                /*if(connected.estaConectado(getContext())){
                     Dialogos.dialogoErrorServicio(getContext());
                 }else{
+                    Dialogos.dialogoErrorConexion(getContext());
+                }*/
+
+                NetworkResponse networkResponse = error.networkResponse;
+                Log.e(TAG, "*->" + networkResponse);
+                if(networkResponse == null){
+                    loading.dismiss();
                     Dialogos.dialogoErrorConexion(getContext());
                 }
             }

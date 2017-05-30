@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -27,6 +28,7 @@ import com.airmovil.profuturo.ti.retencion.helper.GPSRastreador;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.SQLiteHandler;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
+import com.android.volley.NetworkResponse;
 import com.android.volley.VolleyError;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +43,7 @@ public class Escaner extends Fragment {
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
     private int PHOTO_FILE = 0;
+    private int PHOTO_FILE_2 = 0;
     private Button btnCancelar, btnBorrar;
     private ImageView imageView;
     private Button btnFinalizar;
@@ -49,6 +52,10 @@ public class Escaner extends Fragment {
     private Fragment borrar = this;
     private String idTramite, nombre, numeroDeCuenta, hora;
     private GPSRastreador gps;
+    private int intVal1 = 0; int intVal2 = 0;
+    private int x = 0, y = 0;
+
+    private ImageView ifeFrente, ifeVuelta;
 
     public Escaner() {/* constructor vacio es requerido */}
 
@@ -75,23 +82,18 @@ public class Escaner extends Fragment {
         rootView = view;
         // TODO: llama clase singleton volley
         volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
-        Button btn = (Button) rootView.findViewById(R.id.btn_documento);
         btnCancelar= (Button) view.findViewById(R.id.af_btn_cancelar);
         btnFinalizar = (Button) view.findViewById(R.id.af_btn_guardar);
-        btnBorrar= (Button) view.findViewById(R.id.af_btn_borrar);
-        imageView = (ImageView) rootView.findViewById(R.id.scannedImage);
         connected = new Connected();
-        if(getArguments()!=null){
-            idTramite = getArguments().getString("idTramite");
-            nombre = getArguments().getString("nombre");
-            numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-            hora = getArguments().getString("hora");
-        }
 
         // TODO: Clase para obtener las coordenadas
         gps = new GPSRastreador(getContext());
 
-        btn.setOnClickListener(new View.OnClickListener() {
+        ifeFrente = (ImageView) rootView.findViewById(R.id.ife_frente);
+        ifeVuelta = (ImageView) rootView.findViewById(R.id.ife_vuelta);
+
+        //<editor-fold desc="ife frente">
+        ifeFrente.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle ();
@@ -101,7 +103,7 @@ public class Escaner extends Fragment {
                 // nombreImagen es el nombre con el que se debe nombrar la imagen resultante del motor de imagen sin extensión
                 // por ejemplo selfie
                 String nombreImagen = "test2";
-                bundle.putString ("nombreDocumento", nombreImagen);
+                bundle.putString("nombreDocumento", nombreImagen);
                 // ruta destino dentro de las carpetas de motor de imágenes en donde se almacenará el documento
                 // idtramite en este caso sebe ser sustituido por el idTramite que se obtienen el servicio consultarDatosCliente
                 // /mb/premium/rest/consultarDatosCliente
@@ -110,19 +112,52 @@ public class Escaner extends Fragment {
                 bundle.putBoolean("esCamara", true);
                 launchIntent.putExtras(bundle);
                 startActivityForResult (launchIntent, PHOTO_FILE);
-                Log.d("PHOTO_FILE", "" + PHOTO_FILE);
+                intVal1 = 1;
+                Log.d("bandera1", "" + intVal1);
             }
         });
+        //</editor-fold>
+
+        //<editor-fold desc="ife vuelta">
+        ifeVuelta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle ();
+                Intent launchIntent = new Intent ();
+                //Valores por default para el motor
+                launchIntent.setComponent(new ComponentName("mx.com.profuturo.motor", "mx.com.profuturo.motor.CameraUI"));
+                // nombreImagen es el nombre con el que se debe nombrar la imagen resultante del motor de imagen sin extensión
+                // por ejemplo selfie
+                String nombreImagen = "test2";
+                bundle.putString("nombreDocumento", nombreImagen);
+                // ruta destino dentro de las carpetas de motor de imágenes en donde se almacenará el documento
+                // idtramite en este caso sebe ser sustituido por el idTramite que se obtienen el servicio consultarDatosCliente
+                // /mb/premium/rest/consultarDatosCliente
+                bundle.putString("rutaDestino", "idtramite/");
+                // Indicador de que se debe lanzar la cámara
+                bundle.putBoolean("esCamara", true);
+                launchIntent.putExtras(bundle);
+                startActivityForResult (launchIntent, PHOTO_FILE);
+                intVal2 = 2;
+                Log.d("bandera2", "" + intVal2);
+            }
+        });
+        //</editor-fold>
 
         // TODO Cancelar el proceso
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         Dialogos.dialogoCancelarProcesoImplicaciones(getContext(), btnCancelar, fragmentManager, getResources().getString(R.string.msj_cancelar_1138), 1);
 
+        //<editor-fold desc="btn finalizar">
         btnFinalizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(imageView.getDrawable() == null){
-                    Config.dialogoNoExisteUnDocumento(getContext());
+                if(x == 0 && y == 0){
+                    Dialogos.dialogoNoExisteIFE(getContext());
+                }else if(x == 0) {
+                    Dialogos.dialogoNoExisteIFEFrente(getContext());
+                }else if(y == 0) {
+                    Dialogos.dialogoNoExisteIFEVuelta(getContext());
                 }else {
                     AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
                     dialogo1.setTitle("Finalizando");
@@ -131,11 +166,14 @@ public class Escaner extends Fragment {
                     dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            imageView.setDrawingCacheEnabled(true);
-                            final String base64 = Config.encodeTobase64(getContext(), imageView.getDrawingCache());
-                            imageView.setDrawingCacheEnabled(false);
+                            ifeFrente.setDrawingCacheEnabled(true);
+                            ifeVuelta.setDrawingCacheEnabled(true);
+                            final String base64Frente = Config.encodeTobase64(getContext(), ifeFrente.getDrawingCache());
+                            final String base64Reverso = Config.encodeTobase64(getContext(), ifeVuelta.getDrawingCache());
+
+                            ifeFrente.setDrawingCacheEnabled(false);
                             if(connected.estaConectado(getContext())) {
-                                sendJson(true, base64);
+                                sendJson(true, base64Frente, base64Reverso);
                             }else {
                                 AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
                                 dialogo.setTitle(getResources().getString(R.string.error_conexion));
@@ -155,8 +193,8 @@ public class Escaner extends Fragment {
                                         }
 
                                         numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-                                        db.addDocumento(idTramite,fechaN,1138,base64,numeroDeCuenta,Config.usuarioCusp(getContext()),gps.getLatitude(),gps.getLongitude());
-                                        db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+                                        db.addDocumento(idTramite,fechaN,1138,base64Frente,numeroDeCuenta,Config.usuarioCusp(getContext()),gps.getLatitude(),gps.getLongitude(), base64Reverso);
+                                        db.addIDTramite(idTramite,getArguments().getString("nombre"), getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"));
                                         Fragment fragmentoGenerico = new ConCita();
                                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                                         if (fragmentoGenerico != null) {
@@ -166,10 +204,7 @@ public class Escaner extends Fragment {
                                 });
                                 dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-
-                                    }
+                                    public void onClick(DialogInterface dialog, int which) {}
                                 });
                                 dialogo.show();
                             }
@@ -177,20 +212,14 @@ public class Escaner extends Fragment {
                     });
                     dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
+                        public void onClick(DialogInterface dialog, int which) {}
                     });
                     dialogo1.show();
                 }
             }
         });
+        //</editor-fold>
 
-        btnBorrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                imageView.setImageResource(0);
-            }
-        });
     }
 
     /**
@@ -217,19 +246,26 @@ public class Escaner extends Fragment {
                 try {
                     String nombre = data.getStringExtra("rutaImagen");
                     System.out.print(data.toString());
-                    // Se obtiene la ruta de la imagen con extensión .jpg incluida
-                    String nombre1 = data.getStringExtra("rutaImagen");
-                    // En nuesto caso se utiliza la libreria Picasso para mostrar la imagen
                     File imgFile = new  File(nombre);
                     if(imgFile.exists()){
                         Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                        imageView.setImageBitmap(myBitmap);
+                        if(intVal1 == 1) {
+                            ifeFrente.setImageBitmap(myBitmap);
+                            intVal1 = 0;
+                            x = 3;
+                        }
+                        if(intVal2 == 2) {
+                            ifeVuelta.setImageBitmap(myBitmap);
+                            intVal2 = 0;
+                            y = 3;
+                        }
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
         }
+
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -308,10 +344,19 @@ public class Escaner extends Fragment {
             }
             @Override
             public void notifyError(String requestType, VolleyError error) {
-                if(Config.conexion(getContext())){
+                /*if(Config.conexion(getContext())){
                     Dialogos.dialogoErrorServicio(getContext());
                 }else{
                     Dialogos.dialogoErrorConexion(getContext());
+                }*/
+
+                NetworkResponse networkResponse = error.networkResponse;
+
+                Log.e("red", "*->" + networkResponse);
+                if(networkResponse == null){
+                    loading.dismiss();
+                }else{
+                    Log.e("ok", "++ ");
                 }
             }
         };
@@ -321,16 +366,13 @@ public class Escaner extends Fragment {
      * Método para generar el proceso REST
      * @param primerPeticion identifica si el metodo será procesado, debe llegar en true
      */
-    private void sendJson(final boolean primerPeticion, String base64) {
+    private void sendJson(final boolean primerPeticion, String base64, String base64Reverso) {
         if (primerPeticion)
             loading = ProgressDialog.show(getActivity(), getResources().getString(R.string.titulo_carga_datos), getResources().getString(R.string.msj_carga_datos), false, false);
         else
             loading = null;
 
         JSONObject obj = new JSONObject();
-        if(getArguments()!=null){
-            idTramite = getArguments().getString("idTramite");
-        }
         String fechaN = "";
         try {
             SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -343,18 +385,18 @@ public class Escaner extends Fragment {
         }
         try{
             if(getArguments() != null){
-                numeroDeCuenta = getArguments().getString("numeroDeCuenta");
                 JSONObject rqt = new JSONObject();
                 rqt.put("estatusTramite", 1138);
                 rqt.put("fechaHoraFin", fechaN);
-                rqt.put("idTramite", Integer.parseInt(idTramite));
-                rqt.put("numeroCuenta", numeroDeCuenta);
+                rqt.put("idTramite", Integer.parseInt(Config.ID_TRAMITE));
+                rqt.put("numeroCuenta", getArguments().getString("numeroDeCuenta"));
                 JSONObject ubicacion = new JSONObject();
                 ubicacion.put("latitud", gps.getLatitude());
                 ubicacion.put("longitud", gps.getLongitude());
                 rqt.put("ubicacion", ubicacion);
                 rqt.put("usuario", Config.usuarioCusp(getContext()));
                 rqt.put("ineIfe", base64);
+                rqt.put("ineIfeR", base64Reverso);
                 obj.put("rqt", rqt);
             }
             Log.d("datos", "REQUEST-->" + obj);

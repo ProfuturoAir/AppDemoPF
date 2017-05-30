@@ -9,6 +9,10 @@
     <color name="colorGrey">#F6F6F6</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorGreyDark">#DDDDDD</color>
+    <color name="colorPrimaryGray">#f2f3f4</color>
+    <color name="colorSecundaryGray">#b3b3b3</color>
+    <color name="colorRed">#951519</color>
+    <color name="colorGreen">#347C1F</color>
 
     <color name="error_stroke_color">#F27474</color>
     <color name="red_btn_bg_color">#DD6B55</color>

@@ -24,6 +24,7 @@ import com.airmovil.profuturo.ti.retencion.helper.GPSRastreador;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
+import com.android.volley.NetworkResponse;
 import com.android.volley.VolleyError;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,8 +34,7 @@ public class Inicio extends Fragment {
     public static final String TAG = Inicio.class.getSimpleName();
     private static final String ARG_PARAM1 = "fechaInicio";
     private static final String ARG_PARAM2 = "fechaFin";
-    private String mParam1; // fechaInicio
-    private String mParam2; // fechaFin
+    private String mParam1, /* fechaInicio */ mParam2; // fechaFin
     private OnFragmentInteractionListener mListener;
     private View rootView;
     private Connected connected;
@@ -87,11 +87,26 @@ public class Inicio extends Fragment {
             }
             @Override
             public void notifyError(String requestType, VolleyError error) {
-                if(connected.estaConectado(getContext())){
+
+
+                NetworkResponse networkResponse = error.networkResponse;
+
+                Log.e(TAG, "*->" + networkResponse);
+                if(networkResponse == null){
+                    loading.dismiss();
+                }
+
+                /*if (networkResponse != null) {
+                    Log.e("Status code", String.valueOf(networkResponse.statusCode));
+                } else{
+                    Log.e("Status code", String.valueOf(networkResponse.statusCode));
+                }*/
+
+                /*if(connected.estaConectado(getContext())){
                     Dialogos.dialogoErrorServicio(getContext());
                 }else{
                     Dialogos.dialogoErrorConexion(getContext());
-                }
+                }*/
             }
         };
     }
@@ -134,10 +149,14 @@ public class Inicio extends Fragment {
                     if (tvRangoFecha1.getText().toString().isEmpty() || tvRangoFecha2.getText().toString().isEmpty() ) {
                         Dialogos.dialogoFechasVacias(getContext());
                     } else {
-                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        Inicio fragmento = Inicio.newInstance(mParam1 = tvRangoFecha1.getText().toString(), mParam2 = tvRangoFecha2.getText().toString(), rootView.getContext());
-                        borrar.onDestroy();
-                        ft.remove(borrar).replace(R.id.content_asesor, fragmento).addToBackStack(null).commit();
+                        if(Config.comparacionFechas(getContext(), tvRangoFecha1.getText().toString().trim(), tvRangoFecha2.getText().toString().trim())) {
+
+                        }else {
+                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                            Inicio fragmento = Inicio.newInstance(mParam1 = tvRangoFecha1.getText().toString(), mParam2 = tvRangoFecha2.getText().toString(), rootView.getContext());
+                            borrar.onDestroy();
+                            ft.remove(borrar).replace(R.id.content_asesor, fragmento).addToBackStack(null).commit();
+                        }
                     }
                 }else{
                     Dialogos.dialogoErrorConexion(getContext());

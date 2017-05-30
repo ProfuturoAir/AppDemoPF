@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@color/colorWhite"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/textView6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:text="Firma del cliente"
+            android:textStyle="bold"
+            android:textSize="20dp"/>
+        <ImageView
+            android:id="@+id/fc_iv_limpiar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:src="@drawable/icon_borrar"/>
+        <ImageView
+            android:id="@+id/fc_iv_cancelar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:src="@drawable/icono_cancelar2"/>
+        <ImageView
+            android:id="@+id/fc_iv_aceptar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:src="@drawable/icono_checar2"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bitmap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorWhite"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="100dp"
+            android:background="@drawable/customborder"
+            android:layout_marginTop="20dp">
+            <LinearLayout
+                android:id="@+id/contenedor_firma"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <!--com.airmovil.profuturo.ti.retencion.helper.DrawingView
+                    android:id="@+id/aff_dv_firma2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorWhite"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:visibility="visible">
+                </com.airmovil.profuturo.ti.retencion.helper.DrawingView-->
+                <com.kyanogen.signatureview.SignatureView
+                    xmlns:sign="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/signature_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    sign:penSize="5dp"
+                    sign:backgroundColor="#ffffff"
+                    sign:penColor="#000000"
+                    sign:enableSignature="true"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-100dp"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Firma dentro del recuadro"
+                android:textColor="@color/colorPrimaryDark"
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/tv_nombre_cliente_firma"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nombre del Cliente"
+                android:gravity="center"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="19dp"
+                android:layout_marginBottom="7dp"
+                android:layout_marginTop="25dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

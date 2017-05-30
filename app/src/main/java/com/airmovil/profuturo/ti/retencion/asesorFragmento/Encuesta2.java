@@ -24,7 +24,6 @@ import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
-import com.airmovil.profuturo.ti.retencion.helper.EnviaJSON;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.SQLiteHandler;
 import com.airmovil.profuturo.ti.retencion.helper.SpinnerDatos;
@@ -81,6 +80,9 @@ public class Encuesta2 extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getArguments()!=null){
+            Log.e(TAG, "***> " + getArguments().toString());
+        }
         db = new SQLiteHandler(getContext());
     }
 
@@ -100,7 +102,7 @@ public class Encuesta2 extends Fragment {
         variables();
 
         if(getArguments()!=null){
-            idTramite = getArguments().getString("idTramite");
+
             nombre = getArguments().getString("nombre");
             numeroDeCuenta = getArguments().getString("numeroDeCuenta");
             hora = getArguments().getString("hora");
@@ -126,13 +128,14 @@ public class Encuesta2 extends Fragment {
                 }else {
                     if(val == true){
                         if(connected.estaConectado(getContext())){
-                            final EnviaJSON enviaPrevio = new EnviaJSON();
                             Config.teclado(getContext(), etTelefono);
                             Config.teclado(getContext(), etEmail);
                             sendJson(true, iParam1IdGerencia, iParam2IdMotivos, iParam3IdEstatus, iParam4IdTitulo, iParam5IdRegimentPensionario, iParam6IdDocumentacion, iParam7Telefono, iParam8Email);
                             Fragment fragmentoGenerico = new Firma();
                             Asesor asesor = (Asesor) getContext();
-                            asesor.switchFirma(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+                            asesor.parametrosDetalle(fragmentoGenerico, Integer.parseInt(Config.ID_TRAMITE), getArguments().getString("nombre"), getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"), getArguments().getString("nombreAsesor"), getArguments().getString("cuentaAsesor"), getArguments().getString("sucursalAsesor"), getArguments().getString("nombreCliente"), getArguments().getString("numCuentaCliente"), getArguments().getString("nssCliente"), getArguments().getString("curpCliente"), getArguments().getString("fechaCliente"),
+                                    getArguments().getString("saldoCliente"), getArguments().getBoolean("pregunta1"), getArguments().getBoolean("pregunta2"), getArguments().getBoolean("pregunta3"), getArguments().getString("observaciones"), spinnerAfores.getSelectedItem().toString(), spinnerMotivos.getSelectedItem().toString(), spinnerEstatus.getSelectedItem().toString(), spinnerInstituto.getSelectedItem().toString(), spinnerRegimen.getSelectedItem().toString(), spinnerDocumentos.getSelectedItem().toString(), etTelefono.getText().toString().trim(), etEmail.getText().toString().trim());
+
                         }else{
                             AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
                             dialogo.setTitle(getResources().getString(R.string.error_conexion));
@@ -141,14 +144,15 @@ public class Encuesta2 extends Fragment {
                             dialogo.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    db.addObservaciones(idTramite,iParam1IdGerencia,iParam2IdMotivos,iParam3IdEstatus,iParam4IdTitulo,iParam5IdRegimentPensionario,iParam6IdDocumentacion,iParam7Telefono,iParam8Email,1135);
-                                    db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
-                                    Config.teclado(getContext(), etEmail);
-                                    Config.teclado(getContext(), etTelefono);
-
                                     Fragment fragmentoGenerico = new Firma();
                                     Asesor asesor = (Asesor) getContext();
-                                    asesor.switchFirma(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+                                    db.addObservaciones(Config.ID_TRAMITE,iParam1IdGerencia,iParam2IdMotivos,iParam3IdEstatus,iParam4IdTitulo,iParam5IdRegimentPensionario,iParam6IdDocumentacion,iParam7Telefono,iParam8Email,1135);
+                                    db.addIDTramite(Config.ID_TRAMITE,getArguments().getString("nombre"), getArguments().getString("cuentaAsesor"), getArguments().getString("hora"));
+                                    Config.teclado(getContext(), etEmail);
+                                    Config.teclado(getContext(), etTelefono);
+                                    asesor.parametrosDetalle(fragmentoGenerico, Integer.parseInt(Config.ID_TRAMITE), getArguments().getString("nombre"), getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"), getArguments().getString("nombreAsesor"), getArguments().getString("cuentaAsesor"), getArguments().getString("sucursalAsesor"), getArguments().getString("nombreCliente"), getArguments().getString("numCuentaCliente"), getArguments().getString("nssCliente"), getArguments().getString("curpCliente"), getArguments().getString("fechaCliente"),
+                                            getArguments().getString("saldoCliente"), getArguments().getBoolean("pregunta1"), getArguments().getBoolean("pregunta2"), getArguments().getBoolean("pregunta3"), getArguments().getString("observaciones"), spinnerAfores.getSelectedItem().toString(), spinnerMotivos.getSelectedItem().toString(), spinnerEstatus.getSelectedItem().toString(), spinnerInstituto.getSelectedItem().toString(), spinnerRegimen.getSelectedItem().toString(), spinnerDocumentos.getSelectedItem().toString(), etTelefono.getText().toString().trim(), etEmail.getText().toString().trim());
+
                                 }
                             });
                             dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -308,7 +312,6 @@ public class Encuesta2 extends Fragment {
         else
             loading = null;
 
-        idTramite = getArguments().getString("idTramite");
         JSONObject obj = new JSONObject();
         try{
             JSONObject rqt = new JSONObject();
@@ -321,7 +324,7 @@ public class Encuesta2 extends Fragment {
             rqt.put("telefono", telefono);
             rqt.put("email", email);
             rqt.put("estatusTramite", 1135);
-            rqt.put("idTramite", Integer.parseInt(idTramite));
+            rqt.put("idTramite", Config.ID_TRAMITE);
             obj.put("rqt", rqt);
             Log.d(TAG, "REQUEST-->" + obj);
         } catch (JSONException e){

@@ -590,4 +590,49 @@ public class Dialogos extends Activity{
         });
         dialog.create().show();
     }
+
+    public static final void dialogoNoExisteIFEFrente(Context context){
+        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_peligro));
+        progressDialog.setTitle(context.getResources().getString(R.string.error_en_documento_frente));
+        progressDialog.setMessage(context.getResources().getString(R.string.error_en_documento_vacio));
+        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog.dismiss();
+                    }
+                });
+        progressDialog.show();
+    }
+
+    public static final void dialogoNoExisteIFEVuelta(Context context){
+        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_peligro));
+        progressDialog.setTitle(context.getResources().getString(R.string.error_en_documento_vuelta));
+        progressDialog.setMessage(context.getResources().getString(R.string.error_en_documento_vacio));
+        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog.dismiss();
+                    }
+                });
+        progressDialog.show();
+    }
+
+    public static final void dialogoNoExisteIFE(Context context){
+        final ProgressDialog progressDialog = new ProgressDialog(context, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        progressDialog.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.icono_peligro));
+        progressDialog.setTitle(context.getResources().getString(R.string.error_en_documento_ambos_lados));
+        progressDialog.setMessage(context.getResources().getString(R.string.error_en_documento_sin_datos));
+        progressDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getResources().getString(R.string.aceptar),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog.dismiss();
+                    }
+                });
+        progressDialog.show();
+    }
 }

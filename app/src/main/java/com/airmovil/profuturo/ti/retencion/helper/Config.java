@@ -102,7 +102,7 @@ public class Config extends Activity {
     public static final String[] IDS = new String[]{"Selecciona el tipo de ID a buscar","Número de cuenta", "NSS", "CURP"};
     public static final String[] RETENIDO = new String[]{"Selecciona el tipo de estatus de retenidos ", "Retenido", "No Retenido"};
     public static final String[] CITAS = new String[]{"Seleciona el tipo de estatus de citas", "Con Cita", "Sin Cita"};
-    public static final String[] ATENCION = new String[]{"Seleccione a los clientes atendidos o no antendidos", "Atendidos", "No Atendidos"};
+    public static final String[] ATENCION = new String[]{"Clientes", "Atendidos", "No Atendidos"};
     public static final String[] EMAIL = new String[]{"Seleciona un email","profuturo.com.mx", "profuturo.com", "profuturo.mx"};
     // TODO: Variables
     public static final String USERNAME = "profuturo"; // USUARIO, para el acceso al basic authentication
@@ -121,6 +121,7 @@ public class Config extends Activity {
     public static Context context; // Context
     public static String idUsuario = "";
     public static RequestQueue mRequestQueue = null;
+    public static String ID_TRAMITE = "";
     /**
      * Muestra mensaje de fechas vacias
      * @param context referencia de la llamada, fragmento o actividad
@@ -484,6 +485,40 @@ public class Config extends Activity {
         if(Settings.System.getInt(context.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) != 0) {
             Dialogos.dialogoAvisoModoAvion(context);
         }
+    }
+
+    /**
+     * @param context referencia de la llamada, fragmento o actividad
+     * @param fechaInicio fecha de inicio
+     * @param fechaFinal fecha final
+     * @return Dialogo de alerta de rango de fecha
+     */
+    public static boolean comparacionFechas(Context context, String fechaInicio, String fechaFinal){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        boolean validar = false;
+        try{
+            Date date1 = sdf.parse(fechaInicio);
+            Date date2 = sdf.parse(fechaFinal);
+            Log.e("Config", "fecha 1 : " + sdf.format(date1));
+            Log.e("Config", "fecha 2 : " + sdf.format(date2));
+            Calendar cal1 = Calendar.getInstance();
+            Calendar cal2 = Calendar.getInstance();
+            cal1.setTime(date1);
+            cal2.setTime(date2);
+
+            if (cal1.after(cal2)) {
+                Dialogos.msj(context, "Error en fechas", "la fecha Inicio es mayor que la fecha final");
+                validar = true;
+            }
+
+            if (cal1.equals(cal2)) {
+                Dialogos.msj(context, "Error en fechas", "la fecha Inicio es igual a la fecha final");
+                validar = true;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return validar;
     }
 
 }

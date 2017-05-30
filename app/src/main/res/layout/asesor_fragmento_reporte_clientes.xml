@@ -32,56 +32,42 @@
             </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout style="@style/contenedorFiltros2">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="7dp"
+            android:background="@color/colorPrimaryGray"/>
 
-            <LinearLayout style="@style/linearLayoutHorizontal">
-                <LinearLayout style="@style/contenedorSpinner">
-                    <Spinner android:id="@+id/afrc_spinner_ids"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:backgroundTint="@color/colorWhite"/>
-                    <TextView style="@style/linea"/>
+        <LinearLayout style="@style/contenedorFiltros">
+
+            <LinearLayout style="@style/contenedorSpinnerEditText1">
+                <LinearLayout style="@style/contenedorSpinnerLeft">
+                    <Spinner android:id="@+id/afrc_spinner_ids" style="@style/spinner3"/>
                 </LinearLayout>
-                <EditText android:id="@+id/afrc_et_id" style="@style/busqueda"/>
+                <LinearLayout style="@style/contenedorEdittext">
+                    <EditText android:id="@+id/afrc_et_id" style="@style/editText3" />
+                </LinearLayout>
             </LinearLayout>
-
 
             <LinearLayout style="@style/linearLayoutHorizontal">
-                <TextView android:id="@+id/afrc_tv_fecha_rango1" style="@style/fechaInicial2" />
-                <TextView android:id="@+id/afrc_tv_fecha_rango2" style="@style/fechaFinal2"/>
+                <TextView android:id="@+id/afrc_tv_fecha_rango1" style="@style/fechaInicial" />
+                <TextView android:id="@+id/afrc_tv_fecha_rango2" style="@style/fechaFinal"/>
             </LinearLayout>
 
-
-            <LinearLayout style="@style/contenedorSpinner">
-                <Spinner android:id="@+id/afrc_spinner_emitidos"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:backgroundTint="@color/colorWhite"/>
-                <TextView style="@style/linea"/>
+            <LinearLayout style="@style/contenedorSpinner2">
+                <Spinner android:id="@+id/afrc_spinner_emitidos" style="@style/spinner4"/>
             </LinearLayout>
-
-            <Button android:id="@+id/afrc_btn_buscar" style="@style/btnBuscar"/>
-
+            <Button android:id="@+id/afrc_btn_buscar" style="@style/btnBuscar3"/>
         </LinearLayout>
 
         <LinearLayout style="@style/cabeceraLista">
             <TextView style="@style/tituloLista" android:text="@string/texto_clientes"/>
             <TextView android:id="@+id/afrc_tv_registros" style="@style/campoCantidades"/>
         </LinearLayout>
-
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight=".6">
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/afrc_rv_lista"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:divider="@null"
-            android:dividerHeight="0dp"
-            android:text="hello_world" />
+    <LinearLayout style="@style/contenedorRecyclerView">
+        <android.support.v7.widget.RecyclerView android:id="@+id/afrc_rv_lista" style="@style/recyclerView"/>
     </LinearLayout>
 
 </LinearLayout>

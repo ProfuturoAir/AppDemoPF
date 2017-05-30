@@ -29,6 +29,7 @@ import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.AsesorReporteClientesModel;
+import com.android.volley.NetworkResponse;
 import com.android.volley.VolleyError;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -248,10 +249,17 @@ public class ReporteClientes extends Fragment {
 
             @Override
             public void notifyError(String requestType, VolleyError error) {
-                if(connected.estaConectado(getContext())){
+                /*if(connected.estaConectado(getContext())){
                     Dialogos.dialogoErrorServicio(getContext());
                 }else{
                     Dialogos.dialogoErrorConexion(getContext());
+                }*/
+
+                NetworkResponse networkResponse = error.networkResponse;
+
+                Log.e(TAG, "*->" + networkResponse);
+                if(networkResponse == null){
+                    loading.dismiss();
                 }
             }
         };

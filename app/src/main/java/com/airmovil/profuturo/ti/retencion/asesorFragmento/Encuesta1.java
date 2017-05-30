@@ -33,7 +33,7 @@ import org.json.JSONObject;
 public class Encuesta1 extends Fragment {
     public static final String TAG = Encuesta1.class.getSimpleName();
     private SQLiteHandler db;
-    private String idTramite, nombre, numeroDeCuenta, hora;
+    private String nombre, numeroDeCuenta, hora;
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
@@ -44,7 +44,7 @@ public class Encuesta1 extends Fragment {
     private EditText etObservaciones;
     private Button btnContinuar, btnCancelar;
     private Boolean r1, r2, r3;
-    private int estatusTramite = 1134;
+    private int estatusTramite = 1134, idTramite;
     private Fragment borrar = this;
 
     public Encuesta1() {/* contructor vacio es requerido */}
@@ -56,6 +56,10 @@ public class Encuesta1 extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getArguments()!=null){
+            Log.e("Encuesta1", "\n" + getArguments().toString());
+
+        }
         db = new SQLiteHandler(getContext());
     }
 
@@ -138,7 +142,11 @@ public class Encuesta1 extends Fragment {
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                         fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                         Asesor asesor = (Asesor) getContext();
-                        asesor.switchEncuesta2(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+
+                        asesor.parametrosDetalle(fragmentoGenerico, Integer.parseInt(Config.ID_TRAMITE), getArguments().getString("nombre"),
+                                getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"), getArguments().getString("nombreAsesor"), getArguments().getString("cuentaAsesor"), getArguments().getString("sucursalAsesor"),
+                                getArguments().getString("nombreCliente"), getArguments().getString("numCuentaCliente"), getArguments().getString("nssCliente"), getArguments().getString("curpCliente"), getArguments().getString("fechaCliente"),
+                                getArguments().getString("saldoCliente"), r1, r2, r3, etObservaciones.getText().toString(), "", "", "", "", "", "", "", "");
                     }else{
                         AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
                         dialogo.setTitle(getResources().getString(R.string.error_conexion));
@@ -148,11 +156,14 @@ public class Encuesta1 extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Config.teclado(getContext(), etObservaciones);
-                                db.addEncuesta(idTramite,estatusTramite,r1,r2,r3,etObservaciones.getText().toString().trim());
-                                db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+                                db.addEncuesta(Config.ID_TRAMITE,estatusTramite,r1,r2,r3,etObservaciones.getText().toString().trim());
+                                db.addIDTramite(Config.ID_TRAMITE,nombre,getArguments().getString("cuentaAsesor"),hora);
                                 Fragment fragmentoGenerico = new Encuesta2();
                                 Asesor asesor = (Asesor) getContext();
-                                asesor.switchEncuesta2(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+                                asesor.parametrosDetalle(fragmentoGenerico, Integer.parseInt(Config.ID_TRAMITE), getArguments().getString("nombre"),
+                                        getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"), getArguments().getString("nombreAsesor"), getArguments().getString("cuentaAsesor"), getArguments().getString("sucursalAsesor"),
+                                        getArguments().getString("nombreCliente"), getArguments().getString("numCuentaCliente"), getArguments().getString("nssCliente"), getArguments().getString("curpCliente"), getArguments().getString("fechaCliente"),
+                                        getArguments().getString("saldoCliente"), r1, r2, r3, etObservaciones.getText().toString(), "", "", "", "", "", "", "", "");
                             }
                         });
                         dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -256,7 +267,7 @@ public class Encuesta1 extends Fragment {
      */
     private void argumentos(){
         if(getArguments()!= null){
-            idTramite = getArguments().getString("idTramite");
+            idTramite = getArguments().getInt("idTramite");
             nombre = getArguments().getString("nombre");
             numeroDeCuenta = getArguments().getString("numeroDeCuenta");
             hora = getArguments().getString("hora");
@@ -293,7 +304,7 @@ public class Encuesta1 extends Fragment {
             loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
         else
             loading = null;
-        idTramite = getArguments().getString("idTramite");
+        idTramite = getArguments().getInt("idTramite");
         JSONObject obj = new JSONObject();
         try{
             JSONObject rqt = new JSONObject();
@@ -304,7 +315,7 @@ public class Encuesta1 extends Fragment {
             rqt.put("encuesta", encuesta);
             rqt.put("observaciones", observaciones);
             rqt.put("estatusTramite", 1134);
-            rqt.put("idTramite", Integer.parseInt(idTramite));
+            rqt.put("idTramite", Config.ID_TRAMITE);
             obj.put("rqt", rqt);
             Log.d(TAG, "<- RQT ->" + obj);
         } catch (JSONException e){

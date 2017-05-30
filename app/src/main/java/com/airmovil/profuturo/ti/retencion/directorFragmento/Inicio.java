@@ -30,8 +30,7 @@ public class Inicio extends Fragment {
     public static final String TAG = Inicio.class.getSimpleName();
     private static final String ARG_PARAM1 = "fechaInicio";
     private static final String ARG_PARAM2 = "fechaFin";
-    private String mParam1; // fecha Inicio
-    private String mParam2; // fecha fin
+    private String mParam1, /* fecha Inicio */ mParam2 /* fecha fin */;
     private OnFragmentInteractionListener mListener;
     private View rootView;
     private TextView tvInicial, tvNombre, tvFecha, tvRetenidos, tvNoRetenidos, tvSaldoRetenido, tvSaldoNoRetenido, tvRangoFecha1, tvRangoFecha2;
@@ -40,10 +39,7 @@ public class Inicio extends Fragment {
     private Button btnFiltro;
     private Fragment borrar = this;
     private Connected connected;
-    private int iRetenidos = 0;
-    private int iNoRetenidos = 0;
-    private int iSaldoRetenido = 0;
-    private int iSaldoNoRetenido = 0;
+    private int iRetenidos = 0, iNoRetenidos = 0, iSaldoRetenido = 0, iSaldoNoRetenido = 0;
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
@@ -111,10 +107,14 @@ public class Inicio extends Fragment {
                 if(fechaIncial.equals("") || fechaFinal.equals("")){
                     Dialogos.dialogoFechasVacias(getContext());
                 }else {
-                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    Fragment procesoDatosFiltroInicio = Inicio.newInstance(fechaIncial, fechaFinal, rootView.getContext());
-                    borrar.onDestroy();
-                    ft.remove(borrar).replace(R.id.content_director, procesoDatosFiltroInicio).addToBackStack(null).commit();
+                    if(Config.comparacionFechas(getContext(), tvRangoFecha1.getText().toString().trim(), tvRangoFecha2.getText().toString().trim())) {
+
+                    }else {
+                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        Fragment procesoDatosFiltroInicio = Inicio.newInstance(fechaIncial, fechaFinal, rootView.getContext());
+                        borrar.onDestroy();
+                        ft.remove(borrar).replace(R.id.content_director, procesoDatosFiltroInicio).addToBackStack(null).commit();
+                    }
                 }
             }
         });

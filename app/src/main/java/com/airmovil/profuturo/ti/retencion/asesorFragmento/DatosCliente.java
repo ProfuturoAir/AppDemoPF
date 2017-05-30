@@ -42,9 +42,6 @@ public class DatosCliente extends Fragment {
     private ProgressDialog loading;
     private Connected connected;
     private String idTramite;
-    private String nombre;
-    private String numeroDeCuenta;
-    private String hora;
     private Fragment borrar = this;
     Map<String, String> usuario;
 
@@ -75,6 +72,9 @@ public class DatosCliente extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getArguments()!=null){
+            Log.e("getArguments", "\n" + getArguments().toString());
+        }
     }
 
     /**
@@ -93,20 +93,17 @@ public class DatosCliente extends Fragment {
         volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
         sendJson(true);
         variables();
-        if(getArguments()!=null){
-            nombre = getArguments().getString("nombre");
-            numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-            hora = getArguments().getString("hora");
-        }
 
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Fragment fragmentoGenerico = new Encuesta1();
+                Asesor asesor = (Asesor) getContext();
                 if(connected.estaConectado(getContext())){
                     if(idTramite!=null){
-                        Fragment fragmentoGenerico = new Encuesta1();
-                        Asesor asesor = (Asesor) getContext();
-                        asesor.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+                        asesor.parametrosDetalle(fragmentoGenerico, Integer.parseInt(Config.ID_TRAMITE), getArguments().getString("nombre"),
+                                getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"), getArguments().getString("nombreAsesor"), getArguments().getString("cuentaAsesor"), getArguments().getString("sucursalAsesor"), tvClienteNombre.getText().toString(),
+                                tvClienteNumeroCuenta.getText().toString(), tvClienteNSS.getText().toString(), tvClienteCURP.getText().toString(), tvClienteFecha.getText().toString(), tvClienteSaldo.getText().toString(), false, false, false, "", "", "", "", "", "", "", "", "");
                     }
                 }else{
                     AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
@@ -116,11 +113,11 @@ public class DatosCliente extends Fragment {
                     dialogo.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if(idTramite!=null){
-                                Fragment fragmentoGenerico = new Encuesta1();
-                                Asesor asesor = (Asesor) getContext();
-                                asesor.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
-                            }
+                            Fragment fragmentoGenerico = new Encuesta1();
+                            Asesor asesor = (Asesor) getContext();
+                            asesor.parametrosDetalle(fragmentoGenerico, Integer.parseInt(Config.ID_TRAMITE),getArguments().getString("nombre"),
+                                    getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"), getArguments().getString("nombreAsesor"), getArguments().getString("cuentaAsesor"), getArguments().getString("sucursalAsesor"), tvClienteNombre.getText().toString(),
+                                    tvClienteNumeroCuenta.getText().toString(), tvClienteNSS.getText().toString(), tvClienteCURP.getText().toString(), tvClienteFecha.getText().toString(), tvClienteSaldo.getText().toString(), false, false, false, "", "", "", "", "", "", "", "", "");
                         }
                     });
                     dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -255,7 +252,7 @@ public class DatosCliente extends Fragment {
             if(getArguments()!=null){
                 JSONObject rqt = new JSONObject();
                 rqt.put("estatusTramite", 1133);
-                rqt.put("numeroCuenta", getArguments().getString("numeroDeCuenta"));
+                rqt.put("numeroCuenta", getArguments().getString("numeroCuenta"));
                 rqt.put("usuario", Config.usuarioCusp(getContext()));
                 obj.put("rqt", rqt);
             }
@@ -298,5 +295,7 @@ public class DatosCliente extends Fragment {
         }catch (JSONException e){
             e.printStackTrace();
         }
+
+        Config.ID_TRAMITE = idTramite;
     }
 }
