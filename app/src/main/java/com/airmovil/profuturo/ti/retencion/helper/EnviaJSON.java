@@ -89,7 +89,7 @@ public class EnviaJSON {
             sendJsonEncuesta2(true,idTramite,idAfore,idMotivo,idEstatus,idInstituto,idRegimenPensionario,idDocumentacion,telefono,email,estatusTramite,context);
         }
 
-        // TODO: verifica si la firma, esta llena, si es asi se procede para el envio de los datos en segundo plano
+        // TODO: verifica si la img_firma, esta llena, si es asi se procede para el envio de los datos en segundo plano
         if(!firma.isEmpty()){
             idTramite=firma.get(SQLiteHandler.FK_ID_TRAMITE);
             estatusTramite=Integer.parseInt(firma.get(SQLiteHandler.KEY_ESTATUS_TRAMITE));

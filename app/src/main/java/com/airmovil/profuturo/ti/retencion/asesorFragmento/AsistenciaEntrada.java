@@ -3,6 +3,7 @@ package com.airmovil.profuturo.ti.retencion.asesorFragmento;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
+
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
@@ -22,6 +25,8 @@ import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.VolleyError;
+import com.kyanogen.signatureview.SignatureView;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,6 +38,7 @@ public class AsistenciaEntrada extends Fragment{
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
     private GPSRastreador gps;
+    private boolean registro = false;
 
     public AsistenciaEntrada() {/*constructor vacio requerido*/}
 
@@ -76,13 +82,13 @@ public class AsistenciaEntrada extends Fragment{
             }
         });
 
-        int visible = (new MySharePreferences(getContext()).yaRegistro("entrada","01/04/2013"))? View.INVISIBLE: View.VISIBLE;
-        btnGuardar.setVisibility(visible);
-        btnCancelar.setVisibility(visible);
-        btnLimpiar.setVisibility(visible);
-        if(visible == 4){
-            Dialogos.dialogoYaRegistro(getContext(),"Entrada"," Ya ha registrado su entrada");
-        }
+        //int visible = (new MySharePreferences(getContext()).yaRegistro("entrada","01/04/2013"))? View.INVISIBLE: View.VISIBLE;
+        //btnGuardar.setBackgroundColor(Color.BLACK);
+        //btnCancelar.setVisibility(visible);
+        //btnLimpiar.setVisibility(visible);
+        //if(visible == 4){
+            // Dialogos.dialogoYaRegistro(getContext(),"Entrada"," Ya ha registrado su entrada");
+        //}
 
         btnGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,7 +118,7 @@ public class AsistenciaEntrada extends Fragment{
                 }
             }
         });
-        // TODO: Buton cancelar porceso de firma
+        // TODO: Buton cancelar porceso de img_firma
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         Dialogos.dialogoCancelarFirma(getContext(), btnCancelar, fragmentManager);
     }
@@ -239,10 +245,14 @@ public class AsistenciaEntrada extends Fragment{
             if(Integer.parseInt(status) == 200){
                 Dialogos.msj(getContext(), "Envio correcto", "Se ha registrado, la entrada de hoy \nFecha:" + Dialogos.fechaActual() + " \nhora: " +Config.getHoraActual());
                 new MySharePreferences(getContext()).registrar("entrada",Dialogos.fechaActual());
-                int visible = (new MySharePreferences(getContext()).yaRegistro("entrada","01/04/2013"))? View.INVISIBLE: View.VISIBLE;
-                btnGuardar.setVisibility(visible);
-                btnCancelar.setVisibility(visible);
-                btnLimpiar.setVisibility(visible);
+                LinearLayout mensaje = (LinearLayout) rootView.findViewById(R.id.mensaje_ok);
+                mensaje.setVisibility(View.VISIBLE);
+                dvFirma.setVisibility(View.GONE );
+                btnLimpiar.setTextColor(getResources().getColor(R.color.colorAccent));
+                btnLimpiar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+                btnLimpiar.setEnabled(false);
+                btnGuardar.setEnabled(false);
+                btnCancelar.setEnabled(false);
             }else{
                 Dialogos.dialogoErrorRespuesta(getContext(),status, statusText);
             }

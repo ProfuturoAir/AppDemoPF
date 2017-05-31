@@ -19,7 +19,7 @@
         <Button
             android:id="@+id/afcc_btn_sin_cita"
             android:layout_width="350dp"
-            android:background="@color/colorAccent"
+            android:background="@drawable/estilo_bordes_button"
             android:textStyle="bold"
             android:textColor="@color/colorPrimaryDark"
             android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
     </LinearLayout>
 
     <LinearLayout style="@style/cabeceraLista">
-        <TextView style="@style/campoClientes"/>
+        <TextView android:id="@+id/afcc_tv_clientes_atendidos" android:text="" style="@style/campoClientes"/>
         <TextView android:id="@+id/afcc_tv_registros" style="@style/campoCantidades"/>
     </LinearLayout>
 

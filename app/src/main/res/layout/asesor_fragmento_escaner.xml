@@ -6,78 +6,6 @@
     android:background="@color/colorWhite"
     tools:context="com.airmovil.profuturo.ti.retencion.asesorFragmento.Escaner">
 
-    <!--LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:padding="10dp"
-            android:text="Escaner de documentación"
-            android:textSize="20dp"
-            android:id="@+id/textView2" />
-        <Button
-            android:id="@+id/btn_documento"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="3dp"
-            android:background="@color/colorAccent"
-            android:drawableRight="@drawable/ic_menu_camera"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:text="Camara"
-            android:textColor="@color/colorPrimaryDark"
-            android:textStyle="bold" />
-        <ImageView
-            android:id="@+id/scannedImage"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_centerInParent="true" />
-        <Button
-            android:id="@+id/af_btn_borrar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="3dp"
-            android:background="@color/colorAccent"
-            android:text="Borrar"
-            android:textColor="@color/colorPrimaryDark"
-            android:textStyle="bold" />
-        <Button
-            android:id="@+id/af_btn_guardar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="3dp"
-            android:background="@color/colorAccent"
-            android:text="Finalizar"
-            android:textColor="@color/colorPrimaryDark"
-            android:textStyle="bold" />
-        <Button
-            android:id="@+id/af_btn_cancelar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="3dp"
-            android:background="@color/colorAccent"
-            android:text="Cancelar"
-            android:textColor="@color/colorPrimaryDark"
-            android:textStyle="bold" />
-        <TextView android:id="@+id/aff_lbl_LatitudDoc" style="@style/tvlatitud" android:textColor="@color/colorWhite"/>
-        <TextView android:id="@+id/aff_lbl_LongitudDoc" style="@style/tvLogintud" android:textColor="@color/colorWhite"/>
-    </LinearLayout-->
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -125,31 +53,10 @@
                 android:src="@drawable/ife_vuelta"/>
         </LinearLayout>
 
-        <Button
-            android:id="@+id/af_btn_guardar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="30dp"
-            android:background="@color/colorAccent"
-            android:text="Terminar encuesta"
-            android:textColor="@color/colorPrimaryDark"
-            android:textStyle="bold" />
-        <Button
-            android:id="@+id/af_btn_cancelar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="3dp"
-            android:background="@color/colorAccent"
-            android:text="Cancelar"
-            android:textColor="@color/colorPrimaryDark"
-            android:textStyle="bold" />
-
+        <!-- TODO: btn Continual -->
+        <Button android:id="@+id/af_btn_guardar" android:text="Terminar encuesta" style="@style/btnContinuar" />
+        <!-- TODO: btn Cancelar -->
+        <Button android:id="@+id/af_btn_cancelar" style="@style/btnCancelar" />
     </LinearLayout>
 
 </ScrollView>

@@ -109,7 +109,7 @@ public class Config extends Activity {
     public static final String PASSWORD = "123123"; // Contraseña, para el acceso al basic authentication
     // TODO: Variables long fijas aplicadas en la actividad splash y el el handler de la primera peticion REST
     public static final long SPLASH_SCREEN_DELEY = 3500;
-    public static final long TIME_HANDLER = 3000;
+    public static final long TIME_HANDLER = 3300;
     // TODO: Creacion de una nueva instancia a usar para el timer, aplicado en la actividad splash
     private static Timer mTimer = new Timer();
     private static ProgressDialog dialog;

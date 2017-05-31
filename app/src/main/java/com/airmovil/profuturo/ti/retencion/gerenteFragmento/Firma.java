@@ -84,12 +84,12 @@ public class Firma extends Fragment{
             @Override
             public void onClick(View v) {
                 if(!dvFirma.isActive()) {
-                    Dialogos.msj(v.getContext(),"Error", "Se requiere una firma");
+                    Dialogos.msj(v.getContext(),"Error", "Se requiere una img_firma");
                 }else{
                     if(dvFirma.isActive()){
                         AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
                         dialogo1.setTitle("Importante");
-                        dialogo1.setMessage("¿Guardar esta firma?");
+                        dialogo1.setMessage("¿Guardar esta img_firma?");
                         dialogo1.setCancelable(false);
                         dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
                             @Override

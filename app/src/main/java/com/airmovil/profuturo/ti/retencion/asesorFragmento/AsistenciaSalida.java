@@ -138,7 +138,7 @@ public class AsistenciaSalida extends Fragment {
                 }
             }
         });
-        // TODO: Buton cancelar porceso de firma
+        // TODO: Buton cancelar porceso de img_firma
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         Dialogos.dialogoCancelarFirma(getContext(), btnCancelar, fragmentManager);
     }

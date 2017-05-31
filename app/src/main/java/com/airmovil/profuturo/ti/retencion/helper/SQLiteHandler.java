@@ -190,10 +190,10 @@ public class SQLiteHandler extends SQLiteOpenHelper{
     }
 
     /**
-     * Metodo para agregar la firma
+     * Metodo para agregar la img_firma
      * @param idTramite idTramite
      * @param estatusTramite estatusTramite
-     * @param firma firma
+     * @param firma img_firma
      * @param latitud latitud
      * @param longitud longitud
      */

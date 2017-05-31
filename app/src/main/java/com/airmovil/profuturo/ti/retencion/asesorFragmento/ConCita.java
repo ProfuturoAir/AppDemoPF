@@ -52,7 +52,7 @@ public class ConCita extends Fragment {
     private OnFragmentInteractionListener mListener;
     private Spinner spinner;
     private Button btnAplicar, btnClienteSinCita;
-    private TextView tvFecha, tvRegistros;
+    private TextView tvFecha, tvRegistros, tvClientesAtendidos;
     private View rootView;
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
@@ -68,6 +68,7 @@ public class ConCita extends Fragment {
      * @return un objeto ConCita.
      */
     public static ConCita newInstance(int param1, Context context) {
+        Log.e("newInstance", "->" + param1);
         ConCita fragment = new ConCita();
         Bundle args = new Bundle();
         args.putInt(ARG_PARAM1, param1);
@@ -262,6 +263,7 @@ public class ConCita extends Fragment {
         btnClienteSinCita = (Button) rootView.findViewById(R.id.afcc_btn_sin_cita);
         tvFecha = (TextView) rootView.findViewById(R.id.afcc_tv_fecha);
         tvRegistros = (TextView) rootView.findViewById(R.id.afcc_tv_registros);
+        tvClientesAtendidos = (TextView) rootView.findViewById(R.id.afcc_tv_clientes_atendidos);
     }
 
     /**
@@ -359,6 +361,16 @@ public class ConCita extends Fragment {
         }catch (JSONException e){
             e.printStackTrace();
         }
+
+        if(getArguments()!=null){
+            if(getArguments().getInt(ARG_PARAM1) == 1)
+                tvClientesAtendidos.setText("Clientes Atendidos");
+            else if(getArguments().getInt(ARG_PARAM1) == 2)
+                tvClientesAtendidos.setText("Clientes No Atendidos");
+        }else{
+            tvClientesAtendidos.setText("Clientes Atendidos y No Atendidos");
+        }
+
         tvRegistros.setText(filas + " Registros");
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         adapter = new CitasClientesAdapter(rootView.getContext(), getDatos1, recyclerView);

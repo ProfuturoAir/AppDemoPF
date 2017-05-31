@@ -96,23 +96,37 @@ public class Escaner extends Fragment {
         ifeFrente.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle = new Bundle ();
-                Intent launchIntent = new Intent ();
-                //Valores por default para el motor
-                launchIntent.setComponent(new ComponentName("mx.com.profuturo.motor", "mx.com.profuturo.motor.CameraUI"));
-                // nombreImagen es el nombre con el que se debe nombrar la imagen resultante del motor de imagen sin extensión
-                // por ejemplo selfie
-                String nombreImagen = "test2";
-                bundle.putString("nombreDocumento", nombreImagen);
-                // ruta destino dentro de las carpetas de motor de imágenes en donde se almacenará el documento
-                // idtramite en este caso sebe ser sustituido por el idTramite que se obtienen el servicio consultarDatosCliente
-                // /mb/premium/rest/consultarDatosCliente
-                bundle.putString("rutaDestino", "idtramite/");
-                // Indicador de que se debe lanzar la cámara
-                bundle.putBoolean("esCamara", true);
-                launchIntent.putExtras(bundle);
-                startActivityForResult (launchIntent, PHOTO_FILE);
-                intVal1 = 1;
+
+                final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.Theme_AppCompat_DayNight_Dialog_Alert);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
+                progressDialog.setMessage(getResources().getString(R.string.msj_espera_camara));
+                progressDialog.show();
+                new android.os.Handler().postDelayed(
+                        new Runnable() {
+                            public void run() {
+                                Bundle bundle = new Bundle ();
+                                Intent launchIntent = new Intent ();
+                                //Valores por default para el motor
+                                launchIntent.setComponent(new ComponentName("mx.com.profuturo.motor", "mx.com.profuturo.motor.CameraUI"));
+                                // nombreImagen es el nombre con el que se debe nombrar la imagen resultante del motor de imagen sin extensión
+                                // por ejemplo selfie
+                                String nombreImagen = "test2";
+                                bundle.putString("nombreDocumento", nombreImagen);
+                                // ruta destino dentro de las carpetas de motor de imágenes en donde se almacenará el documento
+                                // idtramite en este caso sebe ser sustituido por el idTramite que se obtienen el servicio consultarDatosCliente
+                                // /mb/premium/rest/consultarDatosCliente
+                                bundle.putString("rutaDestino", "idtramite/");
+                                // Indicador de que se debe lanzar la cámara
+                                bundle.putBoolean("esCamara", true);
+                                launchIntent.putExtras(bundle);
+                                startActivityForResult(launchIntent, PHOTO_FILE);
+                                intVal1 = 1;
+                                progressDialog.dismiss();
+                            }
+                        }, Config.TIME_HANDLER);
+
+
                 Log.d("bandera1", "" + intVal1);
             }
         });
@@ -122,23 +136,36 @@ public class Escaner extends Fragment {
         ifeVuelta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle = new Bundle ();
-                Intent launchIntent = new Intent ();
-                //Valores por default para el motor
-                launchIntent.setComponent(new ComponentName("mx.com.profuturo.motor", "mx.com.profuturo.motor.CameraUI"));
-                // nombreImagen es el nombre con el que se debe nombrar la imagen resultante del motor de imagen sin extensión
-                // por ejemplo selfie
-                String nombreImagen = "test2";
-                bundle.putString("nombreDocumento", nombreImagen);
-                // ruta destino dentro de las carpetas de motor de imágenes en donde se almacenará el documento
-                // idtramite en este caso sebe ser sustituido por el idTramite que se obtienen el servicio consultarDatosCliente
-                // /mb/premium/rest/consultarDatosCliente
-                bundle.putString("rutaDestino", "idtramite/");
-                // Indicador de que se debe lanzar la cámara
-                bundle.putBoolean("esCamara", true);
-                launchIntent.putExtras(bundle);
-                startActivityForResult (launchIntent, PHOTO_FILE);
-                intVal2 = 2;
+
+                final ProgressDialog progressDialog = new ProgressDialog(getContext(), R.style.Theme_AppCompat_DayNight_Dialog_Alert);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setTitle(getResources().getString(R.string.msj_esperando));
+                progressDialog.setMessage(getResources().getString(R.string.msj_espera_camara));
+                progressDialog.show();
+                new android.os.Handler().postDelayed(
+                        new Runnable() {
+                            public void run() {
+                                Bundle bundle = new Bundle ();
+                                Intent launchIntent = new Intent ();
+                                //Valores por default para el motor
+                                launchIntent.setComponent(new ComponentName("mx.com.profuturo.motor", "mx.com.profuturo.motor.CameraUI"));
+                                // nombreImagen es el nombre con el que se debe nombrar la imagen resultante del motor de imagen sin extensión
+                                // por ejemplo selfie
+                                String nombreImagen = "test2";
+                                bundle.putString("nombreDocumento", nombreImagen);
+                                // ruta destino dentro de las carpetas de motor de imágenes en donde se almacenará el documento
+                                // idtramite en este caso sebe ser sustituido por el idTramite que se obtienen el servicio consultarDatosCliente
+                                // /mb/premium/rest/consultarDatosCliente
+                                bundle.putString("rutaDestino", "idtramite/");
+                                // Indicador de que se debe lanzar la cámara
+                                bundle.putBoolean("esCamara", true);
+                                launchIntent.putExtras(bundle);
+                                startActivityForResult(launchIntent, PHOTO_FILE);
+                                intVal2 = 2;
+                                progressDialog.dismiss();
+                            }
+                        }, Config.TIME_HANDLER);
+
                 Log.d("bandera2", "" + intVal2);
             }
         });
@@ -416,11 +443,11 @@ public class Escaner extends Fragment {
             status = obj.getString("status");
             if(connected.estaConectado(getContext())){
                 if(Integer.parseInt(status) == 200){
-                    android.app.AlertDialog.Builder dialog  = new android.app.AlertDialog.Builder(getContext());
-                    dialog.setTitle("Datos correctos");
-                    dialog.setMessage("Los datos han sido recibidos, ha finalizado el proceso de implicaciones, da click en ACEPTAR para finalizar el proceso");
-                    dialog.setCancelable(true);
-                    dialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    android.support.v7.app.AlertDialog.Builder dialogo1 = new android.support.v7.app.AlertDialog.Builder(getContext());
+                    dialogo1.setTitle("Datos correctos");
+                    dialogo1.setMessage("Los datos han sido recibidos, ha finalizado el proceso de implicaciones, da click en ACEPTAR para finalizar el proceso");
+                    dialogo1.setCancelable(false);
+                    dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener(){
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Fragment fragmentoGenerico = new ConCita();
@@ -428,7 +455,7 @@ public class Escaner extends Fragment {
                             fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico).commit();
                         }
                     });
-                    dialog.create().show();
+                    dialogo1.show();
                 }else{
                     android.app.AlertDialog.Builder dialog  = new android.app.AlertDialog.Builder(getContext());
                     dialog.setTitle("Error general");

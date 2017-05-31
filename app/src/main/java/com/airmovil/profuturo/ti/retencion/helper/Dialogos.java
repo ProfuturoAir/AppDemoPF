@@ -16,6 +16,8 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Timer;
 
 import com.airmovil.profuturo.ti.retencion.R;
@@ -52,6 +54,9 @@ public class Dialogos extends Activity{
         int mes = calendar.get(Calendar.MONTH);
         int anio = calendar.get(Calendar.YEAR);
         return String.valueOf(dia+1)+"-"+String.valueOf(mes + 1)+"-"+String.valueOf(anio);
+
+
+
     }
 
     /**
@@ -322,7 +327,7 @@ public class Dialogos extends Activity{
     }
 
     /**
-     * Muestra mensaje, aviso de contenido limpio en firma
+     * Muestra mensaje, aviso de contenido limpio en img_firma
      * @param context referencia de la llamada, fragmento o actividad
      */
     public static final void dialogoContenidoLimpio(Context context){
@@ -341,7 +346,7 @@ public class Dialogos extends Activity{
     }
 
     /**
-     * Muestra mensaje de error, se requiere una firma
+     * Muestra mensaje de error, se requiere una img_firma
      * @param context referencia de la llamada, fragmento o actividad
      */
     public static final void dialogoRequiereFirma(Context context){

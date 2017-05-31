@@ -99,6 +99,7 @@
     <string name="msj_salida">Deseas regresar al inicio</string>
     <string name="msj_contenido_limpio">El contenido se ha limpiado</string>
     <string name="msj_esperando">Espere un momento</string>
+    <string name="msj_espera_camara">Por favor espere un momento, se esta preparando la cámara para hacer captura de documento</string>
     <string name="msj_verificando">Se están verificando los datos</string>
     <string name="msj_sin_internet_continuar_proceso">No tienes conexión a internet, pero puedes continuar con el proceso, cuando exista conexión a internet se enviaran los datos</string>
     <string name="msj_error_conexion_firma">No hay conexión a internet, verifica tu conexión y vuelve a intentar</string>

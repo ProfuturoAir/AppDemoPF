@@ -4,19 +4,29 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <TextView
-        android:textColor="@color/colorWhite"
-        android:id="@+id/textViewLogintud1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="texto1" />
+    <LinearLayout
+        android:id="@+id/mensaje_ok"
+        android:layout_width="match_parent"
+        android:layout_height="650dp"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:background="@color/colorWhite"
+        android:gravity="center"
+        android:visibility="gone">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Se ha registrado firma del día de hoy"
+            android:textSize="45dp"
+            android:textStyle="bold"/>
 
-    <TextView
-        android:textColor="@color/colorWhite"
-        android:id="@+id/textViewLatitud1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="texto2" />
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/img_firma"/>
+
+    </LinearLayout>
 
     <com.airmovil.profuturo.ti.retencion.helper.DrawingView
         android:id="@+id/drawinView1"

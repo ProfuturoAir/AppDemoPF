@@ -3,72 +3,67 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardView_item_sin_cita"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="1dp"
-    card_view:cardBackgroundColor="#f6f6f6"
-    card_view:cardCornerRadius="2dp"
-    card_view:contentPadding="0dp"
-    card_view:cardElevation="5dp">
-
+    android:layout_height="wrap_content">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="1dp"
-        android:layout_marginTop="1dp"
-        android:background="@color/colorGrey"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/colorWhite"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingBottom="12dp"
-            android:paddingLeft="12dp"
-            android:paddingTop="12dp"
-            android:paddingRight="12dp">
-
-            <TextView
-                android:id="@+id/afsci_tv_letra"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:background="@drawable/estilo_circular"
-                android:gravity="center"
-                android:text="@string/texto_letra"
-                android:textColor="@color/colorWhite"
-                android:textSize="32sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp"
+        android:background="@color/colorGrey">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/colorGrey"
-            android:orientation="vertical"
-            android:paddingLeft="15dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp">
-
-            <TextView
-                android:id="@+id/afsci_tv_nombre_cliente"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:layout_marginTop="1dp"
+            android:background="@drawable/estilo_bordes_lista"
+            android:orientation="horizontal">
+            <LinearLayout
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingBottom="12dp"
+                android:paddingLeft="12dp"
+                android:paddingTop="12dp"
+                android:paddingRight="12dp">
+                <TextView
+                    android:id="@+id/afsci_tv_letra"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:background="@drawable/estilo_circular"
+                    android:gravity="center"
+                    android:text="@string/texto_letra"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="32sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:textColor="@color/colorPrimaryDark"
-                android:layout_toRightOf="@+id/a_imgv_letra"
-                android:text="Nombre del Cliente"
-                android:textSize="17dp" />
-
-            <TextView
-                android:id="@+id/afsci_tv_cuenta_cliente"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="17dp"
-                android:text="Numero de cuenta" />
-
+                android:orientation="vertical"
+                android:paddingLeft="15dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+                <TextView
+                    android:id="@+id/afsci_tv_nombre_cliente"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:layout_toRightOf="@+id/a_imgv_letra"
+                    android:text="Nombre del Cliente"
+                    android:textSize="17dp" />
+                <TextView
+                    android:id="@+id/afsci_tv_cuenta_cliente"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="17dp"
+                    android:text="Numero de cuenta" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>

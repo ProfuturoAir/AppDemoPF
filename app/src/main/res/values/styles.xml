@@ -459,10 +459,13 @@
     <style name="btn">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@color/colorAccent</item>
+        <item name="android:background">@drawable/estilo_bordes_button</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
         <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
     </style>
     <!-- TODO: Button, btn Aplicar -->
     <style name="btnAplicar">
@@ -484,7 +487,7 @@
         <item name="android:textColor">@color/colorPrimaryDark</item>
         <item name="android:textStyle">bold</item>
     </style>
-    <!-- TODO: btn, boton continuar(Fragmento firma"Asesor") -->
+    <!-- TODO: btn, boton continuar(Fragmento img_firma"Asesor") -->
     <style name="btnContinuar">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -493,7 +496,7 @@
         <item name="android:layout_marginRight">20dp</item>
         <item name="android:layout_marginBottom">5dp</item>
         <item name="android:layout_marginLeft">20dp</item>
-        <item name="android:background">@color/colorAccent</item>
+        <item name="android:background">@drawable/estilo_bordes_button</item>
         <item name="android:text">@string/texto_continuar</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
         <item name="android:textStyle">bold</item>
@@ -507,7 +510,7 @@
         <item name="android:layout_marginRight">20dp</item>
         <item name="android:layout_marginBottom">5dp</item>
         <item name="android:layout_marginLeft">20dp</item>
-        <item name="android:background">@color/colorAccent</item>
+        <item name="android:background">@drawable/estilo_bordes_button</item>
         <item name="android:text">@string/texto_cancelar</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
         <item name="android:textStyle">bold</item>
@@ -822,8 +825,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginBottom">1dp</item>
         <item name="android:layout_marginTop">1dp</item>
-        <item name="android:background">@color/colorGrey</item>
         <item name="android:orientation">horizontal</item>
+        <item name="android:background">@drawable/estilo_bordes_lista</item>
     </style>
     <!-- TODO: Contenedor, contiene el TextView para mostrar solo una letra -->
     <style name="contenedorCirculoLista">
@@ -852,7 +855,6 @@
     <style name="contenedorElementosLista">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="android:background">@color/colorGrey</item>
         <item name="android:orientation">vertical</item>
         <item name="android:paddingLeft">15dp</item>
         <item name="android:paddingTop">10dp</item>

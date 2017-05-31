@@ -50,14 +50,15 @@ public class Signature {
         cancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+
                 android.app.AlertDialog.Builder dialog1 = new android.app.AlertDialog.Builder(v.getContext());
                 dialog1.setTitle("Alerta");
-                dialog1.setMessage("¿Estás de seguro que no quieres firmar?");
+                dialog1.setMessage("¿Estás de seguro que, deseas cerrar el dialogo para firmar?");
                 dialog1.setCancelable(true);
                 dialog1.setPositiveButton("SI", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog1, int which) {
+                        dialog.dismiss();
                     }
                 });
                 dialog1.setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -87,8 +88,8 @@ public class Signature {
                 if(isSignatured){
                     final Bitmap b = Bitmap.createBitmap(content.getDrawingCache());
                     android.app.AlertDialog.Builder dialog1 = new android.app.AlertDialog.Builder(v.getContext());
-                    dialog1.setTitle("Confirmación de firma");
-                    dialog1.setMessage("¿Estas de acuerdo que es la firma correcta ?");
+                    dialog1.setTitle("Confirmación de img_firma");
+                    dialog1.setMessage("¿Estas de acuerdo que es la img_firma correcta ?");
                     dialog1.setCancelable(true);
                     dialog1.setPositiveButton("SI", new DialogInterface.OnClickListener() {
                         @Override
