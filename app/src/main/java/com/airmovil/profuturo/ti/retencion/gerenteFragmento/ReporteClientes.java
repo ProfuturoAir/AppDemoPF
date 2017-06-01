@@ -171,25 +171,24 @@ public class ReporteClientes extends Fragment{
                     case 0:
                         etDatosCliente.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-                        etDatosCliente.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryDark1), PorterDuff.Mode.OVERLAY);
                         etDatosCliente.setFocusable(false);
                         break;
                     case 1:
                         etDatosCliente.setFocusableInTouchMode(true);
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                        etDatosCliente.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
+                        etDatosCliente.getBackground().setColorFilter(getResources().getColor(R.color.colorSecundaryGray), PorterDuff.Mode.LIGHTEN);
                         etDatosCliente.setInputType(InputType.TYPE_CLASS_PHONE);
                         break;
                     case 2:
                         etDatosCliente.setFocusableInTouchMode(true);
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                        etDatosCliente.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
+                        etDatosCliente.getBackground().setColorFilter(getResources().getColor(R.color.colorSecundaryGray), PorterDuff.Mode.LIGHTEN);
                         etDatosCliente.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
                         break;
                     case 3:
                         etDatosCliente.setFocusableInTouchMode(true);
                         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                        etDatosCliente.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.LIGHTEN);
+                        etDatosCliente.getBackground().setColorFilter(getResources().getColor(R.color.colorSecundaryGray), PorterDuff.Mode.LIGHTEN);
                         etDatosCliente.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
                 }
                 etDatosCliente.setHint("Ingresa, " + adapterId.getItem(position));
@@ -224,12 +223,14 @@ public class ReporteClientes extends Fragment{
                     if(tvRangoFecha1.getText().toString().isEmpty() || tvRangoFecha2.getText().toString().isEmpty()){
                         Dialogos.dialogoFechasVacias(getContext());
                     }else{
-                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ReporteClientes fragmento = ReporteClientes.newInstance(spinnerId.getSelectedItemPosition(),  etDatosCliente.getText().toString(), idGerencia, (int) spinnerSucursales.getSelectedItemId(),  etIdAsesor.getText().toString(), tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), spinnerIdRetenido.getSelectedItemPosition(),  spinnerIdCita.getSelectedItemPosition());
-                        borrar.onDestroy();
-                        ft.remove(borrar).replace(R.id.content_gerente, fragmento).addToBackStack(null).commit();
-                        Config.teclado(getContext(), etIdAsesor);
-                        Config.teclado(getContext(), etDatosCliente);
+                        if(Config.comparacionFechas(getContext(), tvRangoFecha1.getText().toString().trim(), tvRangoFecha2.getText().toString().trim()) == false) {
+                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                            ReporteClientes fragmento = ReporteClientes.newInstance(spinnerId.getSelectedItemPosition(), etDatosCliente.getText().toString(), idGerencia, (int) spinnerSucursales.getSelectedItemId(), etIdAsesor.getText().toString(), tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), spinnerIdRetenido.getSelectedItemPosition(), spinnerIdCita.getSelectedItemPosition());
+                            borrar.onDestroy();
+                            ft.remove(borrar).replace(R.id.content_gerente, fragmento).addToBackStack(null).commit();
+                            Config.teclado(getContext(), etIdAsesor);
+                            Config.teclado(getContext(), etDatosCliente);
+                        }
                     }
                 }else{
                     Dialogos.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));

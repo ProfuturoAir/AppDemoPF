@@ -185,7 +185,7 @@ public class DatosCliente extends Fragment {
                 if(event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     Fragment fragment = new ConCita();
-                    Dialogos.dialogoBotonRegresoProcesoImplicaciones(getContext(), fragmentManager, getResources().getString(R.string.msj_regresar_proceso), 2, fragment);
+                    Dialogos.dialogoBotonRegresoProcesoImplicaciones(getContext(), fragmentManager, getResources().getString(R.string.msj_regresar_proceso), 1, fragment);
                     return true;
                 }
                 return false;

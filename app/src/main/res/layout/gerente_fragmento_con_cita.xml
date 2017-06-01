@@ -6,32 +6,61 @@
     android:orientation="vertical"
     tools:context="com.airmovil.profuturo.ti.retencion.gerenteFragmento.ConCita">
 
-    <TextView
-        android:id="@+id/textView4"
-        style="@style/tituloProceso"
-        android:text="Asesoría de Implicaciones T" />
-
-    <TextView android:id="@+id/gfcc_tv_fecha" style="@style/fecha"/>
-
-    <LinearLayout style="@style/contenedorFiltros2">
-        <LinearLayout style="@style/linearLayoutHorizontal">
-            <LinearLayout style="@style/contenedorSpinner">
-                <Spinner android:id="@+id/gfcc_spinner_estados"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:backgroundTint="@color/colorWhite"/>
-                <TextView style="@style/linea"/>
-            </LinearLayout>
-            <Button android:id="@+id/gfcc_btn_aplicar" style="@style/btnAplicar"/>
-        </LinearLayout>
-        <Button android:id="@+id/gfcc_btn_sin_cita" style="@style/btnSinCita"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+        <TextView style="@style/tituloProceso" android:layout_weight="1" android:text="Asesoría de Implicaciones T" />
+        <Button
+            android:id="@+id/gfcc_btn_sin_cita"
+            android:layout_width="350dp"
+            android:background="@drawable/estilo_bordes_button"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cliente sin cita"/>
     </LinearLayout>
-
+    <TextView android:id="@+id/gfcc_tv_fecha" style="@style/fecha"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/estilo_bordes_left">
+            <Spinner
+                android:id="@+id/gfcc_spinner_estados"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:backgroundTint="@color/colorPrimaryDark" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/estilo_bordes_right_button"
+            android:orientation="vertical">
+            <Button
+                android:id="@+id/gfcc_btn_aplicar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/estilo_bordes_right_button"
+                android:textColor="@color/colorPrimaryDark"
+                android:textStyle="bold"
+                android:text="Aplicar"/>
+        </LinearLayout>
+    </LinearLayout>
     <LinearLayout style="@style/cabeceraLista">
-        <TextView style="@style/campoClientes"/>
+        <TextView android:id="@+id/gfcc_tv_clientes_atendidos" android:text="" style="@style/campoClientes"/>
         <TextView android:id="@+id/gfcc_tv_registros" style="@style/campoCantidades"/>
     </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

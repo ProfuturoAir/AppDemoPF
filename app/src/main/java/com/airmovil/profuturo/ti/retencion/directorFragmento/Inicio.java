@@ -107,9 +107,7 @@ public class Inicio extends Fragment {
                 if(fechaIncial.equals("") || fechaFinal.equals("")){
                     Dialogos.dialogoFechasVacias(getContext());
                 }else {
-                    if(Config.comparacionFechas(getContext(), tvRangoFecha1.getText().toString().trim(), tvRangoFecha2.getText().toString().trim())) {
-
-                    }else {
+                    if(Config.comparacionFechas(getContext(), tvRangoFecha1.getText().toString().trim(), tvRangoFecha2.getText().toString().trim()) == false) {
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         Fragment procesoDatosFiltroInicio = Inicio.newInstance(fechaIncial, fechaFinal, rootView.getContext());
                         borrar.onDestroy();

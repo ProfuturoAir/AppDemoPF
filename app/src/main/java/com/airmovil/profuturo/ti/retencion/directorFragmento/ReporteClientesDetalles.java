@@ -50,7 +50,6 @@ public class ReporteClientesDetalles extends Fragment {
     /**
      * Utilice este método de fábrica para crear una nueva instancia de
      * Este fragmento utilizando los parámetros proporcionados.
-     *
      * @param param1 parametro 1 idsucursal.
      * @param param2 parametro 2 idTramite.
      * @param param4 parametro 4 fechaInicio.

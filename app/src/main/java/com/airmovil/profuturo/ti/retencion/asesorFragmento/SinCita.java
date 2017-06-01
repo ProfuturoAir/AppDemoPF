@@ -47,7 +47,6 @@ import java.util.List;
 public class SinCita extends Fragment {
     public static final String TAG = SinCita.class.getSimpleName();
     private static final String ARG_PARAM1 = "param1",  ARG_PARAM2 = "param2";
-    private static final String[] ESTADOS_CITAS = new String[]{"Selecciona...","Número de cuenta", "NSS", "CURP"};
     private Spinner spinner;
     private Button btnBuscar;
     private TextView tvFecha;
@@ -63,7 +62,6 @@ public class SinCita extends Fragment {
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
-    private Connected connected;
     private int pagina = 1;
     private Fragment borrar = this;
 
@@ -288,7 +286,7 @@ public class SinCita extends Fragment {
             }
             @Override
             public void notifyError(String requestType, VolleyError error) {
-                if(connected.estaConectado(getContext())){
+                if(Config.conexion(getContext())){
                     Dialogos.dialogoErrorServicio(getContext());
                 }else{
                     Dialogos.dialogoErrorConexion(getContext());

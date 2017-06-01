@@ -157,9 +157,12 @@ public class ReporteSucursales extends Fragment{
                 if(tvRangoFecha1.getText().toString().equals("") || tvRangoFecha2.getText().toString().equals("")){
                     Dialogos.dialogoFechasVacias(getContext());
                 }else {
-                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    ReporteSucursales fragmento = ReporteSucursales.newInstance(0, Config.ID_SUCURSAL, "", tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), rootView.getContext());
-                    borrar.onDestroy();ft.remove(borrar).replace(R.id.content_director, fragmento).addToBackStack(null).commit();
+                    if(Config.comparacionFechas(getContext(), tvRangoFecha1.getText().toString().trim(), tvRangoFecha2.getText().toString().trim()) == false) {
+                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        ReporteSucursales fragmento = ReporteSucursales.newInstance(0, Config.ID_SUCURSAL, "", tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), rootView.getContext());
+                        borrar.onDestroy();
+                        ft.remove(borrar).replace(R.id.content_director, fragmento).addToBackStack(null).commit();
+                    }
                 }
             }
         });

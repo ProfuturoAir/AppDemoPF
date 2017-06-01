@@ -9,39 +9,23 @@
     <TextView style="@style/tituloProceso" android:text="Cliente sin cita" />
     <TextView android:id="@+id/gfsc_tv_fecha" style="@style/fecha"/>
 
-    <LinearLayout style="@style/contenedorFiltros2">
-
-        <LinearLayout style="@style/linearLayoutHorizontal">
-            <LinearLayout style="@style/contenedorSpinner">
-                <Spinner android:id="@+id/gfsc_spinner_tipo_dato"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:backgroundTint="@color/colorWhite"/>
-                <TextView style="@style/linea"/>
-            </LinearLayout>
-            <EditText android:id="@+id/gfsc_et_datos" style="@style/busqueda" android:inputType="text"/>
+    <LinearLayout style="@style/contenedorSpinnerEditText">
+        <LinearLayout style="@style/contenedorSpinnerLeft">
+            <Spinner android:id="@+id/gfsc_spinner_tipo_dato" style="@style/spinner3"/>
         </LinearLayout>
-        <Button android:id="@+id/gfsc_btn_buscar" style="@style/btnBuscar"/>
+        <LinearLayout style="@style/contenedorEdittext">
+            <EditText android:id="@+id/gfsc_et_datos" style="@style/editText3" />
+        </LinearLayout>
     </LinearLayout>
 
+    <Button android:id="@+id/gfsc_btn_buscar" style="@style/button3"/>
     <LinearLayout style="@style/cabeceraLista">
         <TextView style="@style/campoCliente"/>
         <TextView android:id="@+id/gfsc_tv_registros" style="@style/campoCantidades"/>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight=".6">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/gfsc_rv_lista"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:divider="@null"
-            android:dividerHeight="0dp"
-            android:text="hello_world" />
+    <LinearLayout style="@style/contenedorRecyclerView">
+        <android.support.v7.widget.RecyclerView android:id="@+id/grecyclerview_busqueda_elemento" style="@style/recyclerView"/>
     </LinearLayout>
 
 </LinearLayout>

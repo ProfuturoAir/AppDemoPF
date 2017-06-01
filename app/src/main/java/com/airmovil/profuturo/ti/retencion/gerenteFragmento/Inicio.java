@@ -111,10 +111,12 @@ public class Inicio extends Fragment {
                 if(fechaIncial.equals("") || fechaFinal.equals("")){
                     Dialogos.dialogoFechasVacias(getContext());
                 }else {
-                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    Fragment procesoDatosFiltroInicio = Inicio.newInstance(fechaIncial, fechaFinal, rootView.getContext());
-                    borrar.onDestroy();
-                    ft.remove(borrar).replace(R.id.content_gerente, procesoDatosFiltroInicio).addToBackStack(null).commit();
+                    if(Config.comparacionFechas(getContext(), tvRangoFecha1.getText().toString().trim(), tvRangoFecha2.getText().toString().trim()) == false) {
+                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        Fragment procesoDatosFiltroInicio = Inicio.newInstance(fechaIncial, fechaFinal, rootView.getContext());
+                        borrar.onDestroy();
+                        ft.remove(borrar).replace(R.id.content_gerente, procesoDatosFiltroInicio).addToBackStack(null).commit();
+                    }
                 }
             }
         });
@@ -260,8 +262,10 @@ public class Inicio extends Fragment {
             @Override
             public void notifyError(String requestType, VolleyError error) {
                 if(connected.estaConectado(getContext())){
+                    loading.dismiss();
                     Dialogos.dialogoErrorServicio(getContext());
                 }else{
+                    loading.dismiss();
                     Dialogos.dialogoErrorConexion(getContext());
                 }
             }

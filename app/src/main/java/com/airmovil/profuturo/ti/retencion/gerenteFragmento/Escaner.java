@@ -28,6 +28,7 @@ import com.airmovil.profuturo.ti.retencion.helper.GPSRastreador;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.SQLiteHandler;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
+import com.android.volley.NetworkResponse;
 import com.android.volley.VolleyError;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -76,11 +77,17 @@ public class Escaner extends Fragment {
             }
             @Override
             public void notifyError(String requestType, VolleyError error) {
+                NetworkResponse networkResponse = error.networkResponse;
+                Log.e("*->", " - " + networkResponse);
+                if(networkResponse == null){
+                    loading.dismiss();
+                }
+                /*Log.e("notifyError", error.toString());
                 if(connected.estaConectado(getContext())){
                     Dialogos.dialogoErrorServicio(getContext());
                 }else{
                     Dialogos.dialogoErrorConexion(getContext());
-                }
+                }*/
             }
         };
     }
@@ -164,8 +171,8 @@ public class Escaner extends Fragment {
                                             e.printStackTrace();
                                         }
                                         numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-                                        db.addDocumento(idTramite,fechaN,1138,base64,numeroDeCuenta,Config.usuarioCusp(getContext()),gps.getLatitude(), gps.getLongitude(), base641);
-                                        db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+                                        db.addDocumento(Config.ID_TRAMITE,fechaN,1138,base64,numeroDeCuenta,Config.usuarioCusp(getContext()),gps.getLatitude(), gps.getLongitude(), base641);
+                                        db.addIDTramite(Config.ID_TRAMITE,nombre,numeroDeCuenta,hora);
                                         Fragment fragmentoGenerico = new SinCita();
                                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                                         if (fragmentoGenerico != null) {
@@ -253,9 +260,6 @@ public class Escaner extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof Firma.OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        }
     }
 
     /**
@@ -341,7 +345,6 @@ public class Escaner extends Fragment {
      */
     private void argumentos(){
         if(getArguments()!=null){
-            idTramite = getArguments().getString("idTramite");
             nombre = getArguments().getString("nombre");
             numeroDeCuenta = getArguments().getString("numeroDeCuenta");
             hora = getArguments().getString("hora");
@@ -359,7 +362,6 @@ public class Escaner extends Fragment {
             loading = null;
 
         JSONObject obj = new JSONObject();
-        idTramite = getArguments().getString("idTramite");
         String fechaN = "";
         try {
             SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -380,7 +382,7 @@ public class Escaner extends Fragment {
                 JSONObject rqt = new JSONObject();
                 rqt.put("estatusTramite", 1138);
                 rqt.put("fechaHoraFin", fechaN);
-                rqt.put("idTramite", Integer.parseInt(idTramite));
+                rqt.put("idTramite", Config.ID_TRAMITE);
                 rqt.put("numeroCuenta", numeroDeCuenta);
                 JSONObject ubicacion = new JSONObject();
                 ubicacion.put("latitud", gps.getLatitude());
@@ -401,6 +403,7 @@ public class Escaner extends Fragment {
      * @param obj recibe el obj json de la peticion
      */
     private void primerPaso(JSONObject obj){
+        Log.e("FIRMA", "Response ->" + obj.toString());
         String status = "";
         try{
             status = obj.getString("status");

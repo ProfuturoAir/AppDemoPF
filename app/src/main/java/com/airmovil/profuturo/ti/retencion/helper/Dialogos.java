@@ -16,14 +16,10 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Timer;
 
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.asesorFragmento.ConCita;
 import com.airmovil.profuturo.ti.retencion.asesorFragmento.Inicio;
-import com.airmovil.profuturo.ti.retencion.gerenteFragmento.SinCita;
 
 /**
  * Created by tecnicoairmovil on 25/04/17.
@@ -495,16 +491,15 @@ public class Dialogos extends Activity{
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-
                         switch (idRoll){
                             case 1:
-                                Fragment fragmentoGenerico1 = new ConCita();
+                                Fragment fragmentoGenerico1 = new com.airmovil.profuturo.ti.retencion.asesorFragmento.ConCita();
                                 if (fragmentoGenerico1 != null) {
                                     fragmentManager.beginTransaction().replace(R.id.content_asesor, fragmentoGenerico1).commit();
                                 }
                                 break;
                             case 2:
-                                Fragment fragmentoGeneric2 = new SinCita();
+                                Fragment fragmentoGeneric2 = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.ConCita();
                                 if (fragmentoGeneric2 != null) {
                                     fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGeneric2).commit();
                                 }

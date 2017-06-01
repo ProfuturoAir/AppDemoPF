@@ -1,64 +1,190 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
-        <com.airmovil.profuturo.ti.retencion.helper.DrawingView
-            android:id="@+id/gff_dv_firma"
-            android:layout_width="match_parent"
-            android:layout_height="650dp"
-            android:layout_weight="1"
-            android:background="@android:color/white"
-            android:gravity="center_vertical|center_horizontal"
-            android:visibility="visible">
-        </com.airmovil.profuturo.ti.retencion.helper.DrawingView>
-        <LinearLayout
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite">
+    <LinearLayout style="@style/contenedorEncuesta">
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_below="@+id/gff_dv_firma"
-            android:layout_marginTop="-50dp">
-            <TextView
-                android:id="@+id/gff_tv_nombre"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Nombre del cliente"/>
-            <TextView
-                android:layout_below="@+id/aff_dv_firma"
-                android:layout_width="match_parent"
-                android:layout_marginLeft="100dp"
-                android:layout_marginRight="100dp"
-                android:layout_height="1dp"
-                android:background="@android:color/background_dark"/>
-            <TextView
-                android:layout_below="@+id/aff_dv_firma"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Firma del cliente"
-                android:gravity="center" />
+            android:text="Resultado de Encuesta"
+            android:layout_marginTop="20dp"
+            android:textSize="26dp"
+            android:layout_marginBottom="25dp"
+            android:textStyle="bold"/>
+        <!--TODO: DATOS DEL ASESOR -->
+        <LinearLayout style="@style/contenedorApartados">
+            <!-- TODO: Subtitulo del apartado -->
+            <TextView style="@style/subTituloDatosAsesor"/>
+            <TextView style="@style/separadorSubtitulo"/>
+            <LinearLayout style="@style/separador1filahorizontal">
+                <ImageView style="@style/iconoReporte"/>
+                <TextView style="@style/apartado" android:text="Nombre: " />
+                <TextView android:id="@+id/gtv_nombre_asesor" style="@style/dato"/>
+            </LinearLayout>
+            <LinearLayout style="@style/separador1filahorizontal">
+                <ImageView style="@style/iconoReporte"/>
+                <TextView style="@style/apartado" android:text="Numero de empleado: " />
+                <TextView android:id="@+id/gtv_num_empleado_asesor" style="@style/dato"/>
+            </LinearLayout>
+            <LinearLayout style="@style/separador1filahorizontal">
+                <ImageView style="@style/iconoReporte"/>
+                <TextView style="@style/apartado" android:text="Sucursal: " />
+                <TextView android:id="@+id/gtv_sucursal" style="@style/dato"/>
+            </LinearLayout>
         </LinearLayout>
-    </RelativeLayout>
-
-    <Button android:id="@+id/gff_btn_limpiar" style="@style/btnLimpiar"/>
-    <Button android:id="@+id/gff_btn_guardar" style="@style/btnGuardar" />
-    <Button android:id="@+id/gff_btn_cancelar" style="@style/btnCancelar" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/texto_terminos_y_condiciones"
-        android:textSize="10dp"
-        android:paddingTop="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginBottom="20dp"/>
-
-</LinearLayout>
+        <!-- TODO: DATOS DEL CLIENTE -->
+        <LinearLayout style="@style/contenedorApartados">
+            <!-- TODO: Subtitulo del apartado -->
+            <TextView style="@style/subTituloDatosCliente"/>
+            <TextView style="@style/separadorSubtitulo"/>
+            <LinearLayout style="@style/separador1filahorizontal">
+                <ImageView style="@style/iconoReporte"/>
+                <TextView style="@style/apartado" android:text="Nombre: " />
+                <TextView android:id="@+id/gtv_nombre_cliente" style="@style/dato"/>
+            </LinearLayout>
+            <LinearLayout style="@style/separador1filahorizontal">
+                <ImageView style="@style/iconoReporte"/>
+                <TextView style="@style/apartado" android:text="Número de cuenta: " />
+                <TextView android:id="@+id/gtv_num_cuenta_cliente" style="@style/dato"/>
+            </LinearLayout>
+            <LinearLayout style="@style/separador1filahorizontal">
+                <LinearLayout style="@style/separador2filasHorizontal">
+                    <ImageView style="@style/iconoReporte"/>
+                    <TextView style="@style/apartado" android:text="NSS: " />
+                    <TextView android:id="@+id/gtv_nss_asesor" style="@style/dato"/>
+                </LinearLayout>
+                <LinearLayout style="@style/separador2filasHorizontal">
+                    <ImageView style="@style/iconoReporte"/>
+                    <TextView style="@style/apartado" android:text="CURP: " />
+                    <TextView android:id="@+id/gtv_curp_asesor" style="@style/dato"/>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout style="@style/separador1filahorizontal">
+                <LinearLayout style="@style/separador2filasHorizontal">
+                    <ImageView style="@style/iconoReporte"/>
+                    <TextView style="@style/apartado" android:text="Fecha: " />
+                    <TextView android:id="@+id/gtv_fecha_cliente" style="@style/dato"/>
+                </LinearLayout>
+                <LinearLayout style="@style/separador2filasHorizontal">
+                    <ImageView style="@style/iconoReporte"/>
+                    <TextView style="@style/apartado" android:text="Saldo: " />
+                    <TextView android:id="@+id/gtv_saldo_cliente" style="@style/dato"/>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout style="@style/separador1filahorizontal">
+                <LinearLayout style="@style/separador2filasHorizontal">
+                    <ImageView style="@style/iconoReporte"/>
+                    <TextView style="@style/apartado" android:text="Teléfono: " />
+                    <TextView android:id="@+id/gtv_telefono_cliente" style="@style/dato"/>
+                </LinearLayout>
+                <LinearLayout style="@style/separador2filasHorizontal">
+                    <ImageView style="@style/iconoReporte"/>
+                    <TextView style="@style/apartado" android:text="Email: " />
+                    <TextView android:id="@+id/gtv_email_cliente" style="@style/dato"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+        <!-- TODO: CUENTIONARIO 1 -->
+        <LinearLayout style="@style/contenedorApartados">
+            <!-- TODO: Subtitulo del apartado -->
+            <TextView style="@style/subTituloApartadoPreguntas1"/>
+            <TextView style="@style/separadorSubtitulo"/>
+            <LinearLayout style="@style/separador1filahorizontal">
+                <TextView style="@style/preguntas"/>
+                <TextView style="@style/dato" android:text="Respuestas"/>
+            </LinearLayout>
+            <LinearLayout style="@style/separador1filahorizontal">
+                <ImageView style="@style/iconoReporte"/>
+                <TextView style="@style/apartado2" android:text="@string/pregunta1" />
+                <TextView android:id="@+id/gtv_pregunta1_cliente" style="@style/dato"/>
+            </LinearLayout>
+            <LinearLayout style="@style/separador1filahorizontal">
+                <ImageView style="@style/iconoReporte"/>
+                <TextView style="@style/apartado2" android:text="@string/pregunta2" />
+                <TextView android:id="@+id/gtv_pregunta2_cliente" style="@style/dato"/>
+            </LinearLayout>
+            <LinearLayout style="@style/separador1filahorizontal">
+                <ImageView style="@style/iconoReporte"/>
+                <TextView style="@style/apartado2" android:text="@string/pregunta3" />
+                <TextView android:id="@+id/gtv_pregunta3_cliente" style="@style/dato"/>
+            </LinearLayout>
+            <LinearLayout style="@style/separador1filaVertical">
+                <LinearLayout style="@style/separador1filahorizontal">
+                    <ImageView style="@style/iconoReporte"/>
+                    <TextView style="@style/apartado" android:text="Observaciones" />
+                </LinearLayout>
+                <TextView android:id="@+id/gtv_observaciones_cliente" style="@style/dato"/>
+            </LinearLayout>
+        </LinearLayout>
+        <!-- TODO: CUESTIONARIO 2 -->
+        <LinearLayout style="@style/contenedorApartados">
+            <!-- TODO: Subtitulo del apartado -->
+            <TextView style="@style/subTituloApartadoPreguntas2"/>
+            <TextView style="@style/separadorSubtitulo"/>
+            <LinearLayout style="@style/contenedor3">
+                <LinearLayout style="@style/separador3">
+                    <LinearLayout style="@style/contenedorHorizontal">
+                        <ImageView style="@style/iconoReporte"/>
+                        <TextView style="@style/apartado" android:text="¿A qué afore se va?" />
+                    </LinearLayout>
+                    <TextView android:id="@+id/gtv_afore_cliente" style="@style/dato" android:gravity="center" android:layout_width="match_parent"/>
+                </LinearLayout>
+                <LinearLayout style="@style/separador3">
+                    <LinearLayout style="@style/contenedorHorizontal">
+                        <ImageView style="@style/iconoReporte"/>
+                        <TextView style="@style/apartado" android:text="¿Cuál es el motivo?" />
+                    </LinearLayout>
+                    <TextView android:id="@+id/gtv_motivo_cliente" style="@style/dato" android:gravity="center" android:layout_width="match_parent"/>
+                </LinearLayout>
+                <LinearLayout style="@style/separador3">
+                    <LinearLayout style="@style/contenedorHorizontal">
+                        <ImageView style="@style/iconoReporte"/>
+                        <TextView style="@style/apartado" android:text="¿Cuál es el estatus? "/>
+                    </LinearLayout>
+                    <TextView android:id="@+id/gtv_estatus_cliente" style="@style/dato" android:gravity="center" android:layout_width="match_parent"/>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout style="@style/contenedor3">
+                <LinearLayout style="@style/separador3">
+                    <LinearLayout style="@style/contenedorHorizontal">
+                        <ImageView style="@style/iconoReporte"/>
+                        <TextView style="@style/apartado" android:text="Instituto"/>
+                    </LinearLayout>
+                    <TextView android:id="@+id/gtv_instituto_cliente" style="@style/dato" android:gravity="center" android:layout_width="match_parent"/>
+                </LinearLayout>
+                <LinearLayout style="@style/separador3">
+                    <LinearLayout style="@style/contenedorHorizontal">
+                        <ImageView style="@style/iconoReporte"/>
+                        <TextView style="@style/apartado" android:text="Regimen Pensionario" />
+                    </LinearLayout>
+                    <TextView android:id="@+id/gtv_regimen_cliente" style="@style/dato" android:gravity="center" android:layout_width="match_parent"/>
+                </LinearLayout>
+                <LinearLayout style="@style/separador3">
+                    <LinearLayout style="@style/contenedorHorizontal">
+                        <ImageView style="@style/iconoReporte"/>
+                        <TextView style="@style/apartado" android:text="Tipo de Documentación" />
+                    </LinearLayout>
+                    <TextView android:id="@+id/gtv_documentacion_cliente" style="@style/dato" android:gravity="center" android:layout_width="match_parent"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+        <!--TODO: DATOS DEL ASESOR -->
+        <LinearLayout style="@style/contenedorApartados">
+            <LinearLayout style="@style/contenedorFirmaBoton">
+                <!-- TODO: Subtitulo del apartado -->
+                <TextView style="@style/subTituloFirmaCliente" android:layout_weight="1"/>
+                <Button android:id="@+id/gbtn_firma" style="@style/btnFirma"/>
+            </LinearLayout>
+            <TextView style="@style/separadorSubtitulo"/>
+            <ImageView android:id="@+id/gimagenFirma" style="@style/contenedorHorizontal"/>
+            <TextView style="@style/dato" android:textSize="10dp" android:text="@string/texto_terminos_y_condiciones"/>
+        </LinearLayout>
+        <!-- TODO: Botones -->
+        <LinearLayout style="@style/contenedorApartados">
+            <Button android:id="@+id/gff_btn_guardar" style="@style/btnConfirmar1"/>
+            <Button android:id="@+id/gff_btn_cancelar" style="@style/btnCancelar1"/>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

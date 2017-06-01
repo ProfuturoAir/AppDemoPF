@@ -9,60 +9,45 @@
         <TextView style="@style/tituloProceso" android:text="Clientes " />
         <TextView android:id="@+id/ddfrc_tv_fecha" style="@style/fecha"/>
 
-        <LinearLayout style="@style/contenedorFiltros2">
+        <LinearLayout style="@style/contenedorFiltros">
 
-            <LinearLayout style="@style/linearLayoutHorizontal">
-                <LinearLayout style="@style/contenedorSpinner">
-                    <Spinner android:id="@+id/ddfrc_spinner_id"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:backgroundTint="@color/colorWhite"/>
-                    <TextView style="@style/linea"/>
+            <LinearLayout style="@style/contenedorSpinnerEditText1">
+                <LinearLayout style="@style/contenedorSpinnerLeft">
+                    <Spinner android:id="@+id/ddfrc_spinner_id" style="@style/spinner3"/>
                 </LinearLayout>
-                <EditText android:id="@+id/ddfrc_et_id" style="@style/busqueda"/>
-            </LinearLayout>
-
-            <LinearLayout style="@style/linearLayoutHorizontal">
-                <LinearLayout style="@style/contenedorSpinner">
-                    <Spinner android:id="@+id/ddfrc_spinner_gerencia"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:backgroundTint="@color/colorWhite"/>
-                    <TextView style="@style/linea"/>
-                </LinearLayout>
-                <LinearLayout style="@style/contenedorSpinner">
-                    <Spinner android:id="@+id/ddfrc_spinner_sucursal"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:backgroundTint="@color/colorWhite"/>
-                    <TextView style="@style/linea"/>
-                </LinearLayout>
-                <EditText android:id="@+id/ddfrc_et_asesor" style="@style/busqueda" android:inputType="number" android:hint="Ingresa un ID Asesor"/>
-            </LinearLayout>
-
-            <LinearLayout style="@style/linearLayoutHorizontal">
-                <TextView android:id="@+id/ddfrc_tv_fecha_rango1" style="@style/fechaInicial2" />
-                <TextView android:id="@+id/ddfrc_tv_fecha_rango2" style="@style/fechaFinal2"/>
-            </LinearLayout>
-
-            <LinearLayout style="@style/linearLayoutHorizontal">
-                <LinearLayout style="@style/contenedorSpinner">
-                    <Spinner android:id="@+id/ddfrc_spinner_estado"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:backgroundTint="@color/colorWhite"/>
-                    <TextView style="@style/linea"/>
-                </LinearLayout>
-                <LinearLayout style="@style/contenedorSpinner">
-                    <Spinner android:id="@+id/ddfrc_spinner_citas"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:backgroundTint="@color/colorWhite"/>
-                    <TextView style="@style/linea"/>
+                <LinearLayout style="@style/contenedorEdittext">
+                    <EditText android:id="@+id/ddfrc_et_id" style="@style/editText3" />
                 </LinearLayout>
             </LinearLayout>
 
-            <Button android:id="@+id/ddfrc_btn_buscar" style="@style/btnBuscar"/>
+            <LinearLayout style="@style/contenedorSpinnerEditText1">
+                <LinearLayout style="@style/contenedorSpinner4" android:layout_marginRight="6dp">
+                    <Spinner android:id="@+id/ddfrc_spinner_gerencia" style="@style/spinner3"/>
+                </LinearLayout>
+                <LinearLayout style="@style/contenedorSpinner4" android:layout_marginRight="6dp">
+                    <Spinner android:id="@+id/ddfrc_spinner_sucursal" style="@style/spinner3"/>
+                </LinearLayout>
+                <LinearLayout style="@style/contenedorEdittext" android:layout_marginLeft="6dp">
+                    <EditText android:id="@+id/ddfrc_et_asesor" style="@style/editText3" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout style="@style/linearLayoutHorizontal">
+                <TextView android:id="@+id/ddfrc_tv_fecha_rango1" style="@style/fechaInicial" />
+                <TextView android:id="@+id/ddfrc_tv_fecha_rango2" style="@style/fechaFinal"/>
+            </LinearLayout>
+
+
+            <LinearLayout style="@style/contenedorSpinnerEditText1">
+                <LinearLayout style="@style/contenedorSpinner4" android:layout_marginRight="6dp">
+                    <Spinner android:id="@+id/ddfrc_spinner_estado" style="@style/spinner3"/>
+                </LinearLayout>
+                <LinearLayout style="@style/contenedorSpinner4" android:layout_marginLeft="6dp">
+                    <Spinner android:id="@+id/ddfrc_spinner_citas" style="@style/spinner3"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <Button android:id="@+id/ddfrc_btn_buscar" style="@style/btnBuscar3"/>
 
         </LinearLayout>
 
@@ -71,20 +56,8 @@
             <TextView android:id="@+id/ddfrc_tv_registros" style="@style/campoCantidadesMail"/>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight=".6">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/ddfrc_rv_lista"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:divider="@null"
-                android:dividerHeight="0dp"
-                android:text="hello_world" />
+        <LinearLayout style="@style/contenedorRecyclerView">
+            <android.support.v7.widget.RecyclerView android:id="@+id/ddfrc_rv_lista" style="@style/recyclerView"/>
         </LinearLayout>
 
     </LinearLayout>

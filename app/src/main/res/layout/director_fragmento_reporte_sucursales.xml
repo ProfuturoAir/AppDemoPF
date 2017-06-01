@@ -7,171 +7,55 @@
     tools:context="com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteSucursales">
 
 
-    <TextView style="@style/tituloProceso" android:text="Sucursales" />
-    <TextView android:id="@+id/dfrs_tv_fecha" style="@style/fecha"/>
+    <LinearLayout style="@style/linearLayoutVertical" android:background="@android:color/white">
+        <TextView style="@style/tituloProceso" android:text="Sucursales" />
+        <TextView android:id="@+id/dfrs_tv_fecha" style="@style/fecha"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="5dp">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:background="@color/colorPrimaryDark"
-            android:layout_marginRight="4dp">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Emitidas"
-                android:textColor="@color/colorWhite"
-                android:textStyle="bold"
-                android:paddingLeft="10dp"
-                android:textSize="12dp"
-                android:paddingTop="10dp"/>
-            <TextView
-                android:id="@+id/dfrs_tv_emitidas"
-                android:layout_width="294dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="0"
-                android:paddingTop="5dp"
-                android:paddingBottom="10dp"
-                android:textStyle="bold"
-                android:textSize="40dp"
-                android:textColor="@color/colorWhite"/>
+        <LinearLayout style="@style/contenedorRetenidosNoRetenidosSaldoAfavorSaldoEnContra">
+            <LinearLayout style="@style/contenedorCantidadRetenidosSaldoAFavorColorFondo">
+                <TextView style="@style/textoRetenidos" android:text="Emitidos"/>
+                <TextView style="@style/textoCantidadRetenidoNoRetenido"  android:id="@+id/dfrs_tv_emitidas"/>
+            </LinearLayout>
+            <LinearLayout style="@style/contenedorCantidadNoRetenidosSaldoEnContraColorFondo" >
+                <TextView style="@style/textoNoRetenidos" android:text="No Retenidos"/>
+                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/dfrs_tv_no_emitidas"/>
+            </LinearLayout>
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:background="@color/colorPrimaryDark"
-            android:layout_marginLeft="4dp">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="No Emitidas"
-                android:textColor="@color/colorWhite"
-                android:textStyle="bold"
-                android:paddingLeft="10dp"
-                android:textSize="12dp"
-                android:paddingTop="10dp"/>
-            <TextView
-                android:id="@+id/dfrs_tv_no_emitidas"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="0"
-                android:paddingTop="5dp"
-                android:paddingBottom="10dp"
-                android:textStyle="bold"
-                android:textSize="40dp"
-                android:textColor="@color/colorWhite"/>
+        <LinearLayout style="@style/contenedorRetenidosNoRetenidosSaldoAfavorSaldoEnContra">
+            <LinearLayout style="@style/contenedorCantidadRetenidosSaldoRetenido">
+                <TextView style="@style/textoSaldoRetenido" />
+                <TextView style="@style/textoCantidadSaldoRetenido" android:id="@+id/dfrs_tv_saldo_emitido" />
+            </LinearLayout>
+            <LinearLayout style="@style/contenedorCantidadNoRetenidosSaldoEnContra">
+                <TextView style="@style/textoSaldoEnContra"/>
+                <TextView style="@style/textoCantidadSaldoNoRetenido" android:id="@+id/dfrs_tv_saldo_no_emitido"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView style="@style/separacion"/>
+
+        <LinearLayout style="@style/contenedorFiltros">
+            <LinearLayout style="@style/contenedorSpinner3">
+                <LinearLayout style="@style/contenedorSpinner3">
+                    <Spinner android:id="@+id/dfrs_spinner_sucursales" style="@style/spinner3"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout style="@style/linearLayoutHorizontal">
+                <TextView android:id="@+id/dfrs_tv_fecha_rango1" style="@style/fechaInicial" />
+                <TextView android:id="@+id/dfrs_tv_fecha_rango2" style="@style/fechaFinal"/>
+            </LinearLayout>
+            <Button android:id="@+id/dfrs_btn_buscar" style="@style/btnBuscar3"/>
+        </LinearLayout>
+
+        <LinearLayout style="@style/cabeceraLista">
+            <TextView style="@style/tituloLista" android:text="@string/texto_sucursales"/>
+            <TextView android:id="@+id/dfsc_tv_registros" style="@style/campoCantidades"/>
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="5dp">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:background="@color/colorGrey"
-            android:layout_marginRight="4dp">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Saldo Emitido"
-                android:textStyle="bold"
-                android:paddingLeft="10dp"
-                android:textSize="12dp"
-                android:paddingTop="10dp"/>
-            <TextView
-                android:id="@+id/dfrs_tv_saldo_emitido"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="0"
-                android:paddingTop="5dp"
-                android:paddingBottom="10dp"
-                android:textStyle="bold"
-                android:textSize="40dp"
-                android:textColor="@android:color/holo_green_dark"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:background="@color/colorGrey"
-            android:layout_marginLeft="4dp">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Saldo No Emitido"
-                android:textStyle="bold"
-                android:paddingLeft="10dp"
-                android:textSize="12dp"
-                android:paddingTop="10dp"/>
-
-            <TextView
-                android:id="@+id/dfrs_tv_saldo_no_emitido"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingBottom="10dp"
-                android:paddingTop="5dp"
-                android:text="0"
-                android:textColor="@android:color/holo_red_dark"
-                android:textSize="40dp"
-                android:textStyle="bold" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout style="@style/contenedorFiltros2">
-        <LinearLayout style="@style/contenedorSpinnerLarge">
-            <Spinner android:id="@+id/dfrs_spinner_sucursales"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:backgroundTint="@color/colorWhite"/>
-            <TextView style="@style/linea"/>
-        </LinearLayout>
-        <LinearLayout style="@style/linearLayoutHorizontal">
-            <TextView android:id="@+id/dfrs_tv_fecha_rango1" style="@style/fechaInicial2" />
-            <TextView android:id="@+id/dfrs_tv_fecha_rango2" style="@style/fechaFinal2"/>
-        </LinearLayout>
-        <Button android:id="@+id/dfrs_btn_buscar" style="@style/btnBuscar"/>
-    </LinearLayout>
-
-    <LinearLayout style="@style/cabeceraLista">
-
-        <TextView style="@style/campoCliente" />
-
-        <TextView
-            android:id="@+id/dfsc_tv_registros"
-            style="@style/campoCantidadesMail" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight=".6">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/dfrs_rv_lista"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:divider="@null"
-            android:dividerHeight="0dp"
-            android:text="hello_world" />
+    <LinearLayout style="@style/contenedorRecyclerView">
+        <android.support.v7.widget.RecyclerView android:id="@+id/dfrs_rv_lista" style="@style/recyclerView"/>
     </LinearLayout>
 
 </LinearLayout>

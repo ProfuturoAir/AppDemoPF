@@ -590,9 +590,7 @@ public class Asesor extends AppCompatActivity{
         ft.replace(R.id.content_asesor, fragment, fragment.toString()).addToBackStack(null).commit();
     }
 
-    public void parametrosDetalle(Fragment fragment, int idTramite,  String nombre, String numeroCuenta, String hora, String nombreAsesor, String cuentaAsesor, String sucursalAsesor, String nombreCliente, String numCuentaCliente, String nssCliente,
-                                  String curpCliente, String fechaCliente, String saldoCliente, boolean pregunta1, boolean pregunta2, boolean pregunta3, String observaciones, String afore,
-                                  String motivo, String estatus, String instituto, String regimen, String documentacion, String telefono, String email){
+    public void parametrosDetalle(Fragment fragment, int idTramite,  String nombre, String numeroCuenta, String hora, String nombreAsesor, String cuentaAsesor, String sucursalAsesor, String nombreCliente, String numCuentaCliente, String nssCliente, String curpCliente, String fechaCliente, String saldoCliente, boolean pregunta1, boolean pregunta2, boolean pregunta3, String observaciones, String afore, String motivo, String estatus, String instituto, String regimen, String documentacion, String telefono, String email){
         Bundle bundle = new Bundle();
         bundle.putInt("idTramite", idTramite);
         bundle.putString("nombre", nombre);

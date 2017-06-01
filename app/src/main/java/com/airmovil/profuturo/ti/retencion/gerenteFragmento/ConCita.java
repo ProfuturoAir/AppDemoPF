@@ -32,6 +32,7 @@ import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.GerenteConCitaClientes;
+import com.android.volley.NetworkResponse;
 import com.android.volley.VolleyError;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,16 +42,17 @@ import java.util.List;
 
 public class ConCita extends Fragment {
     private static final String TAG = ConCita.class.getSimpleName();
-    private static final String ARG_PARAM1 = "atencion";
+    private static final String ARG_PARAM1 = "param1";
     private List<GerenteConCitaClientes> getDatos1;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private GerenteCitasClientesAdapter adapter;
+    private String JSON_HORA = "hora", JSON_NOMBRE_CLIENTE = "nombreCliente", JSON_NUMERO_CUENTA = "numeroCuenta", JSON_FILAS_TOTAL = "filasTotal";
     private int filas, pagina = 1, numeroMaximoPaginas = 0, spinnerOpcion;
     private OnFragmentInteractionListener mListener;
     private Spinner spinner;
     private Button btnAplicar, btnClienteSinCita;
-    private TextView tvFecha, tvRegistros;
+    private TextView tvFecha, tvRegistros, tvClientesAtendidos;
     private View rootView;
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
@@ -66,6 +68,7 @@ public class ConCita extends Fragment {
      * @return un objeto ConCita.
      */
     public static ConCita newInstance(int param1, Context context) {
+        Log.e("newInstance", "->" + param1);
         ConCita fragment = new ConCita();
         Bundle args = new Bundle();
         args.putInt(ARG_PARAM1, param1);
@@ -118,6 +121,7 @@ public class ConCita extends Fragment {
             }
         };
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+
         spinner.setSelection(Adapter.NO_SELECTION,false);
         spinner.setAdapter(adapter);
         spinner.setSelection((getArguments()!=null)?getArguments().getInt(ARG_PARAM1):0);
@@ -231,7 +235,7 @@ public class ConCita extends Fragment {
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     Fragment fragment = new Inicio();
-                    Dialogos.dialogoBotonRegresoProcesoImplicaciones(getContext(), fragmentManager, getResources().getString(R.string.msj_regresar_inicio), 1, fragment);
+                    Dialogos.dialogoBotonRegresoProcesoImplicaciones(getContext(), fragmentManager, getResources().getString(R.string.msj_regresar_inicio), 2, fragment);
                     return true;
                 }
                 return false;
@@ -259,6 +263,7 @@ public class ConCita extends Fragment {
         btnClienteSinCita = (Button) rootView.findViewById(R.id.gfcc_btn_sin_cita);
         tvFecha = (TextView) rootView.findViewById(R.id.gfcc_tv_fecha);
         tvRegistros = (TextView) rootView.findViewById(R.id.gfcc_tv_registros);
+        tvClientesAtendidos = (TextView) rootView.findViewById(R.id.gfcc_tv_clientes_atendidos);
     }
 
     /**
@@ -282,9 +287,19 @@ public class ConCita extends Fragment {
             }
             @Override
             public void notifyError(String requestType, VolleyError error) {
-                if(connected.estaConectado(getContext())){
+                /*loading.dismiss();
+                Log.e("volleyError", "--> " + error);
+                if(Config.conexion(getContext())){
                     Dialogos.dialogoErrorServicio(getContext());
+                    Log.e("conexion", "dialogoErrorServicio");
                 }else{
+                    Dialogos.dialogoErrorConexion(getContext());
+                    Log.e("conexion", "dialogoErrorConexion");
+                }*/
+                loading.dismiss();
+                NetworkResponse networkResponse = error.networkResponse;
+                Log.e(TAG, "*->" + networkResponse);
+                if(networkResponse == null){
                     Dialogos.dialogoErrorConexion(getContext());
                 }
             }
@@ -325,8 +340,8 @@ public class ConCita extends Fragment {
         int totalFilas = 1;
         try{
             JSONArray array = obj.getJSONArray("citas");
-            filas = obj.getInt("filasTotal");
-            totalFilas = obj.getInt("filasTotal");
+            filas = obj.getInt(JSON_FILAS_TOTAL);
+            totalFilas = obj.getInt(JSON_FILAS_TOTAL);
             String status = obj.getString("status");
             String statusText = obj.getString("statusText");
             if(Integer.parseInt(status) == 200){
@@ -335,9 +350,9 @@ public class ConCita extends Fragment {
                     JSONObject json = null;
                     try{
                         json = array.getJSONObject(i);
-                        getDatos2.setHora(json.getString("hora"));
-                        getDatos2.setNombreCliente(json.getString("nombreCliente"));
-                        getDatos2.setNumeroCuenta(json.getString("numeroCuenta"));
+                        getDatos2.setHora(json.getString(JSON_HORA));
+                        getDatos2.setNombreCliente(json.getString(JSON_NOMBRE_CLIENTE));
+                        getDatos2.setNumeroCuenta(json.getString(JSON_NUMERO_CUENTA));
                     }catch (JSONException e){
                         e.printStackTrace();
                     }
@@ -349,6 +364,16 @@ public class ConCita extends Fragment {
         }catch (JSONException e){
             e.printStackTrace();
         }
+
+        if(getArguments()!=null){
+            if(getArguments().getInt(ARG_PARAM1) == 1)
+                tvClientesAtendidos.setText("Clientes Atendidos");
+            else if(getArguments().getInt(ARG_PARAM1) == 2)
+                tvClientesAtendidos.setText("Clientes No Atendidos");
+        }else{
+            tvClientesAtendidos.setText("Clientes Atendidos y No Atendidos");
+        }
+
         tvRegistros.setText(filas + " Registros");
         numeroMaximoPaginas = Config.maximoPaginas(totalFilas);
         adapter = new GerenteCitasClientesAdapter(rootView.getContext(), getDatos1, recyclerView);
@@ -401,9 +426,9 @@ public class ConCita extends Fragment {
                 JSONObject json = null;
                 try{
                     json = array.getJSONObject(i);
-                    getDatos2.setHora(json.getString("hora"));
-                    getDatos2.setNombreCliente(json.getString("nombreCliente"));
-                    getDatos2.setNumeroCuenta(json.getString("numeroCuenta"));
+                    getDatos2.setHora(json.getString(JSON_HORA));
+                    getDatos2.setNombreCliente(json.getString(JSON_NOMBRE_CLIENTE));
+                    getDatos2.setNumeroCuenta(json.getString(JSON_NUMERO_CUENTA));
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -412,7 +437,6 @@ public class ConCita extends Fragment {
         }catch (JSONException e){
             e.printStackTrace();
         }
-
         adapter.notifyDataSetChanged();
         adapter.setLoaded();
     }

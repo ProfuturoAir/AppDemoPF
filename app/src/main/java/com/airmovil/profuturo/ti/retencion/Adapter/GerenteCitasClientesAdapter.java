@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.DatosAsesor;
-import com.airmovil.profuturo.ti.retencion.helper.Config;
+import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.listener.OnLoadMoreListener;
 import com.airmovil.profuturo.ti.retencion.model.GerenteConCitaClientes;
@@ -95,16 +95,8 @@ public class GerenteCitasClientesAdapter extends RecyclerView.Adapter {
 
                     if(lista.getNumeroCuenta().isEmpty()){
                         Dialogos.dialogoNoExisteDato(mContext);
-                    }
-
-                    Fragment fragmento = new DatosAsesor();
-                    if (mContext instanceof Gerente) {
-                        if(Config.conexion(mContext)) {
-                            Gerente gerente = (Gerente) mContext;
-                            gerente.switchDatosAsesorTEST(fragmento,lista.getNombreCliente(),lista.getNumeroCuenta(),lista.getHora());
-                        }else{
-                            Dialogos.dialogoErrorConexion(mContext);
-                        }
+                    }else{
+                        fragmentJumpDatosUsuario(v,lista.getNombreCliente(),lista.getNumeroCuenta(),lista.getHora());
                     }
                 }
             });
@@ -130,6 +122,18 @@ public class GerenteCitasClientesAdapter extends RecyclerView.Adapter {
 
     public void setOnLoadMoreListener(OnLoadMoreListener mOnLoadMoreListener) {
         this.mOnLoadMoreListener = mOnLoadMoreListener;
+    }
+
+    public void fragmentJumpDatosUsuario(View view,String nombre,String numeroDeCuenta,String hora) {
+        Fragment fragmento = new DatosAsesor();
+        if (view.getContext() == null)
+            return;
+        if (view.getContext() instanceof Gerente) {
+            Gerente asesor = (Gerente) view.getContext();
+
+            final Connected conected = new Connected();
+            asesor.parametrosDetalle(fragmento, 0,nombre,numeroDeCuenta,hora, "", "", "", "", "", "", "", "", "", false, false, false, "", "","","", "", "", "", "", "");
+        }
     }
 
     public static class LoadingViewHolder extends RecyclerView.ViewHolder {

@@ -9,6 +9,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+
+import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.helper.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -19,7 +21,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.activities.Gerente;
+import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
@@ -27,71 +29,46 @@ import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.SQLiteHandler;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.VolleyError;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Encuesta1 extends Fragment {
     public static final String TAG = Encuesta1.class.getSimpleName();
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     private SQLiteHandler db;
-    private String idTramite, nombre, numeroDeCuenta, hora, mParam1, mParam2, observaciones;
+    private String nombre, numeroDeCuenta, hora;
+    private IResult mResultCallback = null;
+    private VolleySingleton volleySingleton;
+    private ProgressDialog loading;
+    private Connected connected;
     private OnFragmentInteractionListener mListener;
     private View rootView;
     private CheckBox cb1si, cb1no, cb2si, cb2no, cb3si, cb3no;
     private EditText etObservaciones;
     private Button btnContinuar, btnCancelar;
-    private boolean respuesta1, respuesta2, respuesta3;
     private Boolean r1, r2, r3;
-    private int estatusTramite = 1134;
+    private int estatusTramite = 1134, idTramite;
     private Fragment borrar = this;
-    private IResult mResultCallback = null;
-    private VolleySingleton volleySingleton;
-    private ProgressDialog loading;
-    private Connected connected;
 
-    public Encuesta1() { /* Required empty public constructor */}
+    public Encuesta1() {/* contructor vacio es requerido */}
 
     /**
-     * El sistema lo llama cuando crea el fragmento
-     * @param savedInstanceState, llama las variables en el bundle
+     * El sistema realiza esta llamada cuando crea tu actividad
+     * @param savedInstanceState guarda el estado de la aplicacion en un paquete
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = new SQLiteHandler(getContext());
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+        if(getArguments()!=null){
+            Log.e("Encuesta1", "\n" + getArguments().toString());
+
         }
+        db = new SQLiteHandler(getContext());
     }
 
     /**
-     *  metodo para callback de volley
-     */
-    void initVolleyCallback() {
-        mResultCallback = new IResult() {
-            @Override
-            public void notifySuccess(String requestType, JSONObject response) {
-                loading.dismiss();
-                primerPaso(response);
-            }
-            @Override
-            public void notifyError(String requestType, VolleyError error) {
-                if(connected.estaConectado(getContext())){
-                    Dialogos.dialogoErrorServicio(getContext());
-                }else{
-                    Dialogos.dialogoErrorConexion(getContext());
-                }
-            }
-        };
-    }
-
-    /**
-     * El sistema lo llama cuando el fragmento debe diseñar su interfaz de usuario por primera vez
-     * @param view accede a la vista del XML
-     * @param savedInstanceState fuarda el estado de la instancia
+     * El sistema lo llama para iniciar los procesos que estaran dentro del flujo de la vista
+     * @param view accede a la vista del xml
+     * @param savedInstanceState guarda el estado de la aplicacion en un paquete
      */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -102,14 +79,14 @@ public class Encuesta1 extends Fragment {
         // TODO: llama clase singleton volley
         volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
         variables();
-        // TODO: Argumentso verifica si hay datos enviados desde otro fragmento
+        // TODO: Argumentos
         argumentos();
 
         cb1si.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 cb1no.setChecked(false);
-                r1 = (b) ? true : false;
+                r1 = (b) ? true : null;
             }
         });
 
@@ -161,14 +138,17 @@ public class Encuesta1 extends Fragment {
                 }else {
                     final Connected conectado = new Connected();
                     if(conectado.estaConectado(getContext())){
-                        String o = etObservaciones.getText().toString();
-                        sendJson(true, r1, r2, r3, o);
+                        sendJson(true, r1, r2, r3, etObservaciones.getText().toString());
                         Config.teclado(getContext(), etObservaciones);
                         Fragment fragmentoGenerico = new Encuesta2();
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                         fragmentManager.beginTransaction().replace(R.id.content_gerente, fragmentoGenerico).commit();
                         Gerente gerente = (Gerente) getContext();
-                        gerente.switchEncuesta2(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta);
+
+                        gerente.parametrosDetalle(fragmentoGenerico, Integer.parseInt(Config.ID_TRAMITE), getArguments().getString("nombre"),
+                                getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"), getArguments().getString("nombreAsesor"), getArguments().getString("cuentaAsesor"), getArguments().getString("sucursalAsesor"),
+                                getArguments().getString("nombreCliente"), getArguments().getString("numCuentaCliente"), getArguments().getString("nssCliente"), getArguments().getString("curpCliente"), getArguments().getString("fechaCliente"),
+                                getArguments().getString("saldoCliente"), r1, r2, r3, etObservaciones.getText().toString(), "", "", "", "", "", "", "", "");
                     }else{
                         AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
                         dialogo.setTitle(getResources().getString(R.string.error_conexion));
@@ -178,11 +158,14 @@ public class Encuesta1 extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Config.teclado(getContext(), etObservaciones);
-                                db.addEncuesta(idTramite,estatusTramite,r1,r2,r3,etObservaciones.getText().toString().trim());
-                                db.addIDTramite(idTramite,nombre,numeroDeCuenta,hora);
+                                db.addEncuesta(Config.ID_TRAMITE,estatusTramite,r1,r2,r3,etObservaciones.getText().toString().trim());
+                                db.addIDTramite(Config.ID_TRAMITE,nombre,getArguments().getString("cuentaAsesor"),hora);
                                 Fragment fragmentoGenerico = new Encuesta2();
                                 Gerente gerente = (Gerente) getContext();
-                                gerente.switchEncuesta2(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta);
+                                gerente.parametrosDetalle(fragmentoGenerico, Integer.parseInt(Config.ID_TRAMITE), getArguments().getString("nombre"),
+                                        getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"), getArguments().getString("nombreAsesor"), getArguments().getString("cuentaAsesor"), getArguments().getString("sucursalAsesor"),
+                                        getArguments().getString("nombreCliente"), getArguments().getString("numCuentaCliente"), getArguments().getString("nssCliente"), getArguments().getString("curpCliente"), getArguments().getString("fechaCliente"),
+                                        getArguments().getString("saldoCliente"), r1, r2, r3, etObservaciones.getText().toString(), "", "", "", "", "", "", "", "");
                             }
                         });
                         dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -190,23 +173,22 @@ public class Encuesta1 extends Fragment {
                             public void onClick(DialogInterface dialog, int which) {}
                         });
                         dialogo.show();
-
                     }
+
                 }
             }
         });
 
+        // TODO Cancelar el proceso
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         Dialogos.dialogoCancelarProcesoImplicaciones(getContext(), btnCancelar, fragmentManager, getResources().getString(R.string.msj_cancelar_1134), 2);
-
     }
 
     /**
-     * Se lo llama para crear la jerarquía de vistas asociada con el fragmento.
-     * @param inflater inflacion del xml
-     * @param container contenedor del ml
-     * @param savedInstanceState datos guardados
-     * @return el fragmento declarado DIRECTOR INICIO
+     * @param inflater infla la vista XML
+     * @param container muestra el contenido
+     * @param savedInstanceState guarda los datos en el estado de la instancia
+     * @return la vista con los elemetos del XML y metodos
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -221,7 +203,7 @@ public class Encuesta1 extends Fragment {
 
     /**
      * Reciba una llamada cuando se asocia el fragmento con la actividad
-     * @param context establece el estado actual de la apliacion para hacer uso con esta clase
+     * @param context estado actual de la aplicacion
      */
     @Override
     public void onAttach(Context context) {
@@ -232,7 +214,7 @@ public class Encuesta1 extends Fragment {
     }
 
     /**
-     * Se implementa este metodo, para generar el regreso con clic nativo de android
+     *Se lo llama cuando se desasocia el fragmento de la actividad.
      */
     @Override
     public void onDetach() {
@@ -241,7 +223,7 @@ public class Encuesta1 extends Fragment {
     }
 
     /**
-     * Se utiliza este metodo para el control de la tecla de retroceso
+     * Se implementa este metodo, para generar el regreso con clic nativo de android
      */
     @Override
     public void onResume() {
@@ -253,7 +235,7 @@ public class Encuesta1 extends Fragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    Fragment fragment = new SinCita();
+                    Fragment fragment = new ConCita();
                     Dialogos.dialogoBotonRegresoProcesoImplicaciones(getContext(), fragmentManager, getResources().getString(R.string.msj_regresar_proceso), 2, fragment);
                     return true;
                 }
@@ -261,18 +243,12 @@ public class Encuesta1 extends Fragment {
             }
         });
     }
-
-    /**
-     * Esta interfaz debe ser implementada por actividades que contengan esta
-     * Para permitir que se comunique una interacción en este fragmento
-     * A la actividad y potencialmente otros fragmentos contenidos en esta actividad.
-     */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
 
     /**
-     * Setear las variables de xml
+     * Casteo de variables, nueva instancia para la conexion a internet Connected
      */
     private void variables(){
         btnContinuar = (Button) rootView.findViewById(R.id.gfe1_btn_continuar);
@@ -284,14 +260,16 @@ public class Encuesta1 extends Fragment {
         cb3si = (CheckBox) rootView.findViewById(R.id.gfe1_cb_pregunta3_si);
         cb3no = (CheckBox) rootView.findViewById(R.id.gfe1_cb_pregunta3_no);
         etObservaciones = (EditText) rootView.findViewById(R.id.gfe1_et_observaciones);
+        connected = new Connected();
     }
 
     /**
-     * Se utiliza para cololar datos recibidos entre una busqueda(por ejemplo: fechas)
+     *  Espera el regreso de fechas incial (hoy y el dia siguiente)
+     *  y cuando se realiza una nueva busqueda, retorna las fechas seleccionadas
      */
     private void argumentos(){
-        if(getArguments()!=null){
-            idTramite = getArguments().getString("idTramite");
+        if(getArguments()!= null){
+            idTramite = getArguments().getInt("idTramite");
             nombre = getArguments().getString("nombre");
             numeroDeCuenta = getArguments().getString("numeroDeCuenta");
             hora = getArguments().getString("hora");
@@ -299,16 +277,39 @@ public class Encuesta1 extends Fragment {
     }
 
     /**
-     * Envio de datos por REST jsonObject
-     * @param primerPeticion valida que el proceso sea true
+     *  metodo para callback de volley
+     */
+    void initVolleyCallback() {
+        mResultCallback = new IResult() {
+            @Override
+            public void notifySuccess(String requestType, JSONObject response) {
+                loading.dismiss();
+                primerPaso(response);
+            }
+            @Override
+            public void notifyError(String requestType, VolleyError error) {
+                loading.dismiss();
+                if(connected.estaConectado(getContext())){
+                    Dialogos.dialogoErrorServicio(getContext());
+                    Log.e("conexion", "dialogoErrorServicio");
+                }else{
+                    Dialogos.dialogoErrorConexion(getContext());
+                    Log.e("conexion", "dialogoErrorConexion");
+                }
+            }
+        };
+    }
+
+    /**
+     * Método para generar el proceso REST
+     * @param primerPeticion identifica si el metodo será procesado, debe llegar en true
      */
     private void sendJson(final boolean primerPeticion, boolean opc1, boolean opc2, boolean opc3, String observaciones) {
         if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Porfavor espera...", false, false);
+            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
         else
             loading = null;
-
-        idTramite = getArguments().getString("idTramite");
+        idTramite = getArguments().getInt("idTramite");
         JSONObject obj = new JSONObject();
         try{
             JSONObject rqt = new JSONObject();
@@ -319,19 +320,20 @@ public class Encuesta1 extends Fragment {
             rqt.put("encuesta", encuesta);
             rqt.put("observaciones", observaciones);
             rqt.put("estatusTramite", 1134);
-            rqt.put("idTramite", Integer.parseInt(idTramite));
+            rqt.put("idTramite", Config.ID_TRAMITE);
             obj.put("rqt", rqt);
-            Log.d(TAG, "REQUEST-->" + obj);
+            Log.d(TAG, "<- RQT ->" + obj);
         } catch (JSONException e){
-            Dialogos.msj(getContext(), "Error", "Error al formar los datos");
+            Dialogos.dialogoErrorDatos(getContext());
         }
         volleySingleton.postDataVolley("primerPaso", Config.URL_ENVIAR_ENCUESTA, obj);
     }
 
     /**
-     * @param obj recibe el obj json de la peticion
+     * Obtiene el objeto json(Response), se obtiene cada elemento a parsear
+     * @param obj json objeto
      */
     private void primerPaso(JSONObject obj){
-        Log.d(TAG, "RESPONSE: ->" + obj);
+        Log.d(TAG, "<- RESPONSE ->" + obj);
     }
 }

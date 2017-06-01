@@ -13,13 +13,13 @@
         <LinearLayout style="@style/contenedorDatos">
             <!-- TODO: Nombre del asesor y dato a mostrar-->
             <TextView style="@style/tituloDato"  android:text="@string/texto_nombre" />
-            <TextView style="@style/datoMuestra" android:id="@+id/gfda_tv_nombre_usuario" android:text="Gerente"/>
+            <TextView style="@style/datoMuestra" android:id="@+id/gfda_tv_nombre_usuario"/>
             <!-- TODO: Numero de empleado y dato a mostrar-->
             <TextView style="@style/tituloDato" android:text="@string/texto_numero_empleado" />
-            <TextView style="@style/datoMuestra" android:id="@+id/gfda_tv_numero_empleado" android:text="2222"/>
+            <TextView style="@style/datoMuestra" android:id="@+id/gfda_tv_numero_empleado"/>
             <!-- TODO: Sucursal y dato a mostrar-->
             <TextView style="@style/tituloDato" android:text="@string/texto_sucursal" />
-            <TextView style="@style/datoMuestra" android:id="@+id/gfda_tv_sucursal" android:text="Sucursal sur"/>
+            <TextView style="@style/datoMuestra" android:id="@+id/gfda_tv_sucursal"/>
         </LinearLayout>
         <!-- TODO: boton continuar -->
         <Button android:id="@+id/gfda_btn_continuar" style="@style/btnContinuar" />
@@ -28,3 +28,4 @@
         <Button android:id="@+id/gfda_btn_cancelar" style="@style/btnCancelar" />
     </LinearLayout>
 </ScrollView>
+

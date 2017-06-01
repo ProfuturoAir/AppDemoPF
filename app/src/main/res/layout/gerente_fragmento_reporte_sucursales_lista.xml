@@ -3,50 +3,52 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/gfrsl_cv"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="1dp"
-    card_view:cardBackgroundColor="#f6f6f6"
-    card_view:cardCornerRadius="2dp"
-    card_view:contentPadding="0dp"
-    card_view:cardElevation="5dp">
-    <LinearLayout style="@style/contenedorLista">
-        <!-- TODO: Contenedor del circulo y textView(Una sola letra) -->
-        <LinearLayout style="@style/contenedorCirculoLista">
-            <!-- TODO: muestra la primera letra del nombre -->
-            <TextView android:id="@+id/gfrsl_tv_letra" style="@style/letraLista"/>
-        </LinearLayout>
-        <LinearLayout style="@style/contenedorElementosLista">
-            <TextView android:id="@+id/gfrsl_tv_id_sucursal" style="@style/campoLista" android:textStyle="bold" android:text="Nombre de sucursal"/>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp">
-                <!-- TODO: campo 1 -->
-                <TextView style="@style/conCitaLista"/>
-                <TextView android:id="@+id/gfrsl_tv_con_cita" style="@style/textoGreenLista"/>
-                <TextView style="@style/separador" />
-                <TextView android:id="@+id/gfrsl_tv_sin_cita" style="@style/textoRedLista"/>
-                <!-- TODO: campo 2 -->
-                <TextView style="@style/EmitidasLista"/>
-                <TextView android:id="@+id/gfrsl_tv_emitidas" style="@style/textoGreenLista"/>
-                <TextView style="@style/separador" />
-                <TextView android:id="@+id/gfrsl_tv_no_emitidas" style="@style/textoRedLista"/>
-                <!-- TODO: campo 3 -->
-                <TextView style="@style/saldosLista"/>
-                <TextView android:id="@+id/gfrsl_tv_saldos_emitido" style="@style/textoGreenLista"/>
-                <TextView style="@style/separador" />
-                <TextView android:id="@+id/gfrsl_tv_saldos_no_emitido" style="@style/textoRedLista"/>
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp"
+        android:background="@color/colorGrey">
+        <LinearLayout style="@style/contenedorLista">
+            <!-- TODO: Contenedor del circulo y textView(Una sola letra) -->
+            <LinearLayout style="@style/contenedorCirculoLista">
+                <TextView android:id="@+id/gfrsl_tv_letra" style="@style/letraLista"/>
             </LinearLayout>
-            <TextView android:id="@+id/gfrsl_tv_procentaje" style="@style/cantidadPorcentaje"/>
+            <LinearLayout style="@style/contenedorElementosLista">
+                <TextView android:id="@+id/gfrsl_tv_id_sucursal" style="@style/campoLista" android:textStyle="bold" android:text="Nombre de sucursal"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp">
+                    <!-- TODO: campo 1 -->
+                    <TextView style="@style/conCitaLista"/>
+                    <TextView android:id="@+id/gfrsl_tv_con_cita" style="@style/textoGreenLista"/>
+                    <TextView style="@style/separador" />
+                    <TextView android:id="@+id/gfrsl_tv_sin_cita" style="@style/textoRedLista"/>
+                    <!-- TODO: campo 2 -->
+                    <TextView style="@style/EmitidasLista"/>
+                    <TextView android:id="@+id/gfrsl_tv_emitidas" style="@style/textoGreenLista"/>
+                    <TextView style="@style/separador" />
+                    <TextView android:id="@+id/gfrsl_tv_no_emitidas" style="@style/textoRedLista"/>
+                    <!-- TODO: campo 3 -->
+                    <TextView style="@style/saldosLista"/>
+                    <TextView android:id="@+id/gfrsl_tv_saldos_emitido" style="@style/textoGreenLista"/>
+                    <TextView style="@style/separador" />
+                    <TextView android:id="@+id/gfrsl_tv_saldos_no_emitido" style="@style/textoRedLista"/>
+                </LinearLayout>
+                <TextView android:id="@+id/gfrsl_tv_procentaje" style="@style/cantidadPorcentaje"/>
+            </LinearLayout>
+            <ImageView
+                android:id="@+id/gfrsl_tv_menu"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="-50dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/icono_menu_vertical"/>
         </LinearLayout>
-        <ImageView
-            android:id="@+id/gfrsl_tv_menu"
-            android:layout_width="match_parent"
-            android:layout_marginLeft="-50dp"
-            android:layout_height="match_parent"
-            android:background="#f6f6f6"
-            android:src="@drawable/icono_menu_vertical"/>
     </LinearLayout>
 </android.support.v7.widget.CardView>

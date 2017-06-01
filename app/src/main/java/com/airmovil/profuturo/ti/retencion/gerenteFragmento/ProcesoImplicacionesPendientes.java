@@ -14,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+
 import com.airmovil.profuturo.ti.retencion.Adapter.EnviarPendientesAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
@@ -23,8 +25,9 @@ import com.airmovil.profuturo.ti.retencion.model.EnviosPendientesModel;
 
 import java.util.ArrayList;
 import java.util.List;
-
 public class ProcesoImplicacionesPendientes extends Fragment {
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
     private OnFragmentInteractionListener mListener;
     private View rootView;
     private RecyclerView recyclerView;
@@ -33,13 +36,29 @@ public class ProcesoImplicacionesPendientes extends Fragment {
     private Button btnEnviarPendientes;
     private List<EnviosPendientesModel> getDatos1;
     private SQLiteHandler db;
-    private Connected connected;
+    private TextView tvMensaje, tvResultados;
 
-    public ProcesoImplicacionesPendientes() { /* Se requiere un constructor vacio */}
+    public ProcesoImplicacionesPendientes() {/* constructor vacio es requerido*/}
 
     /**
-     * El sistema lo llama cuando crea el fragmento
-     * @param savedInstanceState, llama las variables en el bundle
+     * al crear una nueva instancia
+     * se reciben los parametros:
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return un objeto AsistenciaSalida.
+     */
+    public static ProcesoImplicacionesPendientes newInstance(String param1, String param2) {
+        ProcesoImplicacionesPendientes fragment = new ProcesoImplicacionesPendientes();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    /**
+     * El sistema realiza esta llamada cuando crea tu actividad
+     * @param savedInstanceState guarda el estado de la aplicacion en un paquete
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,22 +67,24 @@ public class ProcesoImplicacionesPendientes extends Fragment {
     }
 
     /**
-     * @param view regresa la vista
-     * @param savedInstanceState parametros a enviar para conservar en el bundle
+     * El sistema lo llama para iniciar los procesos que estaran dentro del flujo de la vista
+     * @param view accede a la vista del xml
+     * @param savedInstanceState guarda el estado de la aplicacion en un paquete
      */
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        // TODO: Casteo
         rootView = view;
         btnEnviarPendientes = (Button) rootView.findViewById(R.id.gfcc_btn_enviar_pendientes);
+        tvMensaje = (TextView) rootView.findViewById(R.id.gtv_mensaje1);
+        tvResultados = (TextView) rootView.findViewById(R.id.gfpip_tv_registros);
         // TODO: modelos
         Cursor todos = db.getAllPending();
         // TODO: Recycler
-        connected = new Connected();
         recyclerView = (RecyclerView) rootView.findViewById(R.id.grecyclerview_pendientes_envio);
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-
         getDatos1 = new ArrayList<>();
         try {
             while (todos.moveToNext()) {
@@ -77,19 +98,28 @@ public class ProcesoImplicacionesPendientes extends Fragment {
         } finally {
             todos.close();
         }
-
-
-        final EnviaJSON enviaPrevio = new EnviaJSON();
         adapter = new EnviarPendientesAdapter(rootView.getContext(), getDatos1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
-
-        if(getDatos1.size() < 1)
+        if(getDatos1.size() < 1) {
+            btnEnviarPendientes.setTextColor(getResources().getColor(android.R.color.background_dark));
+            btnEnviarPendientes.setBackgroundColor(getResources().getColor(R.color.colorPrimaryGray));
+            tvMensaje.setVisibility(View.VISIBLE);
             return;
+        }
+
+        int cantidad = getDatos1.size();
+        if(cantidad!=0)
+            tvResultados.setText(cantidad + " Resultados");
+        else if(cantidad == 1)
+            tvResultados.setText(cantidad + " Resultado");
+        else
+            tvResultados.setText("");
 
         btnEnviarPendientes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Connected connected = new Connected();
                 if(connected.estaConectado(getContext())){
                     android.app.AlertDialog.Builder dlgAlert  = new android.app.AlertDialog.Builder(getContext());
                     dlgAlert.setTitle("Enviar pendientes");
@@ -103,6 +133,7 @@ public class ProcesoImplicacionesPendientes extends Fragment {
                             final EnviaJSON enviaPrevio = new EnviaJSON();
                             for(int i=0;i<getDatos1.size();i++) {
                                 String iT = String.valueOf(getDatos1.get(i).getId_tramite());
+                                Log.d("HOLA","EL ID : "+ iT);
                                 enviaPrevio.sendPrevios(iT, getContext());
                                 getDatos1.remove(i);
                                 adapter.notifyDataSetChanged();
@@ -111,9 +142,7 @@ public class ProcesoImplicacionesPendientes extends Fragment {
                     });
                     dlgAlert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
+                        public void onClick(DialogInterface dialog, int which) {}
                     });
                     dlgAlert.create().show();
                 }
@@ -122,14 +151,14 @@ public class ProcesoImplicacionesPendientes extends Fragment {
     }
 
     /**
-     * Se lo llama para crear la jerarquía de vistas asociada con el fragmento.
-     * @param inflater inflacion del xml
-     * @param container contenedor del ml
-     * @param savedInstanceState datos guardados
-     * @return el fragmento declarado DIRECTOR INICIO
+     * @param inflater infla la vista XML
+     * @param container muestra el contenido
+     * @param savedInstanceState guarda los datos en el estado de la instancia
+     * @return la vista con los elemetos del XML y metodos
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        /* infla la vista del fragmento */
         return inflater.inflate(R.layout.gerente_fragment_proceso_implicaciones_pendientes, container, false);
     }
 
@@ -141,7 +170,7 @@ public class ProcesoImplicacionesPendientes extends Fragment {
 
     /**
      * Reciba una llamada cuando se asocia el fragmento con la actividad
-     * @param context
+     * @param context estado actual de la aplicacion
      */
     @Override
     public void onAttach(Context context) {
@@ -152,7 +181,7 @@ public class ProcesoImplicacionesPendientes extends Fragment {
     }
 
     /**
-     * Se lo llama cuando se desasocia el fragmento de la actividad.
+     *Se lo llama cuando se desasocia el fragmento de la actividad.
      */
     @Override
     public void onDetach() {
@@ -163,8 +192,7 @@ public class ProcesoImplicacionesPendientes extends Fragment {
     /**
      * Esta interfaz debe ser implementada por actividades que contengan esta
      * Para permitir que se comunique una interacción en este fragmento
-     * A la actividad y potencialmente otros fragmentos contenidos en ese
-     * actividad.
+     * A la actividad y potencialmente otros fragmentos contenidos en esta actividad.
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);

@@ -4,8 +4,6 @@
     android:layout_height="wrap_content"
     android:background="@android:color/white"
     tools:context="com.airmovil.profuturo.ti.retencion.gerenteFragmento.Inicio">
-
-
     <LinearLayout style="@style/linearLayoutVertical" android:background="@android:color/white">
         <LinearLayout style="@style/contenedorPrimeraLetraNombre">
             <TextView android:id="@+id/gfi_tv_inicial"  style="@style/primeraLetra"/>

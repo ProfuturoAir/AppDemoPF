@@ -99,7 +99,6 @@ public class ReporteClientesDetalles extends Fragment {
                     primerPaso(response);
                 }
             }
-
             @Override
             public void notifyError(String requestType, VolleyError error) {
                 if(connected.estaConectado(getContext())){

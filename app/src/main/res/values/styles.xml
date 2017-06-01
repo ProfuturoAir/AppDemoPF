@@ -386,7 +386,7 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:text">Fecha Inicial</item>
+        <item name="android:hint">Fecha Inicial</item>
         <item name="android:drawableRight">@drawable/icono_flecha_abajo</item>
         <item name="android:textStyle">bold</item>
         <item name="android:paddingLeft">10dp</item>
@@ -403,7 +403,7 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:text">Fecha Inicial</item>
+        <item name="android:hint">Fecha Inicial</item>
         <item name="android:drawableRight">@drawable/icono_flecha_abajo</item>
         <item name="android:textStyle">bold</item>
         <item name="android:paddingLeft">10dp</item>
@@ -831,7 +831,6 @@
     <style name="contenedorCirculoLista">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@color/colorWhite</item>
         <item name="android:gravity">center</item>
         <item name="android:orientation">vertical</item>
         <item name="android:paddingBottom">12dp</item>
@@ -1212,6 +1211,25 @@
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/estilo_bordes_left</item>
     </style>
+    <!-- TODO: ContenedorSpinnerLeft -->
+    <style name="contenedorSpinner3">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/estilo_bordes</item>
+    </style>
+
+    <!-- TODO: ContenedorSpinnerLeft -->
+    <style name="contenedorSpinner4">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/estilo_bordes</item>
+    </style>
     <!-- TODO: Spinner btn estilos gris -->
     <style name="spinner3">
         <item name="android:layout_width">match_parent</item>
@@ -1231,6 +1249,18 @@
     <style name="editText3">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
+        <item name="android:hint">Ingresa datos</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:drawableRight">@drawable/icono_buscador</item>
+        <item name="android:background">@drawable/estilo_bordes_right</item>
+    </style>
+    <!-- TODO: Estilos de EditText -->
+    <style name="editText4">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
         <item name="android:hint">Ingresa texto</item>
         <item name="android:text">Texto</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
@@ -1238,7 +1268,7 @@
         <item name="android:paddingLeft">10dp</item>
         <item name="android:paddingRight">10dp</item>
         <item name="android:drawableRight">@drawable/icono_buscador</item>
-        <item name="android:background">@drawable/estilo_bordes_right</item>
+        <item name="android:background">@drawable/estilo_bordes</item>
     </style>
     <!-- TODO: Estilos para boton buscar -->
     <style name="button3">
@@ -1267,6 +1297,14 @@
         <item name="android:layout_alignParentBottom">true</item>
         <item name="android:divider">@null</item>
         <item name="android:dividerHeight">0dp</item>
+    </style>
+
+    <!-- TODO: Linea de separacion con filtros -->
+    <style name="separacion">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">2dp</item>
+        <item name="android:layout_marginTop">7dp</item>
+        <item name="android:background">@color/colorPrimaryGray</item>
     </style>
 
 </resources>

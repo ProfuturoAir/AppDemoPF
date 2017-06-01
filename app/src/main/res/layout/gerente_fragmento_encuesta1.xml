@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorWhite"
-    tools:context="com.airmovil.profuturo.ti.retencion.gerenteFragmento.Encuesta1">
+    tools:context="com.airmovil.profuturo.ti.retencion.asesorFragmento.Encuesta1">
     <!-- TODO: Contenedor general -->
     <LinearLayout style="@style/linearLayoutVertical">
         <LinearLayout style="@style/especioSuperior"></LinearLayout>
@@ -60,7 +60,7 @@
 
         <!-- TODO: Subtitulo -->
         <TextView style="@style/subTitulo" android:text="@string/texto_observaciones" />
-        <!-- TODO: EditText, campo para agregar contenido de observaciones -->
+        <!-- TODO: EditText, campo agregar contenido de observaciones -->
         <EditText
             android:id="@+id/gfe1_et_observaciones"
             android:layout_width="match_parent"
@@ -69,10 +69,10 @@
             android:layout_marginRight="20dp"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="20dp"
-            android:padding="10dp"
             android:inputType="textAutoCorrect"
+            android:padding="10dp"
             android:gravity="top"
-            android:textColorHint="@color/colorPrimaryDark"
+            android:textColor="@color/colorPrimaryDark"
             android:background="@color/colorGreyDark"
             android:hint="@string/hint_ingresa_contenido"/>
 

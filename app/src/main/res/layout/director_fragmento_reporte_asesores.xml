@@ -1,53 +1,58 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    tools:context="com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsesores">
+    <TextView style="@style/tituloProceso" android:text="Asesores " />
+    <TextView android:id="@+id/dfra_tv_fecha" style="@style/fecha"/>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:orientation="vertical"
-        tools:context="com.airmovil.profuturo.ti.retencion.directorFragmento.ReporteAsesores">
-        <TextView style="@style/tituloProceso" android:text="Asesores " />
-        <TextView android:id="@+id/dfra_tv_fecha" style="@style/fecha"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <LinearLayout style="@style/contenedorRetenidosNoRetenidosSaldoAfavorSaldoEnContra">
-                <LinearLayout style="@style/contenedorCantidadRetenidosSaldoAFavorColorFondo">
-                    <TextView style="@style/textoRetenidos" android:text="Entidades"/>
-                    <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/dfra_tv_emitidas"/>
-                </LinearLayout>
-                <LinearLayout style="@style/contenedorCantidadRetenidosSaldoAFavorColorFondo" >
-                    <TextView style="@style/textoNoRetenidos" android:text="No Entidades"/>
-                    <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/dfra_tv_no_emitidas"/>
-                </LinearLayout>
+        android:orientation="vertical">
+        <LinearLayout style="@style/contenedorRetenidosNoRetenidosSaldoAfavorSaldoEnContra">
+            <LinearLayout style="@style/contenedorCantidadRetenidosSaldoAFavorColorFondo">
+                <TextView style="@style/textoRetenidos" android:text="Entidades"/>
+                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/dfra_tv_emitidas"/>
             </LinearLayout>
-            <LinearLayout style="@style/contenedorRetenidosNoRetenidosSaldoAfavorSaldoEnContra">
-                <LinearLayout style="@style/contenedorCantidadRetenidosSaldoRetenido">
-                    <TextView style="@style/textoCantidad" android:text="Saldo Emitido" />
-                    <TextView style="@style/textoCantidadSaldoRetenido" android:id="@+id/dfra_tv_saldo_emitido" />
-                </LinearLayout>
-                <LinearLayout style="@style/contenedorCantidadNoRetenidosSaldoEnContra">
-                    <TextView style="@style/textoCantidad" android:text="Saldo no Emitido"/>
-                    <TextView style="@style/textoCantidadSaldoNoRetenido" android:id="@+id/dfra_tv_saldo_no_emitido"/>
-                </LinearLayout>
+            <LinearLayout style="@style/contenedorCantidadRetenidosSaldoAFavorColorFondo" >
+                <TextView style="@style/textoNoRetenidos" android:text="No Entidades"/>
+                <TextView style="@style/textoCantidadRetenidoNoRetenido" android:id="@+id/dfra_tv_no_emitidas"/>
             </LinearLayout>
         </LinearLayout>
-
-
-        <LinearLayout style="@style/contenedorFiltros2">
-            <EditText android:id="@+id/dfra_et_asesor" style="@style/busquedaLarge" android:hint="Ingresar un ID Asesor" android:inputType="number"/>
-            <LinearLayout style="@style/linearLayoutHorizontal">
-                <TextView android:id="@+id/dfra_tv_fecha_rango1" style="@style/fechaInicial2" />
-                <TextView android:id="@+id/dfra_tv_fecha_rango2" style="@style/fechaFinal2"/>
+        <LinearLayout style="@style/contenedorRetenidosNoRetenidosSaldoAfavorSaldoEnContra">
+            <LinearLayout style="@style/contenedorCantidadRetenidosSaldoRetenido">
+                <TextView style="@style/textoCantidad" android:text="Saldo Emitido" />
+                <TextView style="@style/textoCantidadSaldoRetenido" android:id="@+id/dfra_tv_saldo_emitido" />
             </LinearLayout>
-            <Button android:id="@+id/dfra_btn_buscar" style="@style/btnBuscar" />
+            <LinearLayout style="@style/contenedorCantidadNoRetenidosSaldoEnContra">
+                <TextView style="@style/textoCantidad" android:text="Saldo no Emitido"/>
+                <TextView style="@style/textoCantidadSaldoNoRetenido" android:id="@+id/dfra_tv_saldo_no_emitido"/>
+            </LinearLayout>
         </LinearLayout>
+    </LinearLayout>
 
-        <LinearLayout style="@style/cabeceraLista">
-            <TextView style="@style/tituloLista" android:text="@string/texto_asesores"/>
-            <TextView android:id="@+id/dfra_tv_total_registros" style="@style/campoCantidadesMail"/>
+    <TextView style="@style/separacion"/>
+
+    <LinearLayout style="@style/contenedorFiltros">
+        <LinearLayout style="@style/contenedorSpinnerEditText1">
+            <LinearLayout style="@style/contenedorEdittext">
+                <EditText android:id="@+id/dfra_et_asesor"   style="@style/editText3" />
+            </LinearLayout>
         </LinearLayout>
+        <LinearLayout style="@style/linearLayoutHorizontal">
+            <TextView android:id="@+id/dfra_tv_fecha_rango1" style="@style/fechaInicial" />
+            <TextView android:id="@+id/dfra_tv_fecha_rango2" style="@style/fechaFinal"/>
+        </LinearLayout>
+        <Button android:id="@+id/dfra_btn_buscar" style="@style/btnBuscar3" />
+    </LinearLayout>
+
+    <LinearLayout style="@style/cabeceraLista">
+        <TextView style="@style/tituloLista" android:text="@string/texto_asesores"/>
+        <TextView android:id="@+id/dfra_tv_total_registros" style="@style/campoCantidadesMail"/>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

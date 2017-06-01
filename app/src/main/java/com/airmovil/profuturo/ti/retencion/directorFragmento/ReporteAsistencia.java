@@ -163,10 +163,13 @@ public class ReporteAsistencia extends Fragment{
                     if(tvRangoFecha1.getText().toString().isEmpty() || tvRangoFecha2.getText().toString().isEmpty()){
                         Dialogos.dialogoFechasVacias(getContext());
                     }else{
-                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ReporteAsistencia fragmento = ReporteAsistencia.newInstance(mParam1 = Config.ID_GERENCIA, mParam2 = Config.ID_SUCURSAL, etAsesor.getText().toString(), tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), rootView.getContext());
-                        borrar.onDestroy();ft.remove(borrar).replace(R.id.content_director, fragmento).addToBackStack(null).commit();
-                        Config.teclado(getContext(), etAsesor);
+                        if(Config.comparacionFechas(getContext(), tvRangoFecha1.getText().toString().trim(), tvRangoFecha2.getText().toString().trim()) == false) {
+                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                            ReporteAsistencia fragmento = ReporteAsistencia.newInstance(mParam1 = Config.ID_GERENCIA, mParam2 = Config.ID_SUCURSAL, etAsesor.getText().toString(), tvRangoFecha1.getText().toString(), tvRangoFecha2.getText().toString(), rootView.getContext());
+                            borrar.onDestroy();
+                            ft.remove(borrar).replace(R.id.content_director, fragmento).addToBackStack(null).commit();
+                            Config.teclado(getContext(), etAsesor);
+                        }
                     }
                 }else{
                     Dialogos.msj(getContext(), getResources().getString(R.string.error_conexion), getResources().getString(R.string.msj_error_conexion));

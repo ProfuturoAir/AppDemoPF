@@ -9,6 +9,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+
+import com.airmovil.profuturo.ti.retencion.activities.Gerente;
 import com.airmovil.profuturo.ti.retencion.helper.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -16,14 +18,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.airmovil.profuturo.ti.retencion.R;
-import com.airmovil.profuturo.ti.retencion.activities.Gerente;
+import com.airmovil.profuturo.ti.retencion.activities.Asesor;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
 import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.VolleyError;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -31,81 +35,77 @@ import java.util.Map;
 
 public class DatosCliente extends Fragment {
     public static final String TAG = DatosCliente.class.getSimpleName();
-    private static final String ARG_PARAM1 = "nombre", ARG_PARAM2 = "numeroDeCuenta", ARG_PARAM3 = "hora";
+    private static final String ARG_PARAM1 = "param1", ARG_PARAM2 = "param2";
     private TextView tvClienteNombre, tvClienteNumeroCuenta, tvClienteNSS, tvClienteCURP, tvClienteFecha, tvClienteSaldo;
     private Button btnContinuar, btnCancelar;
     private View rootView;
-    private String idTramite, nombre, numeroDeCuenta, hora;
-    private Fragment borrar = this;
-    private Map<String, String> usuario;
-    private OnFragmentInteractionListener mListener;
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
     private Connected connected;
+    private String idTramite;
+    private Fragment borrar = this;
+    Map<String, String> usuario;
 
-    public DatosCliente() {/* Se requiere un constructor vacio */}
+    private OnFragmentInteractionListener mListener;
+
+    public DatosCliente() {/* contructor vacio es requerido*/}
 
     /**
-     * El sistema lo llama cuando crea el fragmento
-     * @param savedInstanceState, llama las variables en el bundle
+     * al crear nueva instancia
+     * se debe recibir los parametros:
+     * @param param1 Parametro 1.
+     * @param param2 Parametro 2.
+     * @return un objeto DatosCliente.
+     */
+    public static DatosCliente newInstance(String param1, String param2, Context context) {
+        DatosCliente fragment = new DatosCliente();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    /**
+     * El sistema realiza esta llamada cuando crea tu actividad
+     * @param savedInstanceState guarda el estado de la aplicacion en un paquete
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getArguments()!=null){
+            Log.e("getArguments", "\n" + getArguments().toString());
+        }
     }
 
     /**
-     *  metodo para callback de volley
-     */
-    void initVolleyCallback() {
-        mResultCallback = new IResult() {
-            @Override
-            public void notifySuccess(String requestType, JSONObject response) {
-                loading.dismiss();
-                primerPaso(response);
-            }
-
-            @Override
-            public void notifyError(String requestType, VolleyError error) {
-                if(connected.estaConectado(getContext())){
-                    Dialogos.dialogoErrorServicio(getContext());
-                }else{
-                    Dialogos.dialogoErrorConexion(getContext());
-                }
-            }
-        };
-    }
-
-    /**
-     * El sistema lo llama cuando el fragmento debe diseñar su interfaz de usuario por primera vez
-     * @param view accede a la vista del XML
-     * @param savedInstanceState fuarda el estado de la instancia
+     * El sistema lo llama para iniciar los procesos que estaran dentro del flujo de la vista
+     * @param view accede a la vista del xml
+     * @param savedInstanceState guarda el estado de la aplicacion en un paquete
      */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        rootView = view;
         // TODO: metodo para callback de volley
         initVolleyCallback();
         // TODO: Lineas para ocultar el teclado virtual (Hide keyboard)
         rootView = view;
         // TODO: llama clase singleton volley
         volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
-        // TODO: envio de REST
         sendJson(true);
-        // TODO: Casteo de variables
         variables();
-        // TODO: Argumentos, verificacion si existen datos recibidos de otros fragmentos
-        argumentos();
 
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Connected conected = new Connected();
-                if(conected.estaConectado(getContext())){
+                Fragment fragmentoGenerico = new Encuesta1();
+                Gerente gerente = (Gerente) getContext();
+                if(connected.estaConectado(getContext())){
                     if(idTramite!=null){
-                        Fragment fragmentoGenerico = new Encuesta1();
-                        Gerente gerente = (Gerente) getContext();
-                        gerente.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
+                        gerente.parametrosDetalle(fragmentoGenerico, Integer.parseInt(Config.ID_TRAMITE), getArguments().getString("nombre"),
+                                getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"), getArguments().getString("nombreAsesor"), getArguments().getString("cuentaAsesor"), getArguments().getString("sucursalAsesor"), tvClienteNombre.getText().toString(),
+                                tvClienteNumeroCuenta.getText().toString(), tvClienteNSS.getText().toString(), tvClienteCURP.getText().toString(), tvClienteFecha.getText().toString(), tvClienteSaldo.getText().toString(), false, false, false, "", "", "", "", "", "", "", "", "");
                     }
                 }else{
                     AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
@@ -115,11 +115,11 @@ public class DatosCliente extends Fragment {
                     dialogo.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if(idTramite!=null){
-                                Fragment fragmentoGenerico = new com.airmovil.profuturo.ti.retencion.gerenteFragmento.Encuesta1();
-                                Gerente gerente = (Gerente) getContext();
-                                gerente.switchEncuesta1(fragmentoGenerico, idTramite,borrar,nombre,numeroDeCuenta,hora);
-                            }
+                            Fragment fragmentoGenerico = new Encuesta1();
+                            Gerente gerente = (Gerente) getContext();
+                            gerente.parametrosDetalle(fragmentoGenerico, Integer.parseInt(Config.ID_TRAMITE),getArguments().getString("nombre"),
+                                    getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"), getArguments().getString("nombreAsesor"), getArguments().getString("cuentaAsesor"), getArguments().getString("sucursalAsesor"), tvClienteNombre.getText().toString(),
+                                    tvClienteNumeroCuenta.getText().toString(), tvClienteNSS.getText().toString(), tvClienteCURP.getText().toString(), tvClienteFecha.getText().toString(), tvClienteSaldo.getText().toString(), false, false, false, "", "", "", "", "", "", "", "", "");
                         }
                     });
                     dialogo.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -130,17 +130,16 @@ public class DatosCliente extends Fragment {
                 }
             }
         });
-
+        // TODO Cancelar el proceso
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         Dialogos.dialogoCancelarProcesoImplicaciones(getContext(), btnCancelar, fragmentManager, getResources().getString(R.string.msj_cancelar_1133), 2);
     }
 
     /**
-     * Se lo llama para crear la jerarquía de vistas asociada con el fragmento.
-     * @param inflater inflacion del xml
-     * @param container contenedor del ml
-     * @param savedInstanceState datos guardados
-     * @return el fragmento declarado DIRECTOR INICIO
+     * @param inflater infla la vista XML
+     * @param container muestra el contenido
+     * @param savedInstanceState guarda los datos en el estado de la instancia
+     * @return la vista con los elemetos del XML y metodos
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -155,7 +154,7 @@ public class DatosCliente extends Fragment {
 
     /**
      * Reciba una llamada cuando se asocia el fragmento con la actividad
-     * @param context
+     * @param context estado actual de la aplicacion
      */
     @Override
     public void onAttach(Context context) {
@@ -166,7 +165,7 @@ public class DatosCliente extends Fragment {
     }
 
     /**
-     * Se implementa este metodo, para generar el regreso con clic nativo de android
+     *Se lo llama cuando se desasocia el fragmento de la actividad.
      */
     @Override
     public void onDetach() {
@@ -175,7 +174,7 @@ public class DatosCliente extends Fragment {
     }
 
     /**
-     * Se utiliza este metodo para el control de la tecla de retroceso
+     * Se implementa este metodo, para generar el regreso con clic nativo de android
      */
     @Override
     public void onResume() {
@@ -187,7 +186,7 @@ public class DatosCliente extends Fragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if(event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    Fragment fragment = new SinCita();
+                    Fragment fragment = new ConCita();
                     Dialogos.dialogoBotonRegresoProcesoImplicaciones(getContext(), fragmentManager, getResources().getString(R.string.msj_regresar_proceso), 2, fragment);
                     return true;
                 }
@@ -199,14 +198,14 @@ public class DatosCliente extends Fragment {
     /**
      * Esta interfaz debe ser implementada por actividades que contengan esta
      * Para permitir que se comunique una interacción en este fragmento
-     * A la actividad y potencialmente otros fragmentos contenidos en esta actividad.
+     * A la actividad y potencialmente otros fragmentos contenidos en esa actividad.
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
 
     /**
-     * Setear las variables de xml
+     * Casteo de variables, nueva instancia para la conexion a internet Connected
      */
     private void variables(){
         tvClienteNombre = (TextView) rootView.findViewById(R.id.gfda_tv_nombre_cliente);
@@ -218,60 +217,64 @@ public class DatosCliente extends Fragment {
         btnContinuar = (Button) rootView.findViewById(R.id.gfda_btn_continuar);
         btnCancelar = (Button) rootView.findViewById(R.id.gfda_btn_cancelar);
         connected = new Connected();
-        usuario = Config.usuario(getContext());
     }
 
     /**
-     * Se utiliza para cololar datos recibidos entre una busqueda(por ejemplo: fechas)
+     *  metodo para callback de volley
      */
-    private void argumentos(){
-        if(getArguments()!=null) {
-            nombre = getArguments().getString("nombre");
-            numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-            hora = getArguments().getString("hora");
-        }
+    void initVolleyCallback() {
+        mResultCallback = new IResult() {
+            @Override
+            public void notifySuccess(String requestType, JSONObject response) {
+                loading.dismiss();
+                primerPaso(response);
+            }
+            @Override
+            public void notifyError(String requestType, VolleyError error) {
+                loading.dismiss();
+                if(connected.estaConectado(getContext())){
+                    Dialogos.dialogoErrorServicio(getContext());
+                    Log.e("conexion", "dialogoErrorServicio");
+                }else{
+                    Dialogos.dialogoErrorConexion(getContext());
+                    Log.e("conexion", "dialogoErrorConexion");
+                }
+            }
+        };
     }
 
     /**
-     * Envio de datos por REST jsonObject
-     * @param primerPeticion valida que el proceso sea true
+     * Método para generar el proceso REST
+     * @param primerPeticion identifica si el metodo será procesado, debe llegar en true
      */
     private void sendJson(final boolean primerPeticion) {
         if (primerPeticion)
-            loading = ProgressDialog.show(getActivity(), "Cargando datos", "Por favor espere un momento...", false, false);
+            loading = ProgressDialog.show(getActivity(), getResources().getString(R.string.titulo_carga_datos), getResources().getString(R.string.msj_carga_datos), false, false);
         else
             loading = null;
-
         JSONObject obj = new JSONObject();
-        nombre = getArguments().getString("nombre");
-        numeroDeCuenta = getArguments().getString("numeroDeCuenta");
-        hora = getArguments().getString("hora");
         try {
-            // TODO: Formacion del JSON request
-            JSONObject rqt = new JSONObject();
-            rqt.put("estatusTramite", 1133);
-            rqt.put("numeroCuenta", numeroDeCuenta);
-            rqt.put("usuario", Config.usuarioCusp(getContext()));
-            obj.put("rqt", rqt);
-            Log.d(TAG, "Primera peticion-->" + obj);
+            if(getArguments()!=null){
+                JSONObject rqt = new JSONObject();
+                rqt.put("estatusTramite", 1133);
+                rqt.put("numeroCuenta", getArguments().getString("numeroCuenta"));
+                rqt.put("usuario", Config.usuarioCusp(getContext()));
+                obj.put("rqt", rqt);
+            }
+            Log.d(TAG, "<- RQT ->" + obj);
         } catch (JSONException e) {
-            Dialogos.msj(getContext(),"Error json","Lo sentimos ocurrio un error al formar los datos.");
+            Dialogos.dialogoErrorDatos(getContext());
         }
         volleySingleton.postDataVolley("primerPaso", Config.URL_CUNSULTAR_DATOS_CLIENTE, obj);
     }
 
     /**
-     * @param obj recibe el obj json de la peticion
+     * Inicia este metodo para llenar la lista de elementos, cada 10, inicia solamente con 10, despues inicia el metodo segundoPaso
+     * @param obj jsonObject
      */
     private void primerPaso(JSONObject obj){
-        Log.d(TAG, "response--->" + obj);
-        String status = "";
-        String statusText = "";
-        String nombre = "";
-        String cuenta = "";
-        String nss = "";
-        String curp = "";
-        String fechaConsulta = "";
+        Log.d(TAG, "<- RESPONSE ->" + obj);
+        String status = "", statusText = "", nombre = "", cuenta = "", nss = "", curp = "", fechaConsulta = "";
         Double saldo;
         try{
             status = obj.getString("status");
@@ -279,11 +282,10 @@ public class DatosCliente extends Fragment {
             idTramite = obj.getString("idTramite");
             if(Integer.parseInt(status) == 200){
                 JSONObject jsonCliente = obj.getJSONObject("cliente");
-                Log.d(TAG, "--> JSON CLIENTE " + jsonCliente);
                 nombre = jsonCliente.getString("nombre");
                 cuenta = jsonCliente.getString("numeroCuenta");
-                nss    = jsonCliente.getString("nss");
-                curp   = jsonCliente.getString("curp");
+                nss = jsonCliente.getString("nss");
+                curp = jsonCliente.getString("curp");
                 fechaConsulta = jsonCliente.getString("fechaConsulta");
                 saldo = jsonCliente.getDouble("saldo");
                 tvClienteNombre.setText("" + nombre);
@@ -293,11 +295,12 @@ public class DatosCliente extends Fragment {
                 tvClienteFecha.setText("" + fechaConsulta);
                 tvClienteSaldo.setText("" + Config.nf.format(saldo));
             }else{
-                Dialogos.dialogoErrorDatos(getContext());
+                Dialogos.dialogoErrorRespuesta(getContext(), status, statusText);
             }
         }catch (JSONException e){
             e.printStackTrace();
         }
-    }
 
+        Config.ID_TRAMITE = idTramite;
+    }
 }

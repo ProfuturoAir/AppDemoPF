@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorWhite"
-    tools:context="com.airmovil.profuturo.ti.retencion.gerenteFragmento.DatosCliente">
+    tools:context="com.airmovil.profuturo.ti.retencion.asesorFragmento.DatosCliente">
     <!-- TODO: Contenido general -->
     <LinearLayout style="@style/contenedorGeneralVertical">
         <!-- TODO: Titulo datos del asesor -->

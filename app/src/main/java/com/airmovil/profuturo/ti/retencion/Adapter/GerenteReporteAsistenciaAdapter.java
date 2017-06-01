@@ -104,7 +104,7 @@ public class GerenteReporteAsistenciaAdapter extends RecyclerView.Adapter {
         if (holder instanceof MyViewHolder) {
             final GerenteReporteAsistenciaModel lista = list.get(position);
             final MyViewHolder myholder = (MyViewHolder) holder;
-            myholder.campoLetra.setText(String.valueOf(String.valueOf(lista.getnEmpleado()).charAt(0)));
+            myholder.campoLetra.setText(String.valueOf(String.valueOf(lista.getNombre()).charAt(0)));
             myholder.campoNombreAsesor.setText("Asesor: " + lista.getNombre());
             myholder.campoNumeroCuentaAsesor.setText("Sucursal: " + lista.getIdSucursal());
             myholder.campoSucursalAsesor.setText("Numero de empleado: " + lista.getnEmpleado());
