@@ -80,14 +80,11 @@ public class Director extends AppCompatActivity implements NetworkStateReceiver.
         volleySingleton = VolleySingleton.getInstance(mResultCallback, getApplicationContext());
         volleySingleton.getDataVolley("Gerencias", Config.URL_GERENCIAS);
         volleySingleton.getDataVolley("Sucursales", Config.URL_SUCURSALES);
-
         // TODO: Listener para verificar conexion a internet
         networkStateReceiver = new NetworkStateReceiver();
         networkStateReceiver.addListener(this);
         this.registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
     }
-
-
 
     /**
      *  metodo para callback de volley

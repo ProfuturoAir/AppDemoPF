@@ -16,6 +16,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,6 +30,8 @@ import com.airmovil.profuturo.ti.retencion.helper.IResult;
 import com.airmovil.profuturo.ti.retencion.helper.SQLiteHandler;
 import com.airmovil.profuturo.ti.retencion.helper.Signature;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
+import com.android.volley.NetworkResponse;
+import com.android.volley.VolleyError;
 import com.kyanogen.signatureview.SignatureView;
 
 import org.json.JSONException;
@@ -74,6 +77,8 @@ public class Firma extends Fragment{
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
+        // TODO: metodo para callback de volley
+        initVolleyCallback();
         // TODO: llama clase singleton volley
         volleySingleton = VolleySingleton.getInstance(mResultCallback, view.getContext());
         btnGuardar = (Button) view.findViewById(R.id.aff_btn_guardar);
@@ -84,6 +89,9 @@ public class Firma extends Fragment{
 
         variables();
         argumentos();
+
+        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(getContext().INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
 
 
         btnFirmar.setOnClickListener(new View.OnClickListener() {
@@ -101,7 +109,6 @@ public class Firma extends Fragment{
         });
 
         if(getArguments()!=null){
-            //idTramite = getArguments().getString("idTramite");
             nombre = getArguments().getString("nombre");
             numeroDeCuenta = getArguments().getString("numeroDeCuenta");
             hora = getArguments().getString("hora");
@@ -164,14 +171,10 @@ public class Firma extends Fragment{
                 }
             }
         });
-
-        // TODO: Buton cancelar porceso de img_firma
         // TODO Cancelar el proceso
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         Dialogos.dialogoCancelarProcesoImplicaciones(getContext(), btnCancelar, fragmentManager, getResources().getString(R.string.msj_cancelar_1137), 1);
     }
-
-
 
     /**
      * Se lo llama para crear la jerarquía de vistas asociada con el fragmento.
@@ -244,6 +247,39 @@ public class Firma extends Fragment{
                 return false;
             }
         });
+    }
+
+    /**
+     *  metodo para callback de volley
+     */
+    void initVolleyCallback() {
+        mResultCallback = new IResult() {
+            @Override
+            public void notifySuccess(String requestType, JSONObject response) {
+                loading.dismiss();
+                primerPaso(response);
+            }
+            @Override
+            public void notifyError(String requestType, VolleyError error) {
+                loading.dismiss();
+                if(Config.conexion(getContext())){
+                    Dialogos.dialogoErrorServicio(getContext());
+                    Log.e("conexion", "dialogoErrorServicio");
+                }else{
+                    Dialogos.dialogoErrorConexion(getContext());
+                    Log.e("conexion", "dialogoErrorConexion");
+                }
+                NetworkResponse networkResponse = error.networkResponse;
+
+                /*
+                Log.e("red", "*->" + networkResponse);
+                if(networkResponse == null){
+                    loading.dismiss();
+                }else{
+                    Log.e("ok", "++ ");
+                }*/
+            }
+        };
     }
 
     private void variables(){
@@ -335,5 +371,13 @@ public class Firma extends Fragment{
             Config.msj(getContext(), "Error", "Error al formar los datos");
         }
         volleySingleton.postDataVolley("primerPaso", Config.URL_ENVIAR_FIRMA, obj);
+    }
+
+    /**
+     * Corre este metodo cuando hay mas de 10 contenido a mostrar en la lista
+     * @param obj objeto json
+     */
+    private void primerPaso(JSONObject obj){
+        Log.e("primerPaso", obj.toString());
     }
 }

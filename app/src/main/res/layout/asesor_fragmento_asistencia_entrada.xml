@@ -3,31 +3,34 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
-
     <LinearLayout
-        android:id="@+id/mensaje_ok"
+        android:id="@+id/mensaje_ok1"
         android:layout_width="match_parent"
         android:layout_height="650dp"
         android:orientation="vertical"
         android:layout_weight="1"
         android:background="@color/colorWhite"
-        android:gravity="center"
+        android:gravity="center_vertical"
         android:visibility="gone">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Se ha registrado firma del día de hoy"
-            android:textSize="45dp"
+            android:text="Se ha registrado la firma del día de hoy"
+            android:textSize="25dp"
             android:textStyle="bold"/>
-
+        <TextView
+            android:id="@+id/tv_fecha_hoy1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="24dp"
+            android:textStyle="bold"/>
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:src="@drawable/img_firma"/>
-
     </LinearLayout>
-
     <com.airmovil.profuturo.ti.retencion.helper.DrawingView
         android:id="@+id/drawinView1"
         android:layout_width="match_parent"
@@ -36,11 +39,8 @@
         android:background="@android:color/white"
         android:gravity="center_vertical|center_horizontal"
         android:visibility="visible">
-
     </com.airmovil.profuturo.ti.retencion.helper.DrawingView>
-
     <Button android:id="@+id/buttonLimpiar1" style="@style/btnLimpiar"/>
     <Button android:id="@+id/buttonGuardar1" style="@style/btnGuardar" />
     <Button android:id="@+id/buttonCancelar1" style="@style/btnCancelar" />
-
 </LinearLayout>

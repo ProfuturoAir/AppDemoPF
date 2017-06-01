@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -441,7 +440,7 @@ public class Escaner extends Fragment {
         String status = "";
         try{
             status = obj.getString("status");
-            if(connected.estaConectado(getContext())){
+            if(Config.conexion(getContext())){
                 if(Integer.parseInt(status) == 200){
                     android.support.v7.app.AlertDialog.Builder dialogo1 = new android.support.v7.app.AlertDialog.Builder(getContext());
                     dialogo1.setTitle("Datos correctos");

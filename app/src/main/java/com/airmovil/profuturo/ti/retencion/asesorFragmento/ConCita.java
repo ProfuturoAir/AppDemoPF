@@ -287,16 +287,19 @@ public class ConCita extends Fragment {
             }
             @Override
             public void notifyError(String requestType, VolleyError error) {
-                /*if(connected.estaConectado(getContext())){
+                /*loading.dismiss();
+                Log.e("volleyError", "--> " + error);
+                if(Config.conexion(getContext())){
                     Dialogos.dialogoErrorServicio(getContext());
+                    Log.e("conexion", "dialogoErrorServicio");
                 }else{
                     Dialogos.dialogoErrorConexion(getContext());
+                    Log.e("conexion", "dialogoErrorConexion");
                 }*/
-
+                loading.dismiss();
                 NetworkResponse networkResponse = error.networkResponse;
                 Log.e(TAG, "*->" + networkResponse);
                 if(networkResponse == null){
-                    loading.dismiss();
                     Dialogos.dialogoErrorConexion(getContext());
                 }
             }

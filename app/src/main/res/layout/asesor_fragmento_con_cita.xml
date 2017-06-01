@@ -80,4 +80,5 @@
             android:dividerHeight="0dp"
             android:text="hello_world" />
     </LinearLayout>
+
 </LinearLayout>

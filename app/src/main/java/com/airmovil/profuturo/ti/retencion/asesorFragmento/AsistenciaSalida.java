@@ -13,6 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
@@ -29,6 +32,7 @@ import java.text.FieldPosition;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 public class AsistenciaSalida extends Fragment {
     private DrawingView dvFirma;
@@ -38,6 +42,10 @@ public class AsistenciaSalida extends Fragment {
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
     private GPSRastreador gps;
+    private MySharePreferences mySharePreferences;
+    private LinearLayout linearLayout;
+    private TextView textViewFecha;
+
 
     public AsistenciaSalida() {/*contructor vacio requerido*/}
 
@@ -66,6 +74,8 @@ public class AsistenciaSalida extends Fragment {
         btnLimpiar = (Button) rootView.findViewById(R.id.buttonLimpiar4);
         btnGuardar = (Button) rootView.findViewById(R.id.buttonGuardar4);
         btnCancelar = (Button) rootView.findViewById(R.id.buttonCancelar4);
+        linearLayout = (LinearLayout) rootView.findViewById(R.id.mensaje_ok4);
+        textViewFecha = (TextView) rootView.findViewById(R.id.tv_fecha_hoy4);
         dvFirma = (DrawingView) view.findViewById(R.id.drawinView4);
         dvFirma.setBrushSize(5);
         dvFirma.setColor("#000000");
@@ -98,13 +108,12 @@ public class AsistenciaSalida extends Fragment {
             }
         });
 
-        int visible = (new MySharePreferences(getContext()).yaRegistro("salida","01/04/2013"))? View.INVISIBLE: View.VISIBLE;
-        btnGuardar.setVisibility(visible);
-        btnCancelar.setVisibility(visible);
-        btnLimpiar.setVisibility(visible);
-        if(visible == 4){
-            Dialogos.dialogoYaRegistro(getContext(),"Salida"," Ya ha registrado su salida");
-        }
+        mySharePreferences = MySharePreferences.getInstance(getContext());
+        HashMap<String,String> datosFirmas = mySharePreferences.registrosFirmas();
+        boolean verificacionFecha = Config.comparacionFechaActual(Dialogos.fechaActual(), datosFirmas.get(MySharePreferences.FECHA_SALIDA));
+        if(verificacionFecha)
+            Config.mensajeRegistro(getContext(), linearLayout, textViewFecha, btnLimpiar, btnGuardar, btnCancelar, dvFirma);
+
 
         btnGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -273,11 +282,8 @@ public class AsistenciaSalida extends Fragment {
             String statusText = obj.getString("statusText");
             if(Integer.parseInt(status) == 200){
                 Dialogos.msj(getContext(), "Envio correcto", "Se ha registrado, la salida.\nFecha:" + Dialogos.fechaActual()+ " \nhora: " + Config.getHoraActual());
-                new MySharePreferences(getContext()).registrar("salida",Dialogos.fechaActual());
-                int visible = (new MySharePreferences(getContext()).yaRegistro("salida","01/04/2013"))? View.INVISIBLE: View.VISIBLE;
-                btnGuardar.setVisibility(visible);
-                btnCancelar.setVisibility(visible);
-                btnLimpiar.setVisibility(visible);
+                Config.mensajeRegistro(getContext(), linearLayout, textViewFecha, btnLimpiar, btnGuardar, btnCancelar, dvFirma);
+                mySharePreferences.setFechaRegistro(4, Dialogos.fechaActual());
             }else{
                 Dialogos.dialogoErrorRespuesta(getContext(),status, statusText);
             }

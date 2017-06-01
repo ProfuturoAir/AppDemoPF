@@ -14,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+
 import com.airmovil.profuturo.ti.retencion.Adapter.EnviarPendientesAdapter;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Connected;
@@ -37,6 +39,7 @@ public class ProcesoImplicacionesPendientes extends Fragment {
     private Button btnEnviarPendientes;
     private List<EnviosPendientesModel> getDatos1;
     private SQLiteHandler db;
+    private TextView tvMensaje, tvResultados;
 
     public ProcesoImplicacionesPendientes() {/* constructor vacio es requerido*/}
 
@@ -76,9 +79,10 @@ public class ProcesoImplicacionesPendientes extends Fragment {
         // TODO: Casteo
         rootView = view;
         btnEnviarPendientes = (Button) rootView.findViewById(R.id.afcc_btn_enviar_pendientes);
+        tvMensaje = (TextView) rootView.findViewById(R.id.tv_mensaje1);
+        tvResultados = (TextView) rootView.findViewById(R.id.afpip_tv_registros);
         // TODO: modelos
         Cursor todos = db.getAllPending();
-        Log.d("HOLA","TODOS: "+todos);
         // TODO: Recycler
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_pendientes_envio);
         recyclerView.setHasFixedSize(true);
@@ -97,13 +101,24 @@ public class ProcesoImplicacionesPendientes extends Fragment {
         } finally {
             todos.close();
         }
-        Connected connected = new Connected();
-        final EnviaJSON enviaPrevio = new EnviaJSON();
         adapter = new EnviarPendientesAdapter(rootView.getContext(), getDatos1, recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
-        if(getDatos1.size() < 1)
+        if(getDatos1.size() < 1) {
+            btnEnviarPendientes.setTextColor(getResources().getColor(android.R.color.background_dark));
+            btnEnviarPendientes.setBackgroundColor(getResources().getColor(R.color.colorPrimaryGray));
+            tvMensaje.setVisibility(View.VISIBLE);
             return;
+        }
+
+        int cantidad = getDatos1.size();
+        if(cantidad!=0)
+            tvResultados.setText(cantidad + " Resultados");
+        else if(cantidad == 1)
+            tvResultados.setText(cantidad + " Resultado");
+        else
+            tvResultados.setText("");
+
         btnEnviarPendientes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

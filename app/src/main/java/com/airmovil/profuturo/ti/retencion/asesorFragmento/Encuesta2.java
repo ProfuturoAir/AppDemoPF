@@ -102,7 +102,6 @@ public class Encuesta2 extends Fragment {
         variables();
 
         if(getArguments()!=null){
-
             nombre = getArguments().getString("nombre");
             numeroDeCuenta = getArguments().getString("numeroDeCuenta");
             hora = getArguments().getString("hora");
@@ -111,7 +110,6 @@ public class Encuesta2 extends Fragment {
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 boolean val = (Config.verificarEmail(etEmail.getText().toString())) ? true : false;
                 iParam1IdGerencia = spinnerAfores.getSelectedItemPosition();
                 iParam2IdMotivos = spinnerMotivos.getSelectedItemPosition();
@@ -255,10 +253,13 @@ public class Encuesta2 extends Fragment {
 
             @Override
             public void notifyError(String requestType, VolleyError error) {
+                loading.dismiss();
                 if(connected.estaConectado(getContext())){
                     Dialogos.dialogoErrorServicio(getContext());
+                    Log.e("conexion", "dialogoErrorServicio");
                 }else{
                     Dialogos.dialogoErrorConexion(getContext());
+                    Log.e("conexion", "dialogoErrorConexion");
                 }
             }
         };

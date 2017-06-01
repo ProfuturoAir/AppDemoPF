@@ -11,8 +11,12 @@ import android.location.LocationManager;
 import android.provider.Settings;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Base64;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
 import java.text.DecimalFormat;
@@ -499,8 +503,6 @@ public class Config extends Activity {
         try{
             Date date1 = sdf.parse(fechaInicio);
             Date date2 = sdf.parse(fechaFinal);
-            Log.e("Config", "fecha 1 : " + sdf.format(date1));
-            Log.e("Config", "fecha 2 : " + sdf.format(date2));
             Calendar cal1 = Calendar.getInstance();
             Calendar cal2 = Calendar.getInstance();
             cal1.setTime(date1);
@@ -519,6 +521,50 @@ public class Config extends Activity {
             e.printStackTrace();
         }
         return validar;
+    }
+
+    /**
+     * @param fecha1 fecha del sistema
+     * @param fecha2 fecha almacenada cuando se hace el registro de la firma
+     * @return un boolenao para verificar si hay fecha de registro
+     */
+    public static boolean comparacionFechaActual(String fecha1, String fecha2){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        boolean validar = false;
+        try{
+            Date date1 = sdf.parse(fecha1);
+            Date date2 = sdf.parse(fecha2);
+
+            Calendar calendar1 = Calendar.getInstance();
+            Calendar calendar2 = Calendar.getInstance();
+
+            calendar1.setTime(date1);
+            calendar2.setTime(date2);
+
+            if(calendar1.equals(calendar2)){
+                validar = true;
+            }else{
+                validar = false;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return validar;
+    }
+
+    public static void mensajeRegistro(Context context, LinearLayout linearLayout, TextView textView,  Button button1, Button button2, Button button3, DrawingView drawingView){
+        linearLayout.setVisibility(View.VISIBLE);
+        textView.setText("Fecha: " + Dialogos.fechaActual());
+        drawingView.setVisibility(View.GONE);
+        button1.setTextColor(context.getResources().getColor(android.R.color.background_dark));
+        button1.setBackgroundColor(context.getResources().getColor(R.color.colorSecundaryGray));
+        button1.setEnabled(false);
+        button2.setTextColor(context.getResources().getColor(android.R.color.background_dark));
+        button2.setBackgroundColor(context.getResources().getColor(R.color.colorSecundaryGray));
+        button2.setEnabled(false);
+        button3.setTextColor(context.getResources().getColor(android.R.color.background_dark));
+        button3.setBackgroundColor(context.getResources().getColor(R.color.colorSecundaryGray));
+        button3.setEnabled(false);
     }
 
 }

@@ -3,21 +3,34 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
-
-    <TextView
-        android:textColor="@color/colorWhite"
-        android:id="@+id/textViewLogintud3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="texto1"/>
-
-    <TextView
-        android:textColor="@color/colorWhite"
-        android:id="@+id/textViewLatitud3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="texto2" />
-
+    <LinearLayout
+        android:id="@+id/mensaje_ok3"
+        android:layout_width="match_parent"
+        android:layout_height="650dp"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:background="@color/colorWhite"
+        android:gravity="center_vertical"
+        android:visibility="gone">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Se ha registrado la firma del día de hoy"
+            android:textSize="25dp"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/tv_fecha_hoy3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="24dp"
+            android:textStyle="bold"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/img_firma"/>
+    </LinearLayout>
     <com.airmovil.profuturo.ti.retencion.helper.DrawingView
         android:id="@+id/drawinView3"
         android:layout_width="match_parent"
@@ -26,11 +39,8 @@
         android:background="@android:color/white"
         android:gravity="center_vertical|center_horizontal"
         android:visibility="visible">
-
     </com.airmovil.profuturo.ti.retencion.helper.DrawingView>
-
     <Button android:id="@+id/buttonLimpiar3" style="@style/btnLimpiar"/>
     <Button android:id="@+id/buttonGuardar3" style="@style/btnGuardar" />
     <Button android:id="@+id/buttonCancelar3" style="@style/btnCancelar" />
-
 </LinearLayout>

@@ -5,23 +5,42 @@
     android:background="@color/colorWhite"
     android:orientation="vertical"
     tools:context="com.airmovil.profuturo.ti.retencion.asesorFragmento.ProcesoImplicacionesPendientes">
-
-    <TextView style="@style/tituloProceso" android:text="@string/texto_envios_pendientes" />
-
-    <LinearLayout style="@style/contenedorFiltros2">
-        <Button android:id="@+id/afcc_btn_enviar_pendientes" style="@style/btnEnviarPendientes"/>
-    </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal">
+        <TextView style="@style/tituloProceso" android:layout_weight="1" android:layout_height="match_parent" android:gravity="center_vertical" android:text="@string/texto_envios_pendientes" />
+        <Button android:id="@+id/afcc_btn_enviar_pendientes" style="@style/btnEnviarPendientes" android:layout_marginRight="10dp"/>
+    </LinearLayout>
+    <LinearLayout style="@style/cabeceraLista">
+        <TextView android:text="Clientes pendientes" style="@style/campoClientes"/>
+        <TextView android:id="@+id/afpip_tv_registros" style="@style/campoCantidades"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview_pendientes_envio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:divider="@null"
-            android:dividerHeight="0dp"
-            android:text="hello_world" />
+            android:divider="@null"/>
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/mensaje_pendientes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:gravity="center">
 
+        <TextView
+            android:id="@+id/tv_mensaje1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:text="No hay elementos pendiente, por enviar"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:visibility="gone"/>
+    </LinearLayout>
 </LinearLayout>

@@ -229,10 +229,13 @@ public class DatosCliente extends Fragment {
             }
             @Override
             public void notifyError(String requestType, VolleyError error) {
+                loading.dismiss();
                 if(connected.estaConectado(getContext())){
                     Dialogos.dialogoErrorServicio(getContext());
+                    Log.e("conexion", "dialogoErrorServicio");
                 }else{
                     Dialogos.dialogoErrorConexion(getContext());
+                    Log.e("conexion", "dialogoErrorConexion");
                 }
             }
         };

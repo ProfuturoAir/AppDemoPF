@@ -72,7 +72,7 @@
             android:inputType="textAutoCorrect"
             android:padding="10dp"
             android:gravity="top"
-            android:textColorHint="@color/colorPrimaryDark"
+            android:textColor="@color/colorPrimaryDark"
             android:background="@color/colorGreyDark"
             android:hint="@string/hint_ingresa_contenido"/>
 

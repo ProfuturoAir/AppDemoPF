@@ -28,6 +28,10 @@ public class MySharePreferences {
     public static final String ROL_EMPLEADO = "rolEmpleado";
     public static final String PERFIL = "perfil";
     public static final String CUSP = "cusp";
+    public static final String FECHA_ENTRADA  = "entrada";
+    public static final String FECHA_SALIDA_COMIDA = "comidaSalida";
+    public static final String FECHA_ENTRADA_COMIDA = "comidaEntrada";
+    public static final String FECHA_SALIDA = "salida";
     private static MySharePreferences sharePref = null;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -165,6 +169,34 @@ public class MySharePreferences {
     public void registrar(String llave,String valor){
         editor.putString(llave,valor);
         editor.commit();
+    }
+
+    public void setFechaRegistro(int apartado, String fecha) {
+        switch (apartado){
+            case 1:
+                editor.putString(FECHA_ENTRADA, fecha);
+                break;
+            case 2:
+                editor.putString(FECHA_SALIDA_COMIDA, fecha);
+                break;
+            case 3:
+                editor.putString(FECHA_ENTRADA_COMIDA, fecha);
+                break;
+            case 4:
+                editor.putString(FECHA_SALIDA, fecha);
+                break;
+        }
+        editor.commit();
+    }
+
+    public HashMap<String, String> registrosFirmas(){
+        HashMap<String, String> firmas = new HashMap<>();
+        firmas.put(CAT, sharedPreferences.getString(CAT,null));
+        firmas.put(FECHA_ENTRADA,  sharedPreferences.getString(FECHA_ENTRADA, null));
+        firmas.put(FECHA_SALIDA_COMIDA,  sharedPreferences.getString(FECHA_SALIDA_COMIDA, null));
+        firmas.put(FECHA_ENTRADA_COMIDA,  sharedPreferences.getString(FECHA_ENTRADA_COMIDA, null));
+        firmas.put(FECHA_SALIDA,  sharedPreferences.getString(FECHA_SALIDA, null));
+        return firmas;
     }
 }
 

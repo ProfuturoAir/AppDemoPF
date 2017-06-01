@@ -88,8 +88,8 @@ public class Signature {
                 if(isSignatured){
                     final Bitmap b = Bitmap.createBitmap(content.getDrawingCache());
                     android.app.AlertDialog.Builder dialog1 = new android.app.AlertDialog.Builder(v.getContext());
-                    dialog1.setTitle("Confirmación de img_firma");
-                    dialog1.setMessage("¿Estas de acuerdo que es la img_firma correcta ?");
+                    dialog1.setTitle("Confirmación de firma");
+                    dialog1.setMessage("¿Estás de acuerdo que es la firma correcta?");
                     dialog1.setCancelable(true);
                     dialog1.setPositiveButton("SI", new DialogInterface.OnClickListener() {
                         @Override

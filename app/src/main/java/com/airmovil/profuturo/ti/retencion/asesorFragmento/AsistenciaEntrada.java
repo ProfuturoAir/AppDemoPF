@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
@@ -30,6 +31,8 @@ import com.kyanogen.signatureview.SignatureView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
 public class AsistenciaEntrada extends Fragment{
     private DrawingView dvFirma;
     private Button btnLimpiar, btnGuardar, btnCancelar;
@@ -38,7 +41,9 @@ public class AsistenciaEntrada extends Fragment{
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
     private GPSRastreador gps;
-    private boolean registro = false;
+    private MySharePreferences mySharePreferences;
+    private LinearLayout linearLayout;
+    private TextView textViewFecha;
 
     public AsistenciaEntrada() {/*constructor vacio requerido*/}
 
@@ -66,6 +71,9 @@ public class AsistenciaEntrada extends Fragment{
         btnLimpiar = (Button) rootView.findViewById(R.id.buttonLimpiar1);
         btnGuardar = (Button) rootView.findViewById(R.id.buttonGuardar1);
         btnCancelar = (Button) rootView.findViewById(R.id.buttonCancelar1);
+        linearLayout = (LinearLayout) rootView.findViewById(R.id.mensaje_ok1);
+        textViewFecha = (TextView) rootView.findViewById(R.id.tv_fecha_hoy1);
+
         // TODO: Clase para obtener las coordenadas
         gps = new GPSRastreador(getContext());
         dvFirma = (DrawingView) view.findViewById(R.id.drawinView1);
@@ -82,13 +90,11 @@ public class AsistenciaEntrada extends Fragment{
             }
         });
 
-        //int visible = (new MySharePreferences(getContext()).yaRegistro("entrada","01/04/2013"))? View.INVISIBLE: View.VISIBLE;
-        //btnGuardar.setBackgroundColor(Color.BLACK);
-        //btnCancelar.setVisibility(visible);
-        //btnLimpiar.setVisibility(visible);
-        //if(visible == 4){
-            // Dialogos.dialogoYaRegistro(getContext(),"Entrada"," Ya ha registrado su entrada");
-        //}
+        mySharePreferences = MySharePreferences.getInstance(getContext());
+        HashMap<String,String> datosFirmas = mySharePreferences.registrosFirmas();
+        boolean verificacionFecha = Config.comparacionFechaActual(Dialogos.fechaActual(), datosFirmas.get(MySharePreferences.FECHA_ENTRADA));
+        if(verificacionFecha)
+            Config.mensajeRegistro(getContext(), linearLayout, textViewFecha, btnLimpiar, btnGuardar, btnCancelar, dvFirma);
 
         btnGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -243,16 +249,9 @@ public class AsistenciaEntrada extends Fragment{
             String status = obj.getString("status");
             String statusText = obj.getString("statusText");
             if(Integer.parseInt(status) == 200){
-                Dialogos.msj(getContext(), "Envio correcto", "Se ha registrado, la entrada de hoy \nFecha:" + Dialogos.fechaActual() + " \nhora: " +Config.getHoraActual());
-                new MySharePreferences(getContext()).registrar("entrada",Dialogos.fechaActual());
-                LinearLayout mensaje = (LinearLayout) rootView.findViewById(R.id.mensaje_ok);
-                mensaje.setVisibility(View.VISIBLE);
-                dvFirma.setVisibility(View.GONE );
-                btnLimpiar.setTextColor(getResources().getColor(R.color.colorAccent));
-                btnLimpiar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-                btnLimpiar.setEnabled(false);
-                btnGuardar.setEnabled(false);
-                btnCancelar.setEnabled(false);
+                Dialogos.msj(getContext(), "Envio correcto", "Se ha registrado, la entrada de hoy \nFecha: " + Dialogos.fechaActual() + " \nhora: " +Config.getHoraActual());
+                Config.mensajeRegistro(getContext(), linearLayout, textViewFecha, btnLimpiar, btnGuardar, btnCancelar, dvFirma);
+                mySharePreferences.setFechaRegistro(1, Dialogos.fechaActual());
             }else{
                 Dialogos.dialogoErrorRespuesta(getContext(),status, statusText);
             }

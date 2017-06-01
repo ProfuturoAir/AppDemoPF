@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.airmovil.profuturo.ti.retencion.R;
 import com.airmovil.profuturo.ti.retencion.helper.Config;
@@ -26,6 +27,8 @@ import com.android.volley.VolleyError;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
 public class AsistenciaComidaSalida extends Fragment{
     private DrawingView dvFirma;
     private TextView tvLongitud, tvLatitud;
@@ -35,6 +38,9 @@ public class AsistenciaComidaSalida extends Fragment{
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
     private GPSRastreador gps;
+    private MySharePreferences mySharePreferences;
+    private LinearLayout linearLayout;
+    private TextView textViewFecha;
 
     public AsistenciaComidaSalida() {/*contructor vacio es requerido */}
 
@@ -59,17 +65,23 @@ public class AsistenciaComidaSalida extends Fragment{
         rootView = view;
         // TODO: llama clase singleton volley
         volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
-        tvLongitud = (TextView) rootView.findViewById(R.id.textViewLogintud2);
-        tvLatitud = (TextView) rootView.findViewById(R.id.textViewLatitud2);
         btnLimpiar = (Button) rootView.findViewById(R.id.buttonLimpiar2);
         btnGuardar = (Button) rootView.findViewById(R.id.buttonGuardar2);
         btnCancelar = (Button) rootView.findViewById(R.id.buttonCancelar2);
         dvFirma = (DrawingView) view.findViewById(R.id.drawinView2);
+        linearLayout = (LinearLayout) rootView.findViewById(R.id.mensaje_ok2);
+        textViewFecha = (TextView) rootView.findViewById(R.id.tv_fecha_hoy2);
         dvFirma.setBrushSize(5);
         dvFirma.setColor("#000000");
         dvFirma.setFocusable(true);
         // TODO: Clase para obtener las coordenadas
         gps = new GPSRastreador(getContext());
+
+        mySharePreferences = MySharePreferences.getInstance(getContext());
+        HashMap<String,String> datosFirmas = mySharePreferences.registrosFirmas();
+        boolean verificacionFecha = Config.comparacionFechaActual(Dialogos.fechaActual(), datosFirmas.get(MySharePreferences.FECHA_SALIDA_COMIDA));
+        if(verificacionFecha)
+            Config.mensajeRegistro(getContext(), linearLayout, textViewFecha, btnLimpiar, btnGuardar, btnCancelar, dvFirma);
 
         btnLimpiar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,14 +91,6 @@ public class AsistenciaComidaSalida extends Fragment{
                 Dialogos.dialogoContenidoLimpio(getContext());
             }
         });
-
-        int visible = (new MySharePreferences(getContext()).yaRegistro("comidaSalida","01/04/2013"))? View.INVISIBLE: View.VISIBLE;
-        btnGuardar.setVisibility(visible);
-        btnCancelar.setVisibility(visible);
-        btnLimpiar.setVisibility(visible);
-        if(visible == 4){
-            Dialogos.dialogoYaRegistro(getContext(),"Salida Comida"," Ya ha registrado su salida de la comida");
-        }
 
         btnGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -249,11 +253,8 @@ public class AsistenciaComidaSalida extends Fragment{
             String statusText = obj.getString("statusText");
             if(Integer.parseInt(status) == 200){
                 Dialogos.msj(getContext(), "Envio correcto", "Se ha registrado, la salida de comida.\nFecha:" + Dialogos.fechaActual() + " \nhora: " +Config.getHoraActual());
-                new MySharePreferences(getContext()).registrar("comidaSalida",Dialogos.fechaActual());
-                int visible = (new MySharePreferences(getContext()).yaRegistro("comidaSalida","01/04/2013"))? View.INVISIBLE: View.VISIBLE;
-                btnGuardar.setVisibility(visible);
-                btnCancelar.setVisibility(visible);
-                btnLimpiar.setVisibility(visible);
+                Config.mensajeRegistro(getContext(), linearLayout, textViewFecha, btnLimpiar, btnGuardar, btnCancelar, dvFirma);
+                mySharePreferences.setFechaRegistro(2, Dialogos.fechaActual());
             }else{
                 Dialogos.dialogoErrorRespuesta(getContext(),status, statusText);
             }

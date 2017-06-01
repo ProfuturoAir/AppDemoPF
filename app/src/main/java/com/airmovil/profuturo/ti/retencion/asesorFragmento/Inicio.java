@@ -87,15 +87,11 @@ public class Inicio extends Fragment {
             }
             @Override
             public void notifyError(String requestType, VolleyError error) {
-
-
                 NetworkResponse networkResponse = error.networkResponse;
-
                 Log.e(TAG, "*->" + networkResponse);
                 if(networkResponse == null){
                     loading.dismiss();
                 }
-
                 /*if (networkResponse != null) {
                     Log.e("Status code", String.valueOf(networkResponse.statusCode));
                 } else{
