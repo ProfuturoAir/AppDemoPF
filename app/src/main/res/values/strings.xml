@@ -163,5 +163,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="texto_frente">Frente</string>
     <string name="texto_reverso">Reverso</string>
+    <string name="texto_captura">Captura de Identificación</string>
 
 </resources>

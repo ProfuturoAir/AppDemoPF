@@ -137,7 +137,7 @@ public class Firma extends Fragment{
                             if(Config.conexion(getContext())) {
                                 sendJson(true, base64);
                                 loading.dismiss();
-                                Fragment fragmentoGenerico = new Escaner();
+                                Fragment fragmentoGenerico = new IneIfe();
                                 Gerente gerente = (Gerente) getContext();
                                 gerente.parametrosDetalle(fragmentoGenerico,0,getArguments().getString("nombre"), getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"), "", "", "", "", "", "", "", "", "", false, false, false, "", "", "", "", "", "", "", "", "");
                             }else{
@@ -150,7 +150,7 @@ public class Firma extends Fragment{
                                     public void onClick(DialogInterface dialog, int which) {
                                         db.addFirma(Config.ID_TRAMITE,1137,base64,gps.getLatitude(),gps.getLongitude());
                                         db.addIDTramite(Config.ID_TRAMITE,getArguments().getString("nombre"), getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"));
-                                        Fragment fragmentoGenerico = new Escaner();
+                                        Fragment fragmentoGenerico = new IneIfe();
                                         Gerente gerente = (Gerente) getContext();
                                         gerente.parametrosDetalle(fragmentoGenerico,0,getArguments().getString("nombre"), getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"), "", "", "", "", "", "", "", "", "", false, false, false, "", "", "", "", "", "", "", "", "");
                                     }

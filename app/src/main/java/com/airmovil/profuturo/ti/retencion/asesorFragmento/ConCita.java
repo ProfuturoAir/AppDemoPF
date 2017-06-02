@@ -296,11 +296,15 @@ public class ConCita extends Fragment {
                     Dialogos.dialogoErrorConexion(getContext());
                     Log.e("conexion", "dialogoErrorConexion");
                 }*/
-                loading.dismiss();
-                NetworkResponse networkResponse = error.networkResponse;
-                Log.e(TAG, "*->" + networkResponse);
-                if(networkResponse == null){
-                    Dialogos.dialogoErrorConexion(getContext());
+                try{
+                    NetworkResponse networkResponse = error.networkResponse;
+                    Log.e(TAG, "*->" + networkResponse);
+                    loading.dismiss();
+                    if(networkResponse == null){
+                        Dialogos.dialogoErrorConexion(getContext());
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
             }
         };

@@ -20,6 +20,7 @@ import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.Toolbar;
 
 import com.airmovil.profuturo.ti.retencion.gerenteFragmento.ConCita;
+import com.airmovil.profuturo.ti.retencion.gerenteFragmento.IneIfe;
 import com.airmovil.profuturo.ti.retencion.helper.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -301,7 +302,7 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
         }else if(f instanceof Firma){
             global = "1.1.3.7";
             checkProccess = true;
-        }else if(f instanceof Escaner){
+        }else if(f instanceof IneIfe){
             global = "1.1.3.8";
             checkProccess = true;
         }else{
@@ -455,7 +456,7 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
                 else if(f instanceof Encuesta1){global = "1.1.3.4";}
                 else if(f instanceof Encuesta2){global = "1.1.3.5";}
                 else if(f instanceof Firma){global = "1.1.3.7";}
-                else if(f instanceof Escaner){global = "1.1.3.8";}
+                else if(f instanceof IneIfe){global = "1.1.3.8";}
                 checkProccess = false;
                 final Fragment borrar = f;
                 borrar.onDestroy();
@@ -714,7 +715,7 @@ public class Gerente extends AppCompatActivity implements NetworkStateReceiver.N
         Bundle bundle = new Bundle();
         bundle.putInt("idTramite", idTramite);
         bundle.putString("nombre", nombre);
-        bundle.putString("numeroCuenta", numeroCuenta);
+        bundle.putString("numeroDeCuenta", numeroCuenta);
         bundle.putString("hora", hora);
         bundle.putString("nombreAsesor", nombreAsesor);
         bundle.putString("cuentaAsesor", cuentaAsesor);
