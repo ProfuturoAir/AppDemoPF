@@ -572,4 +572,20 @@ public class Config extends Activity {
         button3.setEnabled(false);
     }
 
+    public static void mensajeFaltaAnterior(Context context, LinearLayout linearLayout, TextView textView,  Button button1, Button button2, Button button3, DrawingView drawingView, String string){
+        linearLayout.setVisibility(View.VISIBLE);
+        textView.setText(string);
+        drawingView.setVisibility(View.GONE);
+        button1.setTextColor(context.getResources().getColor(android.R.color.background_dark));
+        button1.setBackgroundColor(context.getResources().getColor(R.color.colorSecundaryGray));
+        button1.setEnabled(false);
+        button2.setTextColor(context.getResources().getColor(android.R.color.background_dark));
+        button2.setBackgroundColor(context.getResources().getColor(R.color.colorSecundaryGray));
+        button2.setEnabled(false);
+        button3.setTextColor(context.getResources().getColor(android.R.color.background_dark));
+        button3.setBackgroundColor(context.getResources().getColor(R.color.colorSecundaryGray));
+        button3.setEnabled(false);
+    }
+
+
 }

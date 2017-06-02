@@ -31,7 +31,7 @@ import java.util.HashMap;
 
 public class AsistenciaComidaSalida extends Fragment{
     private DrawingView dvFirma;
-    private TextView tvLongitud, tvLatitud;
+    private TextView tvMensaje;
     private Button btnLimpiar, btnGuardar, btnCancelar;
     private View rootView;
     private IResult mResultCallback = null;
@@ -71,6 +71,7 @@ public class AsistenciaComidaSalida extends Fragment{
         dvFirma = (DrawingView) view.findViewById(R.id.drawinView2);
         linearLayout = (LinearLayout) rootView.findViewById(R.id.mensaje_ok2);
         textViewFecha = (TextView) rootView.findViewById(R.id.tv_fecha_hoy2);
+        tvMensaje = (TextView) rootView.findViewById(R.id.atextView2);
         dvFirma.setBrushSize(5);
         dvFirma.setColor("#000000");
         dvFirma.setFocusable(true);

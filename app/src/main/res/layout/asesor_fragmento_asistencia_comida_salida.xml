@@ -14,6 +14,7 @@
         android:gravity="center_vertical"
         android:visibility="gone">
         <TextView
+            android:id="@+id/atextView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
