@@ -28,10 +28,10 @@ public class MySharePreferences {
     public static final String ROL_EMPLEADO = "rolEmpleado";
     public static final String PERFIL = "perfil";
     public static final String CUSP = "cusp";
-    public static final String FECHA_ENTRADA  = "entrada";
-    public static final String FECHA_SALIDA_COMIDA = "comidaSalida";
-    public static final String FECHA_ENTRADA_COMIDA = "comidaEntrada";
-    public static final String FECHA_SALIDA = "salida";
+    public static String FECHA_ENTRADA  = "entrada";
+    public static String FECHA_SALIDA_COMIDA = "comidaSalida";
+    public static String FECHA_ENTRADA_COMIDA = "comidaEntrada";
+    public static String FECHA_SALIDA = "salida";
     private static MySharePreferences sharePref = null;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -92,6 +92,11 @@ public class MySharePreferences {
         editor.putString(USER_ID, userId);
         editor.putString(CUSP, cusp);
         editor.commit();
+
+        FECHA_ENTRADA += numeroEmpleado;
+        FECHA_SALIDA += numeroEmpleado;
+        FECHA_ENTRADA_COMIDA += numeroEmpleado;
+        FECHA_SALIDA_COMIDA += numeroEmpleado;
     }
 
     /**
@@ -127,6 +132,8 @@ public class MySharePreferences {
         user.put(PERFIL, sharedPreferences.getString(PERFIL, null));
         user.put(CUSP,  sharedPreferences.getString(CUSP, null));
         return user;
+
+
     }
 
 
@@ -134,6 +141,10 @@ public class MySharePreferences {
      * limpia la sesion
      * */
     public void logoutUser(){
+        FECHA_ENTRADA  = "entrada";
+        FECHA_SALIDA_COMIDA = "comidaSalida";
+        FECHA_ENTRADA_COMIDA = "comidaEntrada";
+        FECHA_SALIDA = "salida";
         editor.putBoolean(KEY_IS_LOGGEDIN, false);
         editor.putString(CAT, null);
         editor.putString(APELLIDO_MATERNO, null);
@@ -149,7 +160,7 @@ public class MySharePreferences {
         editor.putString(USER_ID, null);
         editor.putString(PERFIL, null);
         editor.putString(CUSP, null);
-        editor.clear();
+        //editor.clear();
         editor.commit();
         // Redirige a login
         Intent i = new Intent(context, Login.class);

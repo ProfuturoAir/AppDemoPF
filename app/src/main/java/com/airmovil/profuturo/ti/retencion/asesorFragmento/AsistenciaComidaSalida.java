@@ -79,6 +79,7 @@ public class AsistenciaComidaSalida extends Fragment{
 
         mySharePreferences = MySharePreferences.getInstance(getContext());
         HashMap<String,String> datosFirmas = mySharePreferences.registrosFirmas();
+        Log.e("jma","fecha salida comida-->"+MySharePreferences.FECHA_SALIDA_COMIDA);
         boolean verificacionFecha = Config.comparacionFechaActual(Dialogos.fechaActual(), datosFirmas.get(MySharePreferences.FECHA_SALIDA_COMIDA));
         if(verificacionFecha)
             Config.mensajeRegistro(getContext(), linearLayout, textViewFecha, btnLimpiar, btnGuardar, btnCancelar, dvFirma);

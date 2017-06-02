@@ -110,6 +110,7 @@ public class AsistenciaSalida extends Fragment {
 
         mySharePreferences = MySharePreferences.getInstance(getContext());
         HashMap<String,String> datosFirmas = mySharePreferences.registrosFirmas();
+        Log.e("jma","fecha salida-->"+MySharePreferences.FECHA_SALIDA);
         boolean verificacionFecha = Config.comparacionFechaActual(Dialogos.fechaActual(), datosFirmas.get(MySharePreferences.FECHA_SALIDA));
         if(verificacionFecha)
             Config.mensajeRegistro(getContext(), linearLayout, textViewFecha, btnLimpiar, btnGuardar, btnCancelar, dvFirma);

@@ -3,13 +3,11 @@ package com.airmovil.profuturo.ti.retencion.asesorFragmento;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import com.airmovil.profuturo.ti.retencion.helper.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,10 +21,10 @@ import com.airmovil.profuturo.ti.retencion.helper.Dialogos;
 import com.airmovil.profuturo.ti.retencion.helper.DrawingView;
 import com.airmovil.profuturo.ti.retencion.helper.GPSRastreador;
 import com.airmovil.profuturo.ti.retencion.helper.IResult;
+import com.airmovil.profuturo.ti.retencion.helper.Log;
 import com.airmovil.profuturo.ti.retencion.helper.MySharePreferences;
 import com.airmovil.profuturo.ti.retencion.helper.VolleySingleton;
 import com.android.volley.VolleyError;
-import com.kyanogen.signatureview.SignatureView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -92,6 +90,7 @@ public class AsistenciaEntrada extends Fragment{
 
         mySharePreferences = MySharePreferences.getInstance(getContext());
         HashMap<String,String> datosFirmas = mySharePreferences.registrosFirmas();
+        Log.e("jma","fecha entrada-->"+MySharePreferences.FECHA_ENTRADA);
         boolean verificacionFecha = Config.comparacionFechaActual(Dialogos.fechaActual(), datosFirmas.get(MySharePreferences.FECHA_ENTRADA));
         if(verificacionFecha)
             Config.mensajeRegistro(getContext(), linearLayout, textViewFecha, btnLimpiar, btnGuardar, btnCancelar, dvFirma);
