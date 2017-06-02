@@ -362,7 +362,6 @@ public class IneIfe extends Fragment {
             }
             @Override
             public void notifyError(String requestType, VolleyError error) {
-                loading.dismiss();
                 /*NetworkResponse networkResponse = error.networkResponse;
                 Log.e(TAG, "*->" + networkResponse);
                 if(networkResponse == null){
