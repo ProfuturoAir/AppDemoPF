@@ -44,9 +44,7 @@ public class Escaner extends Fragment {
     private int PHOTO_FILE = 0;
     private int PHOTO_FILE_2 = 0;
     private Button btnCancelar, btnBorrar;
-    private ImageView imageView;
     private Button btnFinalizar;
-    private Connected connected;
     private SQLiteHandler db;
     private Fragment borrar = this;
     private String idTramite, nombre, numeroDeCuenta, hora;
@@ -83,7 +81,6 @@ public class Escaner extends Fragment {
         volleySingleton = VolleySingleton.getInstance(mResultCallback, rootView.getContext());
         btnCancelar= (Button) view.findViewById(R.id.af_btn_cancelar);
         btnFinalizar = (Button) view.findViewById(R.id.af_btn_guardar);
-        connected = new Connected();
 
         // TODO: Clase para obtener las coordenadas
         gps = new GPSRastreador(getContext());
@@ -178,7 +175,8 @@ public class Escaner extends Fragment {
         btnFinalizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(x == 0 && y == 0){
+                sendJson(true, "frente", "reverso");
+                /*if(x == 0 && y == 0){
                     Dialogos.dialogoNoExisteIFE(getContext());
                 }else if(x == 0) {
                     Dialogos.dialogoNoExisteIFEFrente(getContext());
@@ -241,7 +239,8 @@ public class Escaner extends Fragment {
                         public void onClick(DialogInterface dialog, int which) {}
                     });
                     dialogo1.show();
-                }
+
+                }*/
             }
         });
         //</editor-fold>
@@ -375,9 +374,7 @@ public class Escaner extends Fragment {
                 }else{
                     Dialogos.dialogoErrorConexion(getContext());
                 }*/
-
                 NetworkResponse networkResponse = error.networkResponse;
-
                 Log.e("red", "*->" + networkResponse);
                 if(networkResponse == null){
                     loading.dismiss();

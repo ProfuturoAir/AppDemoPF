@@ -28,11 +28,6 @@
             android:textSize="24dp"
             android:textStyle="bold"/>
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:src="@drawable/img_firma"/>
-
     </LinearLayout>
 
     <com.airmovil.profuturo.ti.retencion.helper.DrawingView
