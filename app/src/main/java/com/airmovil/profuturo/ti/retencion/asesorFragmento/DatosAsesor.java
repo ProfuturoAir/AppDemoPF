@@ -75,6 +75,7 @@ public class DatosAsesor extends Fragment {
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e(TAG, "PARAMETROS:  --" + getArguments().getString("nombre") + " -- numC :" + getArguments().getString("numeroDeCuenta") + " hora:: " + getArguments().getString("hora"));
                 Connected connected = new Connected();
                 if(connected.estaConectado(getContext())){
                     Fragment fragmentoGenerico = new DatosCliente();

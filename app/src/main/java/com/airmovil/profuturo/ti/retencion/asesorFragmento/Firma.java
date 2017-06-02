@@ -40,6 +40,7 @@ import org.json.JSONObject;
 
 public class Firma extends Fragment{
     public static final String ARG_PARAM1 = "img_firma";
+    private static final String TAG = Firma.class.getSimpleName();
     private IResult mResultCallback = null;
     private VolleySingleton volleySingleton;
     private ProgressDialog loading;
@@ -136,7 +137,7 @@ public class Firma extends Fragment{
                             if(Config.conexion(getContext())) {
                                 sendJson(true, base64);
                                 loading.dismiss();
-                                Fragment fragmentoGenerico = new Escaner();
+                                Fragment fragmentoGenerico = new IneIfe();
                                 Asesor asesor = (Asesor) getContext();
                                 asesor.parametrosDetalle(fragmentoGenerico,0,getArguments().getString("nombre"), getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"), "", "", "", "", "", "", "", "", "", false, false, false, "", "", "", "", "", "", "", "", "");
                             }else{
@@ -149,7 +150,7 @@ public class Firma extends Fragment{
                                     public void onClick(DialogInterface dialog, int which) {
                                         db.addFirma(Config.ID_TRAMITE,1137,base64,gps.getLatitude(),gps.getLongitude());
                                         db.addIDTramite(Config.ID_TRAMITE,getArguments().getString("nombre"), getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"));
-                                        Fragment fragmentoGenerico = new Escaner();
+                                        Fragment fragmentoGenerico = new IneIfe();
                                         Asesor asesor = (Asesor) getContext();
                                         asesor.parametrosDetalle(fragmentoGenerico,0,getArguments().getString("nombre"), getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"), "", "", "", "", "", "", "", "", "", false, false, false, "", "", "", "", "", "", "", "", "");
                                     }
@@ -378,6 +379,6 @@ public class Firma extends Fragment{
      * @param obj objeto json
      */
     private void primerPaso(JSONObject obj){
-        Log.e("primerPaso", obj.toString());
+        Log.e(TAG, obj.toString());
     }
 }

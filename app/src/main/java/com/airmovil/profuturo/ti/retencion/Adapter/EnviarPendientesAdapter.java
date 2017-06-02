@@ -87,18 +87,9 @@ public class EnviarPendientesAdapter extends RecyclerView.Adapter {
             myholder.campoNombre.setText(lista.getNombreCliente());
             myholder.campoCuenta.setText(lista.getNumeroCuenta());
             myholder.campoHora.setText(lista.getHora());
+            myholder.campoLetra.setText(String.valueOf(String.valueOf(lista.getNombreCliente()).charAt(0)));
 
-            //char nombre = lista.getNombreCliente().charAt(0);
-            //final String pLetra = Character.toString(nombre);
 
-            //myholder.campoLetra.setText(pLetra);
-
-            /*myholder.cardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    fragmentJumpDatosUsuario(pLetra, v,lista.getNombreCliente(),lista.getNumeroCuenta(),lista.getHora());
-                }
-            });*/
 
         } else {
             ((EnviarPendientesAdapter.LoadingViewHolder) holder).progressBar.setIndeterminate(true);
@@ -121,27 +112,6 @@ public class EnviarPendientesAdapter extends RecyclerView.Adapter {
 
     public void setOnLoadMoreListener(OnLoadMoreListener mOnLoadMoreListener) {
         this.mOnLoadMoreListener = mOnLoadMoreListener;
-    }
-
-    public void envioDatos(View view){
-
-    }
-
-    public void fragmentJumpDatosUsuario(String idClienteCuenta, View view,String nombre,String numeroDeCuenta,String hora) {
-        Fragment fragmento = new DatosAsesor();
-        if (view.getContext() == null)
-            return;
-        if (view.getContext() instanceof Asesor) {
-            Asesor asesor = (Asesor) view.getContext();
-
-            final Connected conected = new Connected();
-            if(conected.estaConectado(view.getContext())) {
-
-            }else{
-                Config.msj(view.getContext(),"Error conexión", "Sin Conexion por el momento.Cliente P-1.1.3");
-            }
-            asesor.switchDatosAsesor(fragmento, idClienteCuenta,nombre,numeroDeCuenta,hora);
-        }
     }
 
     public static class LoadingViewHolder extends RecyclerView.ViewHolder {

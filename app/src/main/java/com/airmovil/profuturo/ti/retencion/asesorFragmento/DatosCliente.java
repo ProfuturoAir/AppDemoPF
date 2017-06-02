@@ -97,12 +97,12 @@ public class DatosCliente extends Fragment {
         btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e(TAG, "PARAMETROS:  --" + getArguments().getString("nombre") + " -- numC :" + getArguments().getString("numeroDeCuenta") + " hora:: " + getArguments().getString("hora"));
                 Fragment fragmentoGenerico = new Encuesta1();
                 Asesor asesor = (Asesor) getContext();
                 if(connected.estaConectado(getContext())){
                     if(idTramite!=null){
-                        asesor.parametrosDetalle(fragmentoGenerico, Integer.parseInt(Config.ID_TRAMITE), getArguments().getString("nombre"),
-                                getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"), getArguments().getString("nombreAsesor"), getArguments().getString("cuentaAsesor"), getArguments().getString("sucursalAsesor"), tvClienteNombre.getText().toString(),
+                        asesor.parametrosDetalle(fragmentoGenerico, Integer.parseInt(Config.ID_TRAMITE), getArguments().getString("nombre"), getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"), getArguments().getString("nombreAsesor"), getArguments().getString("cuentaAsesor"), getArguments().getString("sucursalAsesor"), tvClienteNombre.getText().toString(),
                                 tvClienteNumeroCuenta.getText().toString(), tvClienteNSS.getText().toString(), tvClienteCURP.getText().toString(), tvClienteFecha.getText().toString(), tvClienteSaldo.getText().toString(), false, false, false, "", "", "", "", "", "", "", "", "");
                     }
                 }else{
@@ -115,8 +115,7 @@ public class DatosCliente extends Fragment {
                         public void onClick(DialogInterface dialog, int which) {
                             Fragment fragmentoGenerico = new Encuesta1();
                             Asesor asesor = (Asesor) getContext();
-                            asesor.parametrosDetalle(fragmentoGenerico, Integer.parseInt(Config.ID_TRAMITE),getArguments().getString("nombre"),
-                                    getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"), getArguments().getString("nombreAsesor"), getArguments().getString("cuentaAsesor"), getArguments().getString("sucursalAsesor"), tvClienteNombre.getText().toString(),
+                            asesor.parametrosDetalle(fragmentoGenerico, Integer.parseInt(Config.ID_TRAMITE),getArguments().getString("nombre"), getArguments().getString("numeroDeCuenta"), getArguments().getString("hora"), getArguments().getString("nombreAsesor"), getArguments().getString("cuentaAsesor"), getArguments().getString("sucursalAsesor"), tvClienteNombre.getText().toString(),
                                     tvClienteNumeroCuenta.getText().toString(), tvClienteNSS.getText().toString(), tvClienteCURP.getText().toString(), tvClienteFecha.getText().toString(), tvClienteSaldo.getText().toString(), false, false, false, "", "", "", "", "", "", "", "", "");
                         }
                     });

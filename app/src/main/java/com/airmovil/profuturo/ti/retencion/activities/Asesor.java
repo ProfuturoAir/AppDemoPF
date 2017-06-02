@@ -239,7 +239,7 @@ public class Asesor extends AppCompatActivity{
         }else if(f instanceof Firma){
             global = "1.1.3.6";
             checkProccess = true;
-        }else if(f instanceof Escaner){
+        }else if(f instanceof IneIfe){
             checkProccess = true;
         }
         if (fragmentoGenerico != null){
@@ -415,7 +415,7 @@ public class Asesor extends AppCompatActivity{
                 }else if(f instanceof Firma){
                     global = "1.1.3.7";
                     Log.d("Envia","a patir Firma");
-                }else if(f instanceof Escaner){
+                }else if(f instanceof IneIfe){
                     global = "1.1.3.8";
                     Log.d("Envia","a patir Documento");
                 }
@@ -596,7 +596,7 @@ public class Asesor extends AppCompatActivity{
         Bundle bundle = new Bundle();
         bundle.putInt("idTramite", idTramite);
         bundle.putString("nombre", nombre);
-        bundle.putString("numeroCuenta", numeroCuenta);
+        bundle.putString("numeroDeCuenta", numeroCuenta);
         bundle.putString("hora", hora);
         bundle.putString("nombreAsesor", nombreAsesor);
         bundle.putString("cuentaAsesor", cuentaAsesor);

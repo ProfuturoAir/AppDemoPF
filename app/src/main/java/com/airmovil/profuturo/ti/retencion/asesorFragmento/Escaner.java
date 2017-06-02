@@ -85,8 +85,8 @@ public class Escaner extends Fragment {
         // TODO: Clase para obtener las coordenadas
         gps = new GPSRastreador(getContext());
 
-        ifeFrente = (ImageView) rootView.findViewById(R.id.ife_frente);
-        ifeVuelta = (ImageView) rootView.findViewById(R.id.ife_vuelta);
+        ifeFrente = (ImageView) rootView.findViewById(R.id.af_iv_ife_frente);
+        ifeVuelta = (ImageView) rootView.findViewById(R.id.af_iv_ife_reverso);
 
         //<editor-fold desc="ife frente">
         ifeFrente.setOnClickListener(new View.OnClickListener() {
@@ -175,8 +175,7 @@ public class Escaner extends Fragment {
         btnFinalizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendJson(true, "frente", "reverso");
-                /*if(x == 0 && y == 0){
+                if(x == 0 && y == 0){
                     Dialogos.dialogoNoExisteIFE(getContext());
                 }else if(x == 0) {
                     Dialogos.dialogoNoExisteIFEFrente(getContext());
@@ -196,7 +195,7 @@ public class Escaner extends Fragment {
                             final String base64Reverso = Config.encodeTobase64(getContext(), ifeVuelta.getDrawingCache());
 
                             ifeFrente.setDrawingCacheEnabled(false);
-                            if(connected.estaConectado(getContext())) {
+                            if(Config.conexion(getContext())) {
                                 sendJson(true, base64Frente, base64Reverso);
                             }else {
                                 AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
@@ -240,7 +239,7 @@ public class Escaner extends Fragment {
                     });
                     dialogo1.show();
 
-                }*/
+                }
             }
         });
         //</editor-fold>

@@ -1,13 +1,56 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.airmovil.profuturo.ti.retencion.asesorFragmento.IneIfe">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhite">
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-
-</FrameLayout>
+        android:background="@color/colorWhite"
+        android:orientation="vertical"
+        android:padding="20dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="24dp"
+            android:textStyle="bold"
+            android:text="Captura de Identificación"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/texto_frente"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:layout_marginTop="30dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="250dp">
+            <ImageView
+                android:id="@+id/afi_im_ife_frente"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ife_frente"/>
+        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/texto_reverso"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:layout_marginTop="30dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="250dp">
+            <ImageView
+                android:id="@+id/afi_im_ife_reverso"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ife_vuelta"/>
+        </LinearLayout>
+        <!-- TODO: btn Continual -->
+        <Button android:id="@+id/afi_btn_finalizar" android:text="Terminar encuesta" style="@style/btnContinuar" />
+        <!-- TODO: btn Cancelar -->
+        <Button android:id="@+id/afi_btn_cancelar" style="@style/btnCancelar" />
+    </LinearLayout>
+</ScrollView>
