@@ -90,7 +90,7 @@ public class AsistenciaEntrada extends Fragment{
 
         mySharePreferences = MySharePreferences.getInstance(getContext());
         HashMap<String,String> datosFirmas = mySharePreferences.registrosFirmas();
-        Log.e("jma","fecha entrada-->"+MySharePreferences.FECHA_ENTRADA);
+        Log.e("jma","fecha entrada-->"+MySharePreferences.FECHA_ENTRADA + "\nFECHAS actual " + Dialogos.fechaActual() + "\nFechaGuardada: " + datosFirmas.get(MySharePreferences.FECHA_ENTRADA));
         boolean verificacionFecha = Config.comparacionFechaActual(Dialogos.fechaActual(), datosFirmas.get(MySharePreferences.FECHA_ENTRADA));
         if(verificacionFecha)
             Config.mensajeRegistro(getContext(), linearLayout, textViewFecha, btnLimpiar, btnGuardar, btnCancelar, dvFirma);

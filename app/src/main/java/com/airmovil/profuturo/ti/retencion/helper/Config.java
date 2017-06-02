@@ -530,6 +530,11 @@ public class Config extends Activity {
      */
     public static boolean comparacionFechaActual(String fecha1, String fecha2){
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+
+        if(fecha2 == null){
+            fecha2 = "00-00-0000";
+        }
+
         boolean validar = false;
         try{
             Date date1 = sdf.parse(fecha1);
